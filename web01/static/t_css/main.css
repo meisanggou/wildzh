@@ -1,0 +1,769 @@
+@charset "utf-8";
+/* CSS Document */
+body {
+    font-family: "Microsoft Yahei", "微软雅黑", "宋体", Arial, Helvetica, sans-serif;
+}
+
+ul, ol, li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.clear {
+    clear: both;
+}
+
+.left {
+    float: left;
+}
+
+.loginMode {
+    margin-top: 100px;
+}
+
+.step a, .market a {
+    display: block;
+}
+
+.font16 {
+    font-size: 16px;
+}
+
+.bottom10 {
+    margin-bottom: 10px;
+}
+
+.bottom20 {
+    margin-bottom: 20px;
+}
+
+.margin5 {
+    margin-right: 5px
+}
+
+.margin10 {
+    margin-right: 10px
+}
+
+.margin20 {
+    margin: 20px 0;
+}
+
+.margintop10 {
+    margin-top: 10px
+}
+
+.margintop20 {
+    margin-top: 20px
+}
+
+.margintop30 {
+    margin-top: 30px
+}
+
+.newBtn {
+    display: block;
+    height: 54px;
+    padding-bottom: 20px;
+}
+
+.infoShow {
+    width: 570px;
+    margin: 30px auto 0;
+}
+
+.font-red {
+    color: #e53b0d;
+}
+
+.bugUpload span, .apiTest span {
+    line-height: 34px;
+}
+
+.width100 {
+    width: 100px;
+}
+
+.width366 {
+    width: 366px;
+}
+
+.width500 {
+    width: 500px;
+}
+
+.width600 {
+    width: 600px;
+}
+
+.width800 {
+    width: 800px;
+}
+
+.block {
+    display: block;
+}
+
+.display_none {
+    display: none
+}
+
+.top6 {
+    padding-top: 6px;
+}
+
+.left5 {
+    padding-left: 5px;
+}
+
+/*登陆页 start*/
+.form-signin {
+    margin: 0 auto;
+    max-width: 330px;
+    padding: 15px;
+}
+
+.form-signin .form-signin-heading, .form-signin .checkbox {
+    margin-bottom: 10px;
+}
+
+.form-signin .checkbox {
+    font-weight: normal;
+}
+
+.form-signin .form-control {
+    box-sizing: border-box;
+    font-size: 16px;
+    height: auto;
+    padding: 10px;
+    position: relative;
+    margin: 15px 0;
+}
+
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+
+/*登陆页 end*/
+/*填写信息模块 start*/
+.step {
+    min-width: 470px;
+    padding-left: 100px;
+    padding-bottom: 20px;
+}
+
+.step p {
+    width: 154px;
+    text-align: center;
+}
+
+.list-body {
+    padding: 15px 50px;
+}
+
+.list-body ul li {
+    clear: both;
+    padding: 8px 0;
+}
+
+.list-body ul li label {
+    width: 150px;
+    text-align: right;
+    line-height: 34px;
+    margin: 0;
+    font-weight: normal;
+}
+
+.list-body ul li input, .panelInput {
+    width: 68%;
+}
+
+/*编号start*/
+.number {
+    width: 100px;
+    background: #eae8e6;
+    border-top: 5px solid #ff991d;
+    text-align: center;
+}
+
+/*填写信息模块 end*/
+/*信息展示模块 start*/
+.infoShowMode {
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+
+/*信息展示模块 end*/
+
+/*系统备注及说明模块 start*/
+.declare {
+    padding-top: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px dotted #999;
+}
+
+.redColor {
+    color: #f23156;
+    font-size: 16px;
+}
+
+.grayColor {
+    color: #CCC
+}
+
+/*系统备注及说明模块 end*/
+.toolTip {
+    line-height: 30px;
+    padding-bottom: 5px;
+}
+
+/*晶云平台数据表页的样式美化*/
+.data {
+    padding: 10px 30px;
+}
+
+.data_title {
+    padding-right: 30px;
+    color: #333;
+    text-decoration: none;
+    line-height: 40px;
+}
+
+.data_title:hover {
+    color: #cb1010;
+}
+
+.data_table_title {
+    line-height: 30px;
+    padding-top: 50px;
+    padding-bottom: 10px;
+    color: #666;
+}
+
+.data_table_title p {
+    margin: 0;
+}
+
+.data_table {
+    border-left: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.data_table th, .data_table td {
+    line-height: 40px;
+    border-top: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    padding: 0 10px;
+}
+
+/*晶云平台遗传频道权限描述*/
+.privilegeTable {
+    margin: 20px 0;
+    border-top: 1px solid #999;
+    border-left: 1px solid #999;
+    border-bottom: none;
+    border-right: none;
+    width: 98%;
+}
+
+.privilegeTable th, .privilegeTable td {
+    padding: 0 8px 0 !important;
+    line-height: 44px !important;
+}
+
+.privilegeTable td {
+    color: #080808;
+}
+
+.btn-down {
+    margin-left: 20px;
+    margin-bottom: 20px;
+    padding: 8px 40px;
+}
+
+.privilegeMenu {
+    position: fixed;
+    width: 8%;
+}
+
+.privilegeMenu li {
+    line-height: 30px;
+}
+
+.privilegeMenu li a {
+    display: block;
+    padding-left: 10px;
+    width: 90%;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.privilegeMenu li a:hover {
+    background: #5cb85c;
+    text-decoration: none;
+}
+
+.privilegeCon {
+    width: 100%;
+    padding-left: 15%;
+}
+
+.permission p {
+    margin-bottom: 0;
+    line-height: 24px;
+    font-size: 14px;
+}
+
+/*添加API页面*/
+.apiMode {
+    padding: 20px 0;
+}
+
+.apiMode label {
+    width: 200px;
+    text-align: right;
+    font-weight: normal;
+}
+
+.box-side {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 5px;
+    padding: 5px 0;
+}
+
+.apiContentLine p {
+    margin-bottom: 0;
+}
+
+.apiContentLine ul li {
+    line-height: 30px;
+    padding: 5px 0;
+}
+
+.apiContentLine input {
+    padding: 0;
+}
+
+.apiContentLine textarea {
+    resize: none;
+    width: 500px;
+    height: 200px;
+}
+
+.select-mode {
+    padding-left: 200px;
+}
+
+.select-mode label {
+    width: auto;
+    text-align: left;
+}
+
+.api-describe {
+    vertical-align: top;
+}
+
+.api-newBtn {
+    margin-left: 202px;
+}
+
+.width300 {
+    width: 300px;
+}
+
+/*API帮助文档*/
+.api-help-mode a {
+    padding-right: 20px;
+    color: #000;
+}
+
+.api-list-table caption {
+    color: #000;
+    font-weight: bold;
+}
+
+.api-list-table th, .api-list-table td {
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+.api-example textarea {
+    resize: none;
+    width: 100%;
+    height: 300px !important;
+    background: none !important;
+}
+
+.care span {
+    padding-right: 20px;
+}
+
+/*晶云平台BUG列表*/
+.bug-input {
+    width: 560px;
+    margin-right: 10px;
+    margin-bottom: 10px
+}
+
+.bugInfoShow {
+    padding-top: 20px;
+}
+
+.bugUpload form {
+    clear: both;
+    padding: 10px 0;
+}
+
+.bugUploadBtn {
+    width: 200px;
+}
+
+.bugUpload input[type="file"] {
+    cursor: pointer;
+    margin: 2px 10px 0 -200px;
+    opacity: 0;
+    width: 200px;
+}
+
+.bugTextMode {
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 20px !important;
+    margin-bottom: 30px;
+}
+
+.bugTextMode textarea {
+    resize: none;
+}
+
+.bugInfoDepict {
+    padding: 30px 0 50px;
+    border-bottom: 1px dashed #ccc;
+}
+
+.bugUpload {
+    padding-top: 15px;
+}
+
+.checkbox {
+    margin: 15px 0 20px;
+}
+
+.checkbox span {
+    width: 180px;
+    display: inline-block;
+}
+
+.amendPrivilege {
+    width: 600px;
+    margin: 0px auto;
+}
+
+.amendBtn {
+    width: 230px;
+    display: block;
+    margin: 0 auto;
+}
+
+.bugAuthor {
+    width: 80px;
+    display: inline-block;
+    padding: 0 5px;
+}
+
+.hand {
+    font-size: 12px;
+    padding-top: 4px;
+    font-weight: normal;
+}
+
+.handCurrent {
+    cursor: pointer;
+}
+
+.gray {
+    background: #fd5b78;
+    color: #fff;
+}
+
+.orange {
+    background: #e24414;
+    color: #fff;
+}
+
+.opacity {
+    opacity: 0;
+}
+
+.grayBg {
+    background: gray;
+}
+
+.zongheBg {
+    width: 100px;
+    background: #ebc79e;
+}
+
+.redBg {
+    background: #e40203;
+}
+
+.orgBg {
+    background: #ff8b00;
+}
+
+.yellowBg {
+    background: #feed01;
+}
+
+.greenBg {
+    background: #007f28;
+}
+
+.blueBg {
+    background: #004dff;
+}
+
+.purpleBg {
+    background: #750686;
+}
+
+/*测试API页面*/
+.apiTest span {
+    background: #ffffff;
+    display: block;
+    padding: 0 5px;
+}
+
+.width150 {
+    width: 150px;
+}
+
+.star {
+    color: #dd1717;
+    font-size: 20px;
+    padding-top: 5px;
+    padding-right: 5px;
+}
+
+.paramListMode {
+    padding-bottom: 50px;
+}
+
+.paramListMode ul li {
+    float: left;
+    line-height: 34px;
+}
+
+.paramListMode label {
+    font-weight: normal;
+    padding-right: 10px;
+}
+
+/*API返回状态码*/
+.status_out {
+    width: 500px;
+    height: 200px;
+    background: #d9d9d9;
+    line-height: 30px;
+    position: absolute;
+    left: 10%;
+    padding: 5px;
+    display: none;
+    z-index: 10;
+}
+
+.status_move {
+    cursor: pointer;
+}
+
+.text-content {
+    width: 568px !important;
+    max-height: 500px;
+    min-height: 100px !important;
+    height: auto;
+}
+.text-center {
+    text-align: center;
+}
+.symbol {
+    cursor: pointer;
+    background: #090;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    line-height: 18px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+    color: #fff;
+}
+
+.tag {
+    padding-left: 74px;
+}
+
+.error_result {
+    color: red
+}
+
+.top_div {
+    margin-top: 50px;
+    font-size: 16px;
+    color: #000000;
+}
+
+.bottom_div {
+    margin: 5px 0 5px 0;
+    font-size: 14px;
+}
+
+.tag span {
+    display: inline-block;
+    background: #f0ad4e;
+    border-radius: 5px;
+    padding: 2px 5px;
+    margin: 10px 0 0 10px;
+    color: #fff;
+}
+
+.tag b {
+    padding-left: 10px;
+    cursor: pointer;
+}
+
+body, td, th {
+    font-family: "微软雅黑";
+    font-size: 14px;
+}
+
+.selected {
+    background: #81ccee;
+}
+
+/* 从下弹出层 */
+
+@-webkit-keyframes bounceIn {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale(.5);
+        transform: scale(.5)
+    }
+    100% {
+        opacity: 1;
+        -webkit-transform: scale(1);
+        transform: scale(1)
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale(.5);
+        -ms-transform: scale(.5);
+        transform: scale(.5)
+    }
+    100% {
+        opacity: 1;
+        -webkit-transform: scale(1);
+        -ms-transform: scale(1);
+        transform: scale(1)
+    }
+}
+
+.popup_div_1 {
+    position: fixed;
+    border-radius: 2px;
+    animation-duration: .3s;
+    min-width: 100px;
+    background-color: rgba(0, 0, 0, .6);
+    color: #ffffff;
+    border: none;
+    animation-name: bounceIn;
+}
+
+.popup_content_1 {
+    padding: 12px 25px;
+    text-align: center;
+    position: relative;
+    line-height: 24px;
+    word-break: break-all;
+    font-size: 14px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /*box-shadow:none;*/
+    /**/
+}
+
+/* 查询文章时，列表的样式 */
+.paddingTop50 {
+    padding-top: 50px;
+}
+
+.articleList li {
+    padding: 20px 10px 10px;
+    border-bottom: 1px dotted #ccc;
+}
+
+.articleList li p:last-child {
+    color: #999;
+}
+
+.parent_background {
+    background-color: transparent;
+}
+
+.addTag {
+    background: green;
+    color: #ffffff;
+    opacity: 0.4;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    text-align: center;
+    list-style: none;
+    position: absolute;
+    overflow: hidden;
+    float: right;
+    margin-top: -10px;
+    margin-right: 10px;
+}
+
+.updateTag {
+    background: goldenrod;
+    color: #ffffff;
+    opacity: 0.4;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    text-align: center;
+    list-style: none;
+    position: absolute;
+    overflow: hidden;
+    float: right;
+    margin-top: -10px;
+    margin-right: 10px;
+}
+
+.abandonTag {
+    background: red;
+    color: #ffffff;
+    opacity: 0.4;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    text-align: center;
+    list-style: none;
+    position: absolute;
+    overflow: hidden;
+    float: right;
+    margin-top: -10px;
+    margin-right: 10px;
+}

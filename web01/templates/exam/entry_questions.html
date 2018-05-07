@@ -1,0 +1,70 @@
+{#<fieldset xmlns="http://www.w3.org/1999/html">#}
+{#    <legend>录入须知</legend>#}
+{#    <p>【1】</p>#}
+{##}
+{#    <p>【2】</p>#}
+{##}
+{#</fieldset>#}
+
+<fieldset>
+    <legend>题目信息</legend>
+    <div class="form-group apiContentLine">
+        <ul>
+            <li>
+                <label for="">测试分类：</label>
+                <select class="box-side width150" id="exam_type" type="text">
+                    <option value="xlcp1" about="4">专业测评</option>
+                    <option value="xlcp2" about="5">兴趣测评</option>
+                </select>
+            </li>
+            <li>
+                <label for="effective_days">测试名称：</label>
+                <input class="box-side width300" id="exam_name" type="text" readonly/>
+                <label>已录入</label>
+                <input class="width100" readonly disabled>
+                <label>题</label>
+            </li>
+            <li>
+                <label class="api-describe" for="">题目描述：</label>
+                <textarea class="box-side" rows="3" id="question_desc" required=""></textarea>
+            </li>
+            <li>
+                <label for="">选择模式：</label>
+                <select class="box-side width150" id="select_mode" type="text">
+                    <option value="1">单选</option>
+                    <option value="2">复选</option>
+                </select>
+            </li>
+        </ul>
+
+    </div>
+</fieldset>
+<fieldset>
+    <legend>选项</legend>
+    <div class="form-group apiContentLine" id="options">
+        <ul>
+            <li name="li_option">
+                <input class="box-side width100" type="text" placeholder="" value="A" readonly/>
+                <label> : </label>
+                <input class="box-side width500" type="text" />
+            </li>
+            <li name="li_option">
+                <input class="box-side width100" type="text" placeholder="" value="B" readonly/>
+                <label> : </label>
+                <input class="box-side width500" type="text" />
+            </li>
+            <li name="li_option">
+                <input class="box-side width100" type="text" placeholder="" value="C" readonly/>
+                <label> : </label>
+                <input class="box-side width500" type="text" />
+            </li>
+            <li name="li_option">
+                <input class="box-side width100" type="text" placeholder="" value="D" readonly/>
+                <label> : </label>
+                <input class="box-side width500" type="text" />
+            </li>
+
+        </ul>
+    </div>
+</fieldset>
+<button class="btn btn-success btn-down api-newBtn" id="btn_new_question">新建</button>
