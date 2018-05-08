@@ -31,17 +31,6 @@ function request_error(xhr){
     }
 }
 
-function add_url_args(url, key, value){
-    var args = key + "=" + value;
-    if (url.indexOf("/?") > 0) {
-        url += "&" + args;
-    }
-    else {
-        url += "?" + args;
-    }
-    return url;
-}
-
 function my_request(request_url, request_method, body_param, request_success){
     if(request_method != "GET"){
         body_param = JSON.stringify(body_param)

@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 import os
+import re
 import string
 from flask import request, jsonify, g
 from flask_helper import RenderTemplate, support_upload
@@ -24,6 +25,7 @@ pic_folder = folder.create_folder2(exam_upload_folder, "pic")
 def index():
     add_url = url_prefix + "/"
     upload_url = url_prefix + "/upload/"
+    info_url = url_prefix + "/info/"
     if "exam_no" in request.args:
         overview_class = ""
         question_class = "active"
@@ -31,7 +33,7 @@ def index():
         overview_class = "active"
         question_class = ""
     return rt.render("index.html", add_url=add_url, overview_class=overview_class, question_class=question_class,
-                     upload_url=upload_url)
+                     upload_url=upload_url, info_url=info_url)
 
 
 @exam_view.route("/", methods=["POST"])
@@ -53,4 +55,29 @@ def new_exam():
 
 
 support_upload(exam_view, static_folder=pic_folder)
+
+
+@exam_view.route("/info/", methods=["GET"])
+def get_exam_info():
+    if "Referer" not in request.headers:
+            return jsonify({"status": False, "data": "Bad Request"})
+    ref_url = request.headers["Referer"]
+    find_type = re.findall("exam_type=(\\w+)", ref_url)
+    if len(find_type) > 0:
+        exam_type = find_type[0]
+    elif "exam_type" in request.args:
+        exam_type = request.args["exam_type"]
+    else:
+        return jsonify({"status": False, "data": "Bad Request."})
+    find_no = re.findall("exam_no=(\\d+)", ref_url)
+    print(find_no)
+    if len(find_no) > 0:
+        exam_no = find_no[0]
+    elif "exam_no" in request.args:
+        exam_no = request.args["exam_no"]
+    else:
+        exam_no = None
+    items = c_exam.select_exam(exam_type, exam_no)
+    return jsonify({"status": True, "data": items})
+
 

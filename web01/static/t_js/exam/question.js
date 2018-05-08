@@ -63,6 +63,16 @@ function add_question()
         );
 }
 
+function init_info(data){
+    if(data == null){
+        var info_url = $("#info_url").val();
+        my_async_request2(info_url, "GET", null, init_info);
+        return 0;
+    }
+    console.info(data);
+}
+
 $(function() {
     $("#btn_new_question").click(add_question);
+    init_info(null);
 });
