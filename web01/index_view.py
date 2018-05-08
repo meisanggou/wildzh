@@ -1,6 +1,6 @@
 # !/usr/bin/env python
 # coding: utf-8
-from tools import RenderTemplate
+from flask_helper import RenderTemplate
 from web01 import create_blue
 
 __author__ = 'meisa'

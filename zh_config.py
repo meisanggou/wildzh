@@ -16,4 +16,4 @@ static_prefix_url = "/static01"
 db_conf_path = os.path.join(script_dir, "mysql_app.conf")
 
 # 目录相关配置
-upload_folder = ""
+upload_folder = "D:\\upload"

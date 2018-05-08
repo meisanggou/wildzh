@@ -16,7 +16,6 @@ for view_file in view_files:
     if view_file.endswith("_view.py"):
         __import__("web01.%s" % view_file[:-3])
 
-
 app.register_blues()
 
 if __name__ == "__main__":

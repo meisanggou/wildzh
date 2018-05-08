@@ -61,7 +61,9 @@ $(function() {
             return 1;
         }
         var data = {"pic": $("#exam_extend_pic")[0].files[0]};
-        upload_request(upload_url, "POST", data);
+        upload_request(upload_url, "POST", data, function(data){
+            $("#exam_extend_pic_url").attr("src", data["pic"]);
+        });
     });
     $("#exam_type").change();
     $("#btn_new").click(new_exam);

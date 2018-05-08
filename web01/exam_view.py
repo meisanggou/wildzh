@@ -2,8 +2,9 @@
 # coding: utf-8
 import os
 from flask import request, jsonify, g
-from flask_helper import RenderTemplate
+from flask_helper import RenderTemplate, support_upload
 from zh_config import db_conf_path, upload_folder
+from tools import folder
 from classes.exam import Exam
 from web01 import create_blue
 
@@ -15,6 +16,8 @@ rt = RenderTemplate("exam")
 exam_view = create_blue("exam", url_prefix=url_prefix)
 c_exam = Exam(db_conf_path)
 exam_upload_folder = os.path.join(upload_folder, "exam")
+pic_folder = folder.create_folder2(exam_upload_folder, "pic")
+
 
 @exam_view.route("/", methods=["GET"])
 def index():
@@ -39,8 +42,6 @@ def new_exam():
         return jsonify({"status": False, "data": "请重试"})
     return jsonify({"status": True, "data": data})
 
-@exam_view.route("/upload/", methods=["POST"])
-def upload_pic():
-    if "pic" in request.files:
-        print(request.files["pic"])
-    return jsonify({"status": True, "data": "success"})
+
+support_upload(exam_view, static_folder=pic_folder)
+
