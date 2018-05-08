@@ -1,8 +1,9 @@
 # !/usr/bin/env python
 # coding: utf-8
-from flask import request, jsonify
+from flask import request, jsonify, g
+from zh_config import db_conf_path
 from tools import RenderTemplate
-
+from classes.exam import Exam
 from web01 import create_blue
 
 __author__ = 'meisa'
@@ -11,7 +12,7 @@ url_prefix="/exam"
 
 rt = RenderTemplate("exam")
 exam_view = create_blue("exam", url_prefix=url_prefix)
-
+c_exam = Exam(db_conf_path)
 
 @exam_view.route("/", methods=["GET"])
 def index():
@@ -27,6 +28,13 @@ def index():
 
 @exam_view.route("/", methods=["POST"])
 def new_exam():
-    data = request.json
-    print(data)
+    data = g.request_data
+    r, exam_no = c_exam.new_exam(data["exam_name"], data["exam_type"], data["exam_desc"], data["eval_type"],
+                                 g.user_name, pic_url=data["pic_url"])
+    if r is False:
+        return jsonify({"status": False, "data": "请重试"})
     return jsonify({"status": True, "data": data})
+
+@exam_view.route("/", methods=[""])
+def upload_pic():
+    pass

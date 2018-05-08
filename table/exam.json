@@ -11,7 +11,7 @@
         "pri_key": true,
         "col_comment": "测试编号",
         "col_name": "exam_no",
-        "col_type": "char(32)"
+        "col_type": "int(11)"
       },
       {
         "col_comment": "测试名称",
@@ -45,6 +45,11 @@
         "col_name": "exam_order",
         "col_type": "text",
         "allow_null": true
+      },
+      {
+        "col_comment": "录入者",
+        "col_name": "adder",
+        "col_type": "varchar(30)"
       }
     ],
     "table_comment": "记录测试的属性",
