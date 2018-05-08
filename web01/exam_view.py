@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 import os
+import string
 from flask import request, jsonify, g
 from flask_helper import RenderTemplate, support_upload
 from zh_config import db_conf_path, upload_folder
@@ -35,11 +36,19 @@ def index():
 
 @exam_view.route("/", methods=["POST"])
 def new_exam():
+    g.user_name = "zh_test"
     data = g.request_data
     r, exam_no = c_exam.new_exam(data["exam_name"], data["exam_type"], data["exam_desc"], data["eval_type"],
                                  g.user_name, pic_url=data["pic_url"])
     if r is False:
         return jsonify({"status": False, "data": "请重试"})
+    cases = dict()
+    for i in range(len(data["result_explain"])):
+        cases["case_%s" % string.letters[i]] = data["result_explain"][i]
+    l = c_exam.new_exam_result_explain(exam_no, **cases)
+    if l <= 0:
+        return jsonify({"status": False, "data": "请重试"})
+    data["exam_no"] = exam_no
     return jsonify({"status": True, "data": data})
 
 

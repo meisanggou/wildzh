@@ -12,15 +12,19 @@ function new_exam(){
         var v = item.val().trim();
         if(v.length <= 0){
             var msg = item.attr("msg");
-            console.info(msg);
             popup_show(msg);
             return 1;
         }
         r_data[keys[i]] = v;
     }
+    var pic_url = $("#exam_extend_pic_url").attr("src");
+    if(pic_url.length <= 0){
+        popup_show("请上传测试图片");
+        return 2;
+    }
+    r_data["pic_url"] = pic_url;
     r_data["result_explain"] = new Array();
     var exist_explains = $("#result_explain").find("li[name='li_explain']:visible");
-    console.info(exist_explains);
     for(var i=0;i<exist_explains.length;i++){
         var explain_item = $(exist_explains[i]);
         var c = explain_item.find("input:eq(0)").val();
@@ -29,11 +33,28 @@ function new_exam(){
             popup_show("请输入【" + c + "】结果对应的解释");
             return 2;
         }
-        console.info(t);
         r_data["result_explain"][i] = t;
     }
     var add_url = $("#add_url").val();
-    my_async_request2(add_url, "POST", r_data);
+    my_async_request2(add_url, "POST", r_data, function(data){
+        swal({
+                title: "选择下一步",
+                text: msg,
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: '录入试题',
+                cancelButtonText: "留在此页",
+                closeOnConfirm: true,
+                closeOnCancel: true
+            },
+            function(isConfirm){
+                if (isConfirm){
+                    location.href = add_url_args(location.href.toLocaleString(), "exam_no", data["exam_no"])
+                }
+            }
+        );
+    });
 }
 
 $(function() {

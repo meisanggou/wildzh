@@ -76,22 +76,26 @@
       {
         "col_comment": "测试结果为第3种情况的解释",
         "col_name": "case_c",
-        "col_type": "varchar(500)"
+        "col_type": "varchar(500)",
+        "allow_null": true
       },
       {
         "col_comment": "测试结果为第4种情况的解释",
         "col_name": "case_d",
-        "col_type": "varchar(500)"
+        "col_type": "varchar(500)",
+        "allow_null": true
       },
       {
         "col_comment": "测试结果为第5种情况的解释",
         "col_name": "case_e",
-        "col_type": "varchar(500)"
+        "col_type": "varchar(500)",
+        "allow_null": true
       },
       {
         "col_comment": "测试结果为第6种情况的解释",
         "col_name": "case_f",
-        "col_type": "varchar(500)"
+        "col_type": "varchar(500)",
+        "allow_null": true
       }
     ],
     "table_comment": "测试结果解释",
