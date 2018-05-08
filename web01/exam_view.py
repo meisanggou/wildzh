@@ -17,13 +17,15 @@ c_exam = Exam(db_conf_path)
 @exam_view.route("/", methods=["GET"])
 def index():
     add_url = url_prefix + "/"
+    upload_url = url_prefix + "/upload/"
     if "exam_no" in request.args:
         overview_class = ""
         question_class = "active"
     else:
         overview_class = "active"
         question_class = ""
-    return rt.render("index.html", add_url=add_url, overview_class=overview_class, question_class=question_class)
+    return rt.render("index.html", add_url=add_url, overview_class=overview_class, question_class=question_class,
+                     upload_url=upload_url)
 
 
 @exam_view.route("/", methods=["POST"])
@@ -35,6 +37,8 @@ def new_exam():
         return jsonify({"status": False, "data": "请重试"})
     return jsonify({"status": True, "data": data})
 
-@exam_view.route("/", methods=[""])
+@exam_view.route("/upload/", methods=["POST"])
 def upload_pic():
-    pass
+    if "pic" in request.files:
+        print(request.files["pic"])
+    return jsonify({"status": True, "data": "success"})

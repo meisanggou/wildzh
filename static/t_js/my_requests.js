@@ -147,3 +147,63 @@ function my_async_request2(request_url, request_method, body_param, request_succ
         }
     });
 }
+function upload_request(request_url, request_method, body_param, request_success, exec_obj)
+{
+    if (request_url.indexOf("/?") > 0) {
+        request_url += "&rf=async";
+    }
+    else {
+        request_url += "?rf=async";
+    }
+    var fd = new FormData();
+    for(var key in body_param){
+        fd.append(key, body_param[key]);
+    }
+    $.ajax({
+        url: request_url,
+        method: request_method,
+        contentType: false,
+        processData: false,
+        dataType: "json",
+        data: fd,
+        success:function(data){
+            if(exec_obj != null) {
+                if ("exec_r" in exec_obj) {
+                    exec_obj.exec_r = true;
+                }
+                if ("exec_completed" in exec_obj) {
+                    exec_obj.exec_completed = true;
+                }
+                if ("exec_ing" in exec_obj) {
+                    exec_obj.exec_ing = false;
+                }
+            }
+            if(data.status == false){
+                sweetAlert(data.data);
+            }
+            else if("location" in data){
+                location.href = data.location;
+            }
+            else if(request_success == null){
+                sweetAlert(data.data);
+            }
+            else{
+                request_success(data.data);
+            }
+        },
+        error:function(xhr){
+            if(exec_obj != null) {
+                if ("exec_r" in exec_obj) {
+                    exec_obj.exec_r = false;
+                }
+                if ("exec_completed" in exec_obj) {
+                    exec_obj.exec_completed = true;
+                }
+                if ("exec_ing" in exec_obj) {
+                    exec_obj.exec_ing = false;
+                }
+            }
+            request_error(xhr);
+        }
+    });
+}

@@ -55,6 +55,14 @@ $(function() {
             $(exist_explain[i]).remove();
         }
     });
+    $("#exam_extend_pic").change(function(){
+        var upload_url= $("#upload_url").val();
+        if($("#exam_extend_pic")[0].files.length <= 0){
+            return 1;
+        }
+        var data = {"pic": $("#exam_extend_pic")[0].files[0]};
+        upload_request(upload_url, "POST", data);
+    });
     $("#exam_type").change();
     $("#btn_new").click(new_exam);
 });
