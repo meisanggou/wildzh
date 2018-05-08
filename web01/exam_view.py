@@ -70,7 +70,6 @@ def get_exam_info():
     else:
         return jsonify({"status": False, "data": "Bad Request."})
     find_no = re.findall("exam_no=(\\d+)", ref_url)
-    print(find_no)
     if len(find_no) > 0:
         exam_no = find_no[0]
     elif "exam_no" in request.args:

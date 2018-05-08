@@ -78,9 +78,11 @@ class Exam(object):
         where_value = dict(exam_type=exam_type)
         if exam_no is not None:
             where_value["exam_no"] = exam_no
-        print(where_value)
         cols = ["exam_type", "exam_no", "exam_name", "exam_desc", "eval_type", "adder", "status",
                 "exam_extend"]
         items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value)
         return items
+
+    def select_questions(self, exam_no):
+        pass
 

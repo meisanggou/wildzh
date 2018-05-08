@@ -69,6 +69,11 @@ function init_info(data){
         my_async_request2(info_url, "GET", null, init_info);
         return 0;
     }
+    if(data.length > 0) {
+        var exam_item = data[0];
+        $("#s_exam_name").val(exam_item["exam_name"]);
+        $("#s_exam_type").val(exam_item["exam_type"]);
+    }
     console.info(data);
 }
 
