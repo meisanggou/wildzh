@@ -6,7 +6,7 @@ import sys
 from flask import request, g, make_response, Blueprint, jsonify, session
 from flask_login import current_user, UserMixin, LoginManager
 
-from tools import JYFlask
+from flask_helper import Flask2
 from function import normal_request_detection, make_static_html, make_default_static_url, make_static_url
 from function import make_static_html2
 
@@ -41,7 +41,7 @@ def load_user(user_name):
 
 
 def create_app():
-    one_web = JYFlask(__name__)
+    one_web = Flask2(__name__)
 
     one_web.secret_key = 'a string'
     login_manager.init_app(one_web)

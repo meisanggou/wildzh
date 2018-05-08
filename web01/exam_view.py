@@ -1,18 +1,20 @@
 # !/usr/bin/env python
 # coding: utf-8
+import os
 from flask import request, jsonify, g
-from zh_config import db_conf_path
-from tools import RenderTemplate
+from flask_helper import RenderTemplate
+from zh_config import db_conf_path, upload_folder
 from classes.exam import Exam
 from web01 import create_blue
 
 __author__ = 'meisa'
 
-url_prefix="/exam"
+url_prefix = "/exam"
 
 rt = RenderTemplate("exam")
 exam_view = create_blue("exam", url_prefix=url_prefix)
 c_exam = Exam(db_conf_path)
+exam_upload_folder = os.path.join(upload_folder, "exam")
 
 @exam_view.route("/", methods=["GET"])
 def index():
