@@ -58,7 +58,7 @@ def index():
     questions_url = url_prefix + "/questions/"
     page_exam = url_prefix + "/?action=exam"
     page_list = url_prefix + "/"
-    if "action" in request.args:
+    if "action" in request.args and request.args["action"] == "exam":
         return rt.render("entry_info.html", page_list=page_list, add_url=add_url, upload_url=upload_url)
     if "exam_no" in request.args:
         return rt.render("entry_questions.html", page_list=page_list, page_exam=page_exam, info_url=info_url,

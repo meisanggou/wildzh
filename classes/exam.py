@@ -53,13 +53,18 @@ class Exam(object):
     def _update_status(self, exam_no, add_status=None, sub_status=None):
         where_value = dict(exam_no=exam_no)
         if add_status is not None:
-             l = self.db.execute_update(self.t_info, update_value_list=["status=status|%s" % add_status],
-                                        where_value=where_value)
+            l = self.db.execute_update(self.t_info, update_value_list=["status=status|%s" % add_status],
+                                       where_value=where_value)
         elif sub_status is not None:
             l = self.db.execute_update(self.t_info, update_value_list=["status=status&~%s" % sub_status],
                                        where_value=where_value)
         else:
             l = 0
+        return l
+
+    def _update_num(self, exam_no):
+        where_value = dict(exam_no=exam_no)
+        l = self.db.execute_update(self.t_info, update_value_list=["exam_num=exam_num+1"], where_value=where_value)
         return l
 
     def _update_question(self, exam_no, question_no, **kwargs):
@@ -83,6 +88,7 @@ class Exam(object):
         l = self._insert_question(exam_no, question_no, question_desc, select_mode, options)
         if l <= 0:
             return False, l
+        self._update_status(exam_no, add_status=2)
         return True, l
 
     def update_exam_questions(self, exam_no, question_no, question_desc=None, select_mode=None, options=None):
@@ -103,7 +109,7 @@ class Exam(object):
             if exam_no is not None:
                 where_value["exam_no"] = exam_no
         cols = ["exam_type", "exam_no", "exam_name", "exam_desc", "eval_type", "adder", "status",
-                "exam_extend"]
+                "exam_extend", "exam_num"]
         items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value)
         return items
 
