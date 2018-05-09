@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import time
+import json
 from mysqldb_rich import DB
 
 __author__ = 'meisa'
@@ -61,6 +62,10 @@ class Exam(object):
             l = 0
         return l
 
+    def _update_question(self, exam_no, question_no, **kwargs):
+        where_value = dict(exam_no=exam_no, question_no=question_no)
+        l = self.db.execute_update(self.t_q, update_value=kwargs, where_value=where_value)
+        return l
 
     def new_exam(self, exam_name, exam_type, exam_desc, eval_type, adder, **exam_extend):
         exam_no = int(time.time())
@@ -73,6 +78,23 @@ class Exam(object):
         l = self._insert_result_explain(exam_no, case_a, case_b, case_c, case_d, case_e, case_f)
         l2 = self._update_status(exam_no, add_status=4)
         return min(l, l2)
+
+    def new_exam_questions(self, exam_no, question_no, question_desc, select_mode, options):
+        l = self._insert_question(exam_no, question_no, question_desc, select_mode, options)
+        if l <= 0:
+            return False, l
+        return True, l
+
+    def update_exam_questions(self, exam_no, question_no, question_desc=None, select_mode=None, options=None):
+        kwargs = dict()
+        if question_desc is not None:
+            kwargs["question_desc"] = question_desc
+        if select_mode is not None:
+            kwargs["select_mode"] = select_mode
+        if options is not None:
+            kwargs["options"] = options
+        l = self._update_question(exam_no, question_no, **kwargs)
+        return l
 
     def select_exam(self, exam_type, exam_no=None):
         where_value = dict(exam_type=exam_type)
@@ -87,4 +109,6 @@ class Exam(object):
         where_value = dict(exam_no=exam_no)
         cols = ["exam_no", "question_no", "question_desc", "select_mode", "options"]
         items = self.db.execute_select(self.t_q, cols=cols, where_value=where_value)
+        for item in items:
+            item["options"] = json.loads(item["options"])
         return items

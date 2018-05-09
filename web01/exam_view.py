@@ -3,6 +3,7 @@
 import os
 import re
 import string
+from functools import wraps
 from flask import request, jsonify, g
 from flask_helper import RenderTemplate, support_upload
 from zh_config import db_conf_path, upload_folder
@@ -19,6 +20,34 @@ exam_view = create_blue("exam", url_prefix=url_prefix)
 c_exam = Exam(db_conf_path)
 exam_upload_folder = os.path.join(upload_folder, "exam")
 pic_folder = folder.create_folder2(exam_upload_folder, "pic")
+
+
+def referer_exam_no(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "Referer" not in request.headers:
+            return jsonify({"status": False, "data": "Bad Request"})
+        g.ref_url = request.headers["Referer"]
+        find_no = re.findall("exam_no=(\\d+)", g.ref_url)
+        if len(find_no) > 0:
+            g.exam_no = find_no[0]
+        elif "exam_no" in request.args:
+            g.exam_no = request.args["exam_no"]
+        else:
+            g.exam_no = None
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def required_exam_no(f):
+    @wraps(f)
+    @referer_exam_no
+    def decorated_function(*args, **kwargs):
+        if g.exam_no is None:
+            return jsonify({"status": False, "data": "Bad Request"})
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 
 @exam_view.route("/", methods=["GET"])
@@ -59,38 +88,36 @@ support_upload(exam_view, static_folder=pic_folder)
 
 
 @exam_view.route("/info/", methods=["GET"])
+@referer_exam_no
 def get_exam_info():
-    if "Referer" not in request.headers:
-            return jsonify({"status": False, "data": "Bad Request"})
-    ref_url = request.headers["Referer"]
-    find_type = re.findall("exam_type=(\\w+)", ref_url)
+    find_type = re.findall("exam_type=(\\w+)", g.ref_url)
     if len(find_type) > 0:
         exam_type = find_type[0]
     elif "exam_type" in request.args:
         exam_type = request.args["exam_type"]
     else:
         return jsonify({"status": False, "data": "Bad Request."})
-    find_no = re.findall("exam_no=(\\d+)", ref_url)
-    if len(find_no) > 0:
-        exam_no = find_no[0]
-    elif "exam_no" in request.args:
-        exam_no = request.args["exam_no"]
-    else:
-        exam_no = None
-    items = c_exam.select_exam(exam_type, exam_no)
+    items = c_exam.select_exam(exam_type, g.exam_no)
     return jsonify({"status": True, "data": items})
 
-@exam_view.route("/questions/", methods=["GET"])
-def get_exam_questions():
-    if "Referer" not in request.headers:
-            return jsonify({"status": False, "data": "Bad Request"})
-    ref_url = request.headers["Referer"]
-    find_no = re.findall("exam_no=(\\d+)", ref_url)
-    if len(find_no) > 0:
-        exam_no = find_no[0]
-    elif "exam_no" in request.args:
-        exam_no = request.args["exam_no"]
+
+@exam_view.route("/questions/", methods=["POST", "PUT"])
+@required_exam_no
+def entry_questions():
+    data = g.request_data
+    question_no = data["question_no"]
+    question_desc = data["question_desc"]
+    select_mode = data["select_mode"]
+    options = data["options"]
+    if request.method == "POST":
+        r, l = c_exam.new_exam_questions(g.exam_no, question_no, question_desc, select_mode, options)
     else:
-        return jsonify({"status": False, "data": "Bad Request"})
-    items = c_exam.select_questions(exam_no)
+        r, l = c_exam.update_exam_questions(g.exam_no, question_no, question_desc, select_mode, options)
+    return jsonify({"status": r, "data": dict(action=request.method, data=data)})
+
+
+@exam_view.route("/questions/", methods=["GET"])
+@required_exam_no
+def get_exam_questions():
+    items = c_exam.select_questions(g.exam_no)
     return jsonify({"status": True, "data": items})

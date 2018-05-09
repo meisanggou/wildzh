@@ -26,7 +26,7 @@
             </li>
             <li>
                 <label class="api-describe" for="">题目描述：</label>
-                <textarea class="box-side" rows="3" id="question_desc" required=""></textarea>
+                <textarea class="box-side" rows="3" id="question_desc" required="">你和朋友计划出游，你更可能承担怎样的角色？</textarea>
             </li>
             <li>
                 <label for="">选择模式：</label>
@@ -46,25 +46,28 @@
             <li name="li_option">
                 <input class="box-side width100" type="text" placeholder="" value="A" readonly/>
                 <label> : </label>
-                <input class="box-side width500" type="text" />
+                <input class="box-side width500" type="text" value="基本朋友决定，你无条件信任对方基本朋友决定，你无条件信任对方" />
             </li>
             <li name="li_option">
                 <input class="box-side width100" type="text" placeholder="" value="B" readonly/>
                 <label> : </label>
-                <input class="box-side width500" type="text" />
+                <input class="box-side width500" type="text" value="会事先想好，但是会考虑到朋友的想法" />
             </li>
             <li name="li_option">
                 <input class="box-side width100" type="text" placeholder="" value="C" readonly/>
                 <label> : </label>
-                <input class="box-side width500" type="text" />
+                <input class="box-side width500" type="text" value="准备一到两个方案，商量后分配各自的任务" />
             </li>
             <li name="li_option">
                 <input class="box-side width100" type="text" placeholder="" value="D" readonly/>
                 <label> : </label>
-                <input class="box-side width500" type="text" />
+                <input class="box-side width500" type="text" value="设想好几个路线，并告知朋友你认为的最优路线是什么" />
             </li>
 
         </ul>
     </div>
 </fieldset>
-<button class="btn btn-success btn-down api-newBtn" id="btn_new_question" disabled>新建</button>
+<a class="status_move display_none" id="link_pre">上一题</a>
+<button class="btn btn-success btn-down display_none" id="btn_update" >更新</button>
+<button class="btn btn-success btn-down " id="btn_new_question" disabled>新建</button>
+<a class="status_move display_none" id="link_next" >下一题</a>
