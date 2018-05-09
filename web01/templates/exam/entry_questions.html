@@ -1,73 +1,91 @@
-{#<fieldset xmlns="http://www.w3.org/1999/html">#}
-{#    <legend>录入须知</legend>#}
-{#    <p>【1】</p>#}
-{##}
-{#    <p>【2】</p>#}
-{##}
-{#</fieldset>#}
+{% extends "base_menu.html" %}
 
-<fieldset>
-    <legend>题目信息</legend>
-    <div class="form-group apiContentLine">
-        <ul>
-            <li>
-                <label for="">测试分类：</label>
-                <select class="box-side width150" id="s_exam_type" type="text" disabled>
-                    <option value="xlcp1" about="4">专业测评</option>
-                    <option value="xlcp2" about="5">兴趣测评</option>
-                </select>
-            </li>
-            <li>
-                <label for="effective_days">测试名称：</label>
-                <input class="box-side width300" id="s_exam_name" type="text" readonly/>
-                <label>当前</label>
-                <input id="questions_num" class="width100" readonly disabled>
-                <label>题</label>
-            </li>
-            <li>
-                <label class="api-describe" for="">题目描述：</label>
-                <textarea class="box-side" rows="3" id="question_desc" required="">你和朋友计划出游，你更可能承担怎样的角色？</textarea>
-            </li>
-            <li>
-                <label for="">选择模式：</label>
-                <select class="box-side width150" id="select_mode" type="text">
-                    <option value="1">单选</option>
-                    <option value="2">复选</option>
-                </select>
-            </li>
+{% block title %}测试管理{% endblock %}
+
+{% block css_content %}
+    {{ 't_css/tabControls.css' | make_static_html | safe }}
+{% endblock %}
+
+{% block js_content %}
+    {{ 't_js/exam/question.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+    <div id="div_content">
+        <ul id="ul_menu" class="nav nav-tabs comTab">
+            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有测试</a></li>
+            <li class=""><a href="{{ page_exam }}" data-toggle="tab">录入测试</a></li>
+            <li class="active"><a href="javascript:void(0)" data-toggle="tab">录入试题</a></li>
         </ul>
+        <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
+            <fieldset>
+                <legend>题目信息</legend>
+                <div class="form-group apiContentLine">
+                    <ul>
+                        <li>
+                            <label for="">测试分类：</label>
+                            <select class="box-side width150" id="s_exam_type" type="text" disabled>
+                                <option value="xlcp1" about="4">专业测评</option>
+                                <option value="xlcp2" about="5">兴趣测评</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label for="effective_days">测试名称：</label>
+                            <input class="box-side width300" id="s_exam_name" type="text" readonly/>
+                            <label>当前</label>
+                            <input id="questions_num" class="width100" readonly disabled>
+                            <label>题</label>
+                        </li>
+                        <li>
+                            <label class="api-describe" for="">题目描述：</label>
+                            <textarea class="box-side" rows="3" id="question_desc"
+                                      required="">你和朋友计划出游，你更可能承担怎样的角色？</textarea>
+                        </li>
+                        <li>
+                            <label for="">选择模式：</label>
+                            <select class="box-side width150" id="select_mode" type="text">
+                                <option value="1">单选</option>
+                                <option value="2">复选</option>
+                            </select>
+                        </li>
+                    </ul>
 
-    </div>
-</fieldset>
-<fieldset>
-    <legend>选项</legend>
-    <div class="form-group apiContentLine" id="options">
-        <ul>
-            <li name="li_option">
-                <input class="box-side width100" type="text" placeholder="" value="A" readonly/>
-                <label> : </label>
-                <input class="box-side width500" type="text" value="基本朋友决定，你无条件信任对方基本朋友决定，你无条件信任对方" />
-            </li>
-            <li name="li_option">
-                <input class="box-side width100" type="text" placeholder="" value="B" readonly/>
-                <label> : </label>
-                <input class="box-side width500" type="text" value="会事先想好，但是会考虑到朋友的想法" />
-            </li>
-            <li name="li_option">
-                <input class="box-side width100" type="text" placeholder="" value="C" readonly/>
-                <label> : </label>
-                <input class="box-side width500" type="text" value="准备一到两个方案，商量后分配各自的任务" />
-            </li>
-            <li name="li_option">
-                <input class="box-side width100" type="text" placeholder="" value="D" readonly/>
-                <label> : </label>
-                <input class="box-side width500" type="text" value="设想好几个路线，并告知朋友你认为的最优路线是什么" />
-            </li>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>选项</legend>
+                <div class="form-group apiContentLine" id="options">
+                    <ul>
+                        <li name="li_option">
+                            <input class="box-side width100" type="text" placeholder="" value="A" readonly/>
+                            <label> : </label>
+                            <input class="box-side width500" type="text" value="基本朋友决定，你无条件信任对方基本朋友决定，你无条件信任对方"/>
+                        </li>
+                        <li name="li_option">
+                            <input class="box-side width100" type="text" placeholder="" value="B" readonly/>
+                            <label> : </label>
+                            <input class="box-side width500" type="text" value="会事先想好，但是会考虑到朋友的想法"/>
+                        </li>
+                        <li name="li_option">
+                            <input class="box-side width100" type="text" placeholder="" value="C" readonly/>
+                            <label> : </label>
+                            <input class="box-side width500" type="text" value="准备一到两个方案，商量后分配各自的任务"/>
+                        </li>
+                        <li name="li_option">
+                            <input class="box-side width100" type="text" placeholder="" value="D" readonly/>
+                            <label> : </label>
+                            <input class="box-side width500" type="text" value="设想好几个路线，并告知朋友你认为的最优路线是什么"/>
+                        </li>
 
-        </ul>
+                    </ul>
+                </div>
+            </fieldset>
+            <a class="status_move display_none" id="link_pre">上一题</a>
+            <button class="btn btn-success btn-down display_none" id="btn_update">更新</button>
+            <button class="btn btn-success btn-down " id="btn_new_question" disabled>新建</button>
+            <a class="status_move display_none" id="link_next">下一题</a>
+            <input id="info_url" value="{{ info_url }}" class="display_none">
+            <input id="questions_url" value="{{ questions_url }}" class="display_none">
+        </div>
     </div>
-</fieldset>
-<a class="status_move display_none" id="link_pre">上一题</a>
-<button class="btn btn-success btn-down display_none" id="btn_update" >更新</button>
-<button class="btn btn-success btn-down " id="btn_new_question" disabled>新建</button>
-<a class="status_move display_none" id="link_next" >下一题</a>
+{% endblock %}
