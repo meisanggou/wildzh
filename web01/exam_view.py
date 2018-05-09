@@ -63,7 +63,7 @@ def index():
     if "exam_no" in request.args:
         return rt.render("entry_questions.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
                          questions_url=questions_url)
-    return rt.render("overview.html", page_exam=page_exam)
+    return rt.render("overview.html", page_exam=page_exam, info_url=info_url)
 
 
 @exam_view.route("/", methods=["POST"])
@@ -96,7 +96,7 @@ def get_exam_info():
     elif "exam_type" in request.args:
         exam_type = request.args["exam_type"]
     else:
-        return jsonify({"status": False, "data": "Bad Request."})
+        exam_type = None
     items = c_exam.select_exam(exam_type, g.exam_no)
     return jsonify({"status": True, "data": items})
 
