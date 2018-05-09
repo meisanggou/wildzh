@@ -42,7 +42,7 @@ class Exam(object):
         for key in amount_case:
             update_value_list.append("{key}={key}+1".format(key=key))
         where_value = dict(exam_no=exam_no)
-        l = self.db.execute_update(self.t_info, update_value_list=update_value_list, where_value=where_value)
+        l = self.db.execute_update(self.t_tj, update_value_list=update_value_list, where_value=where_value)
         return l
 
     def _insert_records(self, user_id, exam_no, result):
@@ -151,12 +151,20 @@ class Exam(object):
         items = self.db.execute_select(self.t_result_explain, cols=cols, where_value=dict(exam_no=exam_no))
         return items
 
-    def select_tj(self, exam_no):
+    def select_tj(self, exam_no, merge_v=True):
         cols = ["exam_no"]
         for c in string.letters[:6]:
             cols.append("amount_%s" % c)
             cols.append("amount_v%s" % c)
         items = self.db.execute_select(self.t_tj, cols=cols, where_value=dict(exam_no=exam_no))
+        if merge_v is False:
+            return items
+        for item in items:
+            for c in string.letters[:6]:
+                o_key = "amount_%s" % c
+                v_key = "amount_v%s" % c
+                item[o_key] += item[v_key]
+                del item[v_key]
         return items
 
     def online_exam(self, exam_no):

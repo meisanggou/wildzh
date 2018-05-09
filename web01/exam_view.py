@@ -153,4 +153,15 @@ def add_exam_records():
     user_id = data["user_id"]
     result = data["result"]
     c_exam.new_exam_record(user_id, exam_no, result)
-    return jsonify({"status": True, "data": "success"})
+    explains = c_exam.select_result_explain(exam_no, result)
+    tj = c_exam.select_tj(exam_no)
+    r = dict(result=result)
+    if len(tj) > 0:
+        r["tj"] = tj[0]
+    else:
+        r["tj"] = None
+    if len(explains) > 0:
+        r["result_explain"] = explains[0]
+    else:
+        r["result_explain"] = None
+    return jsonify({"status": True, "data": r})
