@@ -55,6 +55,8 @@ def index():
     add_url = url_prefix + "/"
     upload_url = url_prefix + "/upload/"
     info_url = url_prefix + "/info/"
+    online_url = url_prefix + "/online/"
+
     questions_url = url_prefix + "/questions/"
     page_exam = url_prefix + "/?action=exam"
     page_list = url_prefix + "/"
@@ -63,7 +65,7 @@ def index():
     if "exam_no" in request.args:
         return rt.render("entry_questions.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
                          questions_url=questions_url)
-    return rt.render("overview.html", page_exam=page_exam, info_url=info_url)
+    return rt.render("overview.html", page_exam=page_exam, info_url=info_url, online_url=online_url)
 
 
 @exam_view.route("/", methods=["POST"])
@@ -121,3 +123,16 @@ def entry_questions():
 def get_exam_questions():
     items = c_exam.select_questions(g.exam_no)
     return jsonify({"status": True, "data": items})
+
+
+@exam_view.route("/online/", methods=["POST"])
+def online_exam():
+    exam_no = g.request_data["exam_no"]
+    exam_type = g.request_data["exam_type"]
+    items = c_exam.select_exam(exam_type, exam_no)
+    if len(items) != 1:
+        return jsonify({"status": False, "data": "测试不存在"})
+    if items[0]["status"] & 7 != 7:
+        return jsonify({"status": False, "data": "测试状态未达到不可上线"})
+    c_exam.online_exam(exam_no)
+    return jsonify({"status": True, "data": "success"})

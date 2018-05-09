@@ -120,3 +120,7 @@ class Exam(object):
         for item in items:
             item["options"] = json.loads(item["options"])
         return items
+
+    def online_exam(self, exam_no):
+        l = self._update_status(exam_no, add_status=8)
+        return l
