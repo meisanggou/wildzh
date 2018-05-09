@@ -1,0 +1,73 @@
+{% extends "base_menu.html" %}
+
+{% block title %}更新测试{% endblock %}
+
+{% block css_content %}
+    {{ 't_css/tabControls.css' | make_static_html | safe }}
+{% endblock %}
+
+{% block js_content %}
+    {{ 't_js/exam/update.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+    <div id="div_content">
+        <ul id="ul_menu" class="nav nav-tabs comTab">
+            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有测试</a></li>
+            <li class=""><a href="{{ page_exam }}" data-toggle="tab">录入测试</a></li>
+            <li class="active"><a href="javascript:void(0)" data-toggle="tab">更新测试</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
+            <fieldset>
+                <legend>测试信息</legend>
+                <div class="form-group apiContentLine">
+                    <ul>
+                        <li>
+                            <label for="">测试分类：</label>
+                            <select class="box-side width150" id="exam_type" type="text">
+                                <option value="xlcp1" about="4">专业测评</option>
+                                <option value="xlcp2" about="5">兴趣测评</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label for="effective_days">测试名称：</label>
+                            <input class="box-side width500" id="exam_name" type="text" placeholder="" msg="请输入测试名称"/>
+                        </li>
+                        <li>
+                            <label for="effective_days">测试介绍：</label>
+                            <input class="box-side width500" id="exam_desc" type="text" msg="请输入测试介绍"/>
+                        </li>
+                        <li>
+                            <label for="effective_days">测试图片：</label>
+                            <input class="box-side width300" id="exam_extend_pic" type="file" placeholder="上传图片"/>
+                            <img id="exam_extend_pic_url" src=""/>
+                        </li>
+                        <li>
+                            <label for="">计算模式：</label>
+                            <select class="box-side width150" id="eval_type" type="text">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                            </select>
+                        </li>
+                    </ul>
+
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>结果解释</legend>
+                <div class="form-group apiContentLine" id="result_explain">
+                    <ul>
+                        <li name="li_explain" class="display_none">
+                            <input class="box-side width100" type="text" placeholder="" readonly/>
+                            <label> : </label>
+                            <input class="box-side width300" type="text"/>
+                        </li>
+                    </ul>
+                </div>
+            </fieldset>
+            <button class="btn btn-success btn-down api-newBtn" id="btn_update_explain">更新</button>
+        </div>
+        <input id="info_url" value="{{ info_url }}" class="display_none">
+        <input id="upload_url" value="{{ upload_url }}" class="display_none">
+    </div>
+{% endblock %}

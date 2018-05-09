@@ -131,6 +131,10 @@ class Exam(object):
         cols = ["exam_type", "exam_no", "exam_name", "exam_desc", "eval_type", "adder", "status",
                 "exam_extend", "exam_num"]
         items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value, where_cond=where_cond)
+        for item in items:
+            if item["exam_extend"] is not None:
+                item.update(json.loads(item["exam_extend"]))
+                del item["exam_extend"]
         return items
 
     def select_questions(self, exam_no):
