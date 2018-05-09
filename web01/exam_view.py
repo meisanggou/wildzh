@@ -147,4 +147,10 @@ def online_exam():
 
 @exam_view.route("/records/", methods=["POST"])
 def add_exam_records():
+    data = g.request_data
+    exam_type = data["exam_type"]
+    exam_no = data["exam_no"]
+    user_id = data["user_id"]
+    result = data["result"]
+    c_exam.new_exam_record(user_id, exam_no, result)
     return jsonify({"status": True, "data": "success"})

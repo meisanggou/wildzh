@@ -67,7 +67,7 @@
         "pri_key": true,
         "col_comment": "测试编号",
         "col_name": "exam_no",
-        "col_type": "char(32)"
+        "col_type": "int(32)"
       },
       {
         "col_comment": "测试结果为第1种情况的解释",
@@ -113,7 +113,7 @@
         "pri_key": true,
         "col_comment": "测试编号",
         "col_name": "exam_no",
-        "col_type": "char(32)"
+        "col_type": "int(11)"
       },
       {
         "col_comment": "测试结果为第1种情况的测试数",
@@ -195,25 +195,26 @@
     "table_cols": [
       {
         "pri_key": true,
-        "col_comment": "测试编号",
-        "col_name": "exam_no",
-        "col_type": "char(32)"
-      },
-      {
         "col_comment": "测试者",
         "col_name": "user_id",
         "col_type": "varchar(50)"
       },
       {
+        "pri_key": true,
+        "col_comment": "测试编号",
+        "col_name": "exam_no",
+        "col_type": "int(11)"
+      },
+      {
+        "pri_key": true,
+        "col_comment": "测试时间",
+        "col_name": "insert_time",
+        "col_type": "int(11)"
+      },
+      {
         "col_comment": "测试结果",
         "col_name": "result",
         "col_type": "char(1)"
-      },
-      {
-        "col_comment": "测试次数",
-        "col_name": "times",
-        "col_type": "int(11)",
-        "default_value": 0
       }
     ],
     "table_comment": "记录每次测试的结果",

@@ -3,6 +3,7 @@
 
 import time
 import json
+import string
 from mysqldb_rich import DB
 
 __author__ = 'meisa'
@@ -36,8 +37,17 @@ class Exam(object):
         l = self.db.execute_insert(self.t_tj, kwargs=kwargs, ignore=True)
         return l
 
-    def _insert_records(self, exam_no, result, times=0, user_id=None):
-        kwargs = dict(exam_no=exam_no, result=result, times=times, user_id=user_id)
+    def _add_tj(self, exam_no, *amount_case):
+        update_value_list = []
+        for key in amount_case:
+            update_value_list.append("{key}={key}+1".format(key=key))
+        where_value = dict(exam_no=exam_no)
+        l = self.db.execute_update(self.t_info, update_value_list=update_value_list, where_value=where_value)
+        return l
+
+    def _insert_records(self, user_id, exam_no, result):
+        insert_time = int(time.time())
+        kwargs = dict(exam_no=exam_no, result=result, insert_time=insert_time, user_id=user_id)
         l = self.db.execute_insert(self.t_records, kwargs=kwargs, ignore=True)
         return l
 
@@ -93,6 +103,13 @@ class Exam(object):
         self._update_status(exam_no, add_status=2)
         return True, l
 
+    def new_exam_record(self, user_id, exam_no, result):
+        if len(result) != 1 or result not in string.letters[:6]:
+            return False, result
+        self._insert_records(user_id, exam_no, result)
+        self._add_tj(exam_no, "amount_%s" % result)
+        return True, None
+
     def update_exam_questions(self, exam_no, question_no, question_desc=None, select_mode=None, options=None):
         kwargs = dict()
         if question_desc is not None:
@@ -124,9 +141,28 @@ class Exam(object):
             item["options"] = json.loads(item["options"])
         return items
 
+    def select_result_explain(self, exam_no, result=None):
+        cols = ["exam_no"]
+        if result is None:
+            for c in string.letters[:6]:
+                cols.append("case_%s" % c)
+        else:
+            cols.append("case_%s" % result)
+        items = self.db.execute_select(self.t_result_explain, cols=cols, where_value=dict(exam_no=exam_no))
+        return items
+
+    def select_tj(self, exam_no):
+        cols = ["exam_no"]
+        for c in string.letters[:6]:
+            cols.append("amount_%s" % c)
+            cols.append("amount_v%s" % c)
+        items = self.db.execute_select(self.t_tj, cols=cols, where_value=dict(exam_no=exam_no))
+        return items
+
     def online_exam(self, exam_no):
         l = self._update_status(exam_no, add_status=8)
-        return l
+        l2 = self._insert_tj(exam_no)
+        return min(l, l2)
 
     def delete_exam(self, exam_type, exam_no):
         l = self._update_info(exam_type, exam_no, status=0)
