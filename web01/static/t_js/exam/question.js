@@ -24,8 +24,11 @@ function load_question(index)
         for(;i<options.length;i++){
             option_item.find("input:eq(1)").val("");
         }
+        var pro_msg = (index + 1) + "/" + exists_questions.length;
+        $("#questions_num").val(pro_msg);
     }
     else{
+        $("#questions_num").val("录入第" + (exists_questions.length + 1));
         $("#question_desc").val("");
         $("#options li[name='li_option']").find("input:eq(1)").val("");
     }
@@ -73,7 +76,7 @@ function execute_action(action)
 
 function entry_success(r_d){
     var data= r_d.data;
-    var action = data.action;
+    var action = r_d.action;
     if(action == "POST") {
         exists_questions[exists_questions.length] = data;
         if(question_no <= data.question_no){
@@ -82,7 +85,6 @@ function entry_success(r_d){
         popup_show("录入成功，可继续录入");
         current_question = exists_questions.length;
         load_question(current_question);
-        $("#questions_num").val(exists_questions.length);
     }
     else{
         popup_show("更新成功");
