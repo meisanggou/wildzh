@@ -52,7 +52,7 @@ function new_exam(){
                 if (isConfirm){
                     var j_url = AddUrlArg(location.pathname, "exam_no", data["exam_no"]);
                     j_url = AddUrlArg(j_url, "exam_type", data["exam_type"]);
-                    location.href = AddUrlArg(j_url)
+                    location.href = j_url;
                 }
             }
         );
