@@ -49,7 +49,6 @@ def required_exam_no(f):
     return decorated_function
 
 
-
 @exam_view.route("/", methods=["GET"])
 def index():
     add_url = url_prefix + "/"
@@ -101,6 +100,13 @@ def get_exam_info():
         exam_type = None
     items = c_exam.select_exam(exam_type, g.exam_no)
     return jsonify({"status": True, "data": items})
+
+@exam_view.route("/info/", methods=["DELETE"])
+def delete_exam():
+    exam_no = g.request_data["exam_no"]
+    exam_type = g.request_data["exam_type"]
+    l = c_exam.delete_exam(exam_type, exam_no)
+    return jsonify({"status": True, "data": "删除成功"})
 
 
 @exam_view.route("/questions/", methods=["POST", "PUT"])

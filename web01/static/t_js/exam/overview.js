@@ -4,6 +4,36 @@
 
 var cn_exam_type = {"xlcp1": "专业测评", "xlcp2": "兴趣测评"};
 
+function delete_exam() {
+    var current_td = $(this).parent();
+    var current_tr = current_td.parent();
+    var tr_id = current_tr.attr("id");
+    var exam_type = current_tr.find("td:eq(0)").text();
+    var exam_name = current_tr.find("td:eq(1)").text();
+    var msg = "确定要删除【" + exam_type + "】【" + exam_name + "】";
+    swal({
+            title: "删除警告",
+            text: msg,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: '#DD6B55',
+            confirmButtonText: '删除',
+            cancelButtonText: "取消",
+            closeOnConfirm: true,
+            closeOnCancel: true
+        },
+        function (isConfirm) {
+            if (isConfirm) {
+                var ks = tr_id.split("|");
+                var r_d = {"exam_no": ks[1], "exam_type": ks[0]};
+                my_async_request2($("#info_url").val(), "DELETE", r_d, function (data) {
+                    location.reload();
+                });
+            }
+        }
+    );
+}
+
 function explain_status(s) {
     if ((s & 128) != 0) {
         return "已下线"
@@ -30,7 +60,7 @@ function init_info(data) {
         var t = $("#t_exams");
         for (var i = 0; i < data.length; i++) {
             var add_tr = $("<tr></tr>");
-
+            add_tr.attr("id", data[i]["exam_type"] + "|" + data[i]["exam_no"]);
             var td_t = new_td(data[i]["exam_type"], cn_exam_type);
             add_tr.append(td_t);
 
@@ -44,7 +74,9 @@ function init_info(data) {
             add_tr.append(td_status);
 
             var td_op = $("<td></td>");
-            td_op.append(new_link("删除", "#"));
+            var del_link = $("<a href='javascript:void(0)'>删除</a>");
+            del_link.click(delete_exam);
+            td_op.append(del_link);
             if ((data[i]["status"] & 8) == 0) {
                 td_op.append(" | ");
                 var question_url = AddUrlArg(location.pathname, "exam_no", data[i]["exam_no"]);
@@ -71,8 +103,8 @@ function init_info(data) {
                         },
                         function (isConfirm) {
                             if (isConfirm) {
-                                my_async_request2($("#online_url").val(), "POST", data_item, function(data){
-                                   location.reload();
+                                my_async_request2($("#online_url").val(), "POST", data_item, function (data) {
+                                    location.reload();
                                 });
                             }
                         }

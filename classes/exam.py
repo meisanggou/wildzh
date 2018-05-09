@@ -47,8 +47,10 @@ class Exam(object):
         l = self.db.execute_insert(self.t_q, kwargs=kwargs, ignore=True)
         return l
 
-    def _update_info(self, exam_no, update_value):
-        pass
+    def _update_info(self, exam_type, exam_no, **update_value):
+        where_value = dict(exam_no=exam_no, exam_type=exam_type)
+        l = self.db.execute_update(self.t_info, update_value=update_value, where_value=where_value)
+        return l
 
     def _update_status(self, exam_no, add_status=None, sub_status=None):
         where_value = dict(exam_no=exam_no)
@@ -104,13 +106,14 @@ class Exam(object):
 
     def select_exam(self, exam_type, exam_no=None):
         where_value = dict()
+        where_cond = ["status<>0"]
         if exam_type is not None:
             where_value = dict(exam_type=exam_type)
             if exam_no is not None:
                 where_value["exam_no"] = exam_no
         cols = ["exam_type", "exam_no", "exam_name", "exam_desc", "eval_type", "adder", "status",
                 "exam_extend", "exam_num"]
-        items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value)
+        items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value, where_cond=where_cond)
         return items
 
     def select_questions(self, exam_no):
@@ -123,4 +126,8 @@ class Exam(object):
 
     def online_exam(self, exam_no):
         l = self._update_status(exam_no, add_status=8)
+        return l
+
+    def delete_exam(self, exam_type, exam_no):
+        l = self._update_info(exam_type, exam_no, status=0)
         return l
