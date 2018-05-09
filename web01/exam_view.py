@@ -120,7 +120,8 @@ def entry_questions():
     if request.method == "POST":
         r, l = c_exam.new_exam_questions(g.exam_no, question_no, question_desc, select_mode, options)
     else:
-        r, l = c_exam.update_exam_questions(g.exam_no, question_no, question_desc, select_mode, options)
+        l = c_exam.update_exam_questions(g.exam_no, question_no, question_desc, select_mode, options)
+        r = True
     return jsonify({"status": r, "data": dict(action=request.method, data=data)})
 
 

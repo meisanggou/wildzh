@@ -145,7 +145,7 @@ function add_question()
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: '#DD6B55',
-            confirmButtonText: '录入',
+            confirmButtonText: btn_text,
             cancelButtonText: "取消",
             closeOnConfirm: true,
             closeOnCancel: true
@@ -153,7 +153,12 @@ function add_question()
         function(isConfirm){
             if (isConfirm){
                 var questions_url = $("#questions_url").val();
-                my_async_request2(questions_url, "POST", r_data, entry_success);
+                if(next_question_no == r_data["question_no"]) {
+                    my_async_request2(questions_url, "POST", r_data, entry_success);
+                }
+                else{
+                    my_async_request2(questions_url, "PUT", r_data, entry_success);
+                }
             }
         }
     );
@@ -194,6 +199,7 @@ function receive_questions(data){
 $(function() {
     if(UrlArgsValue(location.href, "exam_no") != null) {
         $("#btn_new_question").click(add_question);
+        $("#btn_update").click(add_question);
         init_info(null);
         receive_questions(null);
         $("#link_pre").click(function(){
