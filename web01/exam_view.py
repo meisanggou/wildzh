@@ -142,3 +142,8 @@ def online_exam():
         return jsonify({"status": False, "data": "测试状态未达到不可上线"})
     c_exam.online_exam(exam_no)
     return jsonify({"status": True, "data": "success"})
+
+
+@exam_view.route("/records/", methods=["POST"])
+def add_exam_records():
+    return jsonify({"status": True, "data": "success"})

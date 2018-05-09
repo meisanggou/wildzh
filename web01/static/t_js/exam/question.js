@@ -3,8 +3,8 @@
  */
 
 var exists_questions = [];
-var question_no = 1;
-var current_question = 0;
+var next_question_no = 1;
+var current_question_index = 0;
 
 function load_question(index)
 {
@@ -27,11 +27,13 @@ function load_question(index)
         }
         var pro_msg = (index + 1) + "/" + exists_questions.length;
         $("#questions_num").val(pro_msg);
+        $("#questions_num").attr("about", item["question_no"]);
     }
     else{
         $("#questions_num").val("录入第" + (exists_questions.length + 1));
         $("#question_desc").val("");
         $("#options li[name='li_option']").find("input:eq(1)").val("");
+        $("#questions_num").attr("about", next_question_no);
     }
     return 0;
 }
@@ -39,19 +41,19 @@ function load_question(index)
 function execute_action(action)
 {
     if(action == "pre"){
-        if(current_question <= 0){
+        if(current_question_index <= 0){
             return 1
         }
-        current_question -= 1;
+        current_question_index -= 1;
     }
     else if(action == "next"){
-        if(current_question >= exists_questions.length){
+        if(current_question_index >= exists_questions.length){
             return 2
         }
-        current_question += 1;
+        current_question_index += 1;
     }
     else if(action == "current"){
-        if(current_question > exists_questions.length || current_question < 0){
+        if(current_question_index > exists_questions.length || current_question_index < 0){
             return 3
         }
     }
@@ -62,17 +64,17 @@ function execute_action(action)
     $("#btn_update").hide();
     $("#btn_new_question").hide();
     $("#link_next").hide();
-    if(current_question > 0){
+    if(current_question_index > 0){
         $("#link_pre").show();
     }
-    if(current_question == exists_questions.length){
+    if(current_question_index == exists_questions.length){
         $("#btn_new_question").show();
     }
-    if(current_question < exists_questions.length){
+    if(current_question_index < exists_questions.length){
         $("#link_next").show();
         $("#btn_update").show();
     }
-    load_question(current_question);
+    load_question(current_question_index);
 }
 
 function entry_success(r_d){
@@ -80,12 +82,12 @@ function entry_success(r_d){
     var action = r_d.action;
     if(action == "POST") {
         exists_questions[exists_questions.length] = data;
-        if(question_no <= data.question_no){
-            question_no = data.question_no + 1;
+        if(next_question_no <= data.question_no){
+            next_question_no = data.question_no + 1;
         }
         popup_show("录入成功，可继续录入");
-        current_question = exists_questions.length;
-        load_question(current_question);
+        current_question_index = exists_questions.length;
+        load_question(current_question_index);
     }
     else{
         popup_show("更新成功");
@@ -94,8 +96,10 @@ function entry_success(r_d){
 
 function add_question()
 {
+    var btn = $(this);
+    var btn_text = btn.text();
     var r_data = new Object();
-    r_data["question_no"] = exists_questions.length + 1;
+    r_data["question_no"] = parseInt($("#questions_num").attr("about"));
     var msg = "";
     var question_desc = $("#question_desc").val().trim();
     if(question_desc.length <= 0){
@@ -136,7 +140,7 @@ function add_question()
         return 2;
     }
     swal({
-            title: "是否录入",
+            title: "是否" + btn_text,
             text: msg,
             type: "warning",
             showCancelButton: true,
@@ -175,14 +179,15 @@ function receive_questions(data){
         return 0;
     }
     exists_questions = data;
-    for(var i;i<exists_questions.length;i++){
-        if(question_no <= exists_questions[i].question_no){
-            question_no = exists_questions[i].question_no + 1;
+    for(var i=0;i<exists_questions.length;i++){
+        if(next_question_no <= exists_questions[i].question_no){
+            next_question_no = exists_questions[i].question_no + 1;
+            console.info(next_question_no);
         }
     }
     $("#questions_num").val(exists_questions.length);
     $("#btn_new_question").removeAttr("disabled");
-    current_question = exists_questions.length;
+    current_question_index = exists_questions.length;
     execute_action("current");
 }
 
