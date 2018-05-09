@@ -77,7 +77,20 @@ function init_info(data){
     console.info(data);
 }
 
+function receive_questions(data){
+    if(data == null){
+        var questions_url = $("#questions_url").val();
+        my_async_request2(questions_url, "GET", null, receive_questions);
+        return 0;
+    }
+    $("#questions_num").val(data.length);
+    console.info(data);
+}
+
 $(function() {
-    $("#btn_new_question").click(add_question);
-    init_info(null);
+    if(UrlArgsValue(location.href, "exam_no") != null) {
+        $("#btn_new_question").click(add_question);
+        init_info(null);
+        receive_questions(null)
+    }
 });

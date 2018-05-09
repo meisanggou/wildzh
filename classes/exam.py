@@ -84,5 +84,7 @@ class Exam(object):
         return items
 
     def select_questions(self, exam_no):
-        pass
-
+        where_value = dict(exam_no=exam_no)
+        cols = ["exam_no", "question_no", "question_desc", "select_mode", "options"]
+        items = self.db.execute_select(self.t_q, cols=cols, where_value=where_value)
+        return items

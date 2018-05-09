@@ -26,6 +26,7 @@ def index():
     add_url = url_prefix + "/"
     upload_url = url_prefix + "/upload/"
     info_url = url_prefix + "/info/"
+    questions_url = url_prefix + "/questions/"
     if "exam_no" in request.args:
         overview_class = ""
         question_class = "active"
@@ -33,7 +34,7 @@ def index():
         overview_class = "active"
         question_class = ""
     return rt.render("index.html", add_url=add_url, overview_class=overview_class, question_class=question_class,
-                     upload_url=upload_url, info_url=info_url)
+                     upload_url=upload_url, info_url=info_url, questions_url=questions_url)
 
 
 @exam_view.route("/", methods=["POST"])
@@ -79,4 +80,17 @@ def get_exam_info():
     items = c_exam.select_exam(exam_type, exam_no)
     return jsonify({"status": True, "data": items})
 
-
+@exam_view.route("/questions/", methods=["GET"])
+def get_exam_questions():
+    if "Referer" not in request.headers:
+            return jsonify({"status": False, "data": "Bad Request"})
+    ref_url = request.headers["Referer"]
+    find_no = re.findall("exam_no=(\\d+)", ref_url)
+    if len(find_no) > 0:
+        exam_no = find_no[0]
+    elif "exam_no" in request.args:
+        exam_no = request.args["exam_no"]
+    else:
+        return jsonify({"status": False, "data": "Bad Request"})
+    items = c_exam.select_questions(exam_no)
+    return jsonify({"status": True, "data": items})
