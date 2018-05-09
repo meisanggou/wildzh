@@ -22,6 +22,7 @@ function load_question(index)
             option_item.find("input:eq(1)").val(item["options"][i]);
         }
         for(;i<options.length;i++){
+            var option_item = $(options[i]);
             option_item.find("input:eq(1)").val("");
         }
         var pro_msg = (index + 1) + "/" + exists_questions.length;
