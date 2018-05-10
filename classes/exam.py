@@ -18,7 +18,6 @@ class Exam(object):
         self.t_tj = "exam_tj"
         self.t_records = "exam_records"
         self.t_q = "exam_questions"
-        pass
 
     def _insert_info(self, exam_type, exam_no, exam_name, exam_desc, eval_type, adder, status=1, exam_extend=None):
         kwargs = dict(exam_type=exam_type, exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc,
@@ -109,6 +108,16 @@ class Exam(object):
         self._insert_records(user_id, exam_no, result)
         self._add_tj(exam_no, "amount_%s" % result)
         return True, None
+
+    def update_exam(self, exam_type, exam_no, exam_name, exam_desc, eval_type, **exam_extend):
+        update_value = dict(exam_name=exam_name, exam_desc=exam_desc, eval_type=eval_type, exam_extend=exam_extend)
+        l = self._update_info(exam_type, exam_no, **update_value)
+        return l
+
+    def update_result_explain(self, exam_no, case_a, case_b, case_c=None, case_d=None, case_e=None, case_f=None):
+        kwargs = dict(case_a=case_a, case_b=case_b, case_c=case_c, case_d=case_d, case_e=case_e, case_f=case_f)
+        l = self.db.execute_update(self.t_result_explain, update_value=kwargs, where_value=dict(exam_no=exam_no))
+        return l
 
     def update_exam_questions(self, exam_no, question_no, question_desc=None, select_mode=None, options=None):
         kwargs = dict()

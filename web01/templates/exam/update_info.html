@@ -35,6 +35,7 @@
                         </li>
                         <li>
                             <label for="effective_days">测试介绍：</label>
+                            <input class="display_none" id="exam_no" type="text"/>
                             <input class="box-side width500" id="exam_desc" type="text" msg="请输入测试介绍"/>
                         </li>
                         <li>
@@ -69,5 +70,7 @@
         </div>
         <input id="info_url" value="{{ info_url }}" class="display_none">
         <input id="upload_url" value="{{ upload_url }}" class="display_none">
+        <input id="explain_url" value="{{ explain_url }}" class="display_none">
+
     </div>
 {% endblock %}

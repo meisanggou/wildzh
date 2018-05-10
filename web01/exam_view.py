@@ -55,14 +55,14 @@ def index():
     upload_url = url_prefix + "/upload/"
     info_url = url_prefix + "/info/"
     online_url = url_prefix + "/online/"
-
+    explain_url = url_prefix + "/explain/"
     questions_url = url_prefix + "/questions/"
     page_exam = url_prefix + "/?action=exam"
     page_list = url_prefix + "/"
     if "action" in request.args and request.args["action"] == "exam":
         if "exam_no" in request.args:
             return rt.render("update_info.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
-                             upload_url=upload_url)
+                             upload_url=upload_url, explain_url=explain_url)
         return rt.render("entry_info.html", page_list=page_list, add_url=add_url, upload_url=upload_url)
     if "exam_no" in request.args:
         return rt.render("entry_questions.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
@@ -103,6 +103,20 @@ def get_exam_info():
         exam_type = None
     items = c_exam.select_exam(exam_type, g.exam_no)
     return jsonify({"status": True, "data": items})
+
+
+@exam_view.route("/info/", methods=["PUT"])
+def update_exam():
+    data = g.request_data
+    exam_no = data["exam_no"]
+    l = c_exam.update_exam(data["exam_type"], exam_no, data["exam_name"], data["exam_desc"],
+                           data["eval_type"], pic_url=data["pic_url"])
+    cases = dict()
+    for i in range(len(data["result_explain"])):
+        cases["case_%s" % string.letters[i]] = data["result_explain"][i]
+    l2 = c_exam.update_result_explain(exam_no, **cases)
+    return jsonify({"status": True, "data": data})
+
 
 @exam_view.route("/info/", methods=["DELETE"])
 def delete_exam():
@@ -168,3 +182,22 @@ def add_exam_records():
     else:
         r["result_explain"] = None
     return jsonify({"status": True, "data": r})
+
+@exam_view.route("/explain/", methods=["GET"])
+@required_exam_no
+def get_explains():
+    explains = c_exam.select_result_explain(g.exam_no)
+    if len(explains) <= 0:
+        return jsonify({"status": False, "data": "结果解释不存在"})
+    if "list" not in request.args:
+        return jsonify({"status": True, "data": explains[0]})
+    explain_item = explains[0]
+    keys = filter(lambda x: x.startswith("case_"), explain_item.keys())
+    keys.sort()
+    l_explains = []
+    for key in keys:
+        if explain_item[key] is None:
+            break
+        else:
+            l_explains.append(explain_item[key])
+    return jsonify({"status": True, "data": l_explains})
