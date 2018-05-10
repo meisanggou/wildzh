@@ -19,4 +19,4 @@ for view_file in view_files:
 app.register_blues()
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=2400)
