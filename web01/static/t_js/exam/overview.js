@@ -79,10 +79,14 @@ function init_info(data) {
             td_op.append(del_link);
             if ((data[i]["status"] & 8) == 0) {
                 td_op.append(" | ");
-                var question_url = AddUrlArg(location.pathname, "exam_no", data[i]["exam_no"]);
-                question_url = AddUrlArg(question_url, "exam_type", data[i]["exam_type"]);
-                question_url = AddUrlArg(question_url, "action", "question");
+                var basic_url = AddUrlArg(location.pathname, "exam_no", data[i]["exam_no"]);
+                basic_url = AddUrlArg(basic_url, "exam_type", data[i]["exam_type"]);
+                var question_url = AddUrlArg(basic_url, "action", "question");
                 td_op.append(new_link("管理试题", question_url));
+
+                td_op.append(" | ");
+                var update_url = AddUrlArg(basic_url, "action", "exam");
+                td_op.append(new_link("更新信息", update_url));
             }
             if (data[i]["status"] == 7) {
                 var data_item = data[i];
