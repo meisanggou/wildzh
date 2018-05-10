@@ -3,7 +3,7 @@
 
 import os
 import sys
-sys.path.append(os.path.split(os.path.dirname(__file__))[0])
+sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__))[0]))
 
 
 from web01 import app

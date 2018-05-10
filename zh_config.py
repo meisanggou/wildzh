@@ -5,7 +5,7 @@ import os
 
 __author__ = 'meisa'
 
-script_dir = os.path.dirname(__file__)
+script_dir = os.path.abspath(os.path.dirname(__file__))
 
 
 web_pro = "01"
