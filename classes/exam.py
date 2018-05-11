@@ -107,6 +107,7 @@ class Exam(object):
             return False, result
         self._insert_records(user_id, exam_no, result)
         self._add_tj(exam_no, "amount_%s" % result)
+        self._update_num(exam_no)
         return True, None
 
     def update_exam(self, exam_type, exam_no, exam_name, exam_desc, eval_type, **exam_extend):
