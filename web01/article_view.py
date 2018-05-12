@@ -21,6 +21,8 @@ c_article = ArticleManager(db_conf_path)
 def add_func():
     article_no = ""
     g.user_name = "zh_test"
+    page_article = url_prefix + "/?action=article"
+    page_list = url_prefix + "/"
     if "article_no" in request.args:
         article_no = request.args["article_no"]
     if request.is_xhr is True:
@@ -28,9 +30,13 @@ def add_func():
             return jsonify({"status": False, "data": "无效的编号"})
         exec_r, data = c_article.get_article(article_no, g.user_name)
         return jsonify({"status": exec_r, "data": data})
-    if "action" in request.args:
+    if "action" in request.args and request.args["action"] == "look":
         return rt.render("look.html", article_no=article_no)
-    return rt.render("add.html", article_no=article_no)
+    elif "action" in request.args and request.args["action"] == "article":
+        return rt.render("add.html", article_no=article_no, page_list=page_list)
+    query_url = url_prefix + "/query/"
+    return rt.render("query.html", query_url=query_url, page_article=page_article)
+
 
 
 @article_view.route("/", methods=["POST"])

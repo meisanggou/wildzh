@@ -3,24 +3,35 @@
 
 {% block title %}添加文章{% endblock %}
 
+{% block css_content %}
+    {{ 't_css/tabControls.css' | make_static_html | safe }}
+{% endblock %}
 
 {% block js_content %}
     {{ 't_js/ueditor/ueditor.config.js' | make_static_html | safe }}
     {{ 't_js/ueditor/ueditor.all.js' | make_static_html | safe }}
-    {{ 't_js/Common/position_tools.js' | make_static_html | safe }}
+    {{ 't_js/position_tools.js' | make_static_html2 | safe }}
     {{ 't_js/Common/add_node.js' | make_static_html | safe }}
     {{ 't_js/article/add.js' | make_static_html | safe }}
 {% endblock %}
 
 {% block center_content %}
     <!-- 加载编辑器的容器 -->
-
+    <div id="div_content">
+        <ul id="ul_menu" class="nav nav-tabs comTab">
+            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有文章</a></li>
+            <li class="active"><a href="javascript:void(0)" data-toggle="tab">录入文章</a></li>
+        </ul>
     <div style="padding-top: 50px">
         <div class="form-group apiContentLine">
             <ul>
                 <li>
                     <label for="">标题：</label>
                     <input class="box-side width800" id="article_title" type="text"/>
+                </li>
+                <li>
+                    <label class="api-describe" for="">文章简介：</label>
+                    <textarea class="box-side" rows="3" id="article_desc" required></textarea>
                 </li>
             </ul>
         </div>
@@ -31,4 +42,5 @@
     <input id="auto" class="display_none" value="0">
     <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_save">保存</a>
     <a class="left5" href="javascript:void(0)" title="" id="link_look">查看</a>
+    </div>
 {% endblock %}

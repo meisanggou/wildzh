@@ -2,12 +2,21 @@
 
 {% block title %}查询{% endblock %}
 
+{% block css_content %}
+    {{ 't_css/tabControls.css' | make_static_html | safe }}
+{% endblock %}
+
 {% block js_content %}
     {{ 't_js/Common/datetime_tools.js' | make_static_html | safe }}
     {{ 't_js/Article/query.js' | make_static_html | safe }}
 {% endblock %}
 
 {% block center_content %}
+    <div id="div_content">
+        <ul id="ul_menu" class="nav nav-tabs comTab">
+            <li class="active"><a href="javascript:void(0)" data-toggle="tab">所有文章</a></li>
+            <li class=""><a href="{{ page_article }}" data-toggle="tab">录入文章</a></li>
+        </ul>
     <!-- 加载编辑器的容器 -->
     <div class="paddingTop50" id="article_container">
         <div class="form-group apiContentLine">
@@ -18,7 +27,9 @@
                     <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_add_article">新建</a>
                 </li>
             </ul>
-            <input class="display_none" id="url_add_article" value="{{ url_add_article }}">
         </div>
+    <input class="display_none" value="{{ query_url }}"  id="query_url"/>
+    <input class="display_none" value="{{ page_article }}", id="page_article">
+    </div>
     </div>
 {% endblock %}
