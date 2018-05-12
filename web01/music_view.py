@@ -65,7 +65,7 @@ def index():
         return rt.render("entry_info.html", page_list=page_list, add_url=add_url, upload_url=upload_url,
                          m_upload_url=m_upload_url)
     if "music_no" in request.args:
-        return rt.render("detail.html",page_list=page_list, page_music=page_music)
+        return rt.render("detail.html",page_list=page_list, page_music=page_music, info_url=info_url)
     return rt.render("overview.html", page_music=page_music, info_url=info_url, online_url=online_url)
 
 

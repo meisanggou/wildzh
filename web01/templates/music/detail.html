@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block js_content %}
-    {{ 't_js/music/add.js' | make_static_html | safe }}
+    {{ 't_js/music/detail.js' | make_static_html | safe }}
 {% endblock %}
 
 {% block center_content %}
@@ -24,38 +24,32 @@
                     <ul>
                         <li>
                             <label for="">音乐分类：</label>
-                            <select class="box-side width150" id="music_type" type="text">
+                            <select class="box-side width150" id="music_type" type="text" disabled>
                                 <option value="diantai" about="4">电台</option>
                                 <option value="fangsong" about="5">放松</option>
                             </select>
                         </li>
                         <li>
                             <label for="effective_days">音乐名称：</label>
-                            <input class="box-side width500" id="music_name" type="text" placeholder="" msg="请输入音乐名称"/>
+                            <input class="box-side width500" id="music_name" type="text" placeholder="" msg="请输入音乐名称" disabled/>
                         </li>
                         <li>
                             <label for="effective_days">音乐介绍：</label>
-                            <input class="box-side width500" id="music_desc" type="text" msg="请输入音乐介绍"/>
+                            <input class="box-side width500" id="music_desc" type="text" msg="请输入音乐介绍" disabled/>
                         </li>
                         <li>
                             <label for="effective_days">音乐图片：</label>
-                            <input class="box-side width300" id="music_extend_pic" type="file" placeholder="上传图片"/>
                             <img id="music_extend_pic_url" src=""/>
                         </li>
                         <li>
-                            <label for="effective_days">音乐上传：</label>
-                            <input class="box-side width300" id="upload_music" type="file" placeholder="上传音乐"/>
-                            <button class="btn btn-success" id="btn_upload">上传</button>
-                            <input class="display_none" id="music_url">
+                            <label for="effective_days">音乐文件：</label>
+                            <a class="" id="music_url">查看音乐</a>
                         </li>
                     </ul>
 
                 </div>
             </fieldset>
-            <button class="btn btn-success btn-down api-newBtn" id="btn_new" disabled>新建</button>
         </div>
-        <input id="add_url" value="{{ add_url }}" class="display_none">
-        <input id="upload_url" value="{{ upload_url }}" class="display_none">
-        <input id="m_upload_url"  value="{{ m_upload_url }}" class="display_none">
+        <input id="info_url" value="{{ info_url }}" class="display_none">
     </div>
 {% endblock %}
