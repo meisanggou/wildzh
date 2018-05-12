@@ -2,11 +2,13 @@
 # coding: utf-8
 import os
 import re
+import uuid
 import string
 from functools import wraps
+from werkzeug.utils import secure_filename
 from flask import request, jsonify, g
-from flask_helper import RenderTemplate, support_upload
-from zh_config import db_conf_path, upload_folder
+from flask_helper import RenderTemplate, support_upload2
+from zh_config import db_conf_path, upload_folder, file_prefix_url
 from tools import folder
 from classes.music import Music
 from web01 import create_blue
@@ -54,12 +56,14 @@ def required_music_no(f):
 def index():
     add_url = url_prefix + "/"
     upload_url = url_prefix + "/upload/"
+    m_upload_url = url_prefix + "/upload/m/"
     info_url = url_prefix + "/info/"
     online_url = url_prefix + "/online/"
     page_music = url_prefix + "/?action=music"
     page_list = url_prefix + "/"
     if "action" in request.args and request.args["action"] == "music":
-        return rt.render("entry_info.html", page_list=page_list, add_url=add_url, upload_url=upload_url)
+        return rt.render("entry_info.html", page_list=page_list, add_url=add_url, upload_url=upload_url,
+                         m_upload_url=m_upload_url)
     return rt.render("overview.html", page_music=page_music, info_url=info_url, online_url=online_url)
 
 
@@ -67,21 +71,16 @@ def index():
 def new_music():
     g.user_name = "zh_test"
     data = g.request_data
-    r, music_no = c_music.new_music(data["music_name"], data["music_type"], data["music_desc"], data["eval_type"],
+    r, music_no = c_music.new_music(data["music_name"], data["music_type"], data["music_desc"], data["music_url"],
                                  g.user_name, pic_url=data["pic_url"])
     if r is False:
-        return jsonify({"status": False, "data": "请重试"})
-    cases = dict()
-    for i in range(len(data["result_explain"])):
-        cases["case_%s" % string.letters[i]] = data["result_explain"][i]
-    l = c_music.new_music_result_explain(music_no, **cases)
-    if l <= 0:
         return jsonify({"status": False, "data": "请重试"})
     data["music_no"] = music_no
     return jsonify({"status": True, "data": data})
 
 
-support_upload(music_view, static_folder=pic_folder)
+support_upload2(music_view, upload_folder, file_prefix_url, ("music", "pic"), "upload")
+support_upload2(music_view, upload_folder, file_prefix_url, ("music", "m"), "upload/m")
 
 
 @music_view.route("/info/", methods=["GET"])
@@ -96,19 +95,6 @@ def get_music_info():
         music_type = None
     items = c_music.select_music(music_type, g.music_no)
     return jsonify({"status": True, "data": items})
-
-
-@music_view.route("/info/", methods=["PUT"])
-def update_music():
-    data = g.request_data
-    music_no = data["music_no"]
-    l = c_music.update_music(data["music_type"], music_no, data["music_name"], data["music_desc"],
-                           data["eval_type"], pic_url=data["pic_url"])
-    cases = dict()
-    for i in range(len(data["result_explain"])):
-        cases["case_%s" % string.letters[i]] = data["result_explain"][i]
-    l2 = c_music.update_result_explain(music_no, **cases)
-    return jsonify({"status": True, "data": data})
 
 
 @music_view.route("/info/", methods=["DELETE"])
@@ -126,9 +112,7 @@ def online_music():
     music_type = g.request_data["music_type"]
     items = c_music.select_music(music_type, music_no)
     if len(items) != 1:
-        return jsonify({"status": False, "data": "测试不存在"})
-    if items[0]["status"] & 7 != 7:
-        return jsonify({"status": False, "data": "测试状态未达到不可上线"})
+        return jsonify({"status": False, "data": "音乐不存在"})
     c_music.online_music(music_no)
     return jsonify({"status": True, "data": "success"})
 

@@ -12,6 +12,7 @@ web_pro = "01"
 
 c_static_prefix_url = "/static00"
 static_prefix_url = "/static01"
+file_prefix_url = "/file"
 
 db_conf_path = os.path.join(script_dir, "mysql_app.conf")
 

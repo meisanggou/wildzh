@@ -7,6 +7,7 @@ from flask import request, g, make_response, Blueprint, jsonify, session
 from flask_login import current_user, UserMixin, LoginManager
 
 from flask_helper import Flask2
+from zh_config import file_prefix_url, upload_folder
 from function import normal_request_detection, make_static_html, make_default_static_url, make_static_url
 from function import make_static_html2
 
@@ -95,6 +96,8 @@ def create_app():
                          defaults=dict(static_folder=os.path.join(os.path.split(os.path.dirname(__file__))[0], "static")))
     one_web.static_folder = "static"
     one_web.add_url_rule("/static01" + '/<path:filename>', endpoint='static01', view_func=one_web.send_static_file)
+    one_web.add_url_rule(file_prefix_url + "/<path:filename>", endpoint="file", view_func=one_web.send_static_file2,
+                         defaults=dict(static_folder=upload_folder))
     one_web.config.update(PERMANENT_SESSION_LIFETIME=600)
 
     env = one_web.jinja_env
@@ -132,6 +135,7 @@ def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=
         return jsonify({"status": True, "message": "ping %s success" % request.path})
 
     add_blue.add_url_rule("/ping/", endpoint="%s_ping" % blue_name, view_func=ping)
+    add_blue.abc = "123"
     app.blues.append(add_blue)
     # current_app.before_request_funcs[blue_name] = before_request_funcs
     return add_blue
