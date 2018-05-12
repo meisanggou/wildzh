@@ -40,9 +40,21 @@
         "col_type": "varchar(100)"
       },
       {
+        "col_comment": "文章简介",
+        "col_name": "article_desc",
+        "col_type": "varchar(400)",
+        "allow_null": true
+      },
+      {
         "col_comment": "文章摘要",
         "col_name": "abstract",
         "col_type": "varchar(400)"
+      },
+      {
+        "col_comment": "文章图片链接",
+        "col_name": "pic_url",
+        "col_type": "varchar(200)",
+        "allow_null": true
       },
       {
         "col_comment": "更新时间",
