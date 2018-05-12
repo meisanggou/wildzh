@@ -1,0 +1,29 @@
+{% extends "base_menu.html" %}
+
+
+{% block title %}查看文章{% endblock %}
+
+
+{% block js_content %}
+    {{ 't_js/Article/look.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+    <!-- 加载编辑器的容器 -->
+
+    <div style="padding-top: 50px">
+        <div class="form-group apiContentLine">
+            <ul>
+                <li>
+                    <label id="article_title"/>
+                </li>
+            </ul>
+        </div>
+        <div id="container">
+        </div>
+    </div>
+    <input id="article_no" class="display_none" value="{{ article_no }}">
+    <div id="div_edit">
+
+    </div>
+{% endblock %}

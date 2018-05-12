@@ -1,0 +1,88 @@
+[
+  {
+    "table_cols": [
+      {
+        "pri_key": true,
+        "col_comment": "文章编号",
+        "col_name": "article_no",
+        "col_type": "char(32)"
+      },
+      {
+        "col_comment": "文章内容",
+        "col_name": "content",
+        "col_type": "longtext"
+      },
+      {
+        "col_comment": "插入时间",
+        "col_name": "insert_time",
+        "col_type": "int(11)"
+      }
+    ],
+    "table_comment": "文章内容信息",
+    "table_name": "article_content"
+  },
+  {
+    "table_cols": [
+      {
+        "pri_key": true,
+        "col_comment": "文章编号",
+        "col_name": "article_no",
+        "col_type": "char(32)"
+      },
+      {
+        "col_comment": "作者",
+        "col_name": "user_name",
+        "col_type": "varchar(22)"
+      },
+      {
+        "col_comment": "文章标题",
+        "col_name": "title",
+        "col_type": "varchar(100)"
+      },
+      {
+        "col_comment": "文章摘要",
+        "col_name": "abstract",
+        "col_type": "varchar(400)"
+      },
+      {
+        "col_comment": "更新时间",
+        "col_name": "update_time",
+        "col_type": "int(11)"
+      }
+    ],
+    "table_comment": "文章基本信息",
+    "table_name": "article_info"
+  },
+  {
+    "table_cols": [
+      {
+        "pri_key": true,
+        "col_comment": "文章编号",
+        "col_name": "article_no",
+        "col_type": "char(32)"
+      },
+      {
+        "col_comment": "更改次数",
+        "col_name": "update_times",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "阅读次数",
+        "col_name": "read_times",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "自己阅读次数",
+        "col_name": "self_read_times",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "评论数",
+        "col_name": "comment_num",
+        "col_type": "int(11)"
+      }
+    ],
+    "table_comment": "文章统计信息",
+    "table_name": "article_statistics"
+  }
+]

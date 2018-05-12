@@ -1,0 +1,34 @@
+{% extends "base_menu.html" %}
+
+
+{% block title %}添加文章{% endblock %}
+
+
+{% block js_content %}
+    {{ 't_js/ueditor/ueditor.config.js' | make_static_html | safe }}
+    {{ 't_js/ueditor/ueditor.all.js' | make_static_html | safe }}
+    {{ 't_js/Common/position_tools.js' | make_static_html | safe }}
+    {{ 't_js/Common/add_node.js' | make_static_html | safe }}
+    {{ 't_js/article/add.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+    <!-- 加载编辑器的容器 -->
+
+    <div style="padding-top: 50px">
+        <div class="form-group apiContentLine">
+            <ul>
+                <li>
+                    <label for="">标题：</label>
+                    <input class="box-side width800" id="article_title" type="text"/>
+                </li>
+            </ul>
+        </div>
+        <script id="container" name="content" type="text/plain">
+        </script>
+    </div>
+    <input id="article_no" class="display_none" value="{{ article_no }}">
+    <input id="auto" class="display_none" value="0">
+    <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_save">保存</a>
+    <a class="left5" href="javascript:void(0)" title="" id="link_look">查看</a>
+{% endblock %}

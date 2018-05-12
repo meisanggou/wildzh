@@ -1,0 +1,24 @@
+{% extends "base_menu.html" %}
+
+{% block title %}查询{% endblock %}
+
+{% block js_content %}
+    {{ 't_js/Common/datetime_tools.js' | make_static_html | safe }}
+    {{ 't_js/Article/query.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+    <!-- 加载编辑器的容器 -->
+    <div class="paddingTop50" id="article_container">
+        <div class="form-group apiContentLine">
+            <ul>
+                <li>
+                    <input class="box-side width800" id="query_str" type="text"/>
+                    <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_query">查询</a>
+                    <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_add_article">新建</a>
+                </li>
+            </ul>
+            <input class="display_none" id="url_add_article" value="{{ url_add_article }}">
+        </div>
+    </div>
+{% endblock %}
