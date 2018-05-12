@@ -20,6 +20,7 @@ c_article = ArticleManager(db_conf_path)
 @article_view.route("/", methods=["GET"])
 def add_func():
     article_no = ""
+    g.user_name = "zh_test"
     if "article_no" in request.args:
         article_no = request.args["article_no"]
     if request.is_xhr is True:
@@ -34,6 +35,7 @@ def add_func():
 
 @article_view.route("/", methods=["POST"])
 def add_article_action():
+    g.user_name = "zh_test"
     request_data = request.json
     title = request_data["title"]
     abstract = request_data["abstract"]
