@@ -4,8 +4,8 @@
 import os
 from time import time
 from flask import request, g, jsonify
-from flask_helper import RenderTemplate
-from zh_config import db_conf_path
+from flask_helper import RenderTemplate, support_upload2
+from zh_config import db_conf_path, upload_folder, file_prefix_url
 from classes.article import ArticleManager
 from web01 import create_blue, upload_folder
 
@@ -21,6 +21,7 @@ c_article = ArticleManager(db_conf_path)
 def add_func():
     article_no = ""
     g.user_name = "zh_test"
+    upload_url = url_prefix + "/upload/"
     page_article = url_prefix + "/?action=article"
     page_list = url_prefix + "/"
     if "article_no" in request.args:
@@ -33,10 +34,12 @@ def add_func():
     if "action" in request.args and request.args["action"] == "look":
         return rt.render("look.html", article_no=article_no)
     elif "action" in request.args and request.args["action"] == "article":
-        return rt.render("add.html", article_no=article_no, page_list=page_list)
+        return rt.render("add.html", article_no=article_no, page_list=page_list, upload_url=upload_url)
     query_url = url_prefix + "/query/"
     return rt.render("query.html", query_url=query_url, page_article=page_article)
 
+
+support_upload2(article_view, upload_folder, file_prefix_url, ("article", "pic"), "upload")
 
 
 @article_view.route("/", methods=["POST"])
@@ -46,7 +49,9 @@ def add_article_action():
     title = request_data["title"]
     abstract = request_data["abstract"]
     content = request_data["content"]
-    exec_r, data = c_article.new_article(g.user_name, title, abstract, content)
+    article_desc = request_data["article_desc"]
+    pic_url = request_data["pic_url"]
+    exec_r, data = c_article.new_article(g.user_name, title, abstract, content, article_desc, pic_url)
     return jsonify({"status": exec_r, "data": data})
 
 
@@ -57,9 +62,11 @@ def update_article_action():
     title = request_data["title"]
     abstract = request_data["abstract"]
     content = request_data["content"]
+    article_desc = request_data["article_desc"]
+    pic_url = request_data["pic_url"]
     auto = request_data.get("auto", False)
     if auto is False:
-        exec_r, data = c_article.update_article(article_no, title, abstract, content)
+        exec_r, data = c_article.update_article(article_no, title, abstract, content, article_desc, pic_url)
     else:
         article_file = os.path.join(upload_folder, "%s_%s.txt" % (article_no, int(time())))
         with open(article_file, "w") as wa:

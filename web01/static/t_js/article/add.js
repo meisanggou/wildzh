@@ -9,6 +9,8 @@ function handler(data) {
     }
     if ("content" in data && "title" in data) {
         $("#article_title").val(data.title);
+        $("#article_desc").val(data.article_desc);
+        $("#pic_url").attr("src", data.pic_url);
         ue.setContent(data.content);
     }
     else {
@@ -66,9 +68,11 @@ $(document).ready(function () {
         }
         var content = ue.getContent();
         var abstract = ue.getContentTxt().substr(0, 400);
+        var article_desc = $("#article_desc").val();
+        var pic_url = $("#pic_url").attr("src");
         var article_no = $("#article_no").val();
         var method = "POST";
-        var r_data = {"content": content, "abstract": abstract, "title": title};
+        var r_data = {"content": content, "abstract": abstract, "title": title, "article_desc": article_desc, "pic_url": pic_url};
         if (article_no.length == 32) {
             r_data["article_no"] = article_no;
             method = "PUT";
@@ -78,4 +82,14 @@ $(document).ready(function () {
         $("#auto").val("1");
     });
     set_look_link();
+    $("#upload_article_pic").change(function(){
+        var upload_url= $("#upload_url").val();
+        if($("#upload_article_pic")[0].files.length <= 0){
+            return 1;
+        }
+        var data = {"pic": $("#upload_article_pic")[0].files[0]};
+        upload_request(upload_url, "POST", data, function(data){
+            $("#pic_url").attr("src", data["pic"]);
+        });
+    });
 });

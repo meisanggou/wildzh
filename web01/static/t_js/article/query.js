@@ -23,7 +23,7 @@ function handler_query_article(data) {
             var article_item = data[i];
             var article_li = $("<li></li>");
             var title_p = $('<p><a href="javascript:void(0)" target="_blank">' + article_item["title"] + '</a></p>');
-            title_p.find("a").attr("href", $("#page_article").val() + "?action=look&article_no=" + article_item["article_no"]);
+            title_p.find("a").attr("href", location.pathname + "?action=look&article_no=" + article_item["article_no"]);
             article_li.append(title_p);
             var abstract_p = $('<p></p>');
             abstract_p.text(article_item["abstract"]);
