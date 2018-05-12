@@ -32,7 +32,7 @@ def add_func():
         exec_r, data = c_article.get_article(article_no, g.user_name)
         return jsonify({"status": exec_r, "data": data})
     if "action" in request.args and request.args["action"] == "look":
-        return rt.render("look.html", article_no=article_no)
+        return rt.render("look.html", article_no=article_no, page_article=page_article, page_list=page_list)
     elif "action" in request.args and request.args["action"] == "article":
         return rt.render("add.html", article_no=article_no, page_list=page_list, upload_url=upload_url)
     query_url = url_prefix + "/query/"
