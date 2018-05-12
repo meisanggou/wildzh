@@ -25,7 +25,7 @@ pic_folder = folder.create_folder2(music_upload_folder, "pic")
 music_folder = folder.create_folder2(music_upload_folder, "m")
 
 
-def referer_music_no(f):
+def refer_music_no(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if "Referer" not in request.headers:
@@ -44,7 +44,7 @@ def referer_music_no(f):
 
 def required_music_no(f):
     @wraps(f)
-    @referer_music_no
+    @refer_music_no
     def decorated_function(*args, **kwargs):
         if g.music_no is None:
             return jsonify({"status": False, "data": "Bad Request"})
@@ -64,6 +64,8 @@ def index():
     if "action" in request.args and request.args["action"] == "music":
         return rt.render("entry_info.html", page_list=page_list, add_url=add_url, upload_url=upload_url,
                          m_upload_url=m_upload_url)
+    if "music_no" in request.args:
+        return rt.render("detail.html",page_list=page_list, page_music=page_music)
     return rt.render("overview.html", page_music=page_music, info_url=info_url, online_url=online_url)
 
 
@@ -84,7 +86,7 @@ support_upload2(music_view, upload_folder, file_prefix_url, ("music", "m"), "upl
 
 
 @music_view.route("/info/", methods=["GET"])
-@referer_music_no
+@refer_music_no
 def get_music_info():
     find_type = re.findall("music_type=(\\w+)", g.ref_url)
     if len(find_type) > 0:
@@ -123,36 +125,6 @@ def add_music_records():
     music_type = data["music_type"]
     music_no = data["music_no"]
     user_id = data["user_id"]
-    result = data["result"]
-    c_music.new_music_record(user_id, music_no, result)
-    explains = c_music.select_result_explain(music_no, result)
-    tj = c_music.select_tj(music_no)
-    r = dict(result=result)
-    if len(tj) > 0:
-        r["tj"] = tj[0]
-    else:
-        r["tj"] = None
-    if len(explains) > 0:
-        r["result_explain"] = explains[0]
-    else:
-        r["result_explain"] = None
-    return jsonify({"status": True, "data": r})
-
-@music_view.route("/explain/", methods=["GET"])
-@required_music_no
-def get_explains():
-    explains = c_music.select_result_explain(g.music_no)
-    if len(explains) <= 0:
-        return jsonify({"status": False, "data": "结果解释不存在"})
-    if "list" not in request.args:
-        return jsonify({"status": True, "data": explains[0]})
-    explain_item = explains[0]
-    keys = filter(lambda x: x.startswith("case_"), explain_item.keys())
-    keys.sort()
-    l_explains = []
-    for key in keys:
-        if explain_item[key] is None:
-            break
-        else:
-            l_explains.append(explain_item[key])
-    return jsonify({"status": True, "data": l_explains})
+    progress = data["progress"]
+    c_music.new_music_record(user_id, music_no, progress)
+    return jsonify({"status": True, "data": "success"})

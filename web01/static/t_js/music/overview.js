@@ -68,6 +68,12 @@ function init_info(data) {
             add_tr.append(td_status);
 
             var td_op = $("<td></td>");
+            var basic_url = AddUrlArg(location.pathname, "music_no", data[i]["music_no"]);
+            basic_url = AddUrlArg(basic_url, "music_type", data[i]["music_type"]);
+            var detail_url = AddUrlArg(basic_url, "action", "detail");
+            td_op.append(new_link("查看", detail_url));
+
+            td_op.append(" | ");
             var del_link = $("<a href='javascript:void(0)'>删除</a>");
             del_link.click(delete_music);
             td_op.append(del_link);
