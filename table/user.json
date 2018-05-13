@@ -8,6 +8,12 @@
                 "col_type": "varchar(22)"
             },
            {
+                "col_comment": "密码",
+                "col_name": "password",
+                "col_type": "varchar(255)",
+                "allow_null": true
+            },
+           {
                 "col_comment": "角色值",
                 "col_name": "role",
                 "col_type": "int(11)"

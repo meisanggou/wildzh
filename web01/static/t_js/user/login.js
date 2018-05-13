@@ -2,10 +2,11 @@
  * Created by msg on 2/22/17.
  */
 
+var storage_key = "wildzh_username";
+
 function login_success(data) {
     console.info(data);
     var current_user = data.user_name;
-    var storage_key = "jingyun_username";
     var rem_user_names = localStorage.getItem(storage_key);
     var rem_v2 = "";
     if ($("input[name='remember']").is(':checked')) {
@@ -36,14 +37,13 @@ function login() {
     var password = $("input[name='password']").val();
     var next = $("input[name='next']").val();
     var request_data = {"user_name": user_name, "password": password, "next": next};
-    var request_url = "/login/";
+    var request_url = $("#login_url").val();
     my_async_request2(request_url, "POST", request_data, login_success);
 }
 
 $(document).ready(function () {
     console.info("welcome to dms, please login first!");
     // 自动填充记录的账户名
-    var storage_key = "jingyun_username";
     var rem_user_names = localStorage.getItem(storage_key);
     if (rem_user_names != null) {
         var user_names = rem_user_names.split(",");
@@ -53,7 +53,7 @@ $(document).ready(function () {
     $("#btn_login").click(login);
     if ($("#btn_domain_login").length > 0) {
         $("#btn_login").text("自动登录中...");
-        var request_url = "/login/";
+        var request_url = $("#login_url").val();
         var request_data = {"domain_user": true};
         my_async_request2(request_url, "POST", request_data, login_success);
     }

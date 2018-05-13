@@ -3,8 +3,8 @@
 
 import os
 import sys
-from flask import request, g, make_response, Blueprint, jsonify, session
-from flask_login import current_user, UserMixin, LoginManager
+from flask import request, g, make_response, Blueprint, jsonify
+from flask_login import current_user, LoginManager, login_required
 
 from flask_helper import Flask2
 from zh_config import file_prefix_url, upload_folder
@@ -14,31 +14,8 @@ from function import make_static_html2
 __author__ = 'zhouheng'
 
 
-class User(UserMixin):
-    user_name = ""
-
-    def get_id(self):
-        return self.user_name
-
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
-
-
-@login_manager.user_loader
-def load_user(user_name):
-    user = User()
-    user.user_name = user_name
-    if "roles" in session:
-        user.roles = session["roles"]
-    else:
-        user.roles = None
-        session["roles"] = None
-    if "role" in session:
-        user.role = session["role"]
-    else:
-        user.role = 0
-        session["role"] = user.role
-    return user
 
 
 def create_app():
@@ -55,13 +32,6 @@ def create_app():
         g.request_IP_s, g.request_IP = info
         if current_user.is_authenticated:
             g.user_role = current_user.role
-            g.user_name = current_user.user_name
-            g.user_roles = current_user.roles
-            # if g.user_name in user_blacklist:
-            #     message =u"不好意思，您的帐号存在异常，可能访问本系统出现不稳定的想象，现在就是不稳定中。本系统不是很智能，所以不知道啥时候会稳定，也许一分钟，也许一天，也许。。。"
-            #     if "X-Requested-With" in request.headers:
-            #         return jsonify({"status": False, "data": message})
-            #     return message
         else:
             g.user_role = 0
         if "Accept" in request.headers and request.headers["Accept"].find("application/json") >= 0:
@@ -119,23 +89,16 @@ app = create_app()
 
 def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=False):
     add_blue = Blueprint(blue_name, __name__, url_prefix=url_prefix)
-    # if auth_required:
-    #     @add_blue.before_request
-    #     @login_required
-    #     def before_request():
-    #         if special_protocol is True:
-    #             r_protocol = request.headers.get("X-Request-Protocol", "http")
-    #             if r_protocol not in request_special_protocol:
-    #                 redirect_url = "%s://%s%s" % (request_special_protocol[0], request.host, request.full_path)
-    #                 return redirect(redirect_url)
-    #
-    #         g.role_value = control.role_value
+    if auth_required:
+        @add_blue.before_request
+        @login_required
+        def before_request():
+            pass
 
     def ping():
         return jsonify({"status": True, "message": "ping %s success" % request.path})
 
     add_blue.add_url_rule("/ping/", endpoint="%s_ping" % blue_name, view_func=ping)
-    add_blue.abc = "123"
     app.blues.append(add_blue)
     # current_app.before_request_funcs[blue_name] = before_request_funcs
     return add_blue
