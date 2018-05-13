@@ -71,3 +71,8 @@ def login_action():
 
     data = dict(location=next_url, user_name=item["user_name"])
     return jsonify({"status": True, "data": data})
+
+
+@user_view.route("/password/",methods=["GET"])
+def password_page():
+    return rt.render("password.html", url_prefix=url_prefix)

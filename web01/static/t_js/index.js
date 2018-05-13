@@ -10,6 +10,6 @@ $(function(){
     $("#div_main_menu").append('<a href="' + '/exam/">' + '测试管理' + '</a>');
     $("#div_main_menu").append('<a href="' + '/music/">' + '音乐管理' + '</a>');
     $("#div_main_menu").append('<a href="' + '/article/">' + '文章管理' + '</a>');
-    $("#div_main_menu").append('<a href="' + $("#password_url_prefix").val() + '/">' + '修改密码' + '</a>');
+    $("#div_main_menu").append('<a href="' + '/user/password' + '/">' + '修改密码' + '</a>');
     $("#div_main_menu").append('<a href="' + '/user/login' + '/">' + '退出' + '</a>');
 });
