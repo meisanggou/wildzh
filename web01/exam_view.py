@@ -26,7 +26,9 @@ def referer_exam_no(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if "Referer" not in request.headers:
-            return jsonify({"status": False, "data": "Bad Request"})
+            g.ref_url = ""
+            g.exam_no = None
+            return f(*args, **kwargs)
         g.ref_url = request.headers["Referer"]
         find_no = re.findall("exam_no=(\\d+)", g.ref_url)
         if len(find_no) > 0:
