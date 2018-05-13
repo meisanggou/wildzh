@@ -12,5 +12,4 @@ exam_view = create_blue("index", url_prefix="/")
 
 @exam_view.route("/", methods=["GET"])
 def index():
-    print(current_user.is_authenticated)
     return rt.render("index.html")

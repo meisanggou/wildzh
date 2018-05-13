@@ -2,14 +2,6 @@
  * Created by msg on 10/20/16.
  */
 
-function bit_and(role1, role2){
-    var v = role1 & role2;
-    if(v < role1 && v < role2)
-        return false;
-    else
-        return true;
-}
-
 
 $(function(){
     var current_user_role = parseInt($("#current_user_role").val());

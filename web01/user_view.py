@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 
-from flask import g, jsonify, session
+from flask import g, jsonify, session, request
 from flask_login import UserMixin, login_user, current_user, logout_user
 from flask_helper import RenderTemplate
 from zh_config import db_conf_path
@@ -39,7 +39,11 @@ def login_page():
     if current_user.is_authenticated is True:
         logout_user()
     login_url = url_prefix + "/login/"
-    return rt.render("login.html", login_url=login_url)
+    if "next" in request.args:
+        next_url = request.args["next"]
+    else:
+        next_url = "/"
+    return rt.render("login.html", login_url=login_url, next_url=next_url)
 
 
 login_manager.login_view = "user.login_page"
