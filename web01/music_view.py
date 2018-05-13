@@ -2,10 +2,7 @@
 # coding: utf-8
 import os
 import re
-import uuid
-import string
 from functools import wraps
-from werkzeug.utils import secure_filename
 from flask import request, jsonify, g
 from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url

@@ -1,0 +1,56 @@
+[
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "账户名",
+                "col_name": "user_name",
+                "col_type": "varchar(22)"
+            },
+           {
+                "col_comment": "角色值",
+                "col_name": "role",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "昵称",
+                "col_name": "nick_name",
+                "col_type": "varchar(20)"
+            },
+            {
+                "col_comment": "微信id",
+                "col_name": "wx_id",
+                "col_type": "char(28)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "创建者",
+                "col_name": "creator",
+                "col_type": "varchar(22)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "添加时间",
+                "col_name": "add_time",
+                "col_type": "int(11)",
+                "allow_null": true
+            },
+            {
+                "uni_key": true,
+                "col_comment": "用户邮箱",
+                "col_name": "email",
+                "col_type": "varchar(100)",
+                "allow_null": true
+            },
+            {
+                "uni_key": true,
+                "col_comment": "手机号",
+                "col_name": "tel",
+                "col_type": "char(11)",
+                "allow_null": true
+            }
+        ],
+        "table_comment": "用户信息",
+        "table_name": "sys_user"
+    }
+]

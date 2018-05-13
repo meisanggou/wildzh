@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}登录{% endblock %}
+
+{% block js_content %}
+    {{ 't_js/user/login.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="loginMode">
+            <div class="form-signin">
+                <h4 class="form-signin-heading">请先登录</h4>
+                <input type="text" name="user_name" class="form-control" placeholder="用户名/手机号" required autofocus>
+                <label for="inputPassword" class="sr-only">Password</label>
+                <input type="password" id="inputPassword" name="password" class="form-control" placeholder="密码"
+                       required>
+
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="remember" checked> Remember UserName </label>
+                </div>
+                <input name="next" value="{{ next_url }}" style="display:none;"/>
+                <button class="btn btn-lg btn-primary btn-block" id="btn_login">登录</button>
+                {% if domain_user %}
+                    <button class="btn btn-lg btn-primary btn-block display_none" id="btn_domain_login">
+                        域用户{{ domain_user }}登录
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
