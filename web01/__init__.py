@@ -41,15 +41,6 @@ def create_app():
 
     @one_web.after_request
     def after_request(res):
-        if res.status_code == 302 or res.status_code == 301:
-            if "X-Request-Protocol" in request.headers:
-                pro = request.headers["X-Request-Protocol"]
-                if "Location" in res.headers:
-                    location = res.headers["location"]
-                    if location.startswith("http:"):
-                        res.headers["Location"] = pro + ":" + res.headers["Location"][5:]
-                    elif location.startswith("/"):
-                        res.headers["Location"] = "%s://%s%s" % (pro, request.headers["Host"], location)
         if "download_file" in g:
             try:
                 os.system("rm -rf %s" % g.download_file)
