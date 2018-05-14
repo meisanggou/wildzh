@@ -15,7 +15,7 @@ __author__ = 'meisa'
 url_prefix = "/music"
 
 rt = RenderTemplate("music")
-music_view = create_blue("music", url_prefix=url_prefix)
+music_view = create_blue("music", url_prefix=url_prefix, menu_list={"title": u"音乐管理"})
 c_music = Music(db_conf_path)
 music_upload_folder = os.path.join(upload_folder, "music")
 pic_folder = folder.create_folder2(music_upload_folder, "pic")

@@ -6,14 +6,16 @@ from flask_login import UserMixin, login_user, current_user, logout_user
 from flask_helper import RenderTemplate
 from zh_config import db_conf_path
 from classes.user import User
-from web01 import create_blue, login_manager
+from web01 import create_blue, login_manager, portal_menu_list
 
 __author__ = 'meisa'
 
 url_prefix = "/user"
 rt = RenderTemplate("user")
 c_user = User(db_conf_path=db_conf_path)
-user_view = create_blue("user", url_prefix=url_prefix, auth_required=False)
+user_view = create_blue("user", url_prefix=url_prefix, auth_required=False,
+                        menu_list=[{"index": -2, "url": "/password/", "title": u"密码修改"},
+                                   {"index": -1, "url": "/login/", "title": u"退出"}])
 
 
 class FlaskUser(UserMixin):
@@ -21,6 +23,7 @@ class FlaskUser(UserMixin):
 
     def get_id(self):
         return self.user_name
+
 
 @login_manager.user_loader
 def load_user(user_name):

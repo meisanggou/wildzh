@@ -16,7 +16,7 @@ __author__ = 'meisa'
 url_prefix = "/exam"
 
 rt = RenderTemplate("exam")
-exam_view = create_blue("exam", url_prefix=url_prefix, auth_required=False)
+exam_view = create_blue("exam", url_prefix=url_prefix, auth_required=False, menu_list={"title": u"测试管理"})
 c_exam = Exam(db_conf_path)
 exam_upload_folder = os.path.join(upload_folder, "exam")
 pic_folder = folder.create_folder2(exam_upload_folder, "pic")

@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import os
-from flask import request, g, make_response, Blueprint, jsonify
+from flask import request, g, Blueprint, jsonify
 from flask_login import current_user, LoginManager, login_required
 
 from flask_helper import Flask2
@@ -44,10 +44,6 @@ def create_app():
         res.headers["Server"] = "JingYun Server"
         return res
 
-    @one_web.errorhandler(500)
-    def handle_500(e):
-        return str(e)
-
     one_web.add_url_rule("/static00" + '/<path:filename>', endpoint='static00', view_func=one_web.send_static_file2,
                          defaults=dict(static_folder=os.path.join(os.path.split(os.path.dirname(__file__))[0], "static")))
     one_web.static_folder = "static"
@@ -74,9 +70,10 @@ def create_app():
     return one_web
 
 app = create_app()
+portal_menu_list = []
 
 
-def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=False):
+def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=False, menu_list=None):
     add_blue = Blueprint(blue_name, __name__, url_prefix=url_prefix)
     if auth_required:
         @add_blue.before_request
@@ -90,4 +87,21 @@ def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=
     add_blue.add_url_rule("/ping/", endpoint="%s_ping" % blue_name, view_func=ping)
     app.blues.append(add_blue)
     # current_app.before_request_funcs[blue_name] = before_request_funcs
+
+    if menu_list is not None:
+        if isinstance(menu_list, (list, tuple)) is True:
+            for item in menu_list:
+                if "index" not in item:
+                    item["index"] = len(portal_menu_list)
+                if "url" not in item:
+                    item["url"] = url_prefix + "/"
+                else:
+                    item["url"] = url_prefix + item["url"]
+                portal_menu_list.append(item)
+        elif isinstance(menu_list, dict) is True:
+            if "index" not in menu_list:
+                menu_list["index"] = len(portal_menu_list)
+            if "url" not in menu_list:
+                menu_list["url"] = url_prefix + "/"
+            portal_menu_list.append(menu_list)
     return add_blue

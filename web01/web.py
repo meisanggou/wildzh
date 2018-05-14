@@ -6,7 +6,7 @@ import sys
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
 
-from web01 import app
+from web01 import app, portal_menu_list
 
 __author__ = 'meisa'
 
@@ -17,6 +17,12 @@ for view_file in view_files:
         __import__("web01.%s" % view_file[:-3])
 
 app.register_blues()
+l_menu = len(portal_menu_list)
+for item in portal_menu_list:
+    if item["index"] < 0:
+        item["index"] += l_menu
+portal_menu_list.sort(key=lambda x: x["index"])
+app.jinja_env.globals["portal_menu_list"] = portal_menu_list
 
 if __name__ == "__main__":
     app.run(port=2400)
