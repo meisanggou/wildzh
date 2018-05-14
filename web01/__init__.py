@@ -2,13 +2,12 @@
 # coding: utf-8
 
 import os
-import sys
 from flask import request, g, make_response, Blueprint, jsonify
 from flask_login import current_user, LoginManager, login_required
 
 from flask_helper import Flask2
-from zh_config import file_prefix_url, upload_folder
-from function import normal_request_detection, make_static_html, make_default_static_url, make_static_url
+from zh_config import file_prefix_url, upload_folder, accept_agent
+from function import make_static_html, make_default_static_url, make_static_url
 from function import make_static_html2
 
 __author__ = 'zhouheng'
@@ -26,10 +25,6 @@ def create_app():
 
     @one_web.before_request
     def before_request():
-        test_r, info = normal_request_detection(request.headers, request.remote_addr)
-        if test_r is False:
-            return make_response(info, 403)
-        g.request_IP_s, g.request_IP = info
         if current_user.is_authenticated:
             g.user_role = current_user.role
         else:
@@ -64,7 +59,7 @@ def create_app():
     env = one_web.jinja_env
     # env.globals["current_env"] = current_env
     # env.globals["role_value"] = control.role_value
-    # env.globals["menu_url"] = dms_url_prefix + "/portal/"
+    env.globals["menu_url"] = "/"
     # env.globals["short_link_url"] = short_link_prefix
     # env.filters['unix_timestamp'] = unix_timestamp
     # env.filters['bit_and'] = bit_and
@@ -73,6 +68,9 @@ def create_app():
     env.filters['make_default_static_url'] = make_default_static_url
     env.filters['make_static_html'] = make_static_html
     env.filters['make_static_html2'] = make_static_html2
+
+    one_web.handle_30x()
+    one_web.filter_user_agent(accept_agent)
     return one_web
 
 app = create_app()
