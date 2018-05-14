@@ -52,7 +52,7 @@ class User(object):
 
     def update_password(self, user_name, new_password):
         en_password = generate_password_hash(self._md5_hash_password(user_name, new_password))
-        update_value = {"password": en_password, "login_success": 1, "unlock_time": None}
+        update_value = {"password": en_password}
         result = self.db.execute_update(self.t, update_value=update_value, where_value={"user_name": user_name})
         return result
 
@@ -108,4 +108,7 @@ if __name__ == "__main__":
         p = sys.argv[2]
     else:
         u = p = "admin"
-    um.new_user(u, password=p)
+    r, item = um.new_user(u, password=p)
+    if r is False:
+        print("update password")
+        um.update_password(u, p)

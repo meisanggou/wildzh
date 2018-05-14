@@ -27,8 +27,10 @@ def create_app():
     def before_request():
         if current_user.is_authenticated:
             g.user_role = current_user.role
+            g.user_name = current_user.user_name
         else:
             g.user_role = 0
+            g.user_name = None
         if "Accept" in request.headers and request.headers["Accept"].find("application/json") >= 0:
             g.accept_json = True
         else:
