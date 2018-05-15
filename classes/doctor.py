@@ -45,6 +45,12 @@ class Doctor(object):
         l = self.db.execute_plus(self.t, "service_times", where_value=where_value)
         return l
 
+    def new_info(self, doctor_name, doctor_photo, degree, company, department, domain, star_level, labels):
+        service_times = 0
+        item = self._insert_info(doctor_name, doctor_photo, degree, company, department, domain, star_level,
+                                 service_times, labels)
+        return item
+
     def select_doctor(self):
         cols = ["doctor_no", "doctor_name", "degree", "company", "department", "domain", "star_level",
                 "service_times", "labels", "insert_time", "doctor_photo"]

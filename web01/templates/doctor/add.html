@@ -52,15 +52,15 @@
                         </li>
                         <li>
                             <label for="effective_days">星级：</label>
-                            <input class="box-side width100" id="labels" type="text" msg="请输入医生星级"/>
+                            <input class="box-side width100" id="star_level" type="text" msg="请输入医生星级"/>
                         </li>
                     </ul>
 
                 </div>
             </fieldset>
-            <button class="btn btn-success btn-down api-newBtn" id="btn_new" disabled>新建</button>
+            <button class="btn btn-success btn-down api-newBtn" id="btn_new" >新建</button>
         </div>
-        <input id="add_url" value="{{ add_url }}" class="display_none">
+        <input id="info_url" value="{{ info_url }}" class="display_none">
         <input id="upload_url" value="{{ upload_url }}" class="display_none">
     </div>
 {% endblock %}

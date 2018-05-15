@@ -23,8 +23,9 @@ def add_func():
     page_list = url_prefix + "/"
     page_doctor = url_prefix + "/?action=doctor"
     info_url = url_prefix + "/info/"
+    upload_url = url_prefix + "/upload/"
     if "action" in request.args and request.args["action"] == "doctor":
-        return rt.render("add.html", page_list=page_list)
+        return rt.render("add.html", page_list=page_list, upload_url=upload_url, info_url=info_url)
     return rt.render("overview.html", info_url=info_url, page_doctor=page_doctor)
 
 
@@ -34,17 +35,23 @@ def get_doctor_info():
     return jsonify({"status": True, "data": items})
 
 
-@doctor_view.route("/", methods=["POST"])
+support_upload2(doctor_view, upload_folder, file_prefix_url, ("doctor", "photo"), "upload")
+
+
+@doctor_view.route("/info/", methods=["POST"])
 def add_doctor_action():
     g.user_name = "zh_test"
     request_data = request.json
-    title = request_data["title"]
-    abstract = request_data["abstract"]
-    content = request_data["content"]
-    doctor_desc = request_data["doctor_desc"]
-    pic_url = request_data["pic_url"]
-    exec_r, data = c_doctor.new_doctor(g.user_name, title, abstract, content, doctor_desc, pic_url)
-    return jsonify({"status": exec_r, "data": data})
+    doctor_name = request_data["doctor_name"]
+    doctor_photo = request_data["doctor_photo"]
+    degree = request_data["degree"]
+    company = request_data["company"]
+    domain = request_data["domain"]
+    department = request_data["department"]
+    star_level = request_data["star_level"]
+    labels = request_data["labels"]
+    data = c_doctor.new_info(doctor_name, doctor_photo, degree, company, department, domain, star_level, labels)
+    return jsonify({"status": True, "data": data})
 
 
 @doctor_view.route("/", methods=["PUT"])
