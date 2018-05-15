@@ -1,0 +1,44 @@
+{% extends "base_menu.html" %}
+
+{% block title %}医生管理{% endblock %}
+
+{% block css_content %}
+    {{ 't_css/tabControls.css' | make_static_html | safe }}
+{% endblock %}
+
+{% block js_content %}
+    {{ 't_js/doctor/overview.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+    <div id="div_content">
+        <ul id="ul_menu" class="nav nav-tabs comTab">
+            <li class="active"><a href="#div_overview" >所有医生</a></li>
+            <li class=""><a href="{{ page_doctor }}">添加医生</a></li>
+        </ul>
+        <div class="tab-content" style="padding-top: 20px;">
+            <div class="tab-pane fade in active" id="div_overview">
+                <div>
+                    <div style="position: relative">
+                        <table class="table table-bordered table-hover api-list-table margintop20" id="t_doctors">
+                            <tr>
+                                <th scope="col" width="8%">分类</th>
+                                <th scope="col" width="50%">名称</th>
+                                <th scope="col" width=15%">创建时间</th>
+                                <th scope="col" width=10%">状态</th>
+                                <th scope="col" width=17%">操作</th>
+                            </tr>
+                            <tr id="tr_none" class="display_none">
+                                <td colSpan="9" class="text-center">一条记录都没有</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <input id="info_url" value="{{ info_url }}" class="display_none">
+    <input id="online_url" value="{{ online_url }}" class="display_none">
+{% endblock %}
+

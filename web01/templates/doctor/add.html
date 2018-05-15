@@ -1,0 +1,60 @@
+{% extends "base_menu.html" %}
+
+{% block title %}上传医生{% endblock %}
+
+{% block css_content %}
+    {{ 't_css/tabControls.css' | make_static_html | safe }}
+{% endblock %}
+
+{% block js_content %}
+    {{ 't_js/doctor/add.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+    <div id="div_content">
+        <ul id="ul_menu" class="nav nav-tabs comTab">
+            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有医生</a></li>
+            <li class="active"><a href="javascript:void(0)" data-toggle="tab">添加医生</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
+            <fieldset>
+                <legend>基本信息</legend>
+                <div class="form-group apiContentLine">
+                    <ul>
+                        <li>
+                            <label for="">医生分类：</label>
+                            <select class="box-side width150" id="doctor_type" type="text">
+                                <option value="diantai" about="4">电台</option>
+                                <option value="fangsong" about="5">放松</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label for="effective_days">医生名称：</label>
+                            <input class="box-side width500" id="doctor_name" type="text" placeholder="" msg="请输入医生名称"/>
+                        </li>
+                        <li>
+                            <label for="effective_days">医生介绍：</label>
+                            <input class="box-side width500" id="doctor_desc" type="text" msg="请输入医生介绍"/>
+                        </li>
+                        <li>
+                            <label for="effective_days">医生图片：</label>
+                            <input class="box-side width300" id="doctor_extend_pic" type="file" placeholder="上传图片"/>
+                            <img id="doctor_extend_pic_url" src=""/>
+                        </li>
+                        <li>
+                            <label for="effective_days">医生上传：</label>
+                            <input class="box-side width300" id="upload_doctor" type="file" placeholder="上传医生"/>
+                            <button class="btn btn-success" id="btn_upload">上传</button>
+                            <input class="display_none" id="doctor_url">
+                        </li>
+                    </ul>
+
+                </div>
+            </fieldset>
+            <button class="btn btn-success btn-down api-newBtn" id="btn_new" disabled>新建</button>
+        </div>
+        <input id="add_url" value="{{ add_url }}" class="display_none">
+        <input id="upload_url" value="{{ upload_url }}" class="display_none">
+        <input id="m_upload_url"  value="{{ m_upload_url }}" class="display_none">
+    </div>
+{% endblock %}

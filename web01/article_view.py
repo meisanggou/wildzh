@@ -5,9 +5,9 @@ import os
 from time import time
 from flask import request, g, jsonify
 from flask_helper import RenderTemplate, support_upload2
-from zh_config import db_conf_path, upload_folder, file_prefix_url
+from zh_config import db_conf_path, file_prefix_url
 from classes.article import ArticleManager
-from web01 import create_blue, upload_folder, portal_menu_list
+from web01 import create_blue, upload_folder
 
 __author__ = 'ZhouHeng'
 
@@ -16,6 +16,7 @@ url_prefix = "/article"
 rt = RenderTemplate("article", url_prefix=url_prefix)
 article_view = create_blue('article_view', url_prefix=url_prefix, menu_list={"title": u"文章管理"})
 c_article = ArticleManager(db_conf_path)
+
 
 @article_view.route("/", methods=["GET"])
 def add_func():
