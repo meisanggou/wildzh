@@ -2,7 +2,9 @@
 # coding: utf-8
 
 import os
+import re
 from time import time
+from functools import wraps
 from flask import request, g, jsonify
 from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url
@@ -17,6 +19,24 @@ rt = RenderTemplate("doctor", url_prefix=url_prefix)
 doctor_view = create_blue('doctor_view', url_prefix=url_prefix, menu_list={"title": u"医生管理"})
 c_doctor = Doctor(db_conf_path)
 
+
+def referer_doctor_no(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "Referer" not in request.headers:
+            g.ref_url = ""
+            g.doctor_no = None
+            return f(*args, **kwargs)
+        g.ref_url = request.headers["Referer"]
+        find_no = re.findall("doctor_no=(\\d+)", g.ref_url)
+        if len(find_no) > 0:
+            g.doctor_no = find_no[0]
+        elif "doctor_no" in request.args:
+            g.doctor_no = request.args["doctor_no"]
+        else:
+            g.doctor_no = None
+        return f(*args, **kwargs)
+    return decorated_function
 
 @doctor_view.route("/", methods=["GET"])
 def add_func():
@@ -34,8 +54,9 @@ def add_func():
 
 
 @doctor_view.route("/info/", methods=["GET"])
+@referer_doctor_no
 def get_doctor_info():
-    items = c_doctor.select_doctor()
+    items = c_doctor.select_doctor(g.doctor_no)
     return jsonify({"status": True, "data": items})
 
 

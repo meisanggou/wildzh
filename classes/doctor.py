@@ -51,8 +51,12 @@ class Doctor(object):
                                  service_times, labels)
         return item
 
-    def select_doctor(self):
+    def select_doctor(self, doctor_no=None):
+        if doctor_no is not None:
+            where_value = dict(doctor_no=doctor_no)
+        else:
+            where_value = None
         cols = ["doctor_no", "doctor_name", "degree", "company", "department", "domain", "star_level",
                 "service_times", "labels", "insert_time", "doctor_photo", "status"]
-        items = self.db.execute_select(self.t, cols=cols)
+        items = self.db.execute_select(self.t, cols=cols, where_value=where_value)
         return items

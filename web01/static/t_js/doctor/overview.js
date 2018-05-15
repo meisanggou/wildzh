@@ -70,7 +70,7 @@ function init_info(data) {
 
             var td_op = $("<td></td>");
             var basic_url = AddUrlArg(location.pathname, "doctor_no", data[i]["doctor_no"]);
-            var detail_url = AddUrlArg(basic_url, "action", "detail");
+            var detail_url = AddUrlArg(basic_url, "action", "update");
             td_op.append(new_link("查看", detail_url));
 
             td_op.append(" | ");
