@@ -15,9 +15,10 @@ class Doctor(object):
         self.t = "doctor_info"
         self.t_detail = "doctor_detail"
 
-    def _insert_info(self, doctor_name, degree, company, department, domain, star_level, service_times, labels):
+    def _insert_info(self, doctor_name, doctor_photo, degree, company, department, domain, star_level, service_times,
+                     labels):
         kwargs = dict(doctor_name=doctor_name, degree=degree, company=company, department=department, domain=domain,
-                      star_level=star_level, service_times=service_times, labels=labels)
+                      star_level=star_level, service_times=service_times, labels=labels, doctor_photo=doctor_photo)
         kwargs["doctor_no"] = uuid.uuid4().hex
         kwargs["insert_time"] = int(time.time())
         self.db.execute_insert(self.t, kwargs)
@@ -46,6 +47,6 @@ class Doctor(object):
 
     def select_doctor(self):
         cols = ["doctor_no", "doctor_name", "degree", "company", "department", "domain", "star_level",
-                "service_times", "labels", "insert_time"]
+                "service_times", "labels", "insert_time", "doctor_photo"]
         items = self.db.execute_select(self.t, cols=cols)
         return items

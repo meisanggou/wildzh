@@ -10,6 +10,11 @@
 				"col_name": "doctor_name",
 				"col_type": "varchar(30)"
 			},
+          {
+				"col_comment": "医生照片",
+				"col_name": "doctor_photo",
+				"col_type": "varchar(100)"
+			},
 			{
 				"col_comment": "职称",
 				"col_name": "degree",

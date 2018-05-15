@@ -22,30 +22,37 @@
                 <div class="form-group apiContentLine">
                     <ul>
                         <li>
-                            <label for="">医生分类：</label>
-                            <select class="box-side width150" id="doctor_type" type="text">
-                                <option value="diantai" about="4">电台</option>
-                                <option value="fangsong" about="5">放松</option>
-                            </select>
-                        </li>
-                        <li>
-                            <label for="effective_days">医生名称：</label>
-                            <input class="box-side width500" id="doctor_name" type="text" placeholder="" msg="请输入医生名称"/>
-                        </li>
-                        <li>
-                            <label for="effective_days">医生介绍：</label>
-                            <input class="box-side width500" id="doctor_desc" type="text" msg="请输入医生介绍"/>
+                            <label for="effective_days">医生姓名：</label>
+                            <input class="box-side width300" id="doctor_name" type="text" placeholder="" msg="请输入医生姓名"/>
                         </li>
                         <li>
                             <label for="effective_days">医生图片：</label>
                             <input class="box-side width300" id="doctor_extend_pic" type="file" placeholder="上传图片"/>
-                            <img id="doctor_extend_pic_url" src=""/>
+                            <img id="doctor_photo" src=""/>
                         </li>
                         <li>
-                            <label for="effective_days">医生上传：</label>
-                            <input class="box-side width300" id="upload_doctor" type="file" placeholder="上传医生"/>
-                            <button class="btn btn-success" id="btn_upload">上传</button>
-                            <input class="display_none" id="doctor_url">
+                            <label for="effective_days">职称：</label>
+                            <input class="box-side width500" id="degree" type="text" msg="请输入医生职称"/>
+                        </li>
+                        <li>
+                            <label for="effective_days">单位：</label>
+                            <input class="box-side width500" id="company" type="text" msg="请输入医生单位"/>
+                        </li>
+                        <li>
+                            <label for="effective_days">部门：</label>
+                            <input class="box-side width500" id="department" type="text" msg="请输入医生部门"/>
+                        </li>
+                        <li>
+                            <label for="effective_days">擅长领域：</label>
+                            <input class="box-side width500" id="domain" type="text" msg="请输入医生擅长领域"/>
+                        </li>
+                        <li>
+                            <label for="effective_days">标签：</label>
+                            <input class="box-side width500" id="labels" type="text" msg="请输入医生标签"/>
+                        </li>
+                        <li>
+                            <label for="effective_days">星级：</label>
+                            <input class="box-side width100" id="labels" type="text" msg="请输入医生星级"/>
                         </li>
                     </ul>
 
@@ -55,6 +62,5 @@
         </div>
         <input id="add_url" value="{{ add_url }}" class="display_none">
         <input id="upload_url" value="{{ upload_url }}" class="display_none">
-        <input id="m_upload_url"  value="{{ m_upload_url }}" class="display_none">
     </div>
 {% endblock %}
