@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block js_content %}
-    {{ 't_js/doctor/add.js' | make_static_html | safe }}
+    {{ 't_js/doctor/update.js' | make_static_html | safe }}
 {% endblock %}
 
 {% block center_content %}
@@ -59,7 +59,7 @@
 
                 </div>
             </fieldset>
-            <button class="btn btn-success btn-down api-newBtn" id="btn_new" >更新</button>
+            <button class="btn btn-success btn-down api-newBtn" id="btn_update" >更新</button>
             <button class="btn btn-success btn-down api-newBtn" id="btn_detail" >新建或查看详细</button>
         </div>
         <input id="info_url" value="{{ info_url }}" class="display_none">
