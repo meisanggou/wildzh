@@ -1,0 +1,100 @@
+[
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "auto_increment": true,
+                "col_comment": "医生编号",
+                "col_name": "doctor_no",
+                "col_type": "int(11)"
+            },
+           {
+                "col_comment": "医生姓名",
+                "col_name": "doctor_name",
+                "col_type": "varchar(30)"
+            },
+           {
+                "col_comment": "职称",
+                "col_name": "degree",
+                "col_type": "varchar(50)"
+            },
+            {
+                "col_comment": "工作单位 公司",
+                "col_name": "company",
+                "col_type": "varchar(40)"
+            },
+            {
+                "col_comment": "部门",
+                "col_name": "department",
+                "col_type": "varchar(50)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "擅长领域",
+                "col_name": "domain",
+                "col_type": "varchar(100)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "星级",
+                "col_name": "star_level",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "问诊数",
+                "col_name": "service_times",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "标签",
+                "col_name": "labels",
+                "col_type": "varchar(40)",
+                "allow_null": true
+            }
+        ],
+        "table_comment": "医生概要信息",
+        "table_name": "doctor_info"
+    },
+  {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "auto_increment": true,
+                "col_comment": "医生编号",
+                "col_name": "doctor_no",
+                "col_type": "int(11)"
+            },
+           {
+                "col_comment": "个人简介",
+                "col_name": "doctor_profile",
+                "col_type": "varchar(300)"
+            },
+           {
+                "col_comment": "执业经历",
+                "col_name": "work_experience",
+                "col_type": "varchar(1000)"
+            },
+            {
+                "col_comment": "学术经历",
+                "col_name": "study_experience",
+                "col_type": "varchar(800)"
+            },
+            {
+                "col_comment": "获得荣誉",
+                "col_name": "honor",
+                "col_type": "varchar(500)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "收费情况",
+                "col_name": "unit_price",
+                "col_type": "int(11)",
+                "allow_null": true
+            }
+        ],
+        "table_comment": "医生详细信息",
+        "table_name": "doctor_detail"
+    }
+]
