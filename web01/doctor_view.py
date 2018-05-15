@@ -7,7 +7,7 @@ from flask import request, g, jsonify
 from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url
 from classes.doctor import Doctor
-from web01 import create_blue, upload_folder
+from web01 import create_blue
 
 __author__ = 'ZhouHeng'
 
@@ -26,6 +26,10 @@ def add_func():
     upload_url = url_prefix + "/upload/"
     if "action" in request.args and request.args["action"] == "doctor":
         return rt.render("add.html", page_list=page_list, upload_url=upload_url, info_url=info_url)
+    elif "action" in request.args and request.args["action"] == "detail":
+        return rt.render("detail.html", page_list=page_list, page_doctor=page_doctor, info_url=info_url)
+    elif "action" in request.args and request.args["action"] == "update":
+        return rt.render("update.html", page_list=page_list, page_doctor=page_doctor, info_url=info_url)
     return rt.render("overview.html", info_url=info_url, page_doctor=page_doctor)
 
 

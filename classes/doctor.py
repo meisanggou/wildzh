@@ -53,6 +53,6 @@ class Doctor(object):
 
     def select_doctor(self):
         cols = ["doctor_no", "doctor_name", "degree", "company", "department", "domain", "star_level",
-                "service_times", "labels", "insert_time", "doctor_photo"]
+                "service_times", "labels", "insert_time", "doctor_photo", "status"]
         items = self.db.execute_select(self.t, cols=cols)
         return items
