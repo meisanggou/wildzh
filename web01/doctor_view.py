@@ -119,3 +119,11 @@ def add_detail_action():
     request_data["doctor_no"] = g.doctor_no
     return jsonify({"status": True, "data": request_data})
 
+
+@doctor_view.route("/detail/", methods=["PUT"])
+@required_doctor_no
+def update_detail_action():
+    request_data = request.json
+    c_doctor.update_detail(g.doctor_no, **request_data)
+    request_data["doctor_no"] = g.doctor_no
+    return jsonify({"status": True, "data": request_data})

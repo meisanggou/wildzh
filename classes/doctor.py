@@ -35,6 +35,11 @@ class Doctor(object):
         l = self.db.execute_update(self.t, update_value=kwargs, where_value=where_value)
         return l
 
+    def _update_detail(self, doctor_no, **kwargs):
+        where_value = dict(doctor_no=doctor_no)
+        l = self.db.execute_update(self.t_detail, update_value=kwargs, where_value=where_value)
+        return l
+
     def _update_status(self, doctor_no, add_status=None, sub_status=None):
         where_value = dict(doctor_no=doctor_no)
         if add_status is not None:
@@ -67,6 +72,13 @@ class Doctor(object):
             if kwargs[key] is None or key not in cols:
                 del kwargs[key]
         return self._update_info(doctor_no, **kwargs)
+
+    def update_detail(self, doctor_no, **kwargs):
+        cols = ["doctor_profile", "work_experience", "study_experience", "honor", "unit_price"]
+        for key in kwargs.keys():
+            if kwargs[key] is None or key not in cols:
+                del kwargs[key]
+        return self._update_detail(doctor_no, **kwargs)
 
     def select_doctor(self, doctor_no=None):
         if doctor_no is not None:
