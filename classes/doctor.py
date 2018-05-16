@@ -30,6 +30,11 @@ class Doctor(object):
         l = self.db.execute_insert(self.t_detail, kwargs)
         return l
 
+    def _update_info(self, doctor_no, **kwargs):
+        where_value = dict(doctor_no=doctor_no)
+        l = self.db.execute_update(self.t, update_value=kwargs, where_value=where_value)
+        return l
+
     def _update_status(self, music_no, add_status=None, sub_status=None):
         where_value = dict(music_no=music_no)
         if add_status is not None:
@@ -50,6 +55,13 @@ class Doctor(object):
         item = self._insert_info(doctor_name, doctor_photo, degree, company, department, domain, star_level,
                                  service_times, labels)
         return item
+
+    def update_doctor(self, doctor_no, **kwargs):
+        cols = ["doctor_name", "degree", "company", "department", "domain", "star_level", "labels"]
+        for key in kwargs.keys():
+            if kwargs[key] is None or key not in cols:
+                del kwargs[key]
+        return self._update_info(doctor_no, **kwargs)
 
     def select_doctor(self, doctor_no=None):
         if doctor_no is not None:

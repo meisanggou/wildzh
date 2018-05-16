@@ -28,7 +28,7 @@ def referer_doctor_no(f):
             g.doctor_no = None
             return f(*args, **kwargs)
         g.ref_url = request.headers["Referer"]
-        find_no = re.findall("doctor_no=(\\d+)", g.ref_url)
+        find_no = re.findall("doctor_no=(\\w+)", g.ref_url)
         if len(find_no) > 0:
             g.doctor_no = find_no[0]
         elif "doctor_no" in request.args:
@@ -37,6 +37,17 @@ def referer_doctor_no(f):
             g.doctor_no = None
         return f(*args, **kwargs)
     return decorated_function
+
+
+def required_doctor_no(f):
+    @wraps(f)
+    @referer_doctor_no
+    def decorated_function(*args, **kwargs):
+        if g.doctor_no is None:
+            return jsonify({"status": False, "data": "Bad Request"})
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 @doctor_view.route("/", methods=["GET"])
 def add_func():
@@ -65,7 +76,6 @@ support_upload2(doctor_view, upload_folder, file_prefix_url, ("doctor", "photo")
 
 @doctor_view.route("/info/", methods=["POST"])
 def add_doctor_action():
-    g.user_name = "zh_test"
     request_data = request.json
     doctor_name = request_data["doctor_name"]
     doctor_photo = request_data["doctor_photo"]
@@ -79,24 +89,12 @@ def add_doctor_action():
     return jsonify({"status": True, "data": data})
 
 
-@doctor_view.route("/", methods=["PUT"])
+@doctor_view.route("/info/", methods=["PUT"])
+@required_doctor_no
 def update_doctor_action():
     request_data = request.json
-    doctor_no = request_data["doctor_no"]
-    title = request_data["title"]
-    abstract = request_data["abstract"]
-    content = request_data["content"]
-    doctor_desc = request_data["doctor_desc"]
-    pic_url = request_data["pic_url"]
-    auto = request_data.get("auto", False)
-    if auto is False:
-        exec_r, data = c_doctor.update_doctor(doctor_no, title, abstract, content, doctor_desc, pic_url)
-    else:
-        doctor_file = os.path.join(upload_folder, "%s_%s.txt" % (doctor_no, int(time())))
-        with open(doctor_file, "w") as wa:
-            wa.write(content.encode("utf-8"))
-        exec_r, data = True, doctor_file
-    return jsonify({"status": exec_r, "data": data})
+    c_doctor.update_doctor(g.doctor_no, **request_data)
+    return jsonify({"status": True, "data": "success"})
 
 
 @doctor_view.route("/query/", methods=["GET"])
