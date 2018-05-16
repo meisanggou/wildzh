@@ -97,3 +97,7 @@ class Doctor(object):
         if len(items) <= 0:
             return None
         return items[0]
+
+    def online_doctor(self, doctor_no):
+        l = self._update_status(doctor_no, add_status=16)
+        return l

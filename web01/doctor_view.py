@@ -56,13 +56,14 @@ def add_func():
     info_url = url_prefix + "/info/"
     upload_url = url_prefix + "/upload/"
     detail_url = url_prefix + "/detail/"
+    online_url = url_prefix + "/online/"
     if "action" in request.args and request.args["action"] == "doctor":
         return rt.render("add.html", page_list=page_list, upload_url=upload_url, info_url=info_url)
     elif "action" in request.args and request.args["action"] == "detail":
         return rt.render("detail.html", page_list=page_list, page_doctor=page_doctor, detail_url=detail_url)
     elif "action" in request.args and request.args["action"] == "update":
         return rt.render("update.html", page_list=page_list, page_doctor=page_doctor, info_url=info_url)
-    return rt.render("overview.html", info_url=info_url, page_doctor=page_doctor)
+    return rt.render("overview.html", info_url=info_url, page_doctor=page_doctor, online_url=online_url)
 
 
 @doctor_view.route("/info/", methods=["GET"])
@@ -127,3 +128,13 @@ def update_detail_action():
     c_doctor.update_detail(g.doctor_no, **request_data)
     request_data["doctor_no"] = g.doctor_no
     return jsonify({"status": True, "data": request_data})
+
+
+@doctor_view.route("/online/", methods=["POST"])
+def online_music():
+    doctor_no = g.request_data["doctor_no"]
+    items = c_doctor.select_doctor(doctor_no)
+    if len(items) != 1:
+        return jsonify({"status": False, "data": "医生不存在"})
+    c_doctor.online_doctor(doctor_no)
+    return jsonify({"status": True, "data": "success"})
