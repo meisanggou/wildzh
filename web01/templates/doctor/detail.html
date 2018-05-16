@@ -1,13 +1,13 @@
 {% extends "base_menu.html" %}
 
-{% block title %}添加医生详细信息{% endblock %}
+{% block title %}医生详细信息{% endblock %}
 
 {% block css_content %}
     {{ 't_css/tabControls.css' | make_static_html | safe }}
 {% endblock %}
 
 {% block js_content %}
-    {{ 't_js/doctor/add.js' | make_static_html | safe }}
+    {{ 't_js/doctor/detail.js' | make_static_html | safe }}
 {% endblock %}
 
 {% block center_content %}
@@ -24,36 +24,28 @@
                     <ul>
                         <li>
                             <label for="effective_days">医生姓名：</label>
-                            <input class="box-side width300" id="doctor_name" type="text" placeholder="" msg="请输入医生姓名"/>
+                            <input class="box-side width300" id="doctor_name" type="text" placeholder="" disabled/>
                         </li>
                         <li>
-                            <label for="effective_days">医生图片：</label>
-                            <input class="box-side width300" id="doctor_extend_pic" type="file" placeholder="上传图片"/>
+                            <label for="effective_days">个人简介：</label>
+                            <input class="box-side width300" id="doctor_profile" type="text" msg="请输入个人简介"/>
                             <img id="doctor_photo" src=""/>
                         </li>
                         <li>
-                            <label for="effective_days">职称：</label>
-                            <input class="box-side width500" id="degree" type="text" msg="请输入医生职称"/>
+                            <label for="effective_days">工作经历：</label>
+                            <input class="box-side width500" id="work_experience" type="text" msg="请输入工作经历"/>
                         </li>
                         <li>
-                            <label for="effective_days">单位：</label>
-                            <input class="box-side width500" id="company" type="text" msg="请输入医生单位"/>
+                            <label for="effective_days">学术经历：</label>
+                            <input class="box-side width500" id="study_experience" type="text" msg="请输入学术经历"/>
                         </li>
                         <li>
-                            <label for="effective_days">部门：</label>
-                            <input class="box-side width500" id="department" type="text" msg="请输入医生部门"/>
+                            <label for="effective_days">获得荣誉：</label>
+                            <input class="box-side width500" id="honor" type="text" msg="请输入获得荣誉"/>
                         </li>
                         <li>
-                            <label for="effective_days">擅长领域：</label>
-                            <input class="box-side width500" id="domain" type="text" msg="请输入医生擅长领域"/>
-                        </li>
-                        <li>
-                            <label for="effective_days">标签：</label>
-                            <input class="box-side width500" id="labels" type="text" msg="请输入医生标签"/>
-                        </li>
-                        <li>
-                            <label for="effective_days">星级：</label>
-                            <input class="box-side width100" id="star_level" type="text" msg="请输入医生星级"/>
+                            <label for="effective_days">收费情况：</label>
+                            <input class="box-side width100" id="unit_price" type="text" msg="请输入收费情况"/>
                         </li>
                     </ul>
 
@@ -61,7 +53,6 @@
             </fieldset>
             <button class="btn btn-success btn-down api-newBtn" id="btn_new" >新建</button>
         </div>
-        <input id="info_url" value="{{ info_url }}" class="display_none">
-        <input id="upload_url" value="{{ upload_url }}" class="display_none">
+        <input id="detail_url" value="{{ detail_url }}" class="display_none">
     </div>
 {% endblock %}

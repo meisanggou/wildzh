@@ -73,10 +73,9 @@
 	{
 		"table_cols": [{
 				"pri_key": true,
-				"auto_increment": true,
 				"col_comment": "医生编号",
 				"col_name": "doctor_no",
-				"col_type": "int(11)"
+				"col_type": "char(32)"
 			},
 			{
 				"col_comment": "个人简介",
@@ -102,7 +101,7 @@
 			{
 				"col_comment": "收费情况",
 				"col_name": "unit_price",
-				"col_type": "int(11)",
+				"col_type": "varchar(20)",
 				"allow_null": true
 			}
 		],

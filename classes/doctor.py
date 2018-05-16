@@ -24,9 +24,9 @@ class Doctor(object):
         self.db.execute_insert(self.t, kwargs)
         return kwargs
 
-    def _insert_detail(self, doctor_profile, work_experience, study_experience, honor, unit_price):
+    def _insert_detail(self, doctor_no, doctor_profile, work_experience, study_experience, honor, unit_price):
         kwargs = dict(doctor_profile=doctor_profile, work_experience=work_experience, study_experience=study_experience,
-                      honor=honor, unit_price=unit_price)
+                      honor=honor, unit_price=unit_price, doctor_no=doctor_no)
         l = self.db.execute_insert(self.t_detail, kwargs)
         return l
 
@@ -35,8 +35,8 @@ class Doctor(object):
         l = self.db.execute_update(self.t, update_value=kwargs, where_value=where_value)
         return l
 
-    def _update_status(self, music_no, add_status=None, sub_status=None):
-        where_value = dict(music_no=music_no)
+    def _update_status(self, doctor_no, add_status=None, sub_status=None):
+        where_value = dict(doctor_no=doctor_no)
         if add_status is not None:
             l = self.db.execute_logic_or(self.t, status=add_status, where_value=where_value)
         elif sub_status is not None:
@@ -45,8 +45,8 @@ class Doctor(object):
             l = 0
         return l
 
-    def _update_num(self, music_no):
-        where_value = dict(music_no=music_no)
+    def _update_num(self, doctor_no):
+        where_value = dict(doctor_no=doctor_no)
         l = self.db.execute_plus(self.t, "service_times", where_value=where_value)
         return l
 
@@ -55,6 +55,11 @@ class Doctor(object):
         item = self._insert_info(doctor_name, doctor_photo, degree, company, department, domain, star_level,
                                  service_times, labels)
         return item
+
+    def new_detail(self, doctor_no, doctor_profile, work_experience, study_experience, honor, unit_price):
+        l = self._insert_detail(doctor_no, doctor_profile, work_experience, study_experience, honor, unit_price)
+        self._update_status(doctor_no, add_status=2)
+        return l
 
     def update_doctor(self, doctor_no, **kwargs):
         cols = ["doctor_name", "degree", "company", "department", "domain", "star_level", "labels"]
@@ -72,3 +77,11 @@ class Doctor(object):
                 "service_times", "labels", "insert_time", "doctor_photo", "status"]
         items = self.db.execute_select(self.t, cols=cols, where_value=where_value)
         return items
+
+    def select_detail(self, doctor_no):
+        cols = ["doctor_no", "doctor_profile", "work_experience", "study_experience", "honor", "unit_price"]
+        where_value = dict(doctor_no=doctor_no)
+        items = self.db.execute_select(self.t_detail, cols=cols, where_value=where_value)
+        if len(items) <= 0:
+            return None
+        return items[0]

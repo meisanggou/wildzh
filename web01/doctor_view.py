@@ -55,10 +55,11 @@ def add_func():
     page_doctor = url_prefix + "/?action=doctor"
     info_url = url_prefix + "/info/"
     upload_url = url_prefix + "/upload/"
+    detail_url = url_prefix + "/detail/"
     if "action" in request.args and request.args["action"] == "doctor":
         return rt.render("add.html", page_list=page_list, upload_url=upload_url, info_url=info_url)
     elif "action" in request.args and request.args["action"] == "detail":
-        return rt.render("detail.html", page_list=page_list, page_doctor=page_doctor, info_url=info_url)
+        return rt.render("detail.html", page_list=page_list, page_doctor=page_doctor, detail_url=detail_url)
     elif "action" in request.args and request.args["action"] == "update":
         return rt.render("update.html", page_list=page_list, page_doctor=page_doctor, info_url=info_url)
     return rt.render("overview.html", info_url=info_url, page_doctor=page_doctor)
@@ -94,13 +95,27 @@ def add_doctor_action():
 def update_doctor_action():
     request_data = request.json
     c_doctor.update_doctor(g.doctor_no, **request_data)
-    return jsonify({"status": True, "data": "success"})
+    request_data["doctor_no"] = g.doctor_no
+    return jsonify({"status": True, "data": request_data})
 
 
-@doctor_view.route("/query/", methods=["GET"])
-def query_func():
-    if request.is_xhr is True:
-        exec_r, doctors = c_doctor.query_doctor()
-        return jsonify({"status": exec_r, "data": doctors})
-    url_add_doctor = url_prefix + "/"
-    return rt.render("query.html", url_add_doctor=url_add_doctor)
+@doctor_view.route("/detail/", methods=["GET"])
+@required_doctor_no
+def get_detail():
+    item = c_doctor.select_detail(g.doctor_no)
+    return jsonify({"status": True, "data": [item]})
+
+
+@doctor_view.route("/detail/", methods=["POST"])
+@required_doctor_no
+def add_detail_action():
+    request_data = request.json
+    doctor_profile = request_data["doctor_profile"]
+    work_experience = request_data["work_experience"]
+    study_experience = request_data["study_experience"]
+    honor = request_data["honor"]
+    unit_price = request_data["unit_price"]
+    l = c_doctor.new_detail(g.doctor_no, doctor_profile, work_experience, study_experience, honor, unit_price)
+    request_data["doctor_no"] = g.doctor_no
+    return jsonify({"status": True, "data": request_data})
+

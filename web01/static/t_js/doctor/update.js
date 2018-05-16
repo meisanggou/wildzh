@@ -37,7 +37,7 @@ function update_doctor(){
             },
             function(isConfirm){
                 if (isConfirm){
-                    var j_url = location.pathname + "?doctor_no" + data["doctor_no"] + "&action=detail";
+                    var j_url = location.pathname + "?doctor_no=" + data["doctor_no"] + "&action=detail";
                     j_url += "&doctor_name=" + data["doctor_name"];
                     location.href = j_url;
                 }
