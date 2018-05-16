@@ -38,6 +38,7 @@ function update_doctor(){
             function(isConfirm){
                 if (isConfirm){
                     var j_url = location.pathname + "?doctor_no" + data["doctor_no"] + "&action=detail";
+                    j_url += "&doctor_name=" + data["doctor_name"];
                     location.href = j_url;
                 }
             }
@@ -59,6 +60,13 @@ function init_info(data){
         }
 
         $("#doctor_photo").attr("src", doctor_item["doctor_photo"]);
+        var detail_href = location.pathname + "?action=detail&doctor_no=" + doctor_item["doctor_no"];
+        detail_href += "&doctor_name=" + doctor_item["doctor_name"];
+        $("#link_detail").attr("href", detail_href);
+        if((doctor_item["status"] & 2) == 2){
+            $("#link_detail").text("更新详细");
+        }
+        $("#link_detail").show();
     }
 }
 
