@@ -2,15 +2,13 @@
  * Created by meisa on 2018/5/9.
  */
 
-var cn_doctor_type = {"diantai": "电台", "fangsong": "放松"};
-
 function delete_doctor() {
     var current_td = $(this).parent();
     var current_tr = current_td.parent();
     var tr_id = current_tr.attr("id");
-    var doctor_type = current_tr.find("td:eq(0)").text();
-    var doctor_name = current_tr.find("td:eq(1)").text();
-    var msg = "确定要删除【" + doctor_type + "】【" + doctor_name + "】";
+    var doctor_name = current_tr.find("td:eq(0)").text();
+    var degree = current_tr.find("td:eq(1)").text();
+    var msg = "确定要删除【" + degree + "】【" + doctor_name + "】";
     swal({
             title: "删除警告",
             text: msg,
@@ -24,8 +22,7 @@ function delete_doctor() {
         },
         function (isConfirm) {
             if (isConfirm) {
-                var ks = tr_id.split("|");
-                var r_d = {"doctor_no": ks[1], "doctor_type": ks[0]};
+                var r_d = {"doctor_no": tr_id};
                 my_async_request2($("#info_url").val(), "DELETE", r_d, function (data) {
                     location.reload();
                 });

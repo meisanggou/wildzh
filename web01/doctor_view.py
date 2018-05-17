@@ -105,6 +105,13 @@ def update_doctor_action():
     return jsonify({"status": True, "data": request_data})
 
 
+@doctor_view.route("/info/", methods=["DELETE"])
+def delete_doctor_action():
+    request_data = request.json
+    c_doctor.delete_doctor(request_data["doctor_no"])
+    return jsonify({"status": True, "data": request_data})
+
+
 @doctor_view.route("/detail/", methods=["GET"])
 @required_doctor_no
 def get_detail():

@@ -102,3 +102,7 @@ class Doctor(object):
     def online_doctor(self, doctor_no):
         l = self._update_status(doctor_no, add_status=64)
         return l
+
+    def delete_doctor(self, doctor_no):
+        l = self._update_info(doctor_no, status=0)
+        return l
