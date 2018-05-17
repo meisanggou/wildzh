@@ -81,13 +81,14 @@ class Doctor(object):
         return self._update_detail(doctor_no, **kwargs)
 
     def select_doctor(self, doctor_no=None):
+        where_cond = ["status<>0"]
         if doctor_no is not None:
             where_value = dict(doctor_no=doctor_no)
         else:
             where_value = None
         cols = ["doctor_no", "doctor_name", "degree", "company", "department", "domain", "star_level",
                 "service_times", "labels", "insert_time", "doctor_photo", "status"]
-        items = self.db.execute_select(self.t, cols=cols, where_value=where_value)
+        items = self.db.execute_select(self.t, cols=cols, where_value=where_value, where_cond=where_cond)
         return items
 
     def select_detail(self, doctor_no):
