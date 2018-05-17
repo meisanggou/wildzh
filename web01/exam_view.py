@@ -52,8 +52,8 @@ def required_exam_no(f):
     return decorated_function
 
 
-@login_required
 @exam_view.route("/", methods=["GET"])
+@login_required
 def index():
     add_url = url_prefix + "/"
     upload_url = url_prefix + "/upload/"
@@ -74,8 +74,8 @@ def index():
     return rt.render("overview.html", page_exam=page_exam, info_url=info_url, online_url=online_url)
 
 
-@login_required
 @exam_view.route("/", methods=["POST"])
+@login_required
 def new_exam():
     g.user_name = "zh_test"
     data = g.request_data
@@ -116,6 +116,7 @@ def get_exam_info():
 
 
 @exam_view.route("/info/", methods=["PUT"])
+@login_required
 def update_exam():
     data = g.request_data
     exam_no = data["exam_no"]
@@ -129,6 +130,7 @@ def update_exam():
 
 
 @exam_view.route("/info/", methods=["DELETE"])
+@login_required
 def delete_exam():
     exam_no = g.request_data["exam_no"]
     exam_type = g.request_data["exam_type"]
@@ -136,6 +138,7 @@ def delete_exam():
     return jsonify({"status": True, "data": "删除成功"})
 
 
+@login_required
 @exam_view.route("/questions/", methods=["POST", "PUT"])
 @required_exam_no
 def entry_questions():
@@ -160,6 +163,7 @@ def get_exam_questions():
 
 
 @exam_view.route("/online/", methods=["POST"])
+@login_required
 def online_exam():
     exam_no = g.request_data["exam_no"]
     exam_type = g.request_data["exam_type"]
@@ -192,6 +196,7 @@ def add_exam_records():
     else:
         r["result_explain"] = None
     return jsonify({"status": True, "data": r})
+
 
 @exam_view.route("/explain/", methods=["GET"])
 @required_exam_no
