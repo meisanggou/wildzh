@@ -46,6 +46,16 @@ class ArticleManager(object):
         l = self.db.execute_update(self.t_info, where_value=dict(article_no=article_no), update_value=update_value)
         return l
 
+    def _update_status(self, article_no, add_status=None, sub_status=None):
+        where_value = dict(article_no=article_no)
+        if add_status is not None:
+            l = self.db.execute_logic_or(self.t_info, status=add_status, where_value=where_value)
+        elif sub_status is not None:
+            l = self.db.execute_logic_non(self.t_info, where_value=where_value, status=sub_status)
+        else:
+            l = 0
+        return l
+
     def _update_statistics(self, article_no, *args):
         update_value_list = []
         for col in args:
@@ -82,13 +92,13 @@ class ArticleManager(object):
 
     def _select_info(self, article_no, where_cond=None, where_cond_args=None):
         cols = ["article_no", "author", "adder", "title", "article_desc", "abstract", "pic_url",
-                "update_time"]
+                "update_time", "status"]
         if article_no is not None:
             where_value = dict(article_no=article_no)
         else:
             where_value = None
         db_items = self.db.execute_select(self.t_info, where_value=where_value, cols=cols, where_cond=where_cond,
-                                          where_cond_args=where_cond_args)
+                                          where_cond_args=where_cond_args, print_sql=True)
         return db_items
 
     def get_article(self, article_no, user_name):
@@ -112,5 +122,10 @@ class ArticleManager(object):
         if "title" in kwargs:
             where_cond.append("title like %%%s%%")
             where_cond_args.append(kwargs["title"])
-        db_items = self._select_info(None, where_cond, where_cond_args)
+        article_no = kwargs.pop("article_no", None)
+        db_items = self._select_info(article_no, where_cond, where_cond_args)
         return True, db_items
+
+    def online(self, article_no):
+        l = self._update_status(article_no, add_status=64)
+        return l

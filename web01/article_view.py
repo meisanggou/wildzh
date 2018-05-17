@@ -37,7 +37,8 @@ def add_func():
     elif "action" in request.args and request.args["action"] == "article":
         return rt.render("add.html", article_no=article_no, page_list=page_list, upload_url=upload_url)
     query_url = url_prefix + "/query/"
-    return rt.render("query.html", query_url=query_url, page_article=page_article)
+    online_url =  url_prefix + "/online/"
+    return rt.render("query.html", query_url=query_url, page_article=page_article, online_url=online_url)
 
 
 support_upload2(article_view, upload_folder, file_prefix_url, ("article", "pic"), "upload")
@@ -85,3 +86,15 @@ def query_func():
         return jsonify({"status": exec_r, "data": articles})
     url_add_article = url_prefix + "/"
     return rt.render("query.html", url_add_article=url_add_article)
+
+
+@article_view.route("/online/", methods=["POST"])
+def online_music():
+    article_no = g.request_data["article_no"]
+    print(article_no)
+    r, items = c_article.query_article(article_no=article_no)
+    print(items)
+    if r is False or len(items) != 1:
+        return jsonify({"status": False, "data": "文章不存在"})
+    c_article.online(article_no)
+    return jsonify({"status": True, "data": "success"})

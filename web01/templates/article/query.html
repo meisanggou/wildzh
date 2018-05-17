@@ -20,6 +20,19 @@
     <!-- 加载编辑器的容器 -->
     <div class="paddingTop50" id="article_container">
         <div class="form-group apiContentLine">
+            <div style="position: relative">
+                        <table class="table table-bordered table-hover api-list-table margintop20" id="t_article">
+                            <tr>
+                                <th scope="col" width="50%">标题</th>
+                                <th scope="col" width=10%">作者</th>
+                                <th scope="col" width=10%">状态</th>
+                                <th scope="col" width=20%">操作</th>
+                            </tr>
+                            <tr id="tr_none" class="display_none">
+                                <td colSpan="4" class="text-center">一条记录都没有</td>
+                            </tr>
+                        </table>
+                    </div>
             <ul>
                 <li>
                     <input class="box-side width800" id="query_str" type="text"/>
@@ -30,6 +43,7 @@
         </div>
     <input class="display_none" value="{{ query_url }}"  id="query_url"/>
     <input class="display_none" value="{{ page_article }}", id="page_article">
+    <input class="display_none" value="{{ online_url }}", id="online_url">
     </div>
     </div>
 {% endblock %}

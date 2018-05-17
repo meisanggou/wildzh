@@ -2,8 +2,103 @@
  * Created by msg on 3/22/17.
  */
 
+function delete_article() {
+    var current_td = $(this).parent();
+    var current_tr = current_td.parent();
+    var tr_id = current_tr.attr("id");
+    var title = current_tr.find("td:eq(0)").text();
+    var msg = "确定要删除【" + title + "】";
+    swal({
+            title: "删除警告",
+            text: msg,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: '#DD6B55',
+            confirmButtonText: '删除',
+            cancelButtonText: "取消",
+            closeOnConfirm: true,
+            closeOnCancel: true
+        },
+        function (isConfirm) {
+            if (isConfirm) {
+                var r_d = {"article_no": tr_id};
+                my_async_request2($("#info_url").val(), "DELETE", r_d, function (data) {
+                    location.reload();
+                });
+            }
+        }
+    );
+}
+
+function explain_status(s) {
+    if ((s & 128) != 0) {
+        return "已下线"
+    }
+    if ((s & 64) != 0) {
+        return "已上线"
+    }
+    return "待上线"
+}
+
+function fill_table(data) {
+    var keys = ["title", "author"];
+    var t = $("#t_article");
+    for (var i = 0; i < data.length; i++) {
+        var add_tr = $("<tr></tr>");
+        add_tr.attr("id", data[i]["article_no"]);
+
+        for (var j = 0; j < keys.length; j++) {
+            var td_t = new_td(keys[j], data[i]);
+            add_tr.append(td_t);
+        }
+        var td_status = new_td("status", data[i], null, null, explain_status);
+        add_tr.append(td_status);
+
+        var td_op = $("<td></td>");
+        var basic_url = AddUrlArg(location.pathname, "article_no", data[i]["article_no"]);
+
+        var del_link = $("<a href='javascript:void(0)'>删除</a>");
+        del_link.click(delete_article);
+        td_op.append(del_link);
+
+        if (data[i]["status"] == 1) {
+            td_op.append(" | ");
+            var detail_url = AddUrlArg(basic_url, "action", "article");
+            td_op.append(new_link("更新", detail_url));
+
+            var data_item = data[i];
+            td_op.append(" | ");
+            var online_link = $("<a href='javascript:void(0)'>上线</a>");
+            var msg = "确定上线文章【" + data[i]["title"] + "】\n上线后将不可更改信息！";
+            online_link.click(function () {
+                swal({
+                        title: "上线提醒",
+                        text: msg,
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: '#DD6B55',
+                        confirmButtonText: '上线',
+                        cancelButtonText: "取消",
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            my_async_request2($("#online_url").val(), "POST", data_item, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                );
+            });
+            td_op.append(online_link);
+        }
+        add_tr.append(td_op);
+        t.append(add_tr);
+    }
+}
+
 function handler_query_article(data) {
-    console.info(data);
     var article_count = data.length;
     //article_count = 0;
     if (article_count <= 0) {
@@ -14,6 +109,7 @@ function handler_query_article(data) {
         $("#article_container").append(no_article_div);
     }
     else {
+        fill_table(data);
         var article_list = $('<div class="articleList"></>');
         var current_user_name = "";
         if ($("#current_user_name").length > 0) {
@@ -50,32 +146,32 @@ $(document).ready(function () {
     $("#btn_add_article").click(function () {
         window.open($("#page_article").val());
     });
-    $("#btn_query").click(function(){
+    $("#btn_query").click(function () {
         console.info("query");
         var q_value = $("#query_str").val().trim(" ");
         var div_l = $(".articleList");
         var li_articles = div_l.find("li");
         var li_len = li_articles.length;
-        for(var i=0;i<li_len;i++){
+        for (var i = 0; i < li_len; i++) {
             var li_item = $(li_articles[i]);
             li_item.hide();
-            if(q_value.length == 0){
+            if (q_value.length == 0) {
                 li_item.show();
             }
-            else{
-                if(li_item.text().indexOf(q_value) >= 0){
+            else {
+                if (li_item.text().indexOf(q_value) >= 0) {
                     li_item.show();
                 }
             }
 
         }
     });
-    $(function(){
-        document.onkeydown = function(e){
+    $(function () {
+        document.onkeydown = function (e) {
             var ev = document.all ? window.event : e;
-            if(ev.keyCode==13) {
+            if (ev.keyCode == 13) {
                 $("#btn_query").click();
-             }
+            }
         }
     });
 });

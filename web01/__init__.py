@@ -52,7 +52,7 @@ def create_app():
     one_web.add_url_rule("/static01" + '/<path:filename>', endpoint='static01', view_func=one_web.send_static_file)
     one_web.add_url_rule(file_prefix_url + "/<path:filename>", endpoint="file", view_func=one_web.send_static_file2,
                          defaults=dict(static_folder=upload_folder))
-    one_web.config.update(PERMANENT_SESSION_LIFETIME=600)
+    one_web.config.update(PERMANENT_SESSION_LIFETIME=3600)
 
     env = one_web.jinja_env
     # env.globals["current_env"] = current_env
