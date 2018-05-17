@@ -14,9 +14,9 @@ class ArticleManager(object):
         self.t_content = "article_content"
         self.t_statistics = "article_statistics"
 
-    def insert_info(self, article_no, user_name, title, abstract, article_desc=None, pic_url=None):
-        kwargs = dict(article_no=article_no, user_name=user_name, title=title, abstract=abstract, update_time=time(),
-                      article_desc=article_desc, pic_url=pic_url)
+    def insert_info(self, article_no, author, title, abstract, adder=None, article_desc=None, pic_url=None):
+        kwargs = dict(article_no=article_no, author=author, title=title, abstract=abstract, update_time=time(),
+                      article_desc=article_desc, pic_url=pic_url, adder=adder)
         l = self.db.execute_insert(self.t_info, kwargs=kwargs)
         return l
 
@@ -30,9 +30,9 @@ class ArticleManager(object):
         l = self.db.execute_insert(self.t_statistics, kwargs=kwargs)
         return l
 
-    def new_article(self, user_name, title, abstract, content, article_desc=None, pic_url=None):
+    def new_article(self, author, title, abstract, content, adder=None, article_desc=None, pic_url=None):
         article_no = uuid.uuid1().hex
-        l = self.insert_info(article_no, user_name, title, abstract, article_desc, pic_url)
+        l = self.insert_info(article_no, author, title, abstract, adder, article_desc, pic_url)
         l += self.insert_content(article_no, content)
         l += self.insert_statistics(article_no)
         return True, dict(article_no=article_no)
@@ -54,11 +54,14 @@ class ArticleManager(object):
                                    where_value=dict(article_no=article_no))
         return l
 
-    def update_article(self, article_no, title=None, abstract=None, content=None, article_desc=None, pic_url=None):
+    def update_article(self, article_no, author=None, title=None, abstract=None, content=None, article_desc=None,
+                       pic_url=None):
         if content is not None:
             self._update_content(article_no, content)
         self._update_statistics(article_no, "update_times")
         update_value = dict(update_time=time())
+        if author is not None:
+            update_value["author"] = author
         if title is not None:
             update_value["title"] = title
         if abstract is not None:
@@ -78,7 +81,8 @@ class ArticleManager(object):
         return db_items[0]
 
     def _select_info(self, article_no, where_cond=None, where_cond_args=None):
-        cols = ["article_no", "user_name", "title", "article_desc", "abstract", "pic_url", "update_time"]
+        cols = ["article_no", "author", "adder", "title", "article_desc", "abstract", "pic_url",
+                "update_time"]
         if article_no is not None:
             where_value = dict(article_no=article_no)
         else:
@@ -96,7 +100,7 @@ class ArticleManager(object):
         if article_content is None:
             return False, "文章异常"
         article_info.update(article_content)
-        if article_info["user_name"] != user_name:
+        if article_info["adder"] != user_name:
             self._update_statistics(article_no, "read_times")
         else:
             self._update_statistics(article_no, "self_read_times")

@@ -48,11 +48,12 @@ def add_article_action():
     g.user_name = "zh_test"
     request_data = request.json
     title = request_data["title"]
+    author = request_data["author"]
     abstract = request_data["abstract"]
     content = request_data["content"]
     article_desc = request_data["article_desc"]
     pic_url = request_data["pic_url"]
-    exec_r, data = c_article.new_article(g.user_name, title, abstract, content, article_desc, pic_url)
+    exec_r, data = c_article.new_article(author, title, abstract, content, g.user_name, article_desc, pic_url)
     return jsonify({"status": exec_r, "data": data})
 
 
@@ -60,6 +61,7 @@ def add_article_action():
 def update_article_action():
     request_data = request.json
     article_no = request_data["article_no"]
+    author = request_data["author"]
     title = request_data["title"]
     abstract = request_data["abstract"]
     content = request_data["content"]
@@ -67,7 +69,7 @@ def update_article_action():
     pic_url = request_data["pic_url"]
     auto = request_data.get("auto", False)
     if auto is False:
-        exec_r, data = c_article.update_article(article_no, title, abstract, content, article_desc, pic_url)
+        exec_r, data = c_article.update_article(article_no, author, title, abstract, content, article_desc, pic_url)
     else:
         article_file = os.path.join(upload_folder, "%s_%s.txt" % (article_no, int(time())))
         with open(article_file, "w") as wa:

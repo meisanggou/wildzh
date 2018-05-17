@@ -8,6 +8,7 @@ function handler(data) {
         set_look_link();
     }
     if ("content" in data && "title" in data) {
+        $("#author").val(data.author);
         $("#article_title").val(data.title);
         $("#article_desc").val(data.article_desc);
         $("#pic_url").attr("src", data.pic_url);
@@ -69,10 +70,12 @@ $(document).ready(function () {
         var content = ue.getContent();
         var abstract = ue.getContentTxt().substr(0, 400);
         var article_desc = $("#article_desc").val();
+        var author = $("#author").val();
         var pic_url = $("#pic_url").attr("src");
         var article_no = $("#article_no").val();
         var method = "POST";
-        var r_data = {"content": content, "abstract": abstract, "title": title, "article_desc": article_desc, "pic_url": pic_url};
+        var r_data = {"content": content, "abstract": abstract, "title": title, "article_desc": article_desc,
+            "pic_url": pic_url, "author": author};
         if (article_no.length == 32) {
             r_data["article_no"] = article_no;
             method = "PUT";

@@ -29,9 +29,9 @@ function handler_query_article(data) {
             abstract_p.text(article_item["abstract"]);
             article_li.append(abstract_p);
             var time_p = $('<p></p>');
-            var time_text = timestamp_2_datetime(article_item["update_time"]) + "&nbsp;&nbsp;&nbsp;&nbsp;[ 作者：" + article_item["user_name"] + " ]";
+            var time_text = timestamp_2_datetime(article_item["update_time"]) + "&nbsp;&nbsp;&nbsp;&nbsp;[ 作者：" + article_item["adder"] + " ]";
             time_p.html(time_text);
-            if (current_user_name == article_item["user_name"]) {
+            if (current_user_name == article_item["adder"]) {
                 var update_a = $("<a>编辑</a>");
                 update_a.attr("href", $("#page_article").val() + "&article_no=" + article_item["article_no"]);
                 time_p.append($(update_a));
