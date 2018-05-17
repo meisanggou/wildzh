@@ -78,7 +78,7 @@ class Music(object):
         return items
     
     def online_music(self, music_no):
-        l = self._update_status(music_no, add_status=2)
+        l = self._update_status(music_no, add_status=64)
         return l
 
     def delete_music(self, music_type, music_no):

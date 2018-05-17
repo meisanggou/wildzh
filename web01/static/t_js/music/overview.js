@@ -38,7 +38,7 @@ function explain_status(s) {
     if ((s & 128) != 0) {
         return "已下线"
     }
-    if ((s & 2) != 0) {
+    if ((s & 64) != 0) {
         return "已上线"
     }
     return "待上线"
