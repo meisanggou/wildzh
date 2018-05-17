@@ -29,8 +29,8 @@ def referer_exam_no(f):
         if "Referer" not in request.headers:
             g.ref_url = ""
             g.exam_no = None
-            return f(*args, **kwargs)
-        g.ref_url = request.headers["Referer"]
+        else:
+            g.ref_url = request.headers["Referer"]
         find_no = re.findall("exam_no=(\\d+)", g.ref_url)
         if len(find_no) > 0:
             g.exam_no = find_no[0]
@@ -107,6 +107,11 @@ def get_exam_info():
     else:
         exam_type = None
     items = c_exam.select_exam(exam_type, g.exam_no)
+    if g.user_name is None:
+        for i in range(len(items) - 1, -1, -1):
+            if items[i]["status"] & 64 == 64:
+                continue
+            del items[i]
     return jsonify({"status": True, "data": items})
 
 

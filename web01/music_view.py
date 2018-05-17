@@ -4,6 +4,7 @@ import os
 import re
 from functools import wraps
 from flask import request, jsonify, g
+from flask_login import login_required
 from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url
 from tools import folder
@@ -15,7 +16,7 @@ __author__ = 'meisa'
 url_prefix = "/music"
 
 rt = RenderTemplate("music")
-music_view = create_blue("music", url_prefix=url_prefix, menu_list={"title": u"音乐管理"})
+music_view = create_blue("music", url_prefix=url_prefix, menu_list={"title": u"音乐管理"}, auth_required=False)
 c_music = Music(db_conf_path)
 music_upload_folder = os.path.join(upload_folder, "music")
 pic_folder = folder.create_folder2(music_upload_folder, "pic")
@@ -26,8 +27,9 @@ def refer_music_no(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if "Referer" not in request.headers:
-            return jsonify({"status": False, "data": "Bad Request"})
-        g.ref_url = request.headers["Referer"]
+            g.ref_url = ""
+        else:
+            g.ref_url = request.headers["Referer"]
         find_no = re.findall("music_no=(\\d+)", g.ref_url)
         if len(find_no) > 0:
             g.music_no = find_no[0]
@@ -49,6 +51,7 @@ def required_music_no(f):
     return decorated_function
 
 
+@login_required
 @music_view.route("/", methods=["GET"])
 def index():
     add_url = url_prefix + "/"
@@ -93,6 +96,11 @@ def get_music_info():
     else:
         music_type = None
     items = c_music.select_music(music_type, g.music_no)
+    if g.user_name is None:
+        for i in range(len(items) - 1, -1, -1):
+            if items[i]["status"] & 64 == 64:
+                continue
+            del items[i]
     return jsonify({"status": True, "data": items})
 
 

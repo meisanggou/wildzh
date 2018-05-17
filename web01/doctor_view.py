@@ -70,6 +70,11 @@ def add_func():
 @referer_doctor_no
 def get_doctor_info():
     items = c_doctor.select_doctor(g.doctor_no)
+    if g.user_name is None:
+        for i in range(len(items) - 1, -1, -1):
+            if items[i]["status"] & 64 == 64:
+                continue
+            del items[i]
     return jsonify({"status": True, "data": items})
 
 
