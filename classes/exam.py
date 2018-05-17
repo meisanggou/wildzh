@@ -182,7 +182,7 @@ class Exam(object):
         return items
 
     def online_exam(self, exam_no):
-        l = self._update_status(exam_no, add_status=8)
+        l = self._update_status(exam_no, add_status=64)
         l2 = self._insert_tj(exam_no)
         return min(l, l2)
 

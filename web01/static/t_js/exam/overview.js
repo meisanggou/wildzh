@@ -44,7 +44,7 @@ function explain_status(s) {
     if ((s & 4) == 0) {
         return "缺少结果解释";
     }
-    if ((s & 8) != 0) {
+    if ((s & 64) != 0) {
         return "已上线"
     }
     return "待上线"
@@ -77,7 +77,7 @@ function init_info(data) {
             var del_link = $("<a href='javascript:void(0)'>删除</a>");
             del_link.click(delete_exam);
             td_op.append(del_link);
-            if ((data[i]["status"] & 8) == 0) {
+            if ((data[i]["status"] & 64) == 0) {
                 td_op.append(" | ");
                 var basic_url = AddUrlArg(location.pathname, "exam_no", data[i]["exam_no"]);
                 basic_url = AddUrlArg(basic_url, "exam_type", data[i]["exam_type"]);

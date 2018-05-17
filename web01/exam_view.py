@@ -5,6 +5,7 @@ import re
 import string
 from functools import wraps
 from flask import request, jsonify, g
+from flask_login import login_required
 from flask_helper import RenderTemplate, support_upload
 from zh_config import db_conf_path, upload_folder
 from tools import folder
@@ -51,6 +52,7 @@ def required_exam_no(f):
     return decorated_function
 
 
+@login_required
 @exam_view.route("/", methods=["GET"])
 def index():
     add_url = url_prefix + "/"
@@ -72,6 +74,7 @@ def index():
     return rt.render("overview.html", page_exam=page_exam, info_url=info_url, online_url=online_url)
 
 
+@login_required
 @exam_view.route("/", methods=["POST"])
 def new_exam():
     g.user_name = "zh_test"
