@@ -43,6 +43,9 @@ function explain_status(s) {
 function fill_table(data) {
     var keys = ["title", "author"];
     var t = $("#t_article");
+    if(data.length == 0){
+        $("#tr_none").show();
+    }
     for (var i = 0; i < data.length; i++) {
         var add_tr = $("<tr></tr>");
         add_tr.attr("id", data[i]["article_no"]);
@@ -142,7 +145,7 @@ function handler_query_article(data) {
 $(document).ready(function () {
 
     var r_url = $("#query_url").val();
-    my_async_request2(r_url, "GET", null, handler_query_article);
+    my_async_request2(r_url, "GET", null, fill_table);
     $("#btn_add_article").click(function () {
         window.open($("#page_article").val());
     });

@@ -98,7 +98,7 @@ class ArticleManager(object):
         else:
             where_value = None
         db_items = self.db.execute_select(self.t_info, where_value=where_value, cols=cols, where_cond=where_cond,
-                                          where_cond_args=where_cond_args, print_sql=True)
+                                          where_cond_args=where_cond_args)
         return db_items
 
     def get_article(self, article_no, user_name):
@@ -117,7 +117,7 @@ class ArticleManager(object):
         return True, article_info
 
     def query_article(self, **kwargs):
-        where_cond = []
+        where_cond = ["status<>0"]
         where_cond_args = []
         if "title" in kwargs:
             where_cond.append("title like %%%s%%")
@@ -128,4 +128,8 @@ class ArticleManager(object):
 
     def online(self, article_no):
         l = self._update_status(article_no, add_status=64)
+        return l
+
+    def delete_article(self, article_no):
+        l = self._update_info(article_no, dict(status=0))
         return l

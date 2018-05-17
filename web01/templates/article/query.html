@@ -29,19 +29,20 @@
                                 <th scope="col" width=20%">操作</th>
                             </tr>
                             <tr id="tr_none" class="display_none">
-                                <td colSpan="4" class="text-center">一条记录都没有</td>
+                                <td colSpan="4" class="text-center">暂无文章显示<a href="{{ page_article }}">添加文章</a></td>
                             </tr>
                         </table>
                     </div>
-            <ul>
-                <li>
-                    <input class="box-side width800" id="query_str" type="text"/>
-                    <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_query">查询</a>
-                    <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_add_article">新建</a>
-                </li>
-            </ul>
+{#            <ul>#}
+{#                <li>#}
+{#                    <input class="box-side width800" id="query_str" type="text"/>#}
+{#                    <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_query">查询</a>#}
+{#                    <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_add_article">新建</a>#}
+{#                </li>#}
+{#            </ul>#}
         </div>
-    <input class="display_none" value="{{ query_url }}"  id="query_url"/>
+    <input class="display_none" value="{{ info_url }}"  id="query_url"/>
+    <input class="display_none" value="{{ info_url }}"  id="info_url"/>
     <input class="display_none" value="{{ page_article }}", id="page_article">
     <input class="display_none" value="{{ online_url }}", id="online_url">
     </div>
