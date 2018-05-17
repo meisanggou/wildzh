@@ -163,6 +163,13 @@ class Exam(object):
         else:
             cols.append("case_%s" % result)
         items = self.db.execute_select(self.t_result_explain, cols=cols, where_value=dict(exam_no=exam_no))
+        for item in items:
+            for key, v in item.items():
+                if key.startswith("case_") is False:
+                    continue
+                if v is None:
+                    continue
+                item[key] = json.loads(item[key])
         return items
 
     def select_tj(self, exam_no, merge_v=True):

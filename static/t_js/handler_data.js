@@ -57,3 +57,21 @@ function replace_url(content) {
     });
     return content;
 }
+
+function isSuitableNaN(num, min_allow, max_allow){
+    var i_num = parseFloat(num);
+    if(isNaN(i_num)){
+        return false;
+    }
+    if(min_allow != null){
+        if(i_num < min_allow){
+            return false;
+        }
+    }
+    if(max_allow != null){
+        if(i_num > max_allow){
+            return false;
+        }
+    }
+    return true;
+}

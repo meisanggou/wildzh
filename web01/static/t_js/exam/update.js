@@ -29,11 +29,16 @@ function update_exam(){
         var explain_item = $(exist_explains[i]);
         var c = explain_item.find("input:eq(0)").val();
         var t = explain_item.find("input:eq(1)").val().trim();
+        var score = explain_item.find("input:eq(2)").val().trim();
         if(t.length <=0){
             popup_show("请输入【" + c + "】结果对应的解释");
             return 2;
         }
-        r_data["result_explain"][i] = t;
+        if(isSuitableNaN(score, 0, 100) == false){
+            popup_show("请确保【" + c + "】结果对应的打分在0-100");
+            return 2;
+        }
+        r_data["result_explain"][i] = {"desc": t, "score": score};
     }
     var info_url = $("#info_url").val();
     my_async_request2(info_url, "PUT", r_data, function(data){
@@ -87,7 +92,8 @@ function init_explain(data){
     var i = 0;
     for(i=0;i<explains.length&&i<data.length;i++){
         var item = $(explains[i]);
-        item.find("input:eq(1)").val(data[i]);
+        item.find("input:eq(1)").val(data[i]["desc"]);
+        item.find("input:eq(2)").val(data[i]["score"]);
     }
     console.info(data);
 }

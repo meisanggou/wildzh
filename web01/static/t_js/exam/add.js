@@ -29,11 +29,16 @@ function new_exam(){
         var explain_item = $(exist_explains[i]);
         var c = explain_item.find("input:eq(0)").val();
         var t = explain_item.find("input:eq(1)").val().trim();
+        var score = explain_item.find("input:eq(2)").val().trim();
         if(t.length <=0){
             popup_show("请输入【" + c + "】结果对应的解释");
             return 2;
         }
-        r_data["result_explain"][i] = t;
+        if(isSuitableNaN(score, 0, 100) == false){
+            popup_show("请确保【" + c + "】结果对应的打分在0-100");
+            return 2;
+        }
+        r_data["result_explain"][i] = {"desc": t, "score": score};
     }
     var add_url = $("#add_url").val();
     my_async_request2(add_url, "POST", r_data, function(data){
