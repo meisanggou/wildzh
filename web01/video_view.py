@@ -52,7 +52,6 @@ def required_video_no(f):
 @video_view.route("/", methods=["GET"])
 @login_required
 def index():
-    add_url = url_prefix + "/"
     upload_url = url_prefix + "/upload/"
     info_url = url_prefix + "/info/"
     online_url = url_prefix + "/online/"
@@ -61,17 +60,14 @@ def index():
     page_video = url_prefix + "/?action=video"
     page_list = url_prefix + "/"
     if "action" in request.args and request.args["action"] == "video":
-        if "video_no" in request.args:
-            return rt.render("update_info.html", page_list=page_list, page_video=page_video, info_url=info_url,
-                             upload_url=upload_url, explain_url=explain_url)
-        return rt.render("entry_info.html", page_list=page_list, add_url=add_url, upload_url=upload_url)
+        return rt.render("entry_info.html", page_list=page_list, info_url=info_url, upload_url=upload_url)
     if "video_no" in request.args:
         return rt.render("entry_questions.html", page_list=page_list, page_video=page_video, info_url=info_url,
                          questions_url=questions_url)
     return rt.render("overview.html", page_video=page_video, info_url=info_url, online_url=online_url)
 
 
-@video_view.route("/", methods=["POST"])
+@video_view.route("/info/", methods=["POST"])
 @login_required
 def new_video():
     g.user_name = "zh_test"

@@ -4,7 +4,25 @@
 
 var ascii = ["A", "B", "C", "D", "E", "F"];
 
-function new_video(){
+function init_info(data){
+    if(data == null){
+        var info_url = $("#info_url").val();
+        my_async_request2(info_url, "GET", null, init_info);
+        return 0;
+    }
+    if(data.length > 0) {
+        var video_item = data[0];
+        $("#video_name").val(video_item["video_name"]);
+        $("#video_no").val(video_item["video_no"]);
+        select_option("video_type", video_item["video_type"]);
+        $("#episode_num").val(video_item["episode_num"]);
+        $("#video_desc").val(video_item["video_desc"]);
+        $("#video_pic").attr("src", video_item["video_pic"]);
+        $("#btn_new").text("更新");
+    }
+}
+
+function new_or_update_video(){
     var r_data = new Object();
     var keys = ["video_type", "video_name", "video_desc", "episode_num"];
     for(var i=0;i<keys.length;i++){
@@ -24,8 +42,8 @@ function new_video(){
     }
     r_data["video_pic"] = video_pic;
 
-    var add_url = $("#add_url").val();
-    my_async_request2(add_url, "POST", r_data, function(data){
+    var info_url = $("#info_url").val();
+    my_async_request2(info_url, "POST", r_data, function(data){
         swal({
                 title: "选择下一步",
                 text: msg,
@@ -59,6 +77,8 @@ $(function() {
             $("#video_pic").attr("src", data["pic"]);
         });
     });
-    $("#video_type").change();
-    $("#btn_new").click(new_video);
+    if(UrlArgsValue(location.href, "video_no") != null){
+        init_info(null);
+    }
+    $("#btn_new").click(new_or_update_video);
 });
