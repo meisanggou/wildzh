@@ -6,9 +6,8 @@ import string
 from functools import wraps
 from flask import request, jsonify, g
 from flask_login import login_required
-from flask_helper import RenderTemplate, support_upload
-from zh_config import db_conf_path, upload_folder
-from tools import folder
+from flask_helper import RenderTemplate, support_upload2
+from zh_config import db_conf_path, upload_folder, file_prefix_url
 from classes.exam import Exam
 from web01 import create_blue
 
@@ -19,8 +18,6 @@ url_prefix = "/exam"
 rt = RenderTemplate("exam")
 exam_view = create_blue("exam", url_prefix=url_prefix, auth_required=False, menu_list={"title": u"测试管理"})
 c_exam = Exam(db_conf_path)
-exam_upload_folder = os.path.join(upload_folder, "exam")
-pic_folder = folder.create_folder2(exam_upload_folder, "pic")
 
 
 def referer_exam_no(f):
@@ -93,7 +90,7 @@ def new_exam():
     return jsonify({"status": True, "data": data})
 
 
-support_upload(exam_view, static_folder=pic_folder)
+support_upload2(exam_view, upload_folder, file_prefix_url, ("doctor", "photo"), "upload")
 
 
 @exam_view.route("/info/", methods=["GET"])
