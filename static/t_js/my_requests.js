@@ -126,8 +126,11 @@ function my_async_request2(request_url, request_method, body_param, request_succ
             else if(request_success == null){
                 sweetAlert(data.data);
             }
-            else{
+            else if("data" in data){
                 request_success(data.data);
+            }
+            else{
+                request_success(data);
             }
         },
         error:function(xhr){

@@ -1,0 +1,91 @@
+[
+  {
+    "table_cols": [
+      {
+        "pri_key": true,
+        "col_comment": "视频类型",
+        "col_name": "video_type",
+        "col_type": "varchar(10)"
+      },
+      {
+        "pri_key": true,
+        "col_comment": "视频编号",
+        "col_name": "video_no",
+        "col_type": "char(32)"
+      },
+      {
+        "col_comment": "视频名称",
+        "col_name": "video_name",
+        "col_type": "varchar(50)"
+      },
+      {
+        "col_comment": "视频介绍",
+        "col_name": "video_desc",
+        "col_type": "varchar(500)"
+      },
+      {
+        "col_comment": "视频总集数",
+        "col_name": "episode_num",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "视频图片",
+        "col_name": "video_pic",
+        "col_type": "varchar(100)"
+      },
+      {
+        "col_comment": "视频扩展信息",
+        "col_name": "video_extend",
+        "col_type": "text",
+        "allow_null": true
+      },
+      {
+        "col_comment": "视频状态 1代表已录入基本信息 2录入完整每一集 4 8 16 32保留 64代表已上线 128代表不允许收看 0代表已删除",
+        "col_name": "status",
+        "col_type": "int",
+        "default_value": 1
+      },
+      {
+        "col_comment": "收听次数",
+        "col_name": "listen_num",
+        "col_type": "int(11)",
+        "default_value": 0
+      },
+      {
+        "col_comment": "录入者",
+        "col_name": "adder",
+        "col_type": "varchar(30)"
+      }
+    ],
+    "table_comment": "记录视频的属性",
+    "table_name": "video_info"
+  },
+  {
+    "table_cols": [
+      {
+        "pri_key": true,
+        "col_comment": "视频编号",
+        "col_name": "video_no",
+        "col_type": "char(32)"
+      },
+      {
+        "pri_key": true,
+        "col_comment": "第多少集",
+        "col_name": "video_index",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "本集简介",
+        "col_name": "title",
+        "col_type": "varchar(50)"
+      },
+      {
+        "col_comment": "视频图片",
+        "col_name": "episode_pic",
+        "col_type": "varchar(100)"
+      }
+    ],
+    "table_comment": "每一集信息",
+    "table_name": "video_episode"
+  }
+]

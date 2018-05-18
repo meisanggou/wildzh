@@ -20,7 +20,7 @@ app.register_blues()
 l_menu = len(portal_menu_list)
 for item in portal_menu_list:
     if item["index"] < 0:
-        item["index"] += l_menu
+        item["index"] += l_menu * 2
 portal_menu_list.sort(key=lambda x: x["index"])
 app.jinja_env.globals["portal_menu_list"] = portal_menu_list
 
