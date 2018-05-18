@@ -90,7 +90,7 @@ def new_exam():
     return jsonify({"status": True, "data": data})
 
 
-support_upload2(exam_view, upload_folder, file_prefix_url, ("doctor", "photo"), "upload")
+support_upload2(exam_view, upload_folder, file_prefix_url, ("exam", "pic"), "upload")
 
 
 @exam_view.route("/info/", methods=["GET"])
