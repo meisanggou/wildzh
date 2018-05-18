@@ -3,7 +3,7 @@
 
 import time
 import json
-import string
+import uuid
 from mysqldb_rich import DB
 
 __author__ = 'meisa'
@@ -19,12 +19,14 @@ class Video(object):
     def _insert_info(self, video_type, video_no, video_name, video_desc, episode_num, video_pic, adder, status=1,
                      video_extend=None):
         kwargs = dict(video_type=video_type, video_no=video_no, video_name=video_name, video_desc=video_desc,
-                      episode_num=episode_num, status=status, video_extend=video_extend, adder=adder, video_pic=video_pic)
+                      episode_num=episode_num, status=status, video_extend=video_extend, adder=adder,
+                      video_pic=video_pic, insert_time=int(time.time()))
         l = self.db.execute_insert(self.t_info, kwargs=kwargs, ignore=True)
         return l
 
     def _insert_episode(self, video_no, video_index, title, episode_pic=None):
-        kwargs = dict(video_no=video_no, video_index=video_index, title=title, episode_pic=episode_pic)
+        kwargs = dict(video_no=video_no, video_index=video_index, title=title, episode_pic=episode_pic,
+                      insert_time=int(time.time()))
         l = self.db.execute_insert(self.t_episode, kwargs=kwargs, ignore=True)
         return l
 
@@ -43,9 +45,9 @@ class Video(object):
             l = 0
         return l
 
-    def new_video(self, video_name, video_type, video_desc, episode_num, adder, **video_extend):
-        video_no = int(time.time())
-        l = self._insert_info(video_type, video_no, video_name, video_desc, episode_num, adder, video_extend=video_extend)
+    def new_video(self, video_name, video_type, video_desc, episode_num, video_pic, adder):
+        video_no = uuid.uuid4().hex
+        l = self._insert_info(video_type, video_no, video_name, video_desc, episode_num, video_pic, adder)
         if l <= 0:
             return False, l
         return True, video_no
@@ -74,7 +76,7 @@ class Video(object):
             if video_no is not None:
                 where_value["video_no"] = video_no
         cols = ["video_type", "video_no", "video_name", "video_desc", "episode_num", "adder", "status",
-                "video_extend", "video_pic"]
+                "video_extend", "video_pic", "insert_time"]
         items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value, where_cond=where_cond)
         for item in items:
             if item["video_extend"] is not None:

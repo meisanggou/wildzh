@@ -39,7 +39,7 @@ function explain_status(s) {
         return "已下线"
     }
     if ((s & 2) == 0) {
-        return "缺少试题";
+        return "缺少视频";
     }
     if ((s & 4) == 0) {
         return "缺少结果解释";
@@ -67,7 +67,7 @@ function init_info(data) {
             var td_name = new_td("video_name", data[i]);
             add_tr.append(td_name);
 
-            var td_no = new_td("video_no", data[i], null, null, timestamp_2_datetime);
+            var td_no = new_td("insert_time", data[i], null, null, timestamp_2_datetime);
             add_tr.append(td_no);
 
             var td_status = new_td("status", data[i], null, null, explain_status);
@@ -82,7 +82,7 @@ function init_info(data) {
                 var basic_url = AddUrlArg(location.pathname, "video_no", data[i]["video_no"]);
                 basic_url = AddUrlArg(basic_url, "video_type", data[i]["video_type"]);
                 var question_url = AddUrlArg(basic_url, "action", "question");
-                td_op.append(new_link("管理试题", question_url));
+                td_op.append(new_link("管理视频", question_url));
 
                 td_op.append(" | ");
                 var update_url = AddUrlArg(basic_url, "action", "video");

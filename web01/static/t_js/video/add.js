@@ -6,7 +6,7 @@ var ascii = ["A", "B", "C", "D", "E", "F"];
 
 function new_video(){
     var r_data = new Object();
-    var keys = ["video_type", "video_name", "video_desc", "eval_type"];
+    var keys = ["video_type", "video_name", "video_desc", "episode_num"];
     for(var i=0;i<keys.length;i++){
         var item = $("#" + keys[i]);
         var v = item.val().trim();
@@ -17,29 +17,13 @@ function new_video(){
         }
         r_data[keys[i]] = v;
     }
-    var pic_url = $("#video_extend_pic_url").attr("src");
-    if(pic_url.length <= 0){
-        popup_show("请上传测试图片");
+    var video_pic = $("#video_pic").attr("src");
+    if(video_pic.length <= 0){
+        popup_show("请上传视频图片");
         return 2;
     }
-    r_data["pic_url"] = pic_url;
-    r_data["result_explain"] = new Array();
-    var exist_explains = $("#result_explain").find("li[name='li_explain']:visible");
-    for(var i=0;i<exist_explains.length;i++){
-        var explain_item = $(exist_explains[i]);
-        var c = explain_item.find("input:eq(0)").val();
-        var t = explain_item.find("input:eq(1)").val().trim();
-        var score = explain_item.find("input:eq(2)").val().trim();
-        if(t.length <=0){
-            popup_show("请输入【" + c + "】结果对应的解释");
-            return 2;
-        }
-        if(isSuitableNaN(score, 0, 100) == false){
-            popup_show("请确保【" + c + "】结果对应的打分在0-100");
-            return 2;
-        }
-        r_data["result_explain"][i] = {"desc": t, "score": score};
-    }
+    r_data["video_pic"] = video_pic;
+
     var add_url = $("#add_url").val();
     my_async_request2(add_url, "POST", r_data, function(data){
         swal({
@@ -48,7 +32,7 @@ function new_video(){
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: '#DD6B55',
-                confirmButtonText: '录入试题',
+                confirmButtonText: '上传分集视频',
                 cancelButtonText: "留在此页",
                 closeOnConfirm: true,
                 closeOnCancel: true
@@ -65,24 +49,6 @@ function new_video(){
 }
 
 $(function() {
-    $("#video_type").change(function(){
-        var select_m = $("#video_type option:selected").val();
-        var about = parseInt($("#video_type option:selected").attr("about"));
-        var exist_explain = $("#result_explain").find("li[name='li_explain']");
-        var demo_li = $(exist_explain[0]);
-        var demo_parent = demo_li.parent();
-        var exist_len = exist_explain.length;
-        for(var i=exist_len;i<about + 1 && i<= 7;i++)
-        {
-            var clone_li = demo_li.clone();
-            clone_li.show();
-            $(clone_li.find("input")[0]).val(ascii[i - 1]);
-            demo_parent.append(clone_li);
-        }
-        for(var i=about+ 1; i<exist_len;i++){
-            $(exist_explain[i]).remove();
-        }
-    });
     $("#video_extend_pic").change(function(){
         var upload_url= $("#upload_url").val();
         if($("#video_extend_pic")[0].files.length <= 0){
@@ -90,7 +56,7 @@ $(function() {
         }
         var data = {"pic": $("#video_extend_pic")[0].files[0]};
         upload_request(upload_url, "POST", data, function(data){
-            $("#video_extend_pic_url").attr("src", data["pic"]);
+            $("#video_pic").attr("src", data["pic"]);
         });
     });
     $("#video_type").change();

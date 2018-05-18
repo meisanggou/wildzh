@@ -52,6 +52,11 @@
         "default_value": 0
       },
       {
+        "col_comment": "录入时间",
+        "col_name": "insert_time",
+        "col_type": "int(11)"
+      },
+      {
         "col_comment": "录入者",
         "col_name": "adder",
         "col_type": "varchar(30)"
@@ -83,6 +88,11 @@
         "col_comment": "视频图片",
         "col_name": "episode_pic",
         "col_type": "varchar(100)"
+      },
+      {
+        "col_comment": "录入时间",
+        "col_name": "insert_time",
+        "col_type": "int(11)"
       }
     ],
     "table_comment": "每一集信息",

@@ -7,20 +7,20 @@
 {% endblock %}
 
 {% block js_content %}
-    {{ 't_js/exam/overview.js' | make_static_html | safe }}
+    {{ 't_js/video/overview.js' | make_static_html | safe }}
 {% endblock %}
 
 {% block center_content %}
     <div id="div_content">
         <ul id="ul_menu" class="nav nav-tabs comTab">
             <li class="active"><a href="#div_overview" >所有视频</a></li>
-            <li class=""><a href="{{ page_exam }}">录入视频</a></li>
+            <li class=""><a href="{{ page_video }}">录入视频</a></li>
         </ul>
         <div class="tab-content" style="padding-top: 20px;">
             <div class="tab-pane fade in active" id="div_overview">
                 <div>
                     <div style="position: relative">
-                        <table class="table table-bordered table-hover api-list-table margintop20" id="t_exams">
+                        <table class="table table-bordered table-hover api-list-table margintop20" id="t_videos">
                             <tr>
                                 <th scope="col" width="8%">分类</th>
                                 <th scope="col" width="47%">名称</th>

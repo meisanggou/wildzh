@@ -76,15 +76,9 @@ def index():
 def new_video():
     g.user_name = "zh_test"
     data = g.request_data
-    r, video_no = c_video.new_video(data["video_name"], data["video_type"], data["video_desc"], data["eval_type"],
-                                 g.user_name, pic_url=data["pic_url"])
+    r, video_no = c_video.new_video(data["video_name"], data["video_type"], data["video_desc"],
+                                    data["episode_num"], data["video_pic"], g.user_name)
     if r is False:
-        return jsonify({"status": False, "data": "请重试"})
-    cases = dict()
-    for i in range(len(data["result_explain"])):
-        cases["case_%s" % string.letters[i]] = data["result_explain"][i]
-    l = c_video.new_video_result_explain(video_no, **cases)
-    if l <= 0:
         return jsonify({"status": False, "data": "请重试"})
     data["video_no"] = video_no
     return jsonify({"status": True, "data": data})
@@ -118,7 +112,7 @@ def update_video():
     data = g.request_data
     video_no = data["video_no"]
     l = c_video.update_video(data["video_type"], video_no, data["video_name"], data["video_desc"],
-                           data["eval_type"], pic_url=data["pic_url"])
+                           data["episode_num"], pic_url=data["pic_url"])
     cases = dict()
     for i in range(len(data["result_explain"])):
         cases["case_%s" % string.letters[i]] = data["result_explain"][i]
