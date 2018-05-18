@@ -19,11 +19,13 @@ function load_question(index)
         var i = 0;
         for(i=0;i<options.length&&i<item["options"].length;i++){
             var option_item = $(options[i]);
-            option_item.find("input:eq(1)").val(item["options"][i]);
+            option_item.find("input:eq(1)").val(item["options"][i]["desc"]);
+            option_item.find("input:eq(2)").val(item["options"][i]["score"]);
         }
         for(;i<options.length;i++){
             var option_item = $(options[i]);
             option_item.find("input:eq(1)").val("");
+            option_item.find("input:eq(2)").val("");
         }
         var pro_msg = (index + 1) + "/" + exists_questions.length;
         $("#questions_num").val(pro_msg);
@@ -33,6 +35,7 @@ function load_question(index)
         $("#questions_num").val("录入第" + (exists_questions.length + 1));
         $("#question_desc").val("");
         $("#options li[name='li_option']").find("input:eq(1)").val("");
+        $("#options li[name='li_option']").find("input:eq(2)").val("");
         $("#questions_num").attr("about", next_question_no);
     }
     return 0;
@@ -90,6 +93,11 @@ function entry_success(r_d){
         load_question(current_question_index);
     }
     else{
+        for(var i=0; i<exists_questions.length;i++){
+            if(exists_questions[i].question_no == data.question_no){
+                exists_questions[i] = data;
+            }
+        }
         popup_show("更新成功");
     }
 }
@@ -121,10 +129,15 @@ function add_question()
         var option_item = $(options[i]);
         c = option_item.find("input:eq(0)").val();
         t = option_item.find("input:eq(1)").val().trim();
+        var score = option_item.find("input:eq(2)").val().trim();
         if(t.length <= 0){
             break
         }
-        r_data["options"][i] = t;
+        if(isSuitableNaN(score, -10, 10) == false){
+            popup_show("请确保【" + c + "】选项对应的打分在-10-10");
+            return 2;
+        }
+        r_data["options"][i] = {"desc": t, "score": score};
         msg += c + ":" + t + "\n";
     }
     for(;i<options.length;i++){

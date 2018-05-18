@@ -159,6 +159,11 @@ def entry_questions():
 @required_exam_no
 def get_exam_questions():
     items = c_exam.select_questions(g.exam_no)
+    if g.user_name is None:
+        for item in items:
+            options = item["options"]
+            new_options = map(lambda x: x["desc"], options)
+            item["options"] = new_options
     return jsonify({"status": True, "data": items})
 
 
