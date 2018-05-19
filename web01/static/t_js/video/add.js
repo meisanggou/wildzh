@@ -18,7 +18,10 @@ function init_info(data){
         $("#episode_num").val(video_item["episode_num"]);
         $("#video_desc").val(video_item["video_desc"]);
         $("#video_pic").attr("src", video_item["video_pic"]);
+        $("#video_type").attr("disabled", "disabled");
         $("#btn_new").text("更新");
+        $("#li_add").show();
+        $("#li_update a").text("更新视频");
     }
 }
 
@@ -41,9 +44,14 @@ function new_or_update_video(){
         return 2;
     }
     r_data["video_pic"] = video_pic;
-
+    var video_no = $("#video_no").val();
+    var method = "POST";
+    if(video_no.length == 32){
+        method = "PUT";
+        r_data["video_no"] = video_no;
+    }
     var info_url = $("#info_url").val();
-    my_async_request2(info_url, "POST", r_data, function(data){
+    my_async_request2(info_url, method, r_data, function(data){
         swal({
                 title: "选择下一步",
                 text: msg,
@@ -61,12 +69,18 @@ function new_or_update_video(){
                     j_url = AddUrlArg(j_url, "video_type", data["video_type"]);
                     location.href = j_url;
                 }
+                else{
+                    $("#video_type").attr("disabled", "disabled");
+                    $("#video_no").val(data["video_no"]);
+                    $("#btn_new").text("更新");
+                }
             }
         );
     });
 }
 
 $(function() {
+    $("#li_add").hide();
     $("#video_extend_pic").change(function(){
         var upload_url= $("#upload_url").val();
         if($("#video_extend_pic")[0].files.length <= 0){

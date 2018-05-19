@@ -29,6 +29,12 @@
         "col_type": "int(11)"
       },
       {
+        "col_comment": "上传的视频数",
+        "col_name": "upload_num",
+        "col_type": "int(11)",
+        "default_value": 0
+      },
+      {
         "col_comment": "视频图片",
         "col_name": "video_pic",
         "col_type": "varchar(100)"

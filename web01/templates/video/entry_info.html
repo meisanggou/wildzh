@@ -14,7 +14,8 @@
     <div id="div_content">
         <ul id="ul_menu" class="nav nav-tabs comTab">
             <li class=""><a href="{{ page_list }}" data-toggle="tab">所有视频</a></li>
-            <li class="active"><a href="javascript:void(0)" data-toggle="tab">录入视频</a></li>
+            <li class="" id="li_add"><a href="{{ page_video }}" data-toggle="tab">添加视频</a></li>
+            <li class="active" id="li_update"><a href="javascript:void(0)" data-toggle="tab">添加视频</a></li>
         </ul>
         <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
             <fieldset>
@@ -29,20 +30,21 @@
                             </select>
                         </li>
                         <li>
-                            <label for="effective_days">视频名称：</label>
+                            <label for="">视频名称：</label>
+                            <input class="display_none" id="video_no" type="text"/>
                             <input class="box-side width500" id="video_name" type="text" placeholder="" msg="请输入视频名称"/>
                         </li>
                         <li>
-                            <label for="effective_days">视频介绍：</label>
+                            <label for="">视频介绍：</label>
                             <input class="box-side width500" id="video_desc" type="text" msg="请输入视频介绍"/>
                         </li>
                         <li>
-                            <label for="effective_days">视频图片：</label>
+                            <label for="">视频图片：</label>
                             <input class="box-side width300" id="video_extend_pic" type="file" placeholder="上传图片" accept="image/*"/>
                             <img id="video_pic" src=""/>
                         </li>
                         <li>
-                            <label for="effective_days">总集数：</label>
+                            <label for="">总集数：</label>
                             <input class="box-side width100" id="episode_num" type="text" msg="请输入总集数"/>
                         </li>
                     </ul>

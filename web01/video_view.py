@@ -28,7 +28,7 @@ def referer_video_no(f):
             g.video_no = None
         else:
             g.ref_url = request.headers["Referer"]
-        find_no = re.findall("video_no=(\\d+)", g.ref_url)
+        find_no = re.findall("video_no=(\\w+)", g.ref_url)
         if len(find_no) > 0:
             g.video_no = find_no[0]
         elif "video_no" in request.args:
@@ -60,7 +60,8 @@ def index():
     page_video = url_prefix + "/?action=video"
     page_list = url_prefix + "/"
     if "action" in request.args and request.args["action"] == "video":
-        return rt.render("entry_info.html", page_list=page_list, info_url=info_url, upload_url=upload_url)
+        return rt.render("entry_info.html", page_list=page_list, info_url=info_url, upload_url=upload_url,
+                         page_video=page_video)
     if "video_no" in request.args:
         return rt.render("entry_questions.html", page_list=page_list, page_video=page_video, info_url=info_url,
                          questions_url=questions_url)
@@ -106,14 +107,10 @@ def get_video_info():
 @login_required
 def update_video():
     data = g.request_data
-    video_no = data["video_no"]
-    l = c_video.update_video(data["video_type"], video_no, data["video_name"], data["video_desc"],
-                           data["episode_num"], pic_url=data["pic_url"])
-    cases = dict()
-    for i in range(len(data["result_explain"])):
-        cases["case_%s" % string.letters[i]] = data["result_explain"][i]
-    l2 = c_video.update_result_explain(video_no, **cases)
-    return jsonify({"status": True, "data": data})
+    video_type = data.pop("video_type")
+    video_no = data.pop("video_no")
+    l = c_video.update_video(video_type, video_no, **data)
+    return jsonify({"status": True, "data": g.request_data})
 
 
 @video_view.route("/info/", methods=["DELETE"])

@@ -56,9 +56,15 @@ class Video(object):
         l = self._insert_episode(video_no, video_index, title, video_pic)
         return l
 
-    def update_video(self, video_type, video_no, video_name, video_desc, episode_num, video_pic, **video_extend):
-        update_value = dict(video_name=video_name, video_desc=video_desc, episode_num=episode_num, video_pic=video_pic,
-                            video_extend=video_extend)
+    def update_video(self, video_type, video_no, **kwargs):
+        cols = ["video_name", "video_desc", "episode_num","video_extend", "video_pic"]
+        update_value = dict()
+        for key in kwargs.keys():
+            if key not in cols:
+                continue
+            if kwargs[key] is None:
+                continue
+            update_value[key] = kwargs[key]
         l = self._update_info(video_type, video_no, **update_value)
         return l
 
