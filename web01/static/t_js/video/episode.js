@@ -13,12 +13,12 @@ function load_episode(index) {
     }
     if (index < exists_episodes.length) {
         var item = exists_episodes[index];
-        console.info(item);
         $("#title").val(item["title"]);
         $("#episode_pic").attr("src", item["episode_pic"]);
         $("#episode_url").attr("href", item["episode_url"]);
         $("#episode_url").show();
         $("#current_index").val(item["episode_index"]);
+
     }
     else {
         $("#current_index").val("上传第" + (exists_episodes.length + 1));
@@ -26,6 +26,11 @@ function load_episode(index) {
         $("#episode_pic").attr("src", "");
         $("#episode_url").attr("href", "");
         $("#episode_url").hide();
+        $("#btn_upload").text("上传");
+        $("#btn_upload").removeAttr("disabled");
+        $("#upload_episode").removeAttr("disabled");
+        $("#upload_episode").val("");
+        $("#upload_episode_pic").val("");
     }
     return 0;
 }
@@ -103,7 +108,7 @@ function add_episode() {
         var data = r_d.data;
         var action = r_d.action;
         if (action == "POST") {
-            exists_questions[exists_questions.length] = data;
+            exists_episodes[exists_episodes.length] = data;
             if (total_num == exists_episodes.length) {
                 popup_show("本视频集已录入所有分集");
                 current_episode_index = exists_episodes.length - 1;
@@ -112,7 +117,7 @@ function add_episode() {
                 current_episode_index = exists_episodes.length;
                 popup_show("录入成功，可继续录入");
             }
-            load_question(current_question_index);
+            load_episode(current_episode_index);
         }
         else {
             exists_episodes[data.episode_index - 1] = data;
