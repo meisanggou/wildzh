@@ -53,13 +53,19 @@
                             <input class="box-side width300" id="video_extend_pic" type="file" placeholder="上传图片" accept="image/*"/>
                             <img id="video_pic" src=""/>
                         </li>
+                        <li>
+                            <label for="">音乐上传：</label>
+                            <input class="box-side width300" id="upload_episode" type="file" placeholder="上传分集" accept="audio/mpeg"/>
+                            <button class="btn btn-success" id="btn_upload">上传</button>
+                            <input class="display_none" id="episode_url">
+                        </li>
                     </ul>
                 </div>
             </fieldset>
-            <a class="status_move display_none" id="link_pre">上一题</a>
+            <a class="status_move display_none" id="link_pre">上一集</a>
             <button class="btn btn-success btn-down display_none" id="btn_update">更新</button>
             <button class="btn btn-success btn-down " id="btn_new_question" disabled>新建</button>
-            <a class="status_move display_none" id="link_next">下一题</a>
+            <a class="status_move display_none" id="link_next">下一集</a>
             <input id="info_url" value="{{ info_url }}" class="display_none">
             <input id="questions_url" value="{{ questions_url }}" class="display_none">
         </div>

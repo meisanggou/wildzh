@@ -96,6 +96,11 @@
         "col_type": "varchar(100)"
       },
       {
+        "col_comment": "视频图片",
+        "col_name": "episode_url",
+        "col_type": "varchar(100)"
+      },
+      {
         "col_comment": "录入时间",
         "col_name": "insert_time",
         "col_type": "int(11)"
