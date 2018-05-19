@@ -13,28 +13,19 @@ function load_episode(index) {
     }
     if (index < exists_episodes.length) {
         var item = exists_episodes[index];
-        $("#episode_desc").val(item["episode_desc"]);
-        $("#select_mode").val(item["select_mode"]);
-        var options = $("#options li[name='li_option']");
-        var i = 0;
-        for (i = 0; i < options.length && i < item["options"].length; i++) {
-            var option_item = $(options[i]);
-            option_item.find("input:eq(1)").val(item["options"][i]["desc"]);
-            option_item.find("input:eq(2)").val(item["options"][i]["score"]);
-        }
-        for (; i < options.length; i++) {
-            var option_item = $(options[i]);
-            option_item.find("input:eq(1)").val("");
-            option_item.find("input:eq(2)").val("");
-        }
-        var pro_msg = (index + 1) + "/" + exists_episodes.length;
-        $("#episodes_num").val(pro_msg);
-        $("#episodes_num").attr("about", item["episode_no"]);
+        console.info(item);
+        $("#title").val(item["title"]);
+        $("#episode_pic").attr("src", item["episode_pic"]);
+        $("#episode_url").attr("href", item["episode_url"]);
+        $("#episode_url").show();
+        $("#current_index").val(item["episode_index"]);
     }
     else {
         $("#current_index").val("上传第" + (exists_episodes.length + 1));
         $("#title").val("");
         $("#episode_pic").attr("src", "");
+        $("#episode_url").attr("href", "");
+        $("#episode_url").hide();
     }
     return 0;
 }
@@ -96,7 +87,7 @@ function add_episode() {
         return 2;
     }
     r_data["episode_pic"] = episode_pic;
-    var episode_url = $("#episode_url").val();
+    var episode_url = $("#episode_url").attr("href");
     if (episode_url.length <= 0) {
         popup_show("请上传分集视频");
         return 3;
@@ -174,14 +165,15 @@ $(function () {
         }
         $(this).attr("disabled", "disabled");
         $(this).text("上传中");
-        $("#episode_url").val("");
+        $("#episode_url").attr("href", "");
         $("#upload_episode").attr("disabled", "disabled");
 
         var upload_url = $("#url_upload_e").val();
         var data = {"e": $("#upload_episode")[0].files[0]};
         upload_request(upload_url, "POST", data, function (data) {
             $("#btn_upload").text("已上传");
-            $("#episode_url").val(data["e"]);
+            $("#episode_url").attr("href", data["e"]);
+            $("#episode_url").show();
         });
 
     });
