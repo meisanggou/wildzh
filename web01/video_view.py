@@ -53,10 +53,10 @@ def required_video_no(f):
 @login_required
 def index():
     upload_url = url_prefix + "/upload/"
+    url_upload_e = url_prefix + "/upload/e/"
     info_url = url_prefix + "/info/"
     online_url = url_prefix + "/online/"
-    explain_url = url_prefix + "/explain/"
-    questions_url = url_prefix + "/questions/"
+    url_episode = url_prefix + "/episode/"
     page_video = url_prefix + "/?action=video"
     page_list = url_prefix + "/"
     if "action" in request.args and request.args["action"] == "video":
@@ -64,7 +64,7 @@ def index():
                          page_video=page_video)
     if "video_no" in request.args:
         return rt.render("episode.html", page_list=page_list, page_video=page_video, info_url=info_url,
-                         questions_url=questions_url)
+                         url_episode=url_episode, url_upload_e=url_upload_e, upload_url=upload_url)
     return rt.render("overview.html", page_video=page_video, info_url=info_url, online_url=online_url)
 
 
@@ -82,6 +82,7 @@ def new_video():
 
 
 support_upload2(video_view, upload_folder, file_prefix_url, ("video", "pic"), "upload", rename_mode="sha1")
+support_upload2(video_view, upload_folder, file_prefix_url, ("video", "episode"), "upload/e", rename_mode="sha1")
 
 
 @video_view.route("/info/", methods=["GET"])
@@ -123,31 +124,40 @@ def delete_video():
 
 
 @login_required
-@video_view.route("/questions/", methods=["POST", "PUT"])
+@video_view.route("/episode/", methods=["POST", "PUT"])
 @required_video_no
 def entry_questions():
+    find_type = re.findall("video_type=(\\w+)", g.ref_url)
+    if len(find_type) > 0:
+        video_type = find_type[0]
+    elif "video_type" in request.args:
+        video_type = request.args["video_type"]
+    else:
+        video_type = None
     data = g.request_data
-    question_no = data["question_no"]
-    question_desc = data["question_desc"]
-    select_mode = data["select_mode"]
-    options = data["options"]
+    title = data["title"]
+    episode_index = data["episode_index"]
+    episode_pic = data["episode_pic"]
+    episode_url = data["episode_url"]
+    items = c_video.select_video(video_type, g.video_no)
+    if len(items) != 1:
+        return jsonify({"status": False, "data": "视频集不存在"})
+    if episode_index >= items[0]["episode_num"]:
+        return jsonify({"status": False, "data": "视频集索引超出总集数"})
     if request.method == "POST":
-        r, l = c_video.new_video_questions(g.video_no, question_no, question_desc, select_mode, options)
+        r = True
+        l = c_video.new_video_episode(video_type, g.video_no, episode_index, title, episode_url, episode_pic)
     else:
         l = c_video.update_video_questions(g.video_no, question_no, question_desc, select_mode, options)
         r = True
     return jsonify({"status": r, "data": dict(action=request.method, data=data)})
 
 
-@video_view.route("/questions/", methods=["GET"])
+@video_view.route("/episode/", methods=["GET"])
 @required_video_no
 def get_video_questions():
-    items = c_video.select_questions(g.video_no)
-    if g.user_name is None:
-        for item in items:
-            options = item["options"]
-            new_options = map(lambda x: x["desc"], options)
-            item["options"] = new_options
+    items = c_video.select_episode(g.video_no)
+
     return jsonify({"status": True, "data": items})
 
 
@@ -185,23 +195,3 @@ def add_video_records():
     else:
         r["result_explain"] = None
     return jsonify({"status": True, "data": r})
-
-
-@video_view.route("/explain/", methods=["GET"])
-@required_video_no
-def get_explains():
-    explains = c_video.select_result_explain(g.video_no)
-    if len(explains) <= 0:
-        return jsonify({"status": False, "data": "结果解释不存在"})
-    if "list" not in request.args:
-        return jsonify({"status": True, "data": explains[0]})
-    explain_item = explains[0]
-    keys = filter(lambda x: x.startswith("case_"), explain_item.keys())
-    keys.sort()
-    l_explains = []
-    for key in keys:
-        if explain_item[key] is None:
-            break
-        else:
-            l_explains.append(explain_item[key])
-    return jsonify({"status": True, "data": l_explains})

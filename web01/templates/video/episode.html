@@ -19,7 +19,7 @@
         </ul>
         <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
             <fieldset>
-                <legend>题目信息</legend>
+                <legend>视频信息</legend>
                 <div class="form-group apiContentLine">
                     <ul>
                         <li>
@@ -33,7 +33,9 @@
                             <label for="effective_days">视频名称：</label>
                             <input class="box-side width300" id="s_video_name" type="text" readonly/>
                             <label>当前</label>
-                            <input id="questions_num" class="width100" readonly disabled about="">
+                            <input id="current_index" class="width100" readonly disabled>
+                            <label>/</label>
+                            <input id="episode_num" class="width100" readonly disabled>
                             <label>集</label>
                         </li>
                     </ul>
@@ -50,12 +52,12 @@
                         </li>
                         <li>
                             <label for="">分集封面：</label>
-                            <input class="box-side width300" id="video_extend_pic" type="file" placeholder="上传图片" accept="image/*"/>
-                            <img id="video_pic" src=""/>
+                            <input class="box-side width300" id="upload_episode_pic" type="file" placeholder="上传图片" accept="image/*"/>
+                            <img id="episode_pic" src=""/>
                         </li>
                         <li>
-                            <label for="">音乐上传：</label>
-                            <input class="box-side width300" id="upload_episode" type="file" placeholder="上传分集" accept="audio/mpeg"/>
+                            <label for="">分集上传：</label>
+                            <input class="box-side width300" id="upload_episode" type="file" placeholder="上传分集" accept="video/mp4"/>
                             <button class="btn btn-success" id="btn_upload">上传</button>
                             <input class="display_none" id="episode_url">
                         </li>
@@ -64,10 +66,12 @@
             </fieldset>
             <a class="status_move display_none" id="link_pre">上一集</a>
             <button class="btn btn-success btn-down display_none" id="btn_update">更新</button>
-            <button class="btn btn-success btn-down " id="btn_new_question" disabled>新建</button>
+            <button class="btn btn-success btn-down " id="btn_new_episode" >新建</button>
             <a class="status_move display_none" id="link_next">下一集</a>
             <input id="info_url" value="{{ info_url }}" class="display_none">
-            <input id="questions_url" value="{{ questions_url }}" class="display_none">
+            <input id="url_episode" value="{{ url_episode }}" class="display_none">
+            <input id="upload_url" value="{{ upload_url }}" class="display_none">
+            <input id="url_upload_e" value="{{ url_upload_e }}" class="display_none">
         </div>
     </div>
 {% endblock %}

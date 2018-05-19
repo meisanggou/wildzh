@@ -2,224 +2,208 @@
  * Created by meisa on 2018/5/6.
  */
 
-var exists_questions = [];
-var next_question_no = 1;
-var current_question_index = 0;
+var exists_episodes = [];
+var current_episode_index = 0;
+var total_num = 0;
 
-function load_question(index)
-{
-    if(index < 0){
+
+function load_episode(index) {
+    if (index < 0) {
         return 1;
     }
-    if(index < exists_questions.length){
-        var item = exists_questions[index];
-        $("#question_desc").val(item["question_desc"]);
+    if (index < exists_episodes.length) {
+        var item = exists_episodes[index];
+        $("#episode_desc").val(item["episode_desc"]);
         $("#select_mode").val(item["select_mode"]);
         var options = $("#options li[name='li_option']");
         var i = 0;
-        for(i=0;i<options.length&&i<item["options"].length;i++){
+        for (i = 0; i < options.length && i < item["options"].length; i++) {
             var option_item = $(options[i]);
             option_item.find("input:eq(1)").val(item["options"][i]["desc"]);
             option_item.find("input:eq(2)").val(item["options"][i]["score"]);
         }
-        for(;i<options.length;i++){
+        for (; i < options.length; i++) {
             var option_item = $(options[i]);
             option_item.find("input:eq(1)").val("");
             option_item.find("input:eq(2)").val("");
         }
-        var pro_msg = (index + 1) + "/" + exists_questions.length;
-        $("#questions_num").val(pro_msg);
-        $("#questions_num").attr("about", item["question_no"]);
+        var pro_msg = (index + 1) + "/" + exists_episodes.length;
+        $("#episodes_num").val(pro_msg);
+        $("#episodes_num").attr("about", item["episode_no"]);
     }
-    else{
-        $("#questions_num").val("上传第" + (exists_questions.length + 1));
-        $("#question_desc").val("");
-        $("#options li[name='li_option']").find("input:eq(1)").val("");
-        $("#options li[name='li_option']").find("input:eq(2)").val("");
-        $("#questions_num").attr("about", next_question_no);
+    else {
+        $("#current_index").val("上传第" + (exists_episodes.length + 1));
+        $("#title").val("");
+        $("#episode_pic").attr("src", "");
     }
     return 0;
 }
 
-function execute_action(action)
-{
-    if(action == "pre"){
-        if(current_question_index <= 0){
+function execute_action(action) {
+    if (action == "pre") {
+        if (current_episode_index <= 0) {
             return 1
         }
-        current_question_index -= 1;
+        current_episode_index -= 1;
     }
-    else if(action == "next"){
-        if(current_question_index >= exists_questions.length){
+    else if (action == "next") {
+        if (current_episode_index >= exists_episodes.length) {
             return 2
         }
-        current_question_index += 1;
+        current_episode_index += 1;
     }
-    else if(action == "current"){
-        if(current_question_index > exists_questions.length || current_question_index < 0){
+    else if (action == "current") {
+        if (current_episode_index > exists_episodes.length || current_episode_index < 0) {
             return 3
         }
     }
-    else{
+    else {
         return 4;
     }
     $("#link_pre").hide();
     $("#btn_update").hide();
-    $("#btn_new_question").hide();
+    $("#btn_new_episode").hide();
     $("#link_next").hide();
-    if(current_question_index > 0){
+    if (current_episode_index > 0) {
         $("#link_pre").show();
     }
-    if(current_question_index == exists_questions.length){
-        $("#btn_new_question").show();
+    if (current_episode_index == exists_episodes.length) {
+        $("#btn_new_episode").show();
     }
-    if(current_question_index < exists_questions.length){
-        $("#link_next").show();
+    if (current_episode_index < exists_episodes.length) {
+        if (current_episode_index < total_num - 1) {
+            $("#link_next").show();
+        }
         $("#btn_update").show();
     }
-    load_question(current_question_index);
+    load_episode(current_episode_index);
 }
 
-function entry_success(r_d){
-    var data= r_d.data;
-    var action = r_d.action;
-    if(action == "POST") {
-        exists_questions[exists_questions.length] = data;
-        if(next_question_no <= data.question_no){
-            next_question_no = data.question_no + 1;
-        }
-        popup_show("上传成功，可继续上传");
-        current_question_index = exists_questions.length;
-        load_question(current_question_index);
-    }
-    else{
-        for(var i=0; i<exists_questions.length;i++){
-            if(exists_questions[i].question_no == data.question_no){
-                exists_questions[i] = data;
-            }
-        }
-        popup_show("更新成功");
-    }
-}
 
-function add_question()
-{
+function add_episode() {
     var btn = $(this);
     var btn_text = btn.text();
     var r_data = new Object();
-    r_data["question_no"] = parseInt($("#questions_num").attr("about"));
-    var msg = "";
-    var question_desc = $("#question_desc").val().trim();
-    if(question_desc.length <= 0){
-        popup_show("请录入题目描述");
+    var title = $("#title").val();
+    if (title.length <= 0) {
+        popup_show("请输入分集标题");
         return 1;
     }
-    msg += "题目描述：";
-    msg += question_desc + "\n";
-    var select_mode = $("#select_mode").val();
-    r_data["question_desc"] = question_desc;
-    r_data["select_mode"] = select_mode;
-    r_data["options"] = new Array();
-    var options = $("#options li[name='li_option']");
-    var i = 0;
-    var c = "";
-    var t= "";
-    msg += "选项：\n";
-    for(;i<options.length;i++){
-        var option_item = $(options[i]);
-        c = option_item.find("input:eq(0)").val();
-        t = option_item.find("input:eq(1)").val().trim();
-        var score = option_item.find("input:eq(2)").val().trim();
-        if(t.length <= 0){
-            break
-        }
-        if(isSuitableNaN(score, -10, 10) == false){
-            popup_show("请确保【" + c + "】选项对应的打分在-10-10");
-            return 2;
-        }
-        r_data["options"][i] = {"desc": t, "score": score};
-        msg += c + ":" + t + "\n";
-    }
-    for(;i<options.length;i++){
-        var option_item = $(options[i]);
-        t = option_item.find("input:eq(1)").val().trim();
-        if(t.length != 0){
-            popup_show("请录入【" + c +"】选项");
-            return 2;
-        }
-    }
-    if(r_data["options"].length < 2){
-        popup_show("请至少录入两个选项！");
+    r_data["title"] = title;
+    var episode_pic = $("#episode_pic").attr("src");
+    if (episode_pic.length <= 0) {
+        popup_show("请上传分集封面图片");
         return 2;
     }
-    swal({
-            title: "是否" + btn_text,
-            text: msg,
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: '#DD6B55',
-            confirmButtonText: btn_text,
-            cancelButtonText: "取消",
-            closeOnConfirm: true,
-            closeOnCancel: true
-        },
-        function(isConfirm){
-            if (isConfirm){
-                var questions_url = $("#questions_url").val();
-                if(next_question_no == r_data["question_no"]) {
-                    my_async_request2(questions_url, "POST", r_data, entry_success);
-                }
-                else{
-                    my_async_request2(questions_url, "PUT", r_data, entry_success);
-                }
+    r_data["episode_pic"] = episode_pic;
+    var episode_url = $("#episode_url").val();
+    if (episode_url.length <= 0) {
+        popup_show("请上传分集视频");
+        return 3;
+    }
+    r_data["episode_url"] = episode_url;
+    var method = "POST";
+    if (current_episode_index < exists_episodes.length) {
+        method = "PUT"
+    }
+    r_data["episode_index"] = current_episode_index + 1;
+    var url_episode = $("#url_episode").val();
+    my_async_request2(url_episode, method, r_data, function (r_d) {
+        var data = r_d.data;
+        var action = r_d.action;
+        if (action == "POST") {
+            exists_questions[exists_questions.length] = data;
+            if (total_num == exists_episodes.length) {
+                popup_show("本视频集已录入所有分集");
+                current_episode_index = exists_episodes.length - 1;
             }
+            else {
+                current_episode_index = exists_episodes.length;
+                popup_show("录入成功，可继续录入");
+            }
+            load_question(current_question_index);
         }
-    );
+        else {
+            exists_episodes[data.episode_index - 1] = data;
+            popup_show("更新成功");
+        }
+    })
 }
 
-function init_info(data){
-    if(data == null){
+function init_info(data) {
+    if (data == null) {
         var info_url = $("#info_url").val();
         my_async_request2(info_url, "GET", null, init_info);
         return 0;
     }
-    if(data.length > 0) {
+    if (data.length > 0) {
         var video_item = data[0];
         $("#s_video_name").val(video_item["video_name"]);
         $("#s_video_type").val(video_item["video_type"]);
+        $("#episode_num").val(video_item["episode_num"]);
+        total_num = video_item["episode_num"];
+        receive_episodes(null);
     }
 }
 
-function receive_questions(data){
-    if(data == null){
-        var questions_url = $("#questions_url").val();
-        my_async_request2(questions_url, "GET", null, receive_questions);
+
+function receive_episodes(data) {
+    if (data == null) {
+        var url_episode = $("#url_episode").val();
+        my_async_request2(url_episode, "GET", null, receive_episodes);
         return 0;
     }
-    exists_questions = data;
-    for(var i=0;i<exists_questions.length;i++){
-        if(next_question_no <= exists_questions[i].question_no){
-            next_question_no = exists_questions[i].question_no + 1;
-            console.info(next_question_no);
-        }
+    exists_episodes = data;
+
+    $("#btn_new_episode").removeAttr("disabled");
+
+    if (total_num == exists_episodes.length) {
+        current_episode_index = exists_episodes.length - 1;
     }
-    $("#questions_num").val(exists_questions.length);
-    $("#btn_new_question").removeAttr("disabled");
-    current_question_index = exists_questions.length;
+    else {
+        current_episode_index = exists_episodes.length;
+    }
     execute_action("current");
 }
 
-$(function() {
-    if(UrlArgsValue(location.href, "video_no") != null) {
-        $("#btn_new_question").click(add_question);
-        $("#btn_update").click(add_question);
-        init_info(null);
-        receive_questions(null);
-        $("#link_pre").click(function(){
-           execute_action("pre");
+$(function () {
+    $("#btn_upload").click(function () {
+        if ($("#upload_episode")[0].files.length <= 0) {
+            popup_show("请选择分集视频");
+            return 1;
+        }
+        $(this).attr("disabled", "disabled");
+        $(this).text("上传中");
+        $("#episode_url").val("");
+        $("#upload_episode").attr("disabled", "disabled");
+
+        var upload_url = $("#url_upload_e").val();
+        var data = {"e": $("#upload_episode")[0].files[0]};
+        upload_request(upload_url, "POST", data, function (data) {
+            $("#btn_upload").text("已上传");
+            $("#episode_url").val(data["e"]);
         });
-        $("#link_next").click(function(){
-           execute_action("next");
+
+    });
+    $("#upload_episode_pic").change(function () {
+        var upload_url = $("#upload_url").val();
+        if ($("#upload_episode_pic")[0].files.length <= 0) {
+            return 1;
+        }
+        var data = {"pic": $("#upload_episode_pic")[0].files[0]};
+        upload_request(upload_url, "POST", data, function (data) {
+            $("#episode_pic").attr("src", data["pic"]);
+        });
+    });
+    if (UrlArgsValue(location.href, "video_no") != null) {
+        $("#btn_new_episode").click(add_episode);
+        $("#btn_update").click(add_episode);
+        init_info(null);
+        $("#link_pre").click(function () {
+            execute_action("pre");
+        });
+        $("#link_next").click(function () {
+            execute_action("next");
         });
     }
 });

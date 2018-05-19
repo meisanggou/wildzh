@@ -24,15 +24,20 @@ class Video(object):
         l = self.db.execute_insert(self.t_info, kwargs=kwargs, ignore=True)
         return l
 
-    def _insert_episode(self, video_no, video_index, title, episode_pic=None):
-        kwargs = dict(video_no=video_no, video_index=video_index, title=title, episode_pic=episode_pic,
-                      insert_time=int(time.time()))
+    def _insert_episode(self, video_no, episode_index, title, episode_url, episode_pic=None):
+        kwargs = dict(video_no=video_no, episode_index=episode_index, title=title, episode_pic=episode_pic,
+                      insert_time=int(time.time()), episode_url=episode_url)
         l = self.db.execute_insert(self.t_episode, kwargs=kwargs, ignore=True)
         return l
 
     def _update_info(self, video_type, video_no, **update_value):
         where_value = dict(video_no=video_no, video_type=video_type)
         l = self.db.execute_update(self.t_info, update_value=update_value, where_value=where_value)
+        return l
+
+    def _update_num(self, video_type, video_no):
+        where_value = dict(video_type=video_type, video_no=video_no)
+        l = self.db.execute_plus(self.t_info, "upload_num", where_value=where_value)
         return l
 
     def _update_status(self, video_no, add_status=None, sub_status=None):
@@ -52,12 +57,14 @@ class Video(object):
             return False, l
         return True, video_no
 
-    def new_video_episode(self, video_no, video_index, title, video_pic=None):
-        l = self._insert_episode(video_no, video_index, title, video_pic)
+    def new_video_episode(self, video_type, video_no, episode_index, title, episode_url, episode_pic=None):
+        l = self._insert_episode(video_no, episode_index, title, episode_url, episode_pic)
+        if l == 1:
+            self._update_num(video_type, video_no)
         return l
 
     def update_video(self, video_type, video_no, **kwargs):
-        cols = ["video_name", "video_desc", "episode_num","video_extend", "video_pic"]
+        cols = ["video_name", "video_desc", "episode_num", "video_extend", "video_pic"]
         update_value = dict()
         for key in kwargs.keys():
             if key not in cols:
@@ -68,8 +75,8 @@ class Video(object):
         l = self._update_info(video_type, video_no, **update_value)
         return l
 
-    def update_episode(self, video_no, video_index, title=None, video_pic=None):
-        where_value = dict(video_no=video_no, video_index=video_index)
+    def update_episode(self, video_no, episode_index, title=None, video_pic=None):
+        where_value = dict(video_no=video_no, episode_index=episode_index)
         kwargs = dict(title=title, video_pic=video_pic)
         l = self.db.execute_update(self.t_episode, update_value=kwargs, where_value=where_value)
         return l
@@ -92,10 +99,8 @@ class Video(object):
 
     def select_episode(self, video_no):
         where_value = dict(video_no=video_no)
-        cols = ["video_no", "question_no", "question_desc", "select_mode", "options"]
+        cols = ["video_no", "episode_index", "title", "episode_url", "episode_pic"]
         items = self.db.execute_select(self.t_episode, cols=cols, where_value=where_value)
-        for item in items:
-            item["options"] = json.loads(item["options"])
         return items
 
     def online_video(self, video_no):

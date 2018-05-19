@@ -82,7 +82,7 @@
       {
         "pri_key": true,
         "col_comment": "第多少集",
-        "col_name": "video_index",
+        "col_name": "episode_index",
         "col_type": "int(11)"
       },
       {
