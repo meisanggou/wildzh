@@ -75,9 +75,9 @@ class Video(object):
         l = self._update_info(video_type, video_no, **update_value)
         return l
 
-    def update_episode(self, video_no, episode_index, title=None, video_pic=None):
+    def update_episode(self, video_no, episode_index, title=None, episode_url=None, episode_pic=None):
         where_value = dict(video_no=video_no, episode_index=episode_index)
-        kwargs = dict(title=title, video_pic=video_pic)
+        kwargs = dict(title=title, episode_pic=episode_pic, episode_url=episode_url)
         l = self.db.execute_update(self.t_episode, update_value=kwargs, where_value=where_value)
         return l
 

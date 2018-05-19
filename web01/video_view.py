@@ -148,7 +148,7 @@ def entry_questions():
         r = True
         l = c_video.new_video_episode(video_type, g.video_no, episode_index, title, episode_url, episode_pic)
     else:
-        l = c_video.update_video_questions(g.video_no, question_no, question_desc, select_mode, options)
+        l = c_video.update_episode(g.video_no, episode_index, title, episode_url, episode_pic)
         r = True
     return jsonify({"status": r, "data": dict(action=request.method, data=data)})
 
