@@ -70,6 +70,10 @@ function init_info(data) {
             var td_no = new_td("insert_time", data[i], null, null, timestamp_2_datetime);
             add_tr.append(td_no);
 
+            var td_upload = $("<td></td>");
+            td_upload.text(data[i]["upload_num"] + "/" + data[i]["episode_num"]);
+            add_tr.append(td_upload);
+
             var td_status = new_td("status", data[i], null, null, explain_status);
             add_tr.append(td_status);
 

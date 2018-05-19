@@ -82,7 +82,7 @@ class Video(object):
             if video_no is not None:
                 where_value["video_no"] = video_no
         cols = ["video_type", "video_no", "video_name", "video_desc", "episode_num", "adder", "status",
-                "video_extend", "video_pic", "insert_time"]
+                "video_extend", "video_pic", "insert_time", "upload_num"]
         items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value, where_cond=where_cond)
         for item in items:
             if item["video_extend"] is not None:
