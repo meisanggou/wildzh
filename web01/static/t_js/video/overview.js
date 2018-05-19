@@ -85,8 +85,8 @@ function init_info(data) {
                 td_op.append(" | ");
                 var basic_url = AddUrlArg(location.pathname, "video_no", data[i]["video_no"]);
                 basic_url = AddUrlArg(basic_url, "video_type", data[i]["video_type"]);
-                var question_url = AddUrlArg(basic_url, "action", "question");
-                td_op.append(new_link("管理视频", question_url));
+                var episode_url = AddUrlArg(basic_url, "action", "episode");
+                td_op.append(new_link("管理视频", episode_url));
 
                 td_op.append(" | ");
                 var update_url = AddUrlArg(basic_url, "action", "video");

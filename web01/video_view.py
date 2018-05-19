@@ -63,7 +63,7 @@ def index():
         return rt.render("entry_info.html", page_list=page_list, info_url=info_url, upload_url=upload_url,
                          page_video=page_video)
     if "video_no" in request.args:
-        return rt.render("entry_questions.html", page_list=page_list, page_video=page_video, info_url=info_url,
+        return rt.render("episode.html", page_list=page_list, page_video=page_video, info_url=info_url,
                          questions_url=questions_url)
     return rt.render("overview.html", page_video=page_video, info_url=info_url, online_url=online_url)
 

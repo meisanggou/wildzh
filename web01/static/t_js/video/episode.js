@@ -32,7 +32,7 @@ function load_question(index)
         $("#questions_num").attr("about", item["question_no"]);
     }
     else{
-        $("#questions_num").val("录入第" + (exists_questions.length + 1));
+        $("#questions_num").val("上传第" + (exists_questions.length + 1));
         $("#question_desc").val("");
         $("#options li[name='li_option']").find("input:eq(1)").val("");
         $("#options li[name='li_option']").find("input:eq(2)").val("");
@@ -88,7 +88,7 @@ function entry_success(r_d){
         if(next_question_no <= data.question_no){
             next_question_no = data.question_no + 1;
         }
-        popup_show("录入成功，可继续录入");
+        popup_show("上传成功，可继续上传");
         current_question_index = exists_questions.length;
         load_question(current_question_index);
     }
@@ -184,9 +184,9 @@ function init_info(data){
         return 0;
     }
     if(data.length > 0) {
-        var exam_item = data[0];
-        $("#s_exam_name").val(exam_item["exam_name"]);
-        $("#s_exam_type").val(exam_item["exam_type"]);
+        var video_item = data[0];
+        $("#s_video_name").val(video_item["video_name"]);
+        $("#s_video_type").val(video_item["video_type"]);
     }
 }
 
@@ -210,7 +210,7 @@ function receive_questions(data){
 }
 
 $(function() {
-    if(UrlArgsValue(location.href, "exam_no") != null) {
+    if(UrlArgsValue(location.href, "video_no") != null) {
         $("#btn_new_question").click(add_question);
         $("#btn_update").click(add_question);
         init_info(null);
