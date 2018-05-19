@@ -108,10 +108,10 @@ def get_video_info():
 @login_required
 def update_video():
     data = g.request_data
-    video_type = data.pop("video_type")
-    video_no = data.pop("video_no")
-    l = c_video.update_video(video_type, video_no, **data)
-    return jsonify({"status": True, "data": g.request_data})
+    video_type = data["video_type"]
+    video_no = data["video_no"]
+    l = c_video.update_video(**data)
+    return jsonify({"status": True, "data": data})
 
 
 @video_view.route("/info/", methods=["DELETE"])
@@ -142,7 +142,7 @@ def entry_questions():
     items = c_video.select_video(video_type, g.video_no)
     if len(items) != 1:
         return jsonify({"status": False, "data": "视频集不存在"})
-    if episode_index >= items[0]["episode_num"]:
+    if episode_index > items[0]["episode_num"]:
         return jsonify({"status": False, "data": "视频集索引超出总集数"})
     if request.method == "POST":
         r = True

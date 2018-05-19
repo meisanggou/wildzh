@@ -11,6 +11,11 @@ function load_episode(index) {
     if (index < 0) {
         return 1;
     }
+    $("#btn_upload").text("上传");
+    $("#btn_upload").removeAttr("disabled");
+    $("#upload_episode").removeAttr("disabled");
+    $("#upload_episode").val("");
+    $("#upload_episode_pic").val("");
     if (index < exists_episodes.length) {
         var item = exists_episodes[index];
         $("#title").val(item["title"]);
@@ -26,11 +31,7 @@ function load_episode(index) {
         $("#episode_pic").attr("src", "");
         $("#episode_url").attr("href", "");
         $("#episode_url").hide();
-        $("#btn_upload").text("上传");
-        $("#btn_upload").removeAttr("disabled");
-        $("#upload_episode").removeAttr("disabled");
-        $("#upload_episode").val("");
-        $("#upload_episode_pic").val("");
+
     }
     return 0;
 }
@@ -78,7 +79,6 @@ function execute_action(action) {
 
 function add_episode() {
     var btn = $(this);
-    var btn_text = btn.text();
     var r_data = new Object();
     var title = $("#title").val();
     if (title.length <= 0) {
@@ -117,7 +117,7 @@ function add_episode() {
                 current_episode_index = exists_episodes.length;
                 popup_show("录入成功，可继续录入");
             }
-            load_episode(current_episode_index);
+            execute_action("current");
         }
         else {
             exists_episodes[data.episode_index - 1] = data;
