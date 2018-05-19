@@ -96,7 +96,7 @@ function init_info(data) {
                 var data_item = data[i];
                 td_op.append(" | ");
                 var online_link = $("<a href='javascript:void(0)'>上线</a>");
-                var msg = "确定上线【" + data[i]["video_name"] + "】\n上线后将不可更改测试内容！";
+                var msg = "确定上线【" + data[i]["video_name"] + "】\n上线后将不可更改视频内容！";
                 online_link.click(function () {
                     swal({
                             title: "上线提醒",
