@@ -1,5 +1,6 @@
 [{
-		"table_cols": [{
+		"table_cols": [
+          {
 				"pri_key": true,
 				"col_comment": "文章编号",
 				"col_name": "article_no",
@@ -20,7 +21,14 @@
 		"table_name": "article_content"
 	},
 	{
-		"table_cols": [{
+		"table_cols": [
+          {
+				"pri_key": true,
+				"col_comment": "文章分类",
+				"col_name": "article_type",
+				"col_type": "varchar(10)"
+			},
+          {
 				"pri_key": true,
 				"col_comment": "文章编号",
 				"col_name": "article_no",

@@ -14,7 +14,8 @@ __author__ = 'ZhouHeng'
 url_prefix = "/article"
 
 rt = RenderTemplate("article", url_prefix=url_prefix)
-article_view = create_blue('article_view', url_prefix=url_prefix, menu_list={"title": u"文章管理"})
+article_view = create_blue('article_view', url_prefix=url_prefix, menu_list={"title": u"文章管理"},
+                           auth_required=False)
 c_article = ArticleManager(db_conf_path)
 
 
@@ -48,19 +49,22 @@ support_upload2(article_view, upload_folder, file_prefix_url, ("article", "pic")
 def add_article_action():
     g.user_name = "zh_test"
     request_data = request.json
+    article_type = request_data["article_type"]
     title = request_data["title"]
     author = request_data["author"]
     abstract = request_data["abstract"]
     content = request_data["content"]
     article_desc = request_data["article_desc"]
     pic_url = request_data["pic_url"]
-    exec_r, data = c_article.new_article(author, title, abstract, content, g.user_name, article_desc, pic_url)
+    exec_r, data = c_article.new_article(article_type, author, title, abstract, content, g.user_name, article_desc,
+                                         pic_url)
     return jsonify({"status": exec_r, "data": data})
 
 
 @article_view.route("/", methods=["PUT"])
 def update_article_action():
     request_data = request.json
+    article_type = request_data["article_type"]
     article_no = request_data["article_no"]
     author = request_data["author"]
     title = request_data["title"]
@@ -70,7 +74,8 @@ def update_article_action():
     pic_url = request_data["pic_url"]
     auto = request_data.get("auto", False)
     if auto is False:
-        exec_r, data = c_article.update_article(article_no, author, title, abstract, content, article_desc, pic_url)
+        exec_r, data = c_article.update_article(article_type, article_no, author, title, abstract, content,
+                                                article_desc, pic_url)
     else:
         article_file = os.path.join(upload_folder, "%s_%s.txt" % (article_no, int(time())))
         with open(article_file, "w") as wa:
@@ -81,7 +86,7 @@ def update_article_action():
 
 @article_view.route("/info/", methods=["GET"])
 def query_func():
-    if request.is_xhr is True:
+    if request.is_xhr is True or g.user_name is None:
         exec_r, articles = c_article.query_article()
         return jsonify({"status": exec_r, "data": articles})
     url_add_article = url_prefix + "/"

@@ -25,6 +25,13 @@
             <div class="form-group apiContentLine">
                 <ul>
                     <li>
+                        <label for="">文章分类：</label>
+                        <select class="box-side width150" id="article_type" type="text">
+                            <option value="meiwen">美文</option>
+                            <option value="xlts">心理调适</option>
+                        </select>
+                    </li>
+                    <li>
                         <label for="">标题：</label>
                         <input class="box-side width800" id="article_title" type="text"/>
                     </li>
@@ -38,7 +45,8 @@
                     </li>
                     <li>
                         <label for="effective_days">文章图片：</label>
-                        <input class="box-side width300" id="upload_article_pic" type="file" placeholder="上传图片"  accept="image/*"/>
+                        <input class="box-side width300" id="upload_article_pic" type="file" placeholder="上传图片"
+                               accept="image/*"/>
                         <img id="pic_url" src=""/>
                     </li>
                 </ul>
@@ -48,7 +56,7 @@
         </div>
         <input id="article_no" class="display_none" value="{{ article_no }}">
         <input id="auto" class="display_none" value="0">
-        <input id="upload_url" class="display_none" value="{{ upload_url }}" />
+        <input id="upload_url" class="display_none" value="{{ upload_url }}"/>
         <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_save">保存</a>
         <a class="left5" href="javascript:void(0)" title="" id="link_look">查看</a>
     </div>

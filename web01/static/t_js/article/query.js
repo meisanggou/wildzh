@@ -2,6 +2,8 @@
  * Created by msg on 3/22/17.
  */
 
+cn_article_type = {"meiwen": "美文", "xlts": "心理调适"};
+
 function delete_article() {
     var current_td = $(this).parent();
     var current_tr = current_td.parent();
@@ -49,6 +51,9 @@ function fill_table(data) {
     for (var i = 0; i < data.length; i++) {
         var add_tr = $("<tr></tr>");
         add_tr.attr("id", data[i]["article_no"]);
+
+        var td_type = new_td(data[i]["article_type"], cn_article_type);
+        add_tr.append(td_type);
 
         for (var j = 0; j < keys.length; j++) {
             var td_t = new_td(keys[j], data[i]);
