@@ -19,8 +19,10 @@ function init_info(data){
         $("#video_desc").val(video_item["video_desc"]);
         $("#video_pic").attr("src", video_item["video_pic"]);
         $("#video_type").attr("disabled", "disabled");
+        $("#lab_upload_num").text(video_item["upload_num"]);
         $("#btn_new").text("更新");
         $("#li_add").show();
+        $("#div_upload_status").show();
         $("#li_update a").text("更新视频");
     }
 }
