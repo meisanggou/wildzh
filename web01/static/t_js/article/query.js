@@ -72,6 +72,7 @@ function fill_table(data) {
         if (data[i]["status"] == 1) {
             td_op.append(" | ");
             var detail_url = AddUrlArg(basic_url, "action", "article");
+            detail_url = AddUrlArg(detail_url, "article_type", data[i]["article_type"]);
             td_op.append(new_link("更新", detail_url));
 
             var data_item = data[i];

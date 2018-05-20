@@ -24,19 +24,17 @@ def add_func():
     article_no = ""
     g.user_name = "zh_test"
     upload_url = url_prefix + "/upload/"
+    url_info = url_prefix + "/info/"
     page_article = url_prefix + "/?action=article"
     page_list = url_prefix + "/"
     if "article_no" in request.args:
         article_no = request.args["article_no"]
-    if request.is_xhr is True:
-        if len(article_no) != 32:
-            return jsonify({"status": False, "data": "无效的编号"})
-        exec_r, data = c_article.get_article(article_no, g.user_name)
-        return jsonify({"status": exec_r, "data": data})
     if "action" in request.args and request.args["action"] == "look":
-        return rt.render("look.html", article_no=article_no, page_article=page_article, page_list=page_list)
+        return rt.render("look.html", article_no=article_no, page_article=page_article, page_list=page_list,
+                         url_info=url_info)
     elif "action" in request.args and request.args["action"] == "article":
-        return rt.render("add.html", article_no=article_no, page_list=page_list, upload_url=upload_url)
+        return rt.render("add.html", article_no=article_no, page_list=page_list, upload_url=upload_url,
+                         url_info=url_info)
     online_url = url_prefix + "/online/"
     info_url = url_prefix + "/info/"
     return rt.render("query.html", page_article=page_article, online_url=online_url, info_url=info_url)
@@ -90,6 +88,12 @@ def query_func():
         article_type = None
         if "article_type" in request.args:
             article_type = request.args["article_type"]
+        if "article_no" in request.args:
+            article_no = request.args["article_no"]
+            if len(article_no) != 32:
+                return jsonify({"status": False, "data": "无效的编号"})
+            exec_r, data = c_article.get_article(article_type, article_no, g.user_name)
+            return jsonify({"status": exec_r, "data": data})
         exec_r, items = c_article.query_article(article_type=article_type)
         if g.user_name is None:
             for i in range(len(items) - 1, -1, -1):
