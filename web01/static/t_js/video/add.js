@@ -36,6 +36,9 @@ function request_video(method, r_data) {
     my_async_request2(info_url, method, r_data, function (data) {
         if(method == "PUT"){
             popup_show(msg);
+            if("upload_num" in data){
+                $("#lab_upload_num").text(data["upload_num"]);
+            }
         }
         else {
             swal({
@@ -99,6 +102,7 @@ function new_or_update_video() {
     if ($("#lab_upload_num").text().length > 0) {
         var upload_num = parseInt($("#lab_upload_num").text());
         if (r_data["episode_num"] < upload_num) {
+            r_data["upload_num"] = r_data["episode_num"];
             var msg = "更新后总集数【" + r_data["episode_num"] + "】小于已上传集数【" + upload_num + "】，多上传的将会删除！";
             swal({
                     title: "更新确认",

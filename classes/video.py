@@ -30,9 +30,10 @@ class Video(object):
         l = self.db.execute_insert(self.t_episode, kwargs=kwargs, ignore=True)
         return l
 
-    def _update_info(self, video_type, video_no, **update_value):
+    def _update_info(self, video_type, video_no, where_cond=None, **update_value):
         where_value = dict(video_no=video_no, video_type=video_type)
-        l = self.db.execute_update(self.t_info, update_value=update_value, where_value=where_value)
+        l = self.db.execute_update(self.t_info, update_value=update_value, where_value=where_value,
+                                   where_cond=where_cond)
         return l
 
     def _update_num(self, video_type, video_no):
@@ -72,7 +73,15 @@ class Video(object):
             if kwargs[key] is None:
                 continue
             update_value[key] = kwargs[key]
-        l = self._update_info(video_type, video_no, **update_value)
+        if "upload_num" in kwargs and "episode_num" in kwargs and kwargs["episode_num"] >= kwargs["upload_num"]:
+            where_cond = ["upload_num>=%s" % kwargs["upload_num"]]
+            update_value["upload_num"] = kwargs["upload_num"]
+            print("gg")
+            l = self._update_info(video_type, video_no, where_cond=where_cond, **update_value)
+            if l > 0:
+                self.delete_episode(video_no, episode_index=kwargs["upload_num"], delete_mode="multi")
+        else:
+            l = self._update_info(video_type, video_no, **update_value)
         return l
 
     def update_episode(self, video_no, episode_index, title=None, episode_url=None, episode_pic=None):
@@ -109,4 +118,14 @@ class Video(object):
 
     def delete_video(self, video_type, video_no):
         l = self._update_info(video_type, video_no, status=0)
+        return l
+
+    def delete_episode(self, video_no, episode_index, delete_mode="single"):
+        where_value = dict(video_no=video_no)
+        where_cond = []
+        if delete_mode == "single":
+            where_value["episode_index"] = episode_index
+        else:
+            where_cond = ["episode_index>%s" % episode_index]
+        l = self.db.execute_delete(self.t_episode, where_value=where_value, where_cond=where_cond)
         return l
