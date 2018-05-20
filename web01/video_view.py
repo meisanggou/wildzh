@@ -174,25 +174,3 @@ def online_video():
         return jsonify({"status": False, "data": "视频状态未达到不可上线"})
     c_video.online_video(video_no)
     return jsonify({"status": True, "data": "success"})
-
-
-@video_view.route("/records/", methods=["POST"])
-def add_video_records():
-    data = g.request_data
-    video_type = data["video_type"]
-    video_no = data["video_no"]
-    user_id = data["user_id"]
-    result = data["result"]
-    c_video.new_video_record(user_id, video_no, result)
-    explains = c_video.select_result_explain(video_no, result)
-    tj = c_video.select_tj(video_no)
-    r = dict(result=result)
-    if len(tj) > 0:
-        r["tj"] = tj[0]
-    else:
-        r["tj"] = None
-    if len(explains) > 0:
-        r["result_explain"] = explains[0]
-    else:
-        r["result_explain"] = None
-    return jsonify({"status": True, "data": r})
