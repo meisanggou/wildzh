@@ -16,7 +16,8 @@ __author__ = 'ZhouHeng'
 url_prefix = "/doctor"
 
 rt = RenderTemplate("doctor", url_prefix=url_prefix)
-doctor_view = create_blue('doctor_view', url_prefix=url_prefix, menu_list={"title": u"医生管理"})
+doctor_view = create_blue('doctor_view', url_prefix=url_prefix, menu_list={"title": u"医生管理"},
+                          auth_required=False)
 c_doctor = Doctor(db_conf_path)
 
 
@@ -25,9 +26,8 @@ def referer_doctor_no(f):
     def decorated_function(*args, **kwargs):
         if "Referer" not in request.headers:
             g.ref_url = ""
-            g.doctor_no = None
-            return f(*args, **kwargs)
-        g.ref_url = request.headers["Referer"]
+        else:
+            g.ref_url = request.headers["Referer"]
         find_no = re.findall("doctor_no=(\\w+)", g.ref_url)
         if len(find_no) > 0:
             g.doctor_no = find_no[0]
@@ -115,8 +115,17 @@ def delete_doctor_action():
 @doctor_view.route("/detail/", methods=["GET"])
 @required_doctor_no
 def get_detail():
+    items = c_doctor.select_doctor(g.doctor_no)
+    if len(items) <= 0:
+        return jsonify({"status": True, "data": "医生不存在"})
+    doctor_item = items[0]
     item = c_doctor.select_detail(g.doctor_no)
-    return jsonify({"status": True, "data": [item]})
+    if item is None:
+        return jsonify({"status": True, "data": "医生不存在详细信息"})
+    doctor_item.update(item)
+    if g.user_name is None:
+        return jsonify({"status": True, "data": doctor_item})
+    return jsonify({"status": True, "data": [doctor_item]})
 
 
 @doctor_view.route("/detail/", methods=["POST"])
