@@ -109,7 +109,7 @@ function add_episode() {
         var action = r_d.action;
         if (action == "POST") {
             exists_episodes[exists_episodes.length] = data;
-            if (total_num == exists_episodes.length) {
+            if (total_num <= exists_episodes.length) {
                 popup_show("本视频集已录入所有分集");
                 current_episode_index = exists_episodes.length - 1;
             }
@@ -152,8 +152,7 @@ function receive_episodes(data) {
     exists_episodes = data;
 
     $("#btn_new_episode").removeAttr("disabled");
-
-    if (total_num == exists_episodes.length) {
+    if (total_num <= exists_episodes.length) {
         current_episode_index = exists_episodes.length - 1;
     }
     else {
