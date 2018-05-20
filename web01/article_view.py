@@ -87,8 +87,16 @@ def update_article_action():
 @article_view.route("/info/", methods=["GET"])
 def query_func():
     if request.is_xhr is True or g.user_name is None:
-        exec_r, articles = c_article.query_article()
-        return jsonify({"status": exec_r, "data": articles})
+        article_type = None
+        if "article_type" in request.args:
+            article_type = request.args["article_type"]
+        exec_r, items = c_article.query_article(article_type=article_type)
+        if g.user_name is None:
+            for i in range(len(items) - 1, -1, -1):
+                if items[i]["status"] & 64 == 64:
+                    continue
+                del items[i]
+        return jsonify({"status": exec_r, "data": items})
     url_add_article = url_prefix + "/"
     return rt.render("query.html", url_add_article=url_add_article)
 
@@ -96,15 +104,16 @@ def query_func():
 @article_view.route("/online/", methods=["POST"])
 def online_music():
     article_no = g.request_data["article_no"]
-    r, items = c_article.query_article(article_no=article_no)
+    article_type = g.request_data["article_type"]
+    r, items = c_article.query_article(article_no=article_no, article_type=article_type)
     if r is False or len(items) != 1:
         return jsonify({"status": False, "data": "文章不存在"})
-    c_article.online(article_no)
+    c_article.online(article_type, article_no)
     return jsonify({"status": True, "data": "success"})
 
 
 @article_view.route("/info/", methods=["DELETE"])
 def delete_article_action():
     request_data = request.json
-    c_article.delete_article(request_data["article_no"])
+    c_article.delete_article(request_data["article_type"], request_data["article_no"])
     return jsonify({"status": True, "data": request_data})
