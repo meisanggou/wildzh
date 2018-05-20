@@ -46,7 +46,7 @@
         "allow_null": true
       },
       {
-        "col_comment": "视频状态 1代表已录入基本信息 2录入完整每一集 4 8 16 32保留 64代表已上线 128代表不允许收看 0代表已删除",
+        "col_comment": "视频状态 1代表已录入基本信息 2 4 8 16 32保留 64代表已上线 128代表不允许收看 0代表已删除",
         "col_name": "status",
         "col_type": "int",
         "default_value": 1

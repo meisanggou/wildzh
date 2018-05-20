@@ -169,7 +169,8 @@ def online_video():
     items = c_video.select_video(video_type, video_no)
     if len(items) != 1:
         return jsonify({"status": False, "data": "视频不存在"})
-    if items[0]["status"] & 7 != 7:
+    item = items[0]
+    if item["status"] & 1 != 1 and item["upload_num"] != item["episode_num"]:
         return jsonify({"status": False, "data": "视频状态未达到不可上线"})
     c_video.online_video(video_no)
     return jsonify({"status": True, "data": "success"})

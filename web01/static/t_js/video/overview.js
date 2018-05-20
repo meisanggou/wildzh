@@ -34,15 +34,12 @@ function delete_video() {
     );
 }
 
-function explain_status(s) {
+function explain_status(s, upload_num, episode_num) {
     if ((s & 128) != 0) {
         return "已下线"
     }
-    if ((s & 2) == 0) {
+    if (upload_num < episode_num) {
         return "缺少视频";
-    }
-    if ((s & 4) == 0) {
-        return "缺少结果解释";
     }
     if ((s & 64) != 0) {
         return "已上线"
@@ -74,7 +71,8 @@ function init_info(data) {
             td_upload.text(data[i]["upload_num"] + "/" + data[i]["episode_num"]);
             add_tr.append(td_upload);
 
-            var td_status = new_td("status", data[i], null, null, explain_status);
+            var td_status = $("<td></td>");
+            td_status.text(explain_status(data[i]["status"], data[i]["upload_num"], data[i]["episode_num"]));
             add_tr.append(td_status);
 
             var td_op = $("<td></td>");
@@ -91,8 +89,8 @@ function init_info(data) {
                 td_op.append(" | ");
                 var update_url = AddUrlArg(basic_url, "action", "video");
                 td_op.append(new_link("更新信息", update_url));
-            }
-            if (data[i]["status"] == 7) {
+
+                 if (data[i]["upload_num"] == data[i]["episode_num"]) {
                 var data_item = data[i];
                 td_op.append(" | ");
                 var online_link = $("<a href='javascript:void(0)'>上线</a>");
@@ -119,6 +117,8 @@ function init_info(data) {
                     );
                 });
                 td_op.append(online_link);
+            }
+
             }
             add_tr.append(td_op);
 
