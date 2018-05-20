@@ -27,31 +27,8 @@ function init_info(data){
     }
 }
 
-function new_or_update_video(){
-    var r_data = new Object();
-    var keys = ["video_type", "video_name", "video_desc", "episode_num"];
-    for(var i=0;i<keys.length;i++){
-        var item = $("#" + keys[i]);
-        var v = item.val().trim();
-        if(v.length <= 0){
-            var msg = item.attr("msg");
-            popup_show(msg);
-            return 1;
-        }
-        r_data[keys[i]] = v;
-    }
-    var video_pic = $("#video_pic").attr("src");
-    if(video_pic.length <= 0){
-        popup_show("请上传视频图片");
-        return 2;
-    }
-    r_data["video_pic"] = video_pic;
-    var video_no = $("#video_no").val();
-    var method = "POST";
-    if(video_no.length == 32){
-        method = "PUT";
-        r_data["video_no"] = video_no;
-    }
+function request_video(method, r_data)
+{
     var info_url = $("#info_url").val();
     my_async_request2(info_url, method, r_data, function(data){
         swal({
@@ -79,6 +56,33 @@ function new_or_update_video(){
             }
         );
     });
+}
+function new_or_update_video(){
+    var r_data = new Object();
+    var keys = ["video_type", "video_name", "video_desc", "episode_num"];
+    for(var i=0;i<keys.length;i++){
+        var item = $("#" + keys[i]);
+        var v = item.val().trim();
+        if(v.length <= 0){
+            var msg = item.attr("msg");
+            popup_show(msg);
+            return 1;
+        }
+        r_data[keys[i]] = v;
+    }
+    var video_pic = $("#video_pic").attr("src");
+    if(video_pic.length <= 0){
+        popup_show("请上传视频图片");
+        return 2;
+    }
+    r_data["video_pic"] = video_pic;
+    var video_no = $("#video_no").val();
+    var method = "POST";
+    if(video_no.length == 32){
+        method = "PUT";
+        r_data["video_no"] = video_no;
+    }
+    request_video(method, r_data);
 }
 
 $(function() {
