@@ -8,8 +8,10 @@ function delete_article() {
     var current_td = $(this).parent();
     var current_tr = current_td.parent();
     var tr_id = current_tr.attr("id");
-    var title = current_tr.find("td:eq(0)").text();
-    var msg = "确定要删除【" + title + "】";
+    var article_type_s = current_tr.find("td:eq(0)").text();
+    var article_type = current_tr.find("td:eq(0)").attr("name").substr(3);
+    var title = current_tr.find("td:eq(1)").text();
+    var msg = "确定要删除【" + article_type_s + "】【" + title + "】";
     swal({
             title: "删除警告",
             text: msg,
@@ -23,7 +25,7 @@ function delete_article() {
         },
         function (isConfirm) {
             if (isConfirm) {
-                var r_d = {"article_no": tr_id};
+                var r_d = {"article_no": tr_id, "article_type": article_type};
                 my_async_request2($("#info_url").val(), "DELETE", r_d, function (data) {
                     location.reload();
                 });
