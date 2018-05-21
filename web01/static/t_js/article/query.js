@@ -34,6 +34,36 @@ function delete_article() {
     );
 }
 
+function online_article() {
+    var current_td = $(this).parent();
+    var current_tr = current_td.parent();
+    var tr_id = current_tr.attr("id");
+    var article_type_s = current_tr.find("td:eq(0)").text();
+    var article_type = current_tr.find("td:eq(0)").attr("name").substr(3);
+    var title = current_tr.find("td:eq(1)").text();
+    var msg = "确定上线文章【" + article_type_s + "】【" + title + "】\n上线后将不可更改信息！";
+    swal({
+            title: "上线提醒",
+            text: msg,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: '#DD6B55',
+            confirmButtonText: '上线',
+            cancelButtonText: "取消",
+            closeOnConfirm: true,
+            closeOnCancel: true
+        },
+        function (isConfirm) {
+            if (isConfirm) {
+                var r_d = {"article_no": tr_id, "article_type": article_type};
+                my_async_request2($("#online_url").val(), "POST", r_d, function (data) {
+                    location.reload();
+                });
+            }
+        }
+    );
+}
+
 function explain_status(s) {
     if ((s & 128) != 0) {
         return "已下线"
@@ -47,7 +77,7 @@ function explain_status(s) {
 function fill_table(data) {
     var keys = ["title", "author"];
     var t = $("#t_article");
-    if(data.length == 0){
+    if (data.length == 0) {
         $("#tr_none").show();
     }
     for (var i = 0; i < data.length; i++) {
@@ -80,35 +110,7 @@ function fill_table(data) {
             td_op.append(" | ");
             var online_link = $("<a href='javascript:void(0)'>上线</a>");
             var data_item = data[i];
-            online_link.click(function () {
-                var current_td = $(this).parent();
-                var current_tr = current_td.parent();
-                var tr_id = current_tr.attr("id");
-                var article_type_s = current_tr.find("td:eq(0)").text();
-                var article_type = current_tr.find("td:eq(0)").attr("name").substr(3);
-                var title = current_tr.find("td:eq(1)").text();
-                var msg = "确定上线文章【" + article_type_s + "】【" + title + "】\n上线后将不可更改信息！";
-                swal({
-                        title: "上线提醒",
-                        text: msg,
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: '#DD6B55',
-                        confirmButtonText: '上线',
-                        cancelButtonText: "取消",
-                        closeOnConfirm: true,
-                        closeOnCancel: true
-                    },
-                    function (isConfirm) {
-                        if (isConfirm) {
-                            var r_d = {"article_no": tr_id, "article_type": article_type};
-                            my_async_request2($("#online_url").val(), "POST", r_d, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
-                );
-            });
+            online_link.click(online_article);
             td_op.append(online_link);
         }
         add_tr.append(td_op);
