@@ -77,11 +77,17 @@ function fill_table(data) {
             detail_url = AddUrlArg(detail_url, "article_type", data[i]["article_type"]);
             td_op.append(new_link("更新", detail_url));
 
-            var data_item = data[i];
             td_op.append(" | ");
             var online_link = $("<a href='javascript:void(0)'>上线</a>");
-            var msg = "确定上线文章【" + data[i]["title"] + "】\n上线后将不可更改信息！";
+            var data_item = data[i];
             online_link.click(function () {
+                var current_td = $(this).parent();
+                var current_tr = current_td.parent();
+                var tr_id = current_tr.attr("id");
+                var article_type_s = current_tr.find("td:eq(0)").text();
+                var article_type = current_tr.find("td:eq(0)").attr("name").substr(3);
+                var title = current_tr.find("td:eq(1)").text();
+                var msg = "确定上线文章【" + article_type_s + "】【" + title + "】\n上线后将不可更改信息！";
                 swal({
                         title: "上线提醒",
                         text: msg,
@@ -95,7 +101,8 @@ function fill_table(data) {
                     },
                     function (isConfirm) {
                         if (isConfirm) {
-                            my_async_request2($("#online_url").val(), "POST", data_item, function (data) {
+                            var r_d = {"article_no": tr_id, "article_type": article_type};
+                            my_async_request2($("#online_url").val(), "POST", r_d, function (data) {
                                 location.reload();
                             });
                         }
