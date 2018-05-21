@@ -14,7 +14,7 @@ __author__ = 'ZhouHeng'
 
 url_prefix = "/editor"
 rt = RenderTemplate("UEditor", url_prefix=url_prefix)
-editor_view = create_blue('editor_view', url_prefix=url_prefix)
+editor_view = create_blue('editor_view', url_prefix=url_prefix, auth_required=True)
 
 upload_data_dirs = {"image": "img", "scrawl": "scrawl"}
 
@@ -61,13 +61,13 @@ def action_config():
     if action == "uploadimage":
         img_file = request.files["upfile"]
         file_type = img_file.filename.rsplit(".", 1)[-1]
-        save_file_name = get_date_dir(upload_data_dirs["image"]) + "/" + generate_file_path(g.user_name, file_type)
+        save_file_name = get_date_dir(upload_data_dirs["image"]) + "/" + generate_file_path(g.user_no, file_type)
         save_path = os.path.join(upload_folder, save_file_name)
         img_file.save(os.path.join(save_path))
         title = img_file.filename
     elif action == "uploadscrawl":
         file_type = "jpg"
-        save_file_name = get_date_dir(upload_data_dirs["scrawl"]) + "/" + generate_file_path(g.user_name, file_type)
+        save_file_name = get_date_dir(upload_data_dirs["scrawl"]) + "/" + generate_file_path(g.user_no, file_type)
         save_path = os.path.join(upload_folder, save_file_name)
         with open(save_path, "wb") as ws:
             ws.write(base64.b64decode(request.form["upfile"]))

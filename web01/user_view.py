@@ -19,16 +19,16 @@ user_view = create_blue("user", url_prefix=url_prefix, auth_required=False,
 
 
 class FlaskUser(UserMixin):
-    user_name = ""
+    user_no = ""
 
     def get_id(self):
-        return self.user_name
+        return self.user_no
 
 
 @login_manager.user_loader
-def load_user(user_name):
+def load_user(user_no):
     user = FlaskUser()
-    user.user_name = user_name
+    user.user_no = user_no
     if "role" in session:
         user.role = session["role"]
     else:
@@ -67,7 +67,7 @@ def login_action():
         return jsonify({"status": False, "data": "密码不正确"})
 
     user = FlaskUser()
-    user.user_name = item["user_name"]
+    user.user_no = item["user_no"]
     login_user(user)
     if len(next_url) == 0:
         next_url = "/"
@@ -83,14 +83,15 @@ def password_page():
 
 @user_view.route("/password/", methods=["POST"])
 def password_action():
-    user_name = request.form["user_name"]
+    user = request.form["user_name"]
     old_password = request.form["old_password"]
     confirm_password = request.form["confirm_password"]
     new_password = request.form["new_password"]
     if confirm_password != new_password:
         return u"两次输入密码不一致"
-    code, item = c_user.user_confirm(old_password, user_name=user_name)
+    code, item = c_user.user_confirm(old_password, user=user)
     if code != 0:
         return u"密码不正确"
+    user_name = item["user_name"]
     c_user.update_password(user_name, new_password)
     return redirect(url_prefix + "/login/")

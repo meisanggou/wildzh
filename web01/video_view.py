@@ -71,10 +71,9 @@ def index():
 @video_view.route("/info/", methods=["POST"])
 @login_required
 def new_video():
-    g.user_name = "zh_test"
     data = g.request_data
     r, video_no = c_video.new_video(data["video_name"], data["video_type"], data["video_desc"],
-                                    data["episode_num"], data["video_pic"], g.user_name)
+                                    data["episode_num"], data["video_pic"], g.user_no)
     if r is False:
         return jsonify({"status": False, "data": "请重试"})
     data["video_no"] = video_no
@@ -96,7 +95,7 @@ def get_video_info():
     else:
         video_type = None
     items = c_video.select_video(video_type, g.video_no)
-    if g.user_name is None:
+    if g.user_no is None:
         for i in range(len(items) - 1, -1, -1):
             if items[i]["status"] & 64 == 64:
                 continue

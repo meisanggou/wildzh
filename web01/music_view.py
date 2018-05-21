@@ -70,11 +70,11 @@ def index():
 
 
 @music_view.route("/", methods=["POST"])
+@login_required
 def new_music():
-    g.user_name = "zh_test"
     data = g.request_data
     r, music_no = c_music.new_music(data["music_name"], data["music_type"], data["music_desc"], data["music_url"],
-                                 g.user_name, pic_url=data["pic_url"])
+                                 g.user_no, pic_url=data["pic_url"])
     if r is False:
         return jsonify({"status": False, "data": "请重试"})
     data["music_no"] = music_no
@@ -96,7 +96,7 @@ def get_music_info():
     else:
         music_type = None
     items = c_music.select_music(music_type, g.music_no)
-    if g.user_name is None:
+    if g.user_no is None:
         for i in range(len(items) - 1, -1, -1):
             if items[i]["status"] & 64 == 64:
                 continue

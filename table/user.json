@@ -3,6 +3,13 @@
         "table_cols": [
             {
                 "pri_key": true,
+                "auto_increment": true,
+                "col_comment": "账户编号",
+                "col_name": "user_no",
+                "col_type": "int(11)"
+            },
+            {
+                "uni_key": true,
                 "col_comment": "账户名",
                 "col_name": "user_name",
                 "col_type": "varchar(22)"

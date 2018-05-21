@@ -4,10 +4,9 @@
 import os
 import sys
 sys.path.append("..")
-from flask import Flask, request, g, make_response, current_app
+from flask import Flask, request, g
 from flask_login import current_user
 
-from function import normal_request_detection
 from zh_config import web_pro
 
 __author__ = 'zhouheng'
@@ -21,19 +20,10 @@ def create_app():
 
     @one_web.before_request
     def before_request():
-        test_r, info = normal_request_detection(request.headers, request.remote_addr)
-        if test_r is False:
-            return make_response(info, 403)
-        g.request_IP_s, g.request_IP = info
         if current_user.is_authenticated:
             g.user_role = current_user.role
-            g.user_name = current_user.user_name
+            g.user_no = current_user.user_no
             g.user_roles = current_user.roles
-            # if g.user_name in user_blacklist:
-            #     message =u"不好意思，您的帐号存在异常，可能访问本系统出现不稳定的想象，现在就是不稳定中。本系统不是很智能，所以不知道啥时候会稳定，也许一分钟，也许一天，也许。。。"
-            #     if "X-Requested-With" in request.headers:
-            #         return jsonify({"status": False, "data": message})
-            #     return message
         else:
             g.user_role = 0
         if "Accept" in request.headers and request.headers["Accept"].find("application/json") >= 0:
@@ -94,7 +84,6 @@ def create_app():
     # env.filters['make_static_url'] = make_static_url
     # env.filters['make_default_static_url'] = make_default_static_url
     # env.filters['make_static_html'] = make_static_html
-    print()
     return one_web
 
 app = create_app()

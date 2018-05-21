@@ -74,10 +74,9 @@ def index():
 @exam_view.route("/", methods=["POST"])
 @login_required
 def new_exam():
-    g.user_name = "zh_test"
     data = g.request_data
     r, exam_no = c_exam.new_exam(data["exam_name"], data["exam_type"], data["exam_desc"], data["eval_type"],
-                                 g.user_name, pic_url=data["pic_url"])
+                                 g.user_no, pic_url=data["pic_url"])
     if r is False:
         return jsonify({"status": False, "data": "请重试"})
     cases = dict()
@@ -104,7 +103,7 @@ def get_exam_info():
     else:
         exam_type = None
     items = c_exam.select_exam(exam_type, g.exam_no)
-    if g.user_name is None:
+    if g.user_no is None:
         for i in range(len(items) - 1, -1, -1):
             if items[i]["status"] & 64 == 64:
                 continue
@@ -156,7 +155,7 @@ def entry_questions():
 @required_exam_no
 def get_exam_questions():
     items = c_exam.select_questions(g.exam_no)
-    if g.user_name is None:
+    if g.user_no is None:
         for item in items:
             options = item["options"]
             new_options = map(lambda x: x["desc"], options)

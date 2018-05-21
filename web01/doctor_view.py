@@ -70,7 +70,7 @@ def add_func():
 @referer_doctor_no
 def get_doctor_info():
     items = c_doctor.select_doctor(g.doctor_no)
-    if g.user_name is None:
+    if g.user_no is None:
         for i in range(len(items) - 1, -1, -1):
             if items[i]["status"] & 64 == 64:
                 continue
@@ -123,7 +123,7 @@ def get_detail():
     if item is None:
         return jsonify({"status": True, "data": "医生不存在详细信息"})
     doctor_item.update(item)
-    if g.user_name is None:
+    if g.user_no is None:
         return jsonify({"status": True, "data": doctor_item})
     return jsonify({"status": True, "data": [doctor_item]})
 

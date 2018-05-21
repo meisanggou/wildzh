@@ -4,6 +4,7 @@
 import os
 from time import time
 from flask import request, g, jsonify
+from flask_login import login_required
 from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, file_prefix_url
 from classes.article import ArticleManager
@@ -22,7 +23,6 @@ c_article = ArticleManager(db_conf_path)
 @article_view.route("/", methods=["GET"])
 def add_func():
     article_no = ""
-    g.user_name = "zh_test"
     upload_url = url_prefix + "/upload/"
     url_info = url_prefix + "/info/"
     page_article = url_prefix + "/?action=article"
@@ -44,8 +44,8 @@ support_upload2(article_view, upload_folder, file_prefix_url, ("article", "pic")
 
 
 @article_view.route("/", methods=["POST"])
+@login_required
 def add_article_action():
-    g.user_name = "zh_test"
     request_data = request.json
     article_type = request_data["article_type"]
     title = request_data["title"]
@@ -54,7 +54,7 @@ def add_article_action():
     content = request_data["content"]
     article_desc = request_data["article_desc"]
     pic_url = request_data["pic_url"]
-    exec_r, data = c_article.new_article(article_type, author, title, abstract, content, g.user_name, article_desc,
+    exec_r, data = c_article.new_article(article_type, author, title, abstract, content, g.user_no, article_desc,
                                          pic_url)
     return jsonify({"status": exec_r, "data": data})
 
@@ -84,7 +84,7 @@ def update_article_action():
 
 @article_view.route("/info/", methods=["GET"])
 def query_func():
-    if request.is_xhr is True or g.user_name is None:
+    if request.is_xhr is True or g.user_no is None:
         article_type = None
         if "article_type" in request.args:
             article_type = request.args["article_type"]
@@ -92,10 +92,10 @@ def query_func():
             article_no = request.args["article_no"]
             if len(article_no) != 32:
                 return jsonify({"status": False, "data": "无效的编号"})
-            exec_r, data = c_article.get_article(article_type, article_no, g.user_name)
+            exec_r, data = c_article.get_article(article_type, article_no, g.user_no)
             return jsonify({"status": exec_r, "data": data})
         exec_r, items = c_article.query_article(article_type=article_type)
-        if g.user_name is None:
+        if g.user_no is None:
             for i in range(len(items) - 1, -1, -1):
                 if items[i]["status"] & 64 == 64:
                     continue

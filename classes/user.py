@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 
+import re
 import time
 import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -58,7 +59,7 @@ class User(object):
 
     # 验证auth是否存在 包括 account tel alias wx_id
     def verify_user_exist(self, **kwargs):
-        cols = ["user_name", "tel", "email", "wx_id", "role"]
+        cols = ["user_no", "user_name", "tel", "email", "wx_id", "role"]
         if kwargs.pop("need_password", None) is not None:
             cols.append("password")
         db_items = self.db.execute_select(self.t, where_value=kwargs, cols=cols, package=True)
@@ -74,13 +75,24 @@ class User(object):
         self.insert_user(user_name, password, nick_name=nick_name, creator=creator, role=role)
         return True, dict(user_name=user_name)
 
-    def user_confirm(self, password, user_name=None, email=None, tel=None):
-        if user_name is not None:
+    def user_confirm(self, password, user_no=None, user_name=None, email=None, tel=None, user=None):
+        if user_no is not None:
+            where_value = dict(user_no=user_no)
+        elif user_name is not None:
             where_value = dict(user_name=user_name)
         elif email is not None:
             where_value = {"email": email}
         elif tel is not None:
             where_value = {"tel": tel}
+        elif user is not None:
+            if re.match(r"\d{1,10}$", user) is not None:
+                where_value = dict(user_no=user)
+            elif re.match(r"1\d{10}$", user) is not None:
+                where_value = {"tel": user}
+            elif re.match(r"\S+@\s+$", user) is not None:
+                where_value = dict(email=user)
+            else:
+                where_value = dict(user_name=user)
         else:
             return -3, None
         where_value["need_password"] = True
