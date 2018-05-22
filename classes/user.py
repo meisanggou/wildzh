@@ -41,7 +41,7 @@ class User(object):
         self.t = "sys_user"
 
     # 插入用户注册数据
-    def insert_user(self, user_name, password=None, tel=None, nick_name=None, email=None, wx_id=None, creator=None,
+    def insert_user(self, user_name=None, password=None, tel=None, nick_name=None, email=None, wx_id=None, creator=None,
                     role=1):
         add_time = int(time.time())
         kwargs = dict(user_name=user_name, password=password, tel=tel, nick_name=nick_name, email=email, wx_id=wx_id,
@@ -74,6 +74,13 @@ class User(object):
             nick_name = user_name
         self.insert_user(user_name, password, nick_name=nick_name, creator=creator, role=role)
         return True, dict(user_name=user_name)
+
+    def new_wx_user(self, wx_id):
+        self.insert_user(wx_id=wx_id)
+        items = self.verify_user_exist(wx_id=wx_id)
+        if len(items) <= 0:
+            return None
+        return item[0]
 
     def user_confirm(self, password, user_no=None, user_name=None, email=None, tel=None, user=None):
         if user_no is not None:

@@ -12,7 +12,8 @@
                 "uni_key": true,
                 "col_comment": "账户名",
                 "col_name": "user_name",
-                "col_type": "varchar(22)"
+                "col_type": "varchar(22)",
+                "allow_null": true
             },
            {
                 "col_comment": "密码",
@@ -31,6 +32,7 @@
                 "col_type": "varchar(20)"
             },
             {
+                "uni_key": true,
                 "col_comment": "微信id",
                 "col_name": "wx_id",
                 "col_type": "char(28)",

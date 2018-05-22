@@ -51,8 +51,8 @@ def required_music_no(f):
     return decorated_function
 
 
-@login_required
 @music_view.route("/", methods=["GET"])
+@login_required
 def index():
     add_url = url_prefix + "/"
     upload_url = url_prefix + "/upload/"

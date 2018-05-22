@@ -6,6 +6,7 @@ import re
 from time import time
 from functools import wraps
 from flask import request, g, jsonify
+from flask_login import login_required
 from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url
 from classes.doctor import Doctor
@@ -50,6 +51,7 @@ def required_doctor_no(f):
 
 
 @doctor_view.route("/", methods=["GET"])
+@login_required
 def add_func():
     page_list = url_prefix + "/"
     page_doctor = url_prefix + "/?action=doctor"

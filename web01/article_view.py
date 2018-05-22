@@ -21,6 +21,7 @@ c_article = ArticleManager(db_conf_path)
 
 
 @article_view.route("/", methods=["GET"])
+@login_required
 def add_func():
     article_no = ""
     upload_url = url_prefix + "/upload/"
