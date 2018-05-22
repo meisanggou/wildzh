@@ -28,7 +28,6 @@ function login_success(data) {
         localStorage.removeItem(storage_key);
     }
 
-
     location.href = data.location;
 }
 
