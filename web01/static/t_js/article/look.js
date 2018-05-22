@@ -24,8 +24,9 @@ function handler(data) {
 
 $(document).ready(function () {
     var article_no = $("#article_no").val();
-    if (article_no.length == 32) {
-        var r_url = location.href;
-        my_async_request2(r_url, "GET", null, handler);
+    var article_type= UrlArgsValue(location.href, "article_type");
+    if (article_no.length == 32 && article_type != null) {
+        var r_url = $("#url_info").val();
+        my_async_request2(r_url, "GET", {"article_no": article_no, "article_type": article_type}, handler);
     }
 });

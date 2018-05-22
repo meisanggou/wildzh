@@ -45,7 +45,7 @@ function set_look_link()
     var article_no = $("#article_no").val();
     if (article_no.length == 32) {
         $("#link_look").show();
-        var look_url = location.origin + location.pathname + "?&action=look&article_no=" + article_no;
+        var look_url = location.origin + location.pathname + "?action=look&article_no=" + article_no + "&article_type=" + $("#article_type").val();
         $("#link_look").attr("href", look_url);
     }
     else{
