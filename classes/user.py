@@ -80,7 +80,7 @@ class User(object):
         items = self.verify_user_exist(wx_id=wx_id)
         if len(items) <= 0:
             return None
-        return item[0]
+        return items[0]
 
     def user_confirm(self, password, user_no=None, user_name=None, email=None, tel=None, user=None):
         if user_no is not None:

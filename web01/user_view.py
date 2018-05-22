@@ -4,8 +4,9 @@
 from flask import g, jsonify, session, request, redirect
 from flask_login import UserMixin, login_user, current_user, logout_user, login_required
 from flask_helper import RenderTemplate
-from zh_config import db_conf_path
+from zh_config import db_conf_path, web_pro, min_program_conf
 from classes.user import User
+from classes.wx import MiniProgram
 from web01 import create_blue, login_manager
 
 __author__ = 'meisa'
@@ -13,6 +14,7 @@ __author__ = 'meisa'
 url_prefix = "/user"
 rt = RenderTemplate("user")
 c_user = User(db_conf_path=db_conf_path)
+mp = MiniProgram(conf_path=min_program_conf, section=web_pro)
 user_view = create_blue("user", url_prefix=url_prefix, auth_required=False,
                         menu_list=[{"index": -2, "url": "/password/", "title": u"密码修改"},
                                    {"index": -1, "url": "/login/", "title": u"退出"}])
@@ -26,9 +28,9 @@ class FlaskUser(UserMixin):
 
 
 @login_manager.user_loader
-def load_user(user_no):
+def load_user(user_id):
     user = FlaskUser()
-    user.user_no = user_no
+    user.user_no = user_id
     if "role" in session:
         user.role = session["role"]
     else:
@@ -68,12 +70,31 @@ def login_action():
 
     user = FlaskUser()
     user.user_no = item["user_no"]
-    login_user(user)
+    login_user(user, remember=True)
     if len(next_url) == 0:
         next_url = "/"
-
     data = dict(location=next_url, user_name=item["user_name"])
     return jsonify({"status": True, "data": data})
+
+
+@user_view.route("/login/wx/", methods=["POST"])
+def wx_login_action():
+    rd = g.request_data
+    code = rd["code"]
+    exec_r, data = mp.code2session(code)
+    if exec_r is False:
+        return jsonify({"status": False, "data": data})
+    items = c_user.verify_user_exist(wx_id=data["openid"])
+    if len(items) <= 0:
+        item = c_user.new_wx_user(data["openid"])
+    else:
+        item = items[0]
+    if item is None:
+        return jsonify({"status": False, "data": "内部错误"})
+    user = FlaskUser()
+    user.user_no = item["user_no"]
+    login_user(user)
+    return jsonify({"status": True, "data": item})
 
 
 @user_view.route("/password/", methods=["GET"])

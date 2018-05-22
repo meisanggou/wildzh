@@ -98,7 +98,7 @@ def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=
                 if "url" not in item:
                     item["url"] = url_prefix + "/"
                 else:
-                    item["url"] = url_prefix + item["url"]
+                    item['url'] = url_prefix + item["url"]
                 portal_menu_list.append(item)
         elif isinstance(menu_list, dict) is True:
             if "index" not in menu_list:
