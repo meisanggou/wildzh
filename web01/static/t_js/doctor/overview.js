@@ -31,6 +31,35 @@ function delete_doctor() {
     );
 }
 
+function online_doctor() {
+    var current_td = $(this).parent();
+    var current_tr = current_td.parent();
+    var tr_id = current_tr.attr("id");
+    var doctor_name = current_tr.find("td:eq(0)").text();
+    var degree = current_tr.find("td:eq(1)").text();
+    var msg = "确定上线医生【" + doctor_name + "】\n上线后将不可更改信息！";
+    swal({
+            title: "上线提醒",
+            text: msg,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: '#DD6B55',
+            confirmButtonText: '上线',
+            cancelButtonText: "取消",
+            closeOnConfirm: true,
+            closeOnCancel: true
+        },
+        function (isConfirm) {
+            if (isConfirm) {
+                var r_d = {"doctor_no": tr_id};
+                my_async_request2($("#online_url").val(), "POST", r_d, function (data) {
+                    location.reload();
+                });
+            }
+        }
+    );
+}
+
 function explain_status(s) {
     if ((s & 128) != 0) {
         return "已下线"
@@ -57,7 +86,7 @@ function init_info(data) {
             var add_tr = $("<tr></tr>");
             add_tr.attr("id", data[i]["doctor_no"]);
 
-            for(var j=0;j<keys.length;j++){
+            for (var j = 0; j < keys.length; j++) {
                 var td_t = new_td(keys[j], data[i]);
                 add_tr.append(td_t);
             }
@@ -79,28 +108,7 @@ function init_info(data) {
                 var data_item = data[i];
                 td_op.append(" | ");
                 var online_link = $("<a href='javascript:void(0)'>上线</a>");
-                var msg = "确定上线医生【" + data[i]["doctor_name"] + "】\n上线后将不可更改信息！";
-                online_link.click(function () {
-                    swal({
-                            title: "上线提醒",
-                            text: msg,
-                            type: "warning",
-                            showCancelButton: true,
-                            confirmButtonColor: '#DD6B55',
-                            confirmButtonText: '上线',
-                            cancelButtonText: "取消",
-                            closeOnConfirm: true,
-                            closeOnCancel: true
-                        },
-                        function (isConfirm) {
-                            if (isConfirm) {
-                                my_async_request2($("#online_url").val(), "POST", data_item, function (data) {
-                                    location.reload();
-                                });
-                            }
-                        }
-                    );
-                });
+                online_link.click(online_doctor);
                 td_op.append(online_link);
             }
             add_tr.append(td_op);
