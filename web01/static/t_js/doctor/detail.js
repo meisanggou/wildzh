@@ -38,6 +38,9 @@ function add_or_update_detail(){
                     var j_url = location.pathname;
                     location.href = j_url;
                 }
+                else{
+                    $("#btn_new").text("更新");
+                }
             }
         );
     });
@@ -49,7 +52,7 @@ function init_detail(data){
         my_async_request2(detail_url, "GET", null, init_detail);
         return 0;
     }
-    if(typeof(data) == Array && data.length > 0) {
+    if(typeof(data) == "object" && data.length > 0) {
         var item = data[0];
         if(item == null){
             return 0;
