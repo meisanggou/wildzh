@@ -119,7 +119,7 @@ def delete_doctor_action():
 def get_detail():
     items = c_doctor.select_doctor(g.doctor_no)
     if len(items) <= 0:
-        return jsonify({"status": True, "data": "医生不存在"})
+        return jsonify({"status": False, "data": "医生不存在"})
     doctor_item = items[0]
     item = c_doctor.select_detail(g.doctor_no)
     if item is None:
@@ -150,7 +150,7 @@ def update_detail_action():
     request_data = request.json
     c_doctor.update_detail(g.doctor_no, **request_data)
     request_data["doctor_no"] = g.doctor_no
-    return jsonify({"status": True, "data": request_data})
+    return jsonify({"status": True, "data": [request_data]})
 
 
 @doctor_view.route("/online/", methods=["POST"])
