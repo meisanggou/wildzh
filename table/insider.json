@@ -15,6 +15,7 @@
                 "allow_null": true
             },
             {
+                "mul_key": true,
                 "col_comment": "创建者",
                 "col_name": "owner",
                 "col_type": "int(11)",
