@@ -87,6 +87,11 @@
                 "col_type": "varchar(24)"
             },
             {
+                "col_comment": "消费类型 意图 目的 0代表未知充值方式 小于100充值 大于100消费 100保留 ",
+                "col_name": "intention",
+                "col_type": "int(11)"
+            },
+            {
                 "col_comment": "消费金额",
                 "col_name": "amount",
                 "col_type": "int(11)"
@@ -100,6 +105,11 @@
                 "col_comment": "消费后赠送的余额",
                 "col_name": "zs_yue",
                 "col_type": "int(11)"
+            },
+            {
+                "col_comment": "备注",
+                "col_name": "remark",
+                "col_type": "varchar(100)"
             },
             {
                 "col_comment": "添加时间",
@@ -125,9 +135,19 @@
                 "col_type": "varchar(24)"
             },
             {
+                "col_comment": "消费类型 意图 目的 0代表未知充值方式 小于50充值 小于100赠送 大于100消费 100保留 ",
+                "col_name": "intention",
+                "col_type": "int(11)"
+            },
+            {
                 "col_comment": "消费金额",
                 "col_name": "amount",
                 "col_type": "int(11)"
+            },
+            {
+                "col_comment": "备注",
+                "col_name": "remark",
+                "col_type": "varchar(100)"
             },
             {
                 "col_comment": "添加时间",

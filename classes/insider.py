@@ -82,13 +82,15 @@ class Insider(object):
         l = self.db.execute_insert(self.t_b, kwargs=kwargs, ignore=True)
         return l
 
-    def _insert_member_billing(self, user_no, b_no, amount, yue, zs_yue):
-        kwargs = dict(member_no=user_no, billing_no=b_no, amount=amount, yue=yue, zs_yue=zs_yue, add_time=self.add_time)
+    def _insert_member_billing(self, user_no, b_no, intention, amount, yue, zs_yue, remark):
+        kwargs = dict(member_no=user_no, billing_no=b_no, amount=amount, yue=yue, zs_yue=zs_yue, intention=intention,
+                      remark=remark, add_time=self.add_time)
         l = self.db.execute_insert(self.t_mb, kwargs=kwargs, ignore=True)
         return l
 
-    def _insert_project_billing(self, project_no, b_no, amount):
-        kwargs = dict(project_no=project_no, billing_no=b_no, amount=amount, add_time=self.add_time)
+    def _insert_project_billing(self, project_no, b_no, intention, amount, remark):
+        kwargs = dict(project_no=project_no, billing_no=b_no, amount=amount, intention=intention, remark=remark,
+                      add_time=self.add_time)
         l = self.db.execute_insert(self.t_pb, kwargs=kwargs, ignore=True)
         return l
 
@@ -140,7 +142,7 @@ class Insider(object):
             return True, items[-1]
         return False, "Internal Error 03"
 
-    def new_pay(self, project_no, user_no, amount, auto_join=True):
+    def new_pay(self, project_no, user_no, intention, amount, remark, auto_join=True):
         try:
             self.db.start_transaction()
             items = self._select_member(project_no, member_no=user_no, lock=True)
@@ -149,25 +151,33 @@ class Insider(object):
                 if auto_join is False:
                     return False, "Internal Error"
                 self._insert_project_member(project_no, user_no)
-                return self.new_pay(project_no, user_no, amount, auto_join=False)
+                return self.new_pay(project_no, user_no, intention, amount, remark, auto_join=False)
             yue_item = items[0]
-            # 检查余额
-            if yue_item["yue"] + yue_item["zs_yue"] < amount:
-                self.db.end_transaction(fail=True)
-                return False, "credit not enough"
+            if intention > 100:
+                # 检查余额
+                if yue_item["yue"] + yue_item["zs_yue"] < amount:
+                    self.db.end_transaction(fail=True)
+                    return False, "credit not enough"
             b_no = self.create_billing_no(user_no, project_no)
             # 创建账单
             l = self._insert_sys_billing(b_no, amount)
             if l <= 0:
                 self.db.end_transaction(fail=True)
                 return False, "Please Try Again"
-            # 执行扣费
-            if yue_item["yue"] >= amount:
+            # 执行扣费 或者增加余额
+            if intention > 100:
+                if yue_item["yue"] >= amount:
+                    zs_yue = yue_item["zs_yue"]
+                    yue = yue_item["yue"] - amount
+                else:
+                    zs_yue = yue_item["zs_yue"] + yue_item["yue"] - amount
+                    yue = 0
+            elif intention < 50:
                 zs_yue = yue_item["zs_yue"]
-                yue = yue_item["yue"] - amount
+                yue = yue_item["yue"] + amount
             else:
-                zs_yue = yue_item["zs_yue"] + yue_item["yue"] - amount
-                yue = 0
+                zs_yue = yue_item["zs_yue"] + amount
+                yue = yue_item["yue"]
             self._update_project_member(project_no, user_no, yue=yue, zs_yue=zs_yue)
             # 查询扣费结果
             items = self._select_member(project_no, member_no=user_no)
@@ -179,12 +189,12 @@ class Insider(object):
                 self.db.end_transaction(fail=True)
                 return False, "Internal Error 02"
             # 计入个人账单
-            l = self._insert_member_billing(user_no, b_no, amount, yue, zs_yue)
+            l = self._insert_member_billing(user_no, b_no, intention, amount, yue, zs_yue, remark)
             if l <= 0:
                 self.db.end_transaction(fail=True)
                 return False, "Internal Error 03"
             # 计入项目账单
-            l = self._insert_project_billing(project_no, b_no, amount)
+            l = self._insert_project_billing(project_no, b_no, intention, amount, remark)
             if l <= 0:
                 self.db.end_transaction(fail=True)
                 return False, "Internal Error 04"
@@ -233,7 +243,10 @@ if __name__ == "__main__":
     insider_man = Insider(db_conf_path)
     insider_man.new_project(1, project_name="wildzh", silently_continue=True)
     def pay(project_no):
-        exec_r, data = insider_man.new_pay(project_no, 1, 3)
+        import random
+        w = random.randint(1, 200)
+        a = random.randint(10, 19)
+        exec_r, data = insider_man.new_pay(project_no, 1, w, a, "")
         if exec_r is False:
             print(data)
     ts = []
