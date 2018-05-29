@@ -46,7 +46,6 @@ class MiniProgram(object):
         self._ready_run()
         args = dict(appid=self.app_id, secret=self.app_secret, js_code=code, grant_type="authorization_code")
         resp = requests.get(url, params=args)
-        print(resp.request.url)
         if resp.status_code != 200:
             return False, resp.status_code
         r_data = resp.json()
