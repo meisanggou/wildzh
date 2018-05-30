@@ -105,6 +105,7 @@ function my_async_request2(request_url, request_method, body_param, request_succ
         contentType: "application/json",
         dataType: "json",
         data: body_param,
+        headers: {"rf": "async"},
         success:function(data){
             if(exec_obj != null) {
                 if ("exec_r" in exec_obj) {

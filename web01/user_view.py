@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 
-from flask import g, jsonify, session, request, redirect
+from flask import g, jsonify, session, request, redirect, make_response
 from flask_login import UserMixin, login_user, current_user, logout_user, login_required
 from flask_helper import RenderTemplate
 from zh_config import db_conf_path, web_pro, min_program_conf
@@ -48,6 +48,10 @@ def login_page():
         next_url = request.args["next"]
     else:
         next_url = "/"
+    if "rf" in request.headers and request.headers["rf"] == "async":
+        return make_response("登录状态已过期，需要重新登录", 302)
+    elif "rf" in request.args and request.args["rf"] == "async":
+        return make_response("登录状态已过期，需要重新登录", 302)
     return rt.render("login.html", login_url=login_url, next_url=next_url)
 
 
@@ -116,3 +120,10 @@ def password_action():
     user_name = item["user_name"]
     c_user.update_password(user_name, new_password)
     return redirect(url_prefix + "/login/")
+
+
+@user_view.route("/info/", methods=["GET"])
+@login_required
+def user_info():
+    items = c_user.verify_user_exist(user_no=g.user_no)
+    return jsonify({"status": True, "data": items})

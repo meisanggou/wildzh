@@ -205,6 +205,9 @@ class Insider(object):
             self.db.end_transaction(fail=True)
             return False, "Internal Error 99"
 
+    def select_my_project(self, user_no):
+        return self._select_project(owner=user_no)
+
     def select_project(self, project_no=None, owner=None):
         return self._select_project(project_no, owner)
 
