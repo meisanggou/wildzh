@@ -68,6 +68,7 @@ def create_app():
     env.filters['make_static_html2'] = make_static_html2
 
     one_web.handle_30x()
+    one_web.cross_domain()
     one_web.filter_user_agent(accept_agent)
     return one_web
 

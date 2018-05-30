@@ -1,0 +1,42 @@
+[
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "资源 资源类别3位+类别内唯一标识32位",
+                "col_name": "resource_id",
+                "col_type": "varchar(35)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "评论id 时间戳8+原始评论者用户no8+4位子评论编号 0000代表原始评论",
+                "col_name": "comment_id",
+                "col_type": "varchar(20)"
+            },
+            {
+                "col_comment": "评论内容",
+                "col_name": "content",
+                "col_type": "varchar(1000)"
+            },
+            {
+                "col_comment": "评论者",
+                "col_name": "owner",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "是否匿名 0不匿名 1匿名",
+                "col_name": "anonymous",
+                "col_type": "bit(1)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "添加时间",
+                "col_name": "add_time",
+                "col_type": "int(11)",
+                "allow_null": true
+            }
+        ],
+        "table_comment": "会员项目",
+        "table_name": "comment_info"
+    }
+]
