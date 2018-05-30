@@ -121,6 +121,7 @@ def online_music():
 
 
 @music_view.route("/records/", methods=["POST"])
+@login_required
 def add_music_records():
     data = g.request_data
     music_type = data["music_type"]
