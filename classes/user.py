@@ -57,9 +57,17 @@ class User(object):
         result = self.db.execute_update(self.t, update_value=update_value, where_value={"user_name": user_name})
         return result
 
+    def _update_user(self, user_no, **update_value):
+        allow_keys = ["nick_name", "avatar_url"]
+        for key in update_value:
+            if key not in allow_keys:
+                del update_value[key]
+        l = self.db.execute_update(self.t, update_value=update_value, where_value=dict(user_no=user_no))
+        return l
+
     # 验证auth是否存在 包括 account tel alias wx_id
     def verify_user_exist(self, **kwargs):
-        cols = ["user_no", "user_name", "tel", "email", "wx_id", "role"]
+        cols = ["user_no", "user_name", "tel", "email", "wx_id", "role", "nick_name", "avatar_url"]
         if kwargs.pop("need_password", None) is not None:
             cols.append("password")
         db_items = self.db.execute_select(self.t, where_value=kwargs, cols=cols, package=True)
@@ -114,6 +122,9 @@ class User(object):
         del user_item["password"]
         return 0, user_item
 
+    def update_info(self, user_no, **kwargs):
+        l = self._update_user(user_no, **kwargs)
+        return l
 
 if __name__ == "__main__":
     import os

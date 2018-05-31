@@ -127,3 +127,11 @@ def password_action():
 def user_info():
     items = c_user.verify_user_exist(user_no=g.user_no)
     return jsonify({"status": True, "data": items})
+
+@user_view.route("/info/", methods=["PUT"])
+@login_required
+def update_info_action():
+    data = g.request_data
+    c_user.update_info(g.user_no, **data)
+    items = c_user.verify_user_exist(user_no=g.user_no)
+    return jsonify({"status": True, "data": items})

@@ -29,6 +29,7 @@ App({
                   method: "POST",
                   data: { "code": res.code },
                   success: res => {
+                    wx.setStorageSync(this.globalData.userInfoStorageKey, res.data.data)
                     wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
                     req.retry = 1
                     wx.request2(req)

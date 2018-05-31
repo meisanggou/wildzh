@@ -6,6 +6,7 @@ Page({
   data: {
     motto: 'Welcome',
     userInfo: {},
+    userItem: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     needRegister: true
@@ -22,30 +23,16 @@ Page({
         url: '../pay?project_no=' + options["project_no"]
       })
     }
-    if (app.globalData.userInfo) {
+    var userItem = wx.getStorageSync(app.globalData.userInfoStorageKey)
+    if(userItem.avatar_url != null){
       this.setData({
-        userInfo: app.globalData.userInfo,
-        hasUserInfo: true
+        needRegister: false,
+        userItem: userItem
       })
-    } else if (this.data.canIUse) {
-      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-      // 所以此处加入 callback 以防止这种情况
-      app.userInfoReadyCallback = res => {
-        this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
-        })
-      }
-    } else {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      wx.getUserInfo({
-        success: res => {
-          app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
+    }
+    else{
+      this.setData({
+        needRegister: true
       })
     }
     // wx.request2({
@@ -69,21 +56,21 @@ Page({
     // })
   },
   register: function (e) {
-    // console.info(app.globalData.hasLogin)
-    // if (app.globalData.hasLogin === false) {
-    //   wx.login({
-    //     success: function(){
-
-    //     }
-    //   })
-    // }
-    console.log(e)
-    app.globalData.userInfo = e.detail.userInfo
-    console.info(e.detail.userInfo)
-    // this.setData({
-    //   userInfo: e.detail.userInfo,
-    //   hasUserInfo: true
-    // })
+    var that = this
+    var userInfo = e.detail.userInfo
+    var data = {"avatar_url": userInfo.avatarUrl, "nick_name": userInfo.nickName}
+    wx.request2({
+      url: '/user/info/',
+      method: 'PUT',
+      data: data,
+      success: res=>{
+        wx.setStorageSync(app.globalData.userInfoStorageKey, res.data.data)
+        that.setData({
+          needRegister: false,
+          userItem: userItem
+        })
+      }
+    })
   },
   join: function () {
     wx.navigateTo({

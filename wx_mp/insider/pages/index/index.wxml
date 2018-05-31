@@ -25,12 +25,18 @@
         <button class='weui-btn weui-btn_plain-primary' bindtap='business_main'>商家服务</button>
       </view>
       <view wx:else>
-        <button class='weui-btn weui-btn_plain-primary' bindtap='join'>成为商家</button>
-      </view>
-      <button class='weui-btn weui-btn_plain-primary' bindtap='scanCode'>扫码付款</button>
+        <view class="page-section">
+          <view class="page-body-info">
+            <image class="userinfo-avatar" src="{{userItem.avatar_url}}"></image>
+            <text class="userinfo-nickname">{{userItem.nick_name}}</text>
+            <button class='' bindtap='join'>成为商家</button>
 
-      <view class="usermotto">
-        <text class="user-motto">{{motto}}</text>
+            <button class='' bindtap='scanCode'>扫码付款</button>
+          </view>
+          <view class="usermotto">
+            <text class="user-motto">{{motto}}</text>
+          </view>
+        </view>
       </view>
     </view>
   </view>
