@@ -48,19 +48,20 @@ App({
     wx.setStorageSync('logs', logs)
 
     // 登录
-    // wx.login({
-    //   success: res => {
-    //     wx.request({
-    //       url: wx.remote_host + '/user/login/wx/',
-    //       method: "POST",
-    //       data: { "code": res.code },
-    //       success: res => {
-    //         wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
-    //       }
-    //     })
-    //     // 发送 res.code 到后台换取 openId, sessionKey, unionId
-    //   }
-    // })
+    wx.login({
+      success: res => {
+        wx.request({
+          url: wx.remote_host + '/user/login/wx/',
+          method: "POST",
+          data: { "code": res.code },
+          success: res => {
+            wx.setStorageSync(this.globalData.userInfoStorageKey, res.data.data)
+            wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
+          }
+        })
+        // 发送 res.code 到后台换取 openId, sessionKey, unionId
+      }
+    })
     // 获取用户信息
     // wx.getSetting({
     //   success: res => {
@@ -83,6 +84,8 @@ App({
     // })
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    sessionStorageKey: "wildzh_insider_session",
+    userInfoStorageKey: "wildzh_current_user"
   }
 })

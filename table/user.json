@@ -45,12 +45,6 @@
                 "allow_null": true
             },
             {
-                "col_comment": "添加时间",
-                "col_name": "add_time",
-                "col_type": "int(11)",
-                "allow_null": true
-            },
-            {
                 "uni_key": true,
                 "col_comment": "用户邮箱",
                 "col_name": "email",
@@ -62,6 +56,18 @@
                 "col_comment": "手机号",
                 "col_name": "tel",
                 "col_type": "char(11)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "头像",
+                "col_name": "avatar_url",
+                "col_type": "varchar(200)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "添加时间",
+                "col_name": "add_time",
+                "col_type": "int(11)",
                 "allow_null": true
             }
         ],

@@ -7,7 +7,8 @@ Page({
     motto: 'Welcome',
     userInfo: {},
     hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    needRegister: true
   },
   //事件处理函数
   bindViewTap: function () {
@@ -47,33 +48,42 @@ Page({
         }
       })
     }
-    wx.request2({
-      url: '/insider/project/',
-      method: "GET",
-      success: res => {
-        var r_data = res.data
-        if (r_data["status"] == false) {
-          return false
-        }
-        else if (r_data["data"].length > 0) {
-          var is_business = true
-        }
-        else {
-          var is_business = false
-        }
-        this.setData({
-          is_business: is_business
-        })
-      }
-    })
+    // wx.request2({
+    //   url: '/insider/project/',
+    //   method: "GET",
+    //   success: res => {
+    //     var r_data = res.data
+    //     if (r_data["status"] == false) {
+    //       return false
+    //     }
+    //     else if (r_data["data"].length > 0) {
+    //       var is_business = true
+    //     }
+    //     else {
+    //       var is_business = false
+    //     }
+    //     this.setData({
+    //       is_business: is_business
+    //     })
+    //   }
+    // })
   },
-  getUserInfo: function (e) {
+  register: function (e) {
+    // console.info(app.globalData.hasLogin)
+    // if (app.globalData.hasLogin === false) {
+    //   wx.login({
+    //     success: function(){
+
+    //     }
+    //   })
+    // }
     console.log(e)
     app.globalData.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
-    })
+    console.info(e.detail.userInfo)
+    // this.setData({
+    //   userInfo: e.detail.userInfo,
+    //   hasUserInfo: true
+    // })
   },
   join: function () {
     wx.navigateTo({

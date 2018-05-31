@@ -10,14 +10,28 @@
  -->
 
 <view class="container">
-  <view wx:if="{{is_business}}">
-    <button class='weui-btn weui-btn_plain-primary' bindtap='business_main'>商家服务</button>
-  </view>
-  <view wx:else>
-    <button class='weui-btn weui-btn_plain-primary' bindtap='join'>成为商家</button>
-  </view>
-  <button class='weui-btn weui-btn_plain-primary' bindtap='scanCode'>扫码付款</button>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
+  <view class="page-body">
+    <view wx:if="{{needRegister}}">
+      <view class="page-section page-section-spacing">
+        <view class="text-box">
+          <text>您是第一次使用</text>
+          <text>点击注册继续使用</text>
+        </view>
+      </view>
+      <button open-type="getUserInfo" bindgetuserinfo="register">注册</button>
+    </view>
+    <view wx:else>
+      <view wx:if="{{is_business}}">
+        <button class='weui-btn weui-btn_plain-primary' bindtap='business_main'>商家服务</button>
+      </view>
+      <view wx:else>
+        <button class='weui-btn weui-btn_plain-primary' bindtap='join'>成为商家</button>
+      </view>
+      <button class='weui-btn weui-btn_plain-primary' bindtap='scanCode'>扫码付款</button>
+
+      <view class="usermotto">
+        <text class="user-motto">{{motto}}</text>
+      </view>
+    </view>
   </view>
 </view>
