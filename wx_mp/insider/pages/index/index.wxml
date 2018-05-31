@@ -1,18 +1,22 @@
 <!--index.wxml-->
+<!-- 首页展示
+带有project_no 自动跳转到付款页面
+不带有project_no 
+    拥有商铺：显示商家服务
+    未拥有商铺： 显示成为商家
+    扫码付款
+
+显示欢迎
+ -->
+
 <view class="container">
   <view wx:if="{{is_business}}">
-    <button>商家服务</button>
+    <button class='weui-btn weui-btn_plain-primary' bindtap='business_main'>商家服务</button>
   </view>
   <view wx:else>
-    <button bindtap='join'>成为商家</button>
+    <button class='weui-btn weui-btn_plain-primary' bindtap='join'>成为商家</button>
   </view>
-  <view class="userinfo">
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
-  </view>
+  <button class='weui-btn weui-btn_plain-primary' bindtap='scanCode'>扫码付款</button>
   <view class="usermotto">
     <text class="user-motto">{{motto}}</text>
   </view>

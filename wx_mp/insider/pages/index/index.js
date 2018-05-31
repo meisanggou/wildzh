@@ -4,7 +4,7 @@ const app = getApp()
 
 Page({
   data: {
-    motto: 'Hello World',
+    motto: 'Welcome',
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo')
@@ -78,6 +78,26 @@ Page({
   join: function () {
     wx.navigateTo({
       url: '../business/join'
+    })
+  },
+  business_main: function () {
+    wx.navigateTo({
+      url: '../business/main'
+    })
+  },
+  scanCode: function () {
+    var that = this
+    wx.scanCode({
+      success: function (res) {
+        console.info(res.result)
+      },
+      fail: function (res) {
+        wx.showModal({
+          content: "没有扫描到商家信息，请重新扫描",
+          confirmText: "确定",
+          showCancel: false,
+        })
+      }
     })
   }
 })
