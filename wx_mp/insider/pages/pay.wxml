@@ -1,0 +1,9 @@
+<!--pay.wxml-->
+<view class="container">
+  <view class="userinfo">
+    <view wx:if="{{error_project}}">项目不存在</view>
+    <view wx:else>
+      欢迎{{project_name}}
+    </view>
+  </view>
+</view>

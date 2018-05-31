@@ -1,0 +1,12 @@
+<!--pages/business/join.wxml-->
+<view>
+<view class="weui-cells__title">给商铺起个名</view>
+  <view class="weui-cell">
+    <view class="weui-cell__bd">
+      <input class="weui-input" type="text" bindinput='bindPNInput' value='{{project_name}}' auto-focus />
+    </view>
+  </view>
+  <view class="weui-btn-area">
+    <button type="primary" size="{{primarySize}}" loading="{{loading}}" plain="{{plain}}" disabled="{{disabled}}" bindtap="addProject"> 创建 </button>
+  </view>
+</view>
