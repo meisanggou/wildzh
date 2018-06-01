@@ -119,6 +119,17 @@ class ArticleManager(object):
             self._update_statistics(article_no, "self_read_times")
         return True, article_info
 
+    def get_statistics(self, article_no):
+        cols = ["article_no", "update_times", "read_times", "self_read_times"]
+        items = self.db.execute_select(self.t_statistics, cols=cols, where_value=dict(article_no=article_no))
+        if len(items) > 0:
+            return items[0]
+        else:
+            item = dict(article_no=article_no)
+            for key in cols[1:]:
+                item[key] = 0
+            return item
+
     def query_article(self, **kwargs):
         where_cond = ["status<>0"]
         where_cond_args = []

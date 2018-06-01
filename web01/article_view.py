@@ -94,6 +94,8 @@ def query_func():
             if len(article_no) != 32:
                 return jsonify({"status": False, "data": "无效的编号"})
             exec_r, data = c_article.get_article(article_type, article_no, g.user_no)
+            if exec_r is True:
+                data.update(c_article.get_statistics(article_no))
             return jsonify({"status": exec_r, "data": data})
         exec_r, items = c_article.query_article(article_type=article_type)
         if g.user_no is None:
