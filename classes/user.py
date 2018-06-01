@@ -126,6 +126,12 @@ class User(object):
         l = self._update_user(user_no, **kwargs)
         return l
 
+    def get_multi_nick_name(self, user_list):
+        cols = ["user_no", "nick_name", "avatar_url"]
+        user_list = set(user_list)
+        items = self.db.execute_multi_select(self.t, where_value=dict(user_no=user_list), cols=cols)
+        return items
+
 if __name__ == "__main__":
     import os
     import sys
