@@ -21,9 +21,9 @@ class Music(object):
         l = self.db.execute_insert(self.t_info, kwargs=kwargs, ignore=True)
         return l
 
-    def _insert_records(self, user_id, exam_no, progress):
+    def _insert_records(self, user_id, music_no, progress):
         insert_time = int(time.time())
-        kwargs = dict(exam_no=exam_no, progress=progress, insert_time=insert_time, user_id=user_id)
+        kwargs = dict(music_no=music_no, progress=progress, insert_time=insert_time, user_id=user_id)
         l = self.db.execute_insert(self.t_records, kwargs=kwargs, ignore=True)
         return l
 
@@ -44,9 +44,10 @@ class Music(object):
             l = 0
         return l
 
-    def _update_num(self, music_no):
-        where_value = dict(music_no=music_no)
-        l = self.db.execute_update(self.t_info, update_value_list=["listen_num=listen_num+1"], where_value=where_value)
+    def _update_num(self, music_type, music_no):
+        where_value = dict(music_no=music_no, music_type=music_type)
+        l = self.db.execute_update(self.t_info, update_value_list=["listen_num=listen_num+1"],
+                                   where_value=where_value)
         return l
 
     def new_music(self, music_name, music_type, music_desc, music_url, adder, **music_extend):
@@ -56,9 +57,9 @@ class Music(object):
             return False, l
         return True, music_no
     
-    def new_music_record(self, user_id, music_no, progress):
+    def new_music_record(self, user_id, music_type, music_no, progress):
         self._insert_records(user_id, music_no, progress)
-        self._update_num(music_no)
+        self._update_num(music_type, music_no)
         return True, None
     
     def select_music(self, music_type, music_no=None):

@@ -121,12 +121,14 @@ def online_music():
 
 
 @music_view.route("/records/", methods=["POST"])
-@login_required
 def add_music_records():
     data = g.request_data
     music_type = data["music_type"]
     music_no = data["music_no"]
-    user_id = data["user_id"]
-    progress = data["progress"]
-    c_music.new_music_record(user_id, music_no, progress)
+    progress = data.get("progress", -1)
+    if g.user_no is None:
+        user_id = 0
+    else:
+        user_id = g.user_no
+    c_music.new_music_record(user_id, music_type, music_no, progress)
     return jsonify({"status": True, "data": "success"})

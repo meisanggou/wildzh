@@ -76,7 +76,7 @@
         "col_type": "int(11)"
       },
       {
-        "col_comment": "收听进度",
+        "col_comment": "收听进度 -1代表未知",
         "col_name": "progress",
         "col_type": "int(11)"
       }
