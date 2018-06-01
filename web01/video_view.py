@@ -173,3 +173,12 @@ def online_video():
         return jsonify({"status": False, "data": "视频状态未达到不可上线"})
     c_video.online_video(video_no)
     return jsonify({"status": True, "data": "success"})
+
+@video_view.route("/records/", methods=["POST"])
+def record_video_action():
+    data = g.request_data
+    video_no = g.request_data["video_no"]
+    video_type = g.request_data["video_type"]
+    episode_index = data["episode_index"]
+    c_video.add_record(video_type, video_no, episode_index)
+    return jsonify({"status": True, "data": "success"})

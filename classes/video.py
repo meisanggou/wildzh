@@ -41,6 +41,12 @@ class Video(object):
         l = self.db.execute_plus(self.t_info, "upload_num", where_value=where_value)
         return l
 
+    def _update_listen_num(self, video_type, video_no, episode_index):
+        self.db.execute_plus(self.t_info, "listen_num", where_value=dict(video_no=video_no, video_type=video_type))
+        self.db.execute_plus(self.t_episode, "listen_num", where_value=dict(video_no=video_no,
+                                                                            episode_index=episode_index))
+        return True
+
     def _update_status(self, video_no, add_status=None, sub_status=None):
         where_value = dict(video_no=video_no)
         if add_status is not None:
@@ -98,7 +104,7 @@ class Video(object):
             if video_no is not None:
                 where_value["video_no"] = video_no
         cols = ["video_type", "video_no", "video_name", "video_desc", "episode_num", "adder", "status",
-                "video_extend", "video_pic", "insert_time", "upload_num"]
+                "video_extend", "video_pic", "insert_time", "upload_num", "listen_num"]
         items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value, where_cond=where_cond)
         for item in items:
             if item["video_extend"] is not None:
@@ -108,9 +114,13 @@ class Video(object):
 
     def select_episode(self, video_no):
         where_value = dict(video_no=video_no)
-        cols = ["video_no", "episode_index", "title", "episode_url", "episode_pic"]
+        cols = ["video_no", "episode_index", "title", "episode_url", "episode_pic", "listen_num"]
         items = self.db.execute_select(self.t_episode, cols=cols, where_value=where_value)
         return items
+
+    def add_record(self, video_type, video_no, episode_index):
+        r = self._update_listen_num(video_type, video_no, episode_index)
+        return r
 
     def online_video(self, video_no):
         l = self._update_status(video_no, add_status=64)

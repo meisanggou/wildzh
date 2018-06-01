@@ -46,8 +46,7 @@ class Music(object):
 
     def _update_num(self, music_type, music_no):
         where_value = dict(music_no=music_no, music_type=music_type)
-        l = self.db.execute_update(self.t_info, update_value_list=["listen_num=listen_num+1"],
-                                   where_value=where_value)
+        l = self.db.execute_plus(self.t_info, "listen_num", where_value=where_value)
         return l
 
     def new_music(self, music_name, music_type, music_desc, music_url, adder, **music_extend):
