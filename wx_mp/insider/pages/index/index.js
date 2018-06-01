@@ -35,25 +35,25 @@ Page({
         needRegister: true
       })
     }
-    // wx.request2({
-    //   url: '/insider/project/',
-    //   method: "GET",
-    //   success: res => {
-    //     var r_data = res.data
-    //     if (r_data["status"] == false) {
-    //       return false
-    //     }
-    //     else if (r_data["data"].length > 0) {
-    //       var is_business = true
-    //     }
-    //     else {
-    //       var is_business = false
-    //     }
-    //     this.setData({
-    //       is_business: is_business
-    //     })
-    //   }
-    // })
+    wx.request2({
+      url: '/insider/project/',
+      method: "GET",
+      success: res => {
+        var r_data = res.data
+        if (r_data["status"] == false) {
+          return false
+        }
+        else if (r_data["data"].length > 0) {
+          var is_business = true
+        }
+        else {
+          var is_business = false
+        }
+        this.setData({
+          is_business: is_business
+        })
+      }
+    })
   },
   register: function (e) {
     var that = this

@@ -82,6 +82,11 @@
 				"col_name": "doctor_profile",
 				"col_type": "varchar(300)"
 			},
+            {
+				"col_comment": "手机号",
+				"col_name": "tel",
+				"col_type": "varchar(11)"
+			},
 			{
 				"col_comment": "执业经历",
 				"col_name": "work_experience",

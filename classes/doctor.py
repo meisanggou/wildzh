@@ -24,9 +24,9 @@ class Doctor(object):
         self.db.execute_insert(self.t, kwargs)
         return kwargs
 
-    def _insert_detail(self, doctor_no, doctor_profile, work_experience, study_experience, honor, unit_price):
+    def _insert_detail(self, doctor_no, doctor_profile, tel, work_experience, study_experience, honor, unit_price):
         kwargs = dict(doctor_profile=doctor_profile, work_experience=work_experience, study_experience=study_experience,
-                      honor=honor, unit_price=unit_price, doctor_no=doctor_no)
+                      honor=honor, unit_price=unit_price, doctor_no=doctor_no, tel=tel)
         l = self.db.execute_insert(self.t_detail, kwargs)
         return l
 
@@ -61,8 +61,8 @@ class Doctor(object):
                                  service_times, labels)
         return item
 
-    def new_detail(self, doctor_no, doctor_profile, work_experience, study_experience, honor, unit_price):
-        l = self._insert_detail(doctor_no, doctor_profile, work_experience, study_experience, honor, unit_price)
+    def new_detail(self, doctor_no, doctor_profile, tel, work_experience, study_experience, honor, unit_price):
+        l = self._insert_detail(doctor_no, doctor_profile, tel, work_experience, study_experience, honor, unit_price)
         self._update_status(doctor_no, add_status=2)
         return l
 
@@ -74,7 +74,7 @@ class Doctor(object):
         return self._update_info(doctor_no, **kwargs)
 
     def update_detail(self, doctor_no, **kwargs):
-        cols = ["doctor_profile", "work_experience", "study_experience", "honor", "unit_price"]
+        cols = ["doctor_profile", "tel", "work_experience", "study_experience", "honor", "unit_price"]
         for key in kwargs.keys():
             if kwargs[key] is None or key not in cols:
                 del kwargs[key]
@@ -92,7 +92,8 @@ class Doctor(object):
         return items
 
     def select_detail(self, doctor_no):
-        cols = ["doctor_no", "doctor_profile", "work_experience", "study_experience", "honor", "unit_price"]
+        cols = ["doctor_no", "doctor_profile", "tel", "work_experience", "study_experience", "honor",
+                "unit_price"]
         where_value = dict(doctor_no=doctor_no)
         items = self.db.execute_select(self.t_detail, cols=cols, where_value=where_value)
         if len(items) <= 0:

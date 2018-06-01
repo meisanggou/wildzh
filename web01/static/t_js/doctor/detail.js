@@ -4,7 +4,7 @@
 
 function add_or_update_detail(){
     var r_data = new Object();
-    var keys = ["doctor_profile", "work_experience", "study_experience", "honor", "unit_price"];
+    var keys = ["doctor_profile", "tel", "work_experience", "study_experience", "honor", "unit_price"];
     for(var i=0;i<keys.length;i++){
         var item = $("#" + keys[i]);
         var v = item.val().trim();
@@ -57,7 +57,7 @@ function init_detail(data){
         if(item == null){
             return 0;
         }
-        var keys = ["doctor_profile", "work_experience", "study_experience", "honor", "unit_price"];
+        var keys = ["doctor_profile", "tel", "work_experience", "study_experience", "honor", "unit_price"];
         for(var i=0;i<keys.length;i++) {
             $("#" + keys[i]).val(item[keys[i]]);
         }

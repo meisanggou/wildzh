@@ -135,11 +135,12 @@ def get_detail():
 def add_detail_action():
     request_data = request.json
     doctor_profile = request_data["doctor_profile"]
+    tel = request_data["tel"]
     work_experience = request_data["work_experience"]
     study_experience = request_data["study_experience"]
     honor = request_data["honor"]
     unit_price = request_data["unit_price"]
-    l = c_doctor.new_detail(g.doctor_no, doctor_profile, work_experience, study_experience, honor, unit_price)
+    l = c_doctor.new_detail(g.doctor_no, doctor_profile, tel, work_experience, study_experience, honor, unit_price)
     request_data["doctor_no"] = g.doctor_no
     return jsonify({"status": True, "data": request_data})
 
