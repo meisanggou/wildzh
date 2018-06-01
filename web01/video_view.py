@@ -156,7 +156,6 @@ def entry_questions():
 @required_video_no
 def get_video_questions():
     items = c_video.select_episode(g.video_no)
-
     return jsonify({"status": True, "data": items})
 
 
