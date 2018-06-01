@@ -91,13 +91,15 @@ class Doctor(object):
         items = self.db.execute_select(self.t, cols=cols, where_value=where_value, where_cond=where_cond)
         return items
 
-    def select_detail(self, doctor_no):
+    def select_detail(self, doctor_no, add_times=False):
         cols = ["doctor_no", "doctor_profile", "tel", "work_experience", "study_experience", "honor",
                 "unit_price"]
         where_value = dict(doctor_no=doctor_no)
         items = self.db.execute_select(self.t_detail, cols=cols, where_value=where_value)
         if len(items) <= 0:
             return None
+        if add_times is True:
+            self._update_num(doctor_no)
         return items[0]
 
     def online_doctor(self, doctor_no):

@@ -130,6 +130,15 @@ def get_detail():
     return jsonify({"status": True, "data": [doctor_item]})
 
 
+@doctor_view.route("/detail/tel/", methods=["GET"])
+@required_doctor_no
+def get_detail_tel():
+    item = c_doctor.select_detail(g.doctor_no, add_times=True)
+    if item is None:
+        return jsonify({"status": True, "data": "医生不存在详细信息"})
+    return jsonify({"status": True, "data": item["tel"]})
+
+
 @doctor_view.route("/detail/", methods=["POST"])
 @required_doctor_no
 def add_detail_action():
