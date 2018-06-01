@@ -5,7 +5,7 @@ import re
 import time
 import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
-from mysqldb_rich import DB
+from mysqldb_rich.db2 import DB
 
 __author__ = 'meisa'
 

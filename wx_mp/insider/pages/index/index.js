@@ -18,13 +18,20 @@ Page({
     })
   },
   onLoad: function (options) {
+    console.info("index on Load")
     if ("project_no" in options) {
       wx.navigateTo({
         url: '../pay?project_no=' + options["project_no"]
       })
     }
+
     var userItem = wx.getStorageSync(app.globalData.userInfoStorageKey)
-    if(userItem.avatar_url != null){
+    if(userItem == ""){
+      this.setData({
+        needRegister: false
+      })
+    }
+    else if(userItem.avatar_url != null){
       this.setData({
         needRegister: false,
         userItem: userItem
@@ -52,9 +59,17 @@ Page({
         this.setData({
           is_business: is_business
         })
+        var userItem = wx.getStorageSync(app.globalData.userInfoStorageKey)
+        this.setData({
+          userItem: userItem
+        })
       }
     })
   },
+  onReady: function () {
+    console.info("index on Ready")
+  },
+
   register: function (e) {
     var that = this
     var userInfo = e.detail.userInfo
@@ -64,7 +79,9 @@ Page({
       method: 'PUT',
       data: data,
       success: res=>{
-        wx.setStorageSync(app.globalData.userInfoStorageKey, res.data.data)
+        console.info(res.data.data)
+        var userItem = res.data.data
+        wx.setStorageSync(app.globalData.userInfoStorageKey, userItem)
         that.setData({
           needRegister: false,
           userItem: userItem

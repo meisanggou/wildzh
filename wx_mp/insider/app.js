@@ -1,6 +1,8 @@
 //app.js
 App({
   onLaunch: function (options) {
+    console.info("App Lunch")
+    var that = this
     wx.remote_host = "http://127.0.0.1:2400"
     wx.session_storage_key = "wildzh_insider_session"
     wx.request2 = function (req) {
@@ -29,7 +31,8 @@ App({
                   method: "POST",
                   data: { "code": res.code },
                   success: res => {
-                    wx.setStorageSync(this.globalData.userInfoStorageKey, res.data.data)
+                    console.info("auto wx login success")
+                    wx.setStorageSync(that.globalData.userInfoStorageKey, res.data.data)
                     wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
                     req.retry = 1
                     wx.request2(req)
@@ -47,7 +50,6 @@ App({
     var logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
     wx.setStorageSync('logs', logs)
-
     // 登录
     wx.login({
       success: res => {
@@ -56,7 +58,9 @@ App({
           method: "POST",
           data: { "code": res.code },
           success: res => {
-            wx.setStorageSync(this.globalData.userInfoStorageKey, res.data.data)
+            console.info("App Wx Login Success")
+            console.info(that.globalData)
+            wx.setStorageSync(that.globalData.userInfoStorageKey, res.data.data)
             wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
           }
         })
@@ -83,6 +87,12 @@ App({
     //     }
     //   }
     // })
+  },
+  onShow: function () {
+    console.log('App Show')
+  },
+  onHide: function () {
+    console.log('App Hide')
   },
   globalData: {
     userInfo: null,

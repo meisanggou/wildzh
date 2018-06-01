@@ -134,4 +134,6 @@ def update_info_action():
     data = g.request_data
     c_user.update_info(g.user_no, **data)
     items = c_user.verify_user_exist(user_no=g.user_no)
-    return jsonify({"status": True, "data": items})
+    if len(items) <= 0:
+        return jsonify({"status": False, "data": "not exist"})
+    return jsonify({"status": True, "data": items[0]})
