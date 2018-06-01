@@ -75,3 +75,10 @@ function isSuitableNaN(num, min_allow, max_allow){
     }
     return true;
 }
+
+$(function() {
+   $("input[type=tel]").change(function(){
+       var v = $(this).val();
+       $(this).val(format_num(v).substr(0, 11));
+   });
+});

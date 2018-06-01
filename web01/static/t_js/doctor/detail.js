@@ -69,4 +69,9 @@ $(function() {
     $("#btn_new").click(add_or_update_detail);
     init_detail(null);
     $("#doctor_name").val(decodeURI(UrlArgsValue(location.href, "doctor_name")));
+    console.info("dddd");
+    //$("#tel").change(function(){
+    //    console.info("change");
+    //    $("#tel").val(format_num($("#tel").val().substr(0, 11)));
+    //});
 });
