@@ -1,4 +1,4 @@
-// pages/mine/index.js
+// pages/mine/billing.js
 Page({
 
   /**

@@ -79,7 +79,6 @@ Page({
       method: 'PUT',
       data: data,
       success: res=>{
-        console.info(res.data.data)
         var userItem = res.data.data
         wx.setStorageSync(app.globalData.userInfoStorageKey, userItem)
         that.setData({

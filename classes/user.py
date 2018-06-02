@@ -1,17 +1,122 @@
 # !/usr/bin/env python
 # coding: utf-8
 
+import os
 import re
 import time
+import base64
+import requests
 import hashlib
+import socket
+import string
+import random
+import struct
+from PIL import Image
+from Crypto.Cipher import AES
+import qrcode
 from werkzeug.security import generate_password_hash, check_password_hash
 from mysqldb_rich.db2 import DB
 
 __author__ = 'meisa'
 
 
-class User(object):
+class EncryptActor(object):
+    def __init__(self, aes_key=None, actor_id=None):
+        if aes_key is None or len(aes_key) != 32:
+            self.aes_encode_key = "TWFNaW5nWmhhbmc2MjNJc015V2lmZUJ5V2lsZFpIMTU="
+            self.aes_key = base64.b64decode(self.aes_encode_key)
+        else:
+            self.aes_key = aes_key
+        if isinstance(actor_id, basestring) is False:
+            self._id = "wild_zh"
+        else:
+            self._id = actor_id
 
+    @staticmethod
+    def random_str():
+        """ 随机生成16位字符串
+        @return: 16位字符串
+        """
+        rule = string.letters + string.digits
+        c_list = random.sample(rule, 16)
+        return "".join(c_list)
+
+        # 解密加密数据
+
+    def decrypt_msg(self, msg):
+        try:
+            key = self.aes_key
+            crypt_actor = AES.new(key, AES.MODE_CBC, key[:16])
+            # 使用BASE64对密文进行解码，然后AES-CBC解密
+            plain_text = crypt_actor.decrypt(base64.b64decode(msg))
+        except Exception, e:
+            print(e)
+            return ""
+        try:
+            pad = ord(plain_text[-1])
+            # 去掉补位字符串
+            content = plain_text[16:-pad]
+            xml_len = socket.ntohl(struct.unpack("I", content[: 4])[0])
+            xml_content = content[4: xml_len + 4]
+            from_app_id = content[xml_len + 4:]
+        except Exception, e:
+            print(e.args)
+            return ""
+        if from_app_id != self._id:
+            return ""
+        return xml_content
+
+    def encrypt_msg(self, msg):
+        msg = unicode(msg)
+        # 16位随机字符串添加到明文开头
+        text = self.random_str() + struct.pack("I", socket.htonl(len(msg))) + msg + self._id
+        # 使用自定义的填充方式对明文进行补位填充
+        text_length = len(text)
+        # 计算需要填充的位数
+        amount_to_pad = 32 - (text_length % 32)
+        if amount_to_pad == 0:
+            amount_to_pad = 32
+        # 获得补位所用的字符
+        pad = chr(amount_to_pad)
+        text += pad * amount_to_pad
+        # 加密
+        crypt_actor = AES.new(self.aes_key, AES.MODE_CBC, self.aes_key[:16])
+        try:
+            cipher_text = crypt_actor.encrypt(text)
+            # 使用BASE64对加密后的字符串进行编码
+            return base64.b64encode(cipher_text)
+        except Exception, e:
+            print(e.args)
+            return ""
+
+
+def generate_qr(content, paste_img_path, save_path):
+    qr = qrcode.QRCode(version=2, box_size=10, border=2)
+    qr.add_data(content)
+    qr.make(fit=True)
+    img = qr.make_image()
+    img = img.convert("RGBA")
+    if os.path.exists(paste_img_path) is True:
+        icon = Image.open(paste_img_path)
+        img_w, img_h = img.size
+        factor = 4
+        size_w = int(img_w / factor)
+        size_h = int(img_h / factor)
+
+        icon_w, icon_h = icon.size
+        if icon_w > size_w:
+            icon_w = size_w
+        if icon_h > size_h:
+            icon_h = size_h
+        icon = icon.resize((icon_w, icon_h), Image.ANTIALIAS)
+
+        w = int((img_w - icon_w) / 2)
+        h = int((img_h - icon_h) / 2)
+        img.paste(icon, (w, h))
+
+    img.save(save_path)
+
+class User(object):
     _salt_password = "msg_zh2018"
 
     @staticmethod
@@ -36,9 +141,16 @@ class User(object):
                 return True
         return False
 
-    def __init__(self, db_conf_path):
+    def __init__(self, db_conf_path, upload_folder=None):
+        self.encrypt = EncryptActor()
         self.db = DB(conf_path=db_conf_path)
         self.t = "sys_user"
+        if upload_folder is not None:
+            self.user_folder = os.path.join(upload_folder, "user")
+            if os.path.exists(self.user_folder) is False:
+                os.makedirs(self.user_folder)
+        else:
+            self.user_folder = None
 
     # 插入用户注册数据
     def insert_user(self, user_name=None, password=None, tel=None, nick_name=None, email=None, wx_id=None, creator=None,
@@ -123,6 +235,19 @@ class User(object):
         return 0, user_item
 
     def update_info(self, user_no, **kwargs):
+        if "avatar_url" in kwargs:
+            if kwargs["avatar_url"].startswith("http") and self.user_folder is not None:
+                try:
+                    resp = requests.get(kwargs["avatar_url"])
+                    if resp.status_code != 200:
+                        return False
+                    avatar_path = os.path.join(self.user_folder, "%s_avatar.png" % user_no)
+                    qr_path = os.path.join(self.user_folder, "%s_qr.png" % user_no)
+                    with open(avatar_path, "wb") as wa:
+                        wa.write(resp.content)
+                    generate_qr(self.encrypt.encrypt_msg(user_no), avatar_path, qr_path)
+                except Exception as e:
+                    return False
         l = self._update_user(user_no, **kwargs)
         return l
 
@@ -132,19 +257,47 @@ class User(object):
         items = self.db.execute_multi_select(self.t, where_value=dict(user_no=user_list), cols=cols)
         return items
 
+    def my_qc_code(self, user_no):
+        return self.user_folder, "%s_qr.png" % user_no
+
+    def who_i_am(self, user_no, timeout):
+        c = int(time.time() + timeout)
+        d_c = "%s|%s" % (user_no, c)
+        e_c = self.encrypt.encrypt_msg(d_c)
+        return e_c
+
+    def who_is(self, en_user):
+        d_c = self.encrypt.decrypt_msg(en_user)
+        m_r = re.match(r"^(\d+)\|(\d+)$", d_c)
+        if m_r is None:
+            return None
+        user_no = int(m_r.groups()[0])
+        timeout = int(m_r.groups()[1])
+        print(timeout)
+        print(time.time())
+        print(timeout < int(time.time()))
+        if timeout < int(time.time()):
+            return None
+        return user_no
+
 if __name__ == "__main__":
-    import os
-    import sys
-    script_dir = os.path.abspath(os.path.dirname(__file__))
-    sys.path.append(script_dir)
-    from zh_config import db_conf_path
-    um = User(db_conf_path)
-    if len(sys.argv) >= 3:
-        u = sys.argv[1]
-        p = sys.argv[2]
-    else:
-        u = p = "admin"
-    r, item = um.new_user(u, password=p)
-    if r is False:
-        print("update password")
-        um.update_password(u, p)
+    # import os
+    # import sys
+    # script_dir = os.path.abspath(os.path.dirname(__file__))
+    # sys.path.append(script_dir)
+    # from zh_config import db_conf_path
+    # um = User(db_conf_path)
+    # if len(sys.argv) >= 3:
+    # u = sys.argv[1]
+    #     p = sys.argv[2]
+    # else:
+    #     u = p = "admin"
+    # r, item = um.new_user(u, password=p)
+    # if r is False:
+    #     print("update password")
+    #     um.update_password(u, p)
+    e = EncryptActor()
+    s = e.encrypt_msg("this is a message")
+    print(s)
+    ds = e.decrypt_msg("F36QT3Zse4Zr9bSVAn9wjd9+LJDEc8w/GPTulTbGY/4CcUvRnm04+3n8hjsk4WlZKlU0MuaOb2qhUGr7A182pA==")
+    print(ds)

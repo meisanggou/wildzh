@@ -5,7 +5,8 @@
     "pages/pay",
     "pages/business/join",
     "pages/business/main",
-    "pages/mine/index"
+    "pages/mine/billing",
+    "pages/mine/me"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -22,7 +23,7 @@
         "text": "首页"
       },
       {
-        "pagePath": "pages/mine/index",
+        "pagePath": "pages/mine/me",
         "iconPath": "image/icon_API.png",
         "selectedIconPath": "image/icon_API_HL.png",
         "text": "我的"

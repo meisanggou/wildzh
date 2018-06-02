@@ -3,3 +3,5 @@ mysqldb-rich
 Flask
 Flask-Login
 Flask-Helper
+pycrypto
+qrcode

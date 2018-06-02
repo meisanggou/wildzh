@@ -1,0 +1,12 @@
+<!--pages/mine/my.wxml-->
+<view class="container">
+  <view class="page-body">
+    <view class="page-section">
+      <view class="page-body-info">
+        <image class="userinfo-avatar" src="{{userItem.avatar_url}}"></image>
+        <text class="userinfo-nickname">Welcome {{userItem.nick_name}}</text>
+        <image class="userinfo-qr" src="{{identity_qr}}"></image>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,15 @@
+/* pages/mine/my.wxss */
+
+.userinfo-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+
+.userinfo-qr {
+  width: 320rpx;
+  height: 320rpx;
+  margin: 20rpx;
+  border-radius: 5%;
+}

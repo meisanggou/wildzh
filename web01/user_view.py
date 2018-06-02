@@ -1,10 +1,10 @@
 # !/usr/bin/env python
 # coding: utf-8
 
-from flask import g, jsonify, session, request, redirect, make_response
+from flask import g, jsonify, session, request, redirect, make_response, send_file, send_from_directory
 from flask_login import UserMixin, login_user, current_user, logout_user, login_required
 from flask_helper import RenderTemplate
-from zh_config import db_conf_path, web_pro, min_program_conf
+from zh_config import db_conf_path, web_pro, min_program_conf, upload_folder
 from classes.user import User
 from classes.wx import MiniProgram
 from web01 import create_blue, login_manager
@@ -13,7 +13,7 @@ __author__ = 'meisa'
 
 url_prefix = "/user"
 rt = RenderTemplate("user")
-c_user = User(db_conf_path=db_conf_path)
+c_user = User(db_conf_path=db_conf_path, upload_folder=upload_folder)
 mp = MiniProgram(conf_path=min_program_conf, section=web_pro)
 user_view = create_blue("user", url_prefix=url_prefix, auth_required=False,
                         menu_list=[{"index": -2, "url": "/password/", "title": u"密码修改"},
@@ -128,6 +128,7 @@ def user_info():
     items = c_user.verify_user_exist(user_no=g.user_no)
     return jsonify({"status": True, "data": items})
 
+
 @user_view.route("/info/", methods=["PUT"])
 @login_required
 def update_info_action():
@@ -137,3 +138,23 @@ def update_info_action():
     if len(items) <= 0:
         return jsonify({"status": False, "data": "not exist"})
     return jsonify({"status": True, "data": items[0]})
+
+@user_view.route("/whoIam/", methods=["GET"])
+@login_required
+def who_i_am_action():
+    items = c_user.verify_user_exist(user_no=g.user_no)
+    if len(items) != 1:
+        return jsonify({"status": False, "data": "not exist"})
+    en_s = c_user.who_i_am(g.user_no, 60)
+    user_item = items[0]
+    user_item["shy_me"] = en_s
+    return jsonify({"status": True, "data": user_item})
+
+@user_view.route("/qr/", methods=["GET"])
+def my_qr_code_png():
+    user_no = c_user.who_is(request.args["whoIs"])
+    print(user_no)
+    if user_no is None:
+        return make_response("Not Found", 404)
+    d, f = c_user.my_qc_code(user_no)
+    return send_from_directory(d, f)
