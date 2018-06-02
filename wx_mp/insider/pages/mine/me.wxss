@@ -8,8 +8,8 @@
 }
 
 .userinfo-qr {
-  width: 320rpx;
-  height: 320rpx;
-  margin: 20rpx;
+  width: 350rpx;
+  height: 350rpx;
+  margin: 30rpx;
   border-radius: 5%;
 }

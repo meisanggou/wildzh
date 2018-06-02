@@ -28,7 +28,6 @@ Page({
           })
           var shy_me = encodeURIComponent(userItem.shy_me)
           var identity_qr = app.globalData.remote_host + "/user/qr/?whoIs=" + shy_me
-          console.info(shy_me)
           this.setData({
             userItem: userItem,
             identity_qr: identity_qr

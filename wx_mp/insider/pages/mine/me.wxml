@@ -4,8 +4,9 @@
     <view class="page-section">
       <view class="page-body-info">
         <image class="userinfo-avatar" src="{{userItem.avatar_url}}"></image>
-        <text class="userinfo-nickname">Welcome {{userItem.nick_name}}</text>
+        <text class="userinfo-nickname">欢迎 {{userItem.nick_name}}</text>
         <image class="userinfo-qr" src="{{identity_qr}}"></image>
+        <text class="userinfo-nickname">商家扫一扫为我充值</text>
       </view>
     </view>
   </view>
