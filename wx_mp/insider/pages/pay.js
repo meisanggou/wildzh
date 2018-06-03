@@ -5,29 +5,52 @@ Page({
    * 页面的初始数据
    */
   data: {
-    error_project: true
+    error_info: true,
+    project_name: ""
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    var that = this
     if (!"project_no" in options) {
       this.setData({
-        error_project: true
+        error_info: "请扫描"
       })
     }
     else {
       this.setData({
-        error_project: true,
-        project_no: options.project_no
+        error_info: ""
       })
       wx.request2({
-        url: '/insider/project/',
+        url: '/insider/project/mine/?project_no=' + options.project_no,
         method: "GET",
         success: res => {
-
+          if (res.statusCode != 200) {
+            that.setData({
+              error_info: "内部出错请稍后重试" + res.statusCode
+            })
+          }
+          else if (res.data.status == false) {
+            that.setData({
+              error_info: res.data.data
+            })
+          }
+          else {
+            var pro_item = res.data.data
+            console.info(pro_item)
+            that.setData({
+              project_name: pro_item.project_name
+            })
+          }
+        },
+        fail: res => {
+          that.setData({
+            error_info: "内部出错请稍后重试."
+          })
         }
+
       })
     }
 
@@ -80,5 +103,23 @@ Page({
    */
   onShareAppMessage: function () {
 
+  },
+  scanCode: function () {
+    var that = this
+    wx.scanCode({
+      success: function (res) {
+        var project_no = res.result
+        wx.navigateTo({
+          url: 'pay?project_no=' + project_no
+        })
+      },
+      fail: function (res) {
+        wx.showModal({
+          content: "没有扫描到商家信息，请重新扫描",
+          confirmText: "确定",
+          showCancel: false,
+        })
+      }
+    })
   }
 })

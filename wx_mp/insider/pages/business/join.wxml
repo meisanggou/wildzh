@@ -2,17 +2,26 @@
 <view class="container">
   <view class="page-body">
     <view class="page-section">
-      <view class="page-section-title">给商铺起个名</view>
-      <view class="weui-cells weui-cells_after-title">
-        <view class="weui-cell weui-cell_input">
-          <view class="weui-cell__bd">
-            <input class="weui-input" name="input" placeholder="" value='{{project_name}}' />
+      <form catchsubmit="addProject" catchreset="formReset">
+        <view class="page-section">
+          <view class="page-section-title">给商铺起个名</view>
+          <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="project_name" maxlength="10" value='{{project_name}}' />
+              </view>
+              <view wx:if="{{errorName}}" class="icon-small-wrp">
+                <icon class="icon-small" type="warn" size="23"></icon>
+              </view>
+            </view>
           </view>
         </view>
-      </view>
+        <view class="btn-area">
+          <button type="primary" formType="submit" size="{{primarySize}}" loading="{{loading}}" plain="{{plain}}" disabled="{{disabled}}">创建</button>
+        </view>
+      </form>
+
     </view>
-    <view class="weui-btn-area">
-      <button type="primary" size="{{primarySize}}" loading="{{loading}}" plain="{{plain}}" disabled="{{disabled}}" bindtap="addProject"> 创建 </button>
-    </view>
+
   </view>
 </view>

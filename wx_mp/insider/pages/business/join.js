@@ -7,6 +7,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    errorName: false,
     project_name: ""
 
   },
@@ -71,8 +72,16 @@ Page({
       project_name: e.detail.value
     })
   },
-  addProject: function () {
-    var project_name = this.data.project_name
+  addProject: function (event) {
+    var that = this
+    var form_data = event.detail.value
+    var project_name = form_data.project_name
+    if(project_name.length <= 0){
+      that.setData({
+        errorName: true
+      })
+      return ""
+    }
     wx.request2({
       url: '/insider/project/',
       method: "POST",

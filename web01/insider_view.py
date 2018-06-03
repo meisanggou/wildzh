@@ -38,6 +38,22 @@ def new_project_action():
     return jsonify({"status": exec_r, "data": data})
 
 
+@insider_view.route("/project/mine/", methods=["GET"])
+def mine_info_in_project():
+    project_no = request.args["project_no"]
+    items = c_insider.select_project(project_no=project_no)
+    if len(items) != 1:
+        return jsonify({"status": False, "data": "项目不存在"})
+    pro_item = items[0]
+    items = c_insider.select_member(project_no, g.user_no)
+    if len(items) != 1:
+        pro_item["is_member"] = False
+    else:
+        pro_item["is_member"] = True
+        pro_item.update(items[0])
+    return jsonify({"status": True, "data": pro_item})
+
+
 support_upload2(insider_view, upload_folder, file_prefix_url, ("insider", "project"), "upload/p")
 
 
@@ -48,7 +64,6 @@ def recharge_action():
     project_no = data["project_no"]
     user_no = int(data["user_no"])
     amount = int(data["amount"])
-    print(data)
     # 验证用户是否有权限充值
     items = c_insider.select_project(project_no=project_no, owner=g.user_no)
     if len(items) <= 0:

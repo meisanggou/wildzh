@@ -1,9 +1,35 @@
 <!--pay.wxml-->
-<view class="container">
-  <view class="userinfo">
-    <view wx:if="{{error_project}}">项目不存在</view>
+<view class="container page-body">
+  <view class="page-sectionpage-section">
+    <view wx:if="{{error_info}}">
+      <view>{{error_info}}</view>
+      <button bindtap='scanCode'>扫码付款</button>
+    </view>
     <view wx:else>
-      欢迎{{project_name}}
+      <view class="page-head">
+        <view class="page-head-title">付款给商家-{{project_name}}</view>
+        <view class="page-head-line"></view>
+        <view wx:if="{{desc}}" class="page-head-desc">{{desc}}</view>
+      </view>
+      <form catchsubmit="formSubmit" catchreset="formReset">
+        <view class="page-section">
+          <view class="page-section-title">金额</view>
+          <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="amount" maxlength="8" placeholder="输入金额" type='number' />
+              </view>
+              <view wx:if="{{errorAmount}}" class="icon-small-wrp">
+                <icon class="icon-small" type="warn" size="23"></icon>
+              </view>
+
+            </view>
+          </view>
+        </view>
+        <view class="btn-area">
+          <button type="primary" formType="submit">付款</button>
+        </view>
+      </form>
     </view>
   </view>
 </view>

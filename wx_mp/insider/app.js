@@ -59,7 +59,6 @@ App({
           data: { "code": res.code },
           success: res => {
             console.info("App Wx Login Success")
-            console.info(that.globalData)
             wx.setStorageSync(that.globalData.userInfoStorageKey, res.data.data)
             wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
           }

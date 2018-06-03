@@ -107,7 +107,10 @@ Page({
     var that = this
     wx.scanCode({
       success: function (res) {
-        console.info(res.result)
+        var project_no = res.result
+        wx.navigateTo({
+          url: '../pay?project_no=' + project_no
+        })
       },
       fail: function (res) {
         wx.showModal({
