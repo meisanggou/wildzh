@@ -11,9 +11,9 @@
           <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell weui-cell_input">
               <view class="weui-cell__bd">
-                <input class="weui-input" name="jine" maxlength="8" placeholder="充值金额" type='number' />
+                <input class="weui-input" name="amount" maxlength="8" placeholder="充值金额" type='number' />
               </view>
-              <view wx:if="{{errorJine}}" class="icon-small-wrp">
+              <view wx:if="{{errorAmount}}" class="icon-small-wrp">
                 <icon class="icon-small" type="warn" size="23"></icon>
               </view>
 
@@ -26,8 +26,8 @@
             <view class="weui-cell weui-cell_input">
               <view class="weui-cell__bd">
                 <!-- <image src='{{user_avatar}}'></image> -->
-                <input class="weui-input" name="user" placeholder="点击右侧扫码" disabled/>
-                <input class="hide" name="user_no" />
+                <input class="weui-input" name="user" placeholder="点击右侧扫码" value='{{user_nick_name}}' disabled/>
+                <input class="hide" name="user_no" value='{{user_no}}'/>
               </view>
               <view class="weui-cell__ft">
                 <button class="weui-vcode-btn" bindtap='scanCode'>扫码</button>

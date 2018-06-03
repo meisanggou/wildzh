@@ -139,6 +139,7 @@ def update_info_action():
         return jsonify({"status": False, "data": "not exist"})
     return jsonify({"status": True, "data": items[0]})
 
+
 @user_view.route("/whoIam/", methods=["GET"])
 @login_required
 def who_i_am_action():

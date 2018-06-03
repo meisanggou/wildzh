@@ -203,6 +203,8 @@ class Insider(object):
             return True, n_yue_item
         except Exception as e:
             print(e)
+            import traceback
+            traceback.print_exc()
             self.db.end_transaction(fail=True)
             return False, "Internal Error 99"
 
