@@ -70,3 +70,13 @@ def recharge_action():
         return jsonify({"status": True, "data": "用户无权限充值"})
     exec_r, data = c_insider.new_pay(project_no, user_no, 1, amount, "充值")
     return jsonify({"status": exec_r, "data": data})
+
+
+@insider_view.route("/pay/", methods=["POST"])
+def pay_action():
+    # 商家扫描用户 获得用户user_no 为其充值
+    data = g.request_data
+    project_no = data["project_no"]
+    amount = int(data["amount"])
+    exec_r, data = c_insider.new_pay(project_no, g.user_no, 1, amount, "充值")
+    return jsonify({"status": exec_r, "data": data})

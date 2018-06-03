@@ -5,7 +5,8 @@ Page({
    * 页面的初始数据
    */
   data: {
-    error_info: true,
+    error_info: "加载中...",
+    project_no: null,
     project_name: ""
   },
 
@@ -14,9 +15,9 @@ Page({
    */
   onLoad: function (options) {
     var that = this
-    if (!"project_no" in options) {
+    if (!("project_no" in options)) {
       this.setData({
-        error_info: "请扫描"
+        error_info: "请扫描商家二维码"
       })
     }
     else {
@@ -39,9 +40,10 @@ Page({
           }
           else {
             var pro_item = res.data.data
-            console.info(pro_item)
             that.setData({
-              project_name: pro_item.project_name
+              project_name: pro_item.project_name,
+              project_no: pro_item.project_no,
+              yue: 0
             })
           }
         },
@@ -116,6 +118,55 @@ Page({
       fail: function (res) {
         wx.showModal({
           content: "没有扫描到商家信息，请重新扫描",
+          confirmText: "确定",
+          showCancel: false,
+        })
+      }
+    })
+  },
+  submitPay: function(event){
+    var form_data = event.detail.value
+    if(form_data.amount.length <= 0){
+      this.setData({
+        errorAmount: true
+      })
+      return ""
+    }
+    form_data.project_no = this.data.project_no
+    wx.request2({
+      url: '/insider/pay/',
+      method: "POST",
+      data: form_data,
+      success: res => {
+        if (res.statusCode != 200) {
+          wx.showModal({
+            content: "内部出错请稍后重试" + res.statusCode,
+            confirmText: "确定",
+            showCancel: false,
+          })
+        }
+        else if (res.data.status == false) {
+          wx.showModal({
+            content: res.data.data,
+            confirmText: "确定",
+            showCancel: false,
+          })
+        }
+        else {
+          wx.showModal({
+            content: "付款成功",
+            confirmText: "确定",
+            showCancel: false,
+          })
+          that.setData({
+            user_nick_name: null,
+            user_no: null
+          })
+        }
+      },
+      fail: res => {
+        wx.showModal({
+          content: "内部出错请稍后重试.",
           confirmText: "确定",
           showCancel: false,
         })

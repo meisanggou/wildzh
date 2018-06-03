@@ -1,1 +1,5 @@
 /* pages/pay.wxss */
+.smallbtn {
+  padding: 0 .8em 0 .6em;
+  font-size: 14px
+}
