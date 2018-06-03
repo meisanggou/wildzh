@@ -11,11 +11,11 @@ import socket
 import string
 import random
 import struct
-from PIL import Image
 from Crypto.Cipher import AES
-import qrcode
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from mysqldb_rich.db2 import DB
+from function import generate_qr
 
 __author__ = 'meisa'
 
@@ -89,32 +89,6 @@ class EncryptActor(object):
             print(e.args)
             return ""
 
-
-def generate_qr(content, paste_img_path, save_path):
-    qr = qrcode.QRCode(version=2, box_size=10, border=2)
-    qr.add_data(content)
-    qr.make(fit=True)
-    img = qr.make_image()
-    img = img.convert("RGBA")
-    if os.path.exists(paste_img_path) is True:
-        icon = Image.open(paste_img_path)
-        img_w, img_h = img.size
-        factor = 4
-        size_w = int(img_w / factor)
-        size_h = int(img_h / factor)
-
-        icon_w, icon_h = icon.size
-        if icon_w > size_w:
-            icon_w = size_w
-        if icon_h > size_h:
-            icon_h = size_h
-        icon = icon.resize((icon_w, icon_h), Image.ANTIALIAS)
-
-        w = int((img_w - icon_w) / 2)
-        h = int((img_h - icon_h) / 2)
-        img.paste(icon, (w, h))
-
-    img.save(save_path)
 
 class User(object):
     _salt_password = "msg_zh2018"
@@ -245,7 +219,7 @@ class User(object):
                     qr_path = os.path.join(self.user_folder, "%s_qr.png" % user_no)
                     with open(avatar_path, "wb") as wa:
                         wa.write(resp.content)
-                    generate_qr(self.encrypt.encrypt_msg(user_no), avatar_path, qr_path)
+                    generate_qr(self.encrypt.encrypt_msg(user_no), qr_path, avatar_path)
                 except Exception as e:
                     return False
         l = self._update_user(user_no, **kwargs)
@@ -273,9 +247,6 @@ class User(object):
             return None
         user_no = int(m_r.groups()[0])
         timeout = int(m_r.groups()[1])
-        print(timeout)
-        print(time.time())
-        print(timeout < int(time.time()))
         if timeout < int(time.time()):
             return None
         return user_no
