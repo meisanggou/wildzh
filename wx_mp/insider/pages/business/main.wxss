@@ -1,1 +1,7 @@
 /* pages/business/main.wxss */
+.img-qr {
+  width: 350rpx;
+  height: 350rpx;
+  margin: 10rpx;
+  border-radius: 5%;
+}

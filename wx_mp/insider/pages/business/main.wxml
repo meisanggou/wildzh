@@ -1,28 +1,40 @@
 <!--pages/business/main.wxml-->
-<view class="container">
-  <view class='page input js_show'>
-    <view class="page__bd">
-      <view class="weui-cells weui-cells_form">
-        <view class="weui-cell">
-          <view class="weui-cell__hd">
-            <label class="weui-label">qq</label>
-          </view>
-          <view class="weui-cell__bd">
-            <input class="weui-input" type="number" pattern="[0-9]*" placeholder="请输入qq号" />
-          </view>
-        </view>
-        <view class="weui-cell weui-cell_vcode">
-          <view class="weui-cell__hd">
-            <label class="weui-label">手机号</label>
-          </view>
-          <view class="weui-cell__bd">
-            <input class="weui-input" type="tel" placeholder="请输入手机号" />
-          </view>
-          <view class="weui-cell__ft">
-            <button class="weui-vcode-btn">获取验证码</button>
+<view class="container page-body">
+  <view class="page-section">
+    <view class="page-body-info">
+      <text>会员扫码付款</text>
+      <image class="img-qr" src="{{project_qr}}"></image>
+      <text>为会员充值</text>
+      <form catchsubmit="formSubmit" catchreset="formReset">
+        <view class="page-section">
+          <view class="page-section-title">金额</view>
+          <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="input" placeholder="充值金额" value='{{recharge_num}}' />
+              </view>
+            </view>
           </view>
         </view>
-      </view>
+        <view class="page-section">
+          <view class="page-section-title">用户</view>
+          <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="input" placeholder="点击右侧扫码" value='{{recharge_user}}'/>
+              </view>
+              <view class="weui-cell__ft">
+                <button class="weui-vcode-btn" bindtap='scanCode'>扫码</button>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="btn-area">
+          <button type="primary" formType="submit" disabled='{{disable_recharge}}'>充值</button>
+          <button formType="reset">Reset</button>
+        </view>
+      </form>
     </view>
   </view>
+
 </view>

@@ -1,3 +1,5 @@
+//获取应用实例
+const app = getApp()
 // pages/business/join.js
 Page({
 
@@ -69,14 +71,23 @@ Page({
       project_name: e.detail.value
     })
   },
-  addProject: function(){
+  addProject: function () {
     var project_name = this.data.project_name
     wx.request2({
       url: '/insider/project/',
       method: "POST",
-      data: {"project_name": project_name},
+      data: { "project_name": project_name },
       success: res => {
-        console.info(res.data)
+        if (res.data.status == true) {
+          var r_data = res.data
+          wx.setStorage({
+            key: app.globalData.myProjectStorageKey,
+            data: [r_data.data],
+          })
+          wx.navigateTo({
+            url: 'main',
+          })
+        }
       }
     })
   }

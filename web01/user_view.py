@@ -153,7 +153,6 @@ def who_i_am_action():
 @user_view.route("/qr/", methods=["GET"])
 def my_qr_code_png():
     user_no = c_user.who_is(request.args["whoIs"])
-    print(user_no)
     if user_no is None:
         return make_response("Not Found", 404)
     d, f = c_user.my_qc_code(user_no)

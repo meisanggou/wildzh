@@ -51,6 +51,11 @@ Page({
           return false
         }
         else if (r_data["data"].length > 0) {
+          // wx.setStorageSync(app.globalData.myProjectStorageKey, r_data["data"])
+          wx.setStorage({
+            key: app.globalData.myProjectStorageKey,
+            data: r_data["data"],
+          })
           var is_business = true
         }
         else {

@@ -3,6 +3,7 @@
 
 import time
 from mysqldb_rich.db2 import DB
+from function import generate_qr
 
 __author__ = 'meisa'
 
@@ -214,6 +215,9 @@ class Insider(object):
     def select_member(self, project_no, member_no=None):
         items = self._select_member(project_no, member_no)
         return items
+
+    def create_project_qr(self, project_no, save_path):
+        generate_qr(project_no, save_path)
 
     def verify_billing_no(self):
         cols = ["billing_no", "amount"]

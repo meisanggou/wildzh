@@ -98,6 +98,7 @@ App({
     userInfo: null,
     sessionStorageKey: "wildzh_insider_session",
     userInfoStorageKey: "wildzh_current_user",
+    myProjectStorageKey: "wildzh_my_projects",
     remote_host: "http://127.0.0.1:2400",
     userItem: {}
   }

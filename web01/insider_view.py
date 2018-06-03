@@ -31,7 +31,14 @@ def get_my_project():
 def new_project_action():
     project_name = request.json["project_name"]
     exec_r, data = c_insider.new_project(g.user_no, project_name)
+    if exec_r is True:
+        project_no = data["project_no"]
+        save_path = os.path.join(upload_folder, "insider", "project", "%s_qr.png" % project_no)
+        c_insider.create_project_qr(project_no, save_path)
     return jsonify({"status": exec_r, "data": data})
+
+
+support_upload2(insider_view, upload_folder, file_prefix_url, ("insider", "project"), "upload/p")
 
 
 @insider_view.route("/recharge/", methods=["POST"])
