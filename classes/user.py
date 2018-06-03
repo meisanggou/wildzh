@@ -251,6 +251,14 @@ class User(object):
             return None
         return user_no
 
+    def who_is_he(self, en_user):
+        d_c = self.encrypt.decrypt_msg(en_user)
+        m_r = re.match(r"^(\d+)$", d_c)
+        if m_r is None:
+            return None
+        user_no = int(m_r.groups()[0])
+        return user_no
+
 if __name__ == "__main__":
     # import os
     # import sys

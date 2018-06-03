@@ -150,6 +150,24 @@ def who_i_am_action():
     user_item["shy_me"] = en_s
     return jsonify({"status": True, "data": user_item})
 
+@user_view.route("/whoIsHe/", methods=["POST"])
+@login_required
+def who_is_he_action():
+    en_user = g.request_data["en_user"]
+    user_no = c_user.who_is_he(en_user)
+    if user_no is None:
+        return jsonify({"status": False, "data": "无效的用户信息"})
+    items = c_user.verify_user_exist(user_no=user_no)
+    if len(items) <= 0:
+        return jsonify({"status": False, "data": "用户不存在"})
+    user_item = items[0]
+    if user_item["user_no"] == g.user_no:
+        user_item["is_self"] = True
+    else:
+        user_item["is_self"] = False
+    return jsonify({"status": True, "data": user_item})
+
+
 @user_view.route("/qr/", methods=["GET"])
 def my_qr_code_png():
     user_no = c_user.who_is(request.args["whoIs"])

@@ -11,8 +11,12 @@
           <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell weui-cell_input">
               <view class="weui-cell__bd">
-                <input class="weui-input" name="input" placeholder="充值金额" value='{{recharge_num}}' />
+                <input class="weui-input" name="jine" maxlength="8" placeholder="充值金额" type='number' />
               </view>
+              <view wx:if="{{errorJine}}" class="icon-small-wrp">
+                <icon class="icon-small" type="warn" size="23"></icon>
+              </view>
+
             </view>
           </view>
         </view>
@@ -21,16 +25,21 @@
           <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell weui-cell_input">
               <view class="weui-cell__bd">
-                <input class="weui-input" name="input" placeholder="点击右侧扫码" value='{{recharge_user}}'/>
+                <!-- <image src='{{user_avatar}}'></image> -->
+                <input class="weui-input" name="user" placeholder="点击右侧扫码" disabled/>
+                <input class="hide" name="user_no" />
               </view>
               <view class="weui-cell__ft">
                 <button class="weui-vcode-btn" bindtap='scanCode'>扫码</button>
+              </view>
+              <view wx:if="{{errorUser}}" class="icon-small-wrp">
+                <icon class="icon-small" type="warn" size="23"></icon>
               </view>
             </view>
           </view>
         </view>
         <view class="btn-area">
-          <button type="primary" formType="submit" disabled='{{disable_recharge}}'>充值</button>
+          <button type="primary" formType="submit">充值</button>
           <button formType="reset">Reset</button>
         </view>
       </form>

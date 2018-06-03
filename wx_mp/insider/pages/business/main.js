@@ -9,9 +9,9 @@ Page({
   data: {
     project_name: "",
     project_qr: null,
-    disable_recharge: true,
-    recharge_num: null,
-    recharge_user: null
+    user_avatar: null,
+    errorJine: false,
+    errorUser: false
   },
 
   /**
@@ -80,7 +80,46 @@ Page({
     var that = this
     wx.scanCode({
       success: function (res) {
-        console.info(res.result)
+        wx.request2({
+          url: '/user/whoIsHe/',
+          method: "POST",
+          data: {"en_user": res.result},
+          success: res=> {
+            if(res.statusCode != 200){
+              wx.showModal({
+                content: "内部出错请稍后重试" + res.statusCode,
+                confirmText: "确定",
+                showCancel: false,
+              })
+            }
+            else if(res.data.status == false){
+              wx.showModal({
+                content: res.data.data,
+                confirmText: "确定",
+                showCancel: false,
+              })
+            }
+            else{
+              var user_item = res.data.data
+              var u = user_item.nick_name
+              if(u == null){
+                u = user_item.user_no
+              }
+              that.setData({
+                user_avatar: user_item.avatar_url,
+                recharge_user_no: user_item.user_no,
+                recharge_user: u         
+              })
+            }
+          },
+          fail: res=>{
+            wx.showModal({
+              content: "内部出错请稍后重试.",
+              confirmText: "确定",
+              showCancel: false,
+            })
+          }
+        })
       },
       fail: function (res) {
         wx.showModal({
@@ -91,7 +130,24 @@ Page({
       }
     })
   },
-  formSubmit: function(){
+  formSubmit: function (event){
+   var form_data = event.detail.value
+   this.setData({
+     errorUser: false,
+     errorJine: false
+   })
+   if(form_data.jine.length <= 0){
+     this.setData({
+       errorJine: true
+     })
+     return false
+   }
+   if (form_data.user_no.length <= 0) {
+     this.setData({
+       errorUser: true
+     })
+     return false
+   }
     console.info("form submit")
   }
 })
