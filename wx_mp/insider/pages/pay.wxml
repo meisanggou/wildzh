@@ -46,7 +46,13 @@
           </view>
         </view>
         <view class="btn-area">
-          <button type="primary" formType="submit">付款</button>
+          <view wx:if='{{needRecharge}}'>
+            <button type="primary" bindtap='recharge'>余额不足点击充值</button>
+          </view>
+          <view wx:else>
+            <button type="primary" formType="submit">付款</button>
+          </view>
+
         </view>
       </form>
     </view>

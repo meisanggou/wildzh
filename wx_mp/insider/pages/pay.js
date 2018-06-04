@@ -6,6 +6,7 @@ Page({
    */
   data: {
     error_info: "加载中...",
+    needRecharge: false,
     project_no: null,
     project_name: ""
   },
@@ -40,10 +41,20 @@ Page({
           }
           else {
             var pro_item = res.data.data
+            var yue = 0
+            var needRecharge = false
+            if(pro_item.is_member == true){
+              yue += pro_item.yue + pro_item + zs_yue
+            }
+            if(yue <= 0){
+              var needRecharge = true
+            }
+
             that.setData({
               project_name: pro_item.project_name,
               project_no: pro_item.project_no,
-              yue: 0
+              yue: 0,
+              needRecharge: needRecharge
             })
           }
         },
@@ -171,6 +182,11 @@ Page({
           showCancel: false,
         })
       }
+    })
+  },
+  recharge: function(){
+    wx.switchTab({
+      url: '/pages/mine/me',
     })
   }
 })
