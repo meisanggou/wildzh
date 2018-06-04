@@ -3,7 +3,7 @@ App({
   onLaunch: function (options) {
     console.info("App Lunch")
     var that = this
-    wx.remote_host = "http://127.0.0.1:2400"
+    wx.remote_host = "https://meisanggou.wicp.net"
     wx.session_storage_key = "wildzh_insider_session"
     wx.request2 = function (req) {
       var origin_req = req
@@ -98,7 +98,7 @@ App({
     sessionStorageKey: "wildzh_insider_session",
     userInfoStorageKey: "wildzh_current_user",
     myProjectStorageKey: "wildzh_my_projects",
-    remote_host: "http://127.0.0.1:2400",
+    remote_host: "https://meisanggou.wicp.net",
     userItem: {}
   }
 })
