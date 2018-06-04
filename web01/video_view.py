@@ -20,6 +20,8 @@ video_view = create_blue("video", url_prefix=url_prefix, auth_required=False, me
 c_video = Video(db_conf_path)
 
 type_dict = dict(dongman=u"动漫", yingshi=u"影视", gxshipin=u"国学视频", gxyinpin=u"国学音频")
+format_dict = [["视频", "video/mp4"], ["音频", "audio/mp3"]]
+
 
 def referer_video_no(f):
     @wraps(f)

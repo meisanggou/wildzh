@@ -40,6 +40,11 @@
         "col_type": "varchar(100)"
       },
       {
+        "col_comment": "接受的格式",
+        "col_name": "accept_formats",
+        "col_type": "varchar(100)"
+      },
+      {
         "col_comment": "视频扩展信息",
         "col_name": "video_extend",
         "col_type": "text",

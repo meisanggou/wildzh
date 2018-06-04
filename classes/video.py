@@ -16,11 +16,11 @@ class Video(object):
         self.t_info = "video_info"
         self.t_episode = "video_episode"
 
-    def _insert_info(self, video_type, video_no, video_name, video_desc, episode_num, video_pic, adder, status=1,
-                     video_extend=None):
+    def _insert_info(self, video_type, video_no, video_name, video_desc, episode_num, video_pic, accept_formats, adder,
+                     status=1, video_extend=None):
         kwargs = dict(video_type=video_type, video_no=video_no, video_name=video_name, video_desc=video_desc,
                       episode_num=episode_num, status=status, video_extend=video_extend, adder=adder,
-                      video_pic=video_pic, insert_time=int(time.time()))
+                      video_pic=video_pic, insert_time=int(time.time()), accept_formats=accept_formats)
         l = self.db.execute_insert(self.t_info, kwargs=kwargs, ignore=True)
         return l
 
@@ -57,9 +57,10 @@ class Video(object):
             l = 0
         return l
 
-    def new_video(self, video_name, video_type, video_desc, episode_num, video_pic, adder):
+    def new_video(self, video_name, video_type, video_desc, episode_num, video_pic, accept_formats, adder):
         video_no = uuid.uuid4().hex
-        l = self._insert_info(video_type, video_no, video_name, video_desc, episode_num, video_pic, adder)
+        l = self._insert_info(video_type, video_no, video_name, video_desc, episode_num, video_pic, accept_formats,
+                              adder)
         if l <= 0:
             return False, l
         return True, video_no
@@ -104,7 +105,7 @@ class Video(object):
             if video_no is not None:
                 where_value["video_no"] = video_no
         cols = ["video_type", "video_no", "video_name", "video_desc", "episode_num", "adder", "status",
-                "video_extend", "video_pic", "insert_time", "upload_num", "listen_num"]
+                "video_extend", "video_pic", "insert_time", "upload_num", "listen_num", "accept_formats"]
         items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value, where_cond=where_cond)
         for item in items:
             if item["video_extend"] is not None:
