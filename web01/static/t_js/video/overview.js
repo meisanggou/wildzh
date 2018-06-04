@@ -2,7 +2,7 @@
  * Created by meisa on 2018/5/9.
  */
 
-var cn_video_type = {"dongman": "动漫", "yingshi": "影视"};
+var cn_video_type = {};
 
 function delete_video() {
     var current_td = $(this).parent();
@@ -128,5 +128,6 @@ function init_info(data) {
 }
 
 $(function () {
+    cn_video_type =  JSON.parse($("#lab_type_dict").text());
     init_info(null);
 });
