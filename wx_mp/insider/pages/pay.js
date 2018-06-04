@@ -8,7 +8,8 @@ Page({
     error_info: "加载中...",
     needRecharge: false,
     project_no: null,
-    project_name: ""
+    project_name: "",
+    payResult: null
   },
 
   /**
@@ -44,7 +45,7 @@ Page({
             var yue = 0
             var needRecharge = false
             if(pro_item.is_member == true){
-              yue += pro_item.yue + pro_item + zs_yue
+              yue += pro_item.yue + pro_item.zs_yue
             }
             if(yue <= 0){
               var needRecharge = true
@@ -53,7 +54,7 @@ Page({
             that.setData({
               project_name: pro_item.project_name,
               project_no: pro_item.project_no,
-              yue: 0,
+              yue: yue,
               needRecharge: needRecharge
             })
           }
@@ -136,6 +137,7 @@ Page({
     })
   },
   submitPay: function(event){
+    var that = this
     var form_data = event.detail.value
     if(form_data.amount.length <= 0){
       this.setData({
@@ -164,14 +166,10 @@ Page({
           })
         }
         else {
-          wx.showModal({
-            content: "付款成功",
-            confirmText: "确定",
-            showCancel: false,
-          })
+          var r_data = res.data.data
+          console.info(r_data)
           that.setData({
-            user_nick_name: null,
-            user_no: null
+            payResult: r_data
           })
         }
       },
@@ -187,6 +185,11 @@ Page({
   recharge: function(){
     wx.switchTab({
       url: '/pages/mine/me',
+    })
+  },
+  payCompeleted: function(){
+    wx.switchTab({
+      url: '/pages/index/index',
     })
   }
 })

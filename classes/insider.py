@@ -200,6 +200,7 @@ class Insider(object):
                 self.db.end_transaction(fail=True)
                 return False, "Internal Error 04"
             self.db.end_transaction()
+            n_yue_item["amount"] = amount
             return True, n_yue_item
         except Exception as e:
             print(e)

@@ -78,5 +78,5 @@ def pay_action():
     data = g.request_data
     project_no = data["project_no"]
     amount = int(data["amount"])
-    exec_r, data = c_insider.new_pay(project_no, g.user_no, 1, amount, "充值")
+    exec_r, data = c_insider.new_pay(project_no, g.user_no, 101, amount, "消费")
     return jsonify({"status": exec_r, "data": data})
