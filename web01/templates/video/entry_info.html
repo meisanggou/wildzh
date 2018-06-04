@@ -1,6 +1,6 @@
 {% extends "base_menu.html" %}
 
-{% block title %}视频管理{% endblock %}
+{% block title %}音视频集管理{% endblock %}
 
 {% block css_content %}
     {{ 't_css/tabControls.css' | make_static_html | safe }}
@@ -13,9 +13,9 @@
 {% block center_content %}
     <div id="div_content">
         <ul id="ul_menu" class="nav nav-tabs comTab">
-            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有视频</a></li>
-            <li class="" id="li_add"><a href="{{ page_video }}" data-toggle="tab">添加视频</a></li>
-            <li class="active" id="li_update"><a href="javascript:void(0)" data-toggle="tab">添加视频</a></li>
+            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有音视频集</a></li>
+            <li class="" id="li_add"><a href="{{ page_video }}" data-toggle="tab">添加音视频集</a></li>
+            <li class="active" id="li_update"><a href="javascript:void(0)" data-toggle="tab">添加音视频集</a></li>
         </ul>
         <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
             <fieldset>
@@ -25,8 +25,9 @@
                         <li>
                             <label for="">视频分类：</label>
                             <select class="box-side width150" id="video_type" type="text">
-                                <option value="dongman" >动漫</option>
-                                <option value="yingshi">影视</option>
+                                {% for k, v in type_dict.items() %}}
+                                <option value="{{ k }}" >{{ v }}</option>
+                                {% endfor %}
                             </select>
                         </li>
                         <li>

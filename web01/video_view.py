@@ -16,9 +16,10 @@ __author__ = 'meisa'
 url_prefix = "/video"
 
 rt = RenderTemplate("video")
-video_view = create_blue("video", url_prefix=url_prefix, auth_required=False, menu_list={"title": u"视频管理"})
+video_view = create_blue("video", url_prefix=url_prefix, auth_required=False, menu_list={"title": u"音/视频集管理"})
 c_video = Video(db_conf_path)
 
+type_dict = dict(dongman=u"动漫", yingshi=u"影视", gxshipin=u"国学视频", gxyinpin=u"国学音频")
 
 def referer_video_no(f):
     @wraps(f)
@@ -61,7 +62,7 @@ def index():
     page_list = url_prefix + "/"
     if "action" in request.args and request.args["action"] == "video":
         return rt.render("entry_info.html", page_list=page_list, info_url=info_url, upload_url=upload_url,
-                         page_video=page_video)
+                         page_video=page_video, type_dict=type_dict)
     if "video_no" in request.args:
         return rt.render("episode.html", page_list=page_list, page_video=page_video, info_url=info_url,
                          url_episode=url_episode, url_upload_e=url_upload_e, upload_url=upload_url)
