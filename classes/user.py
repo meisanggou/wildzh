@@ -208,6 +208,16 @@ class User(object):
         del user_item["password"]
         return 0, user_item
 
+    def generate_user_qr(self, user_no):
+        if self.user_folder is None:
+            return False
+        avatar_path = os.path.join(self.user_folder, "%s_avatar.png" % user_no)
+        qr_path = os.path.join(self.user_folder, "%s_qr.png" % user_no)
+        if os.path.exists(avatar_path) is False:
+            avatar_path = None
+        generate_qr(self.encrypt.encrypt_msg(user_no), qr_path, avatar_path)
+        return True
+
     def update_info(self, user_no, **kwargs):
         if "avatar_url" in kwargs:
             if kwargs["avatar_url"].startswith("http") and self.user_folder is not None:
@@ -216,10 +226,9 @@ class User(object):
                     if resp.status_code != 200:
                         return False
                     avatar_path = os.path.join(self.user_folder, "%s_avatar.png" % user_no)
-                    qr_path = os.path.join(self.user_folder, "%s_qr.png" % user_no)
                     with open(avatar_path, "wb") as wa:
                         wa.write(resp.content)
-                    generate_qr(self.encrypt.encrypt_msg(user_no), qr_path, avatar_path)
+                    self.generate_user_qr(user_no)
                 except Exception as e:
                     return False
         l = self._update_user(user_no, **kwargs)

@@ -91,6 +91,7 @@ def wx_login_action():
     items = c_user.verify_user_exist(wx_id=data["openid"])
     if len(items) <= 0:
         item = c_user.new_wx_user(data["openid"])
+        c_user.generate_user_qr(item["user_no"])
     else:
         item = items[0]
     if item is None:

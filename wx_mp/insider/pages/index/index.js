@@ -51,7 +51,6 @@ Page({
           return false
         }
         else if (r_data["data"].length > 0) {
-          // wx.setStorageSync(app.globalData.myProjectStorageKey, r_data["data"])
           wx.setStorage({
             key: app.globalData.myProjectStorageKey,
             data: r_data["data"],
@@ -73,25 +72,6 @@ Page({
   },
   onReady: function () {
     console.info("index on Ready")
-  },
-
-  register: function (e) {
-    var that = this
-    var userInfo = e.detail.userInfo
-    var data = {"avatar_url": userInfo.avatarUrl, "nick_name": userInfo.nickName}
-    wx.request2({
-      url: '/user/info/',
-      method: 'PUT',
-      data: data,
-      success: res=>{
-        var userItem = res.data.data
-        wx.setStorageSync(app.globalData.userInfoStorageKey, userItem)
-        that.setData({
-          needRegister: false,
-          userItem: userItem
-        })
-      }
-    })
   },
   join: function () {
     wx.navigateTo({

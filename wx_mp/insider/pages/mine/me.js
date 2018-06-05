@@ -7,6 +7,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    needRegister: true,
     userItem: {},
     identity_qr: null
 
@@ -16,6 +17,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    console.info("page me on load")
     wx.request2({
       url: '/user/whoIam/',
       method: "GET",
@@ -28,9 +30,14 @@ Page({
           })
           var shy_me = encodeURIComponent(userItem.shy_me)
           var identity_qr = app.globalData.remote_host + "/user/qr/?whoIs=" + shy_me
+          var needRegister = true
+          if(userItem["avatar_url"] != null){
+            needRegister = false
+          }
           this.setData({
             userItem: userItem,
-            identity_qr: identity_qr
+            identity_qr: identity_qr,
+            needRegister: needRegister
           })
         }
 
@@ -71,7 +78,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-
+    console.info("Pull down Refresh")
   },
 
   /**
@@ -86,5 +93,23 @@ Page({
    */
   onShareAppMessage: function () {
 
+  },
+  register: function (e) {
+    var that = this
+    var userInfo = e.detail.userInfo
+    var data = { "avatar_url": userInfo.avatarUrl, "nick_name": userInfo.nickName }
+    wx.request2({
+      url: '/user/info/',
+      method: 'PUT',
+      data: data,
+      success: res => {
+        var userItem = res.data.data
+        wx.setStorage(app.globalData.userInfoStorageKey, userItem)
+        that.setData({
+          needRegister: false,
+          userItem: userItem
+        })
+      }
+    })
   }
 })

@@ -11,28 +11,17 @@
 
 <view class="container">
   <view class="page-body">
-    <view wx:if="{{needRegister}}">
-      <view class="page-section page-section-spacing">
-        <view class="text-box">
-          <text>您是第一次使用</text>
-          <text>点击注册继续使用</text>
+    <view class="page-section">
+      <view class="page-body-info">
+        <image class="userinfo-avatar" src="{{userItem.avatar_url}}"></image>
+        <text class="userinfo-nickname">Welcome {{userItem.nick_name}}</text>
+        <view wx:if="{{is_business}}">
+          <button bindtap='business_main'>商家服务</button>
         </view>
-      </view>
-      <button open-type="getUserInfo" bindgetuserinfo="register">注册</button>
-    </view>
-    <view wx:else>
-      <view class="page-section">
-        <view class="page-body-info">
-          <image class="userinfo-avatar" src="{{userItem.avatar_url}}"></image>
-          <text class="userinfo-nickname">Welcome {{userItem.nick_name}}</text>
-          <view wx:if="{{is_business}}">
-            <button bindtap='business_main'>商家服务</button>
-          </view>
-          <view wx:else>
-            <button bindtap='join'>成为商家</button>
-          </view>
-          <button bindtap='scanCode'>扫码付款</button>
+        <view wx:else>
+          <button bindtap='join'>成为商家</button>
         </view>
+        <button bindtap='scanCode'>扫码付款</button>
       </view>
     </view>
   </view>
