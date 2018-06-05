@@ -30,6 +30,14 @@
                                 {% endfor %}
                             </select>
                         </li>
+                    <li>
+                            <label for="">音/视频集：</label>
+                            <select class="box-side width150" id="accept_formats" type="text">
+                                {% for item in format_dict %}}
+                                <option value="{{ item[1] }}" >{{ item[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </li>
                         <li>
                             <label for="">视频名称：</label>
                             <input class="display_none" id="video_no" type="text"/>

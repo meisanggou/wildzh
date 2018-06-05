@@ -70,7 +70,7 @@ function request_video(method, r_data) {
 }
 function new_or_update_video() {
     var r_data = new Object();
-    var keys = ["video_type", "video_name", "video_desc", "episode_num"];
+    var keys = ["video_type", "accept_formats", "video_name", "video_desc", "episode_num"];
     for (var i = 0; i < keys.length; i++) {
         var item = $("#" + keys[i]);
         var v = item.val().trim();

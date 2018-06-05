@@ -20,7 +20,7 @@ video_view = create_blue("video", url_prefix=url_prefix, auth_required=False, me
 c_video = Video(db_conf_path)
 
 type_dict = dict(dongman=u"动漫", yingshi=u"影视", gxshipin=u"国学视频", gxyinpin=u"国学音频")
-format_dict = [["视频", "video/mp4"], ["音频", "audio/mp3"]]
+format_dict = [[u"视频", "video/mp4"], [u"音频", "audio/mp3"]]
 
 
 def referer_video_no(f):
@@ -64,7 +64,7 @@ def index():
     page_list = url_prefix + "/"
     if "action" in request.args and request.args["action"] == "video":
         return rt.render("entry_info.html", page_list=page_list, info_url=info_url, upload_url=upload_url,
-                         page_video=page_video, type_dict=type_dict)
+                         page_video=page_video, type_dict=type_dict, format_dict=format_dict)
     if "video_no" in request.args:
         return rt.render("episode.html", page_list=page_list, page_video=page_video, info_url=info_url,
                          url_episode=url_episode, url_upload_e=url_upload_e, upload_url=upload_url, type_dict=type_dict)
@@ -77,7 +77,7 @@ def index():
 def new_video():
     data = g.request_data
     r, video_no = c_video.new_video(data["video_name"], data["video_type"], data["video_desc"],
-                                    data["episode_num"], data["video_pic"], g.user_no)
+                                    data["episode_num"], data["video_pic"], data["accept_formats"], g.user_no)
     if r is False:
         return jsonify({"status": False, "data": "请重试"})
     data["video_no"] = video_no
