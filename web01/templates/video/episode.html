@@ -24,9 +24,8 @@
                     <ul>
                         <li>
                             <label for="">视频分类：</label>
+{#                            <input class="box-side width300" id="s_video_type" type="text" readonly/>#}
                             <select class="box-side width150" id="s_video_type" type="text" disabled>
-                                <option value="dongman" >动漫</option>
-                                <option value="yingshi">影视</option>
                             </select>
                         </li>
                         <li>
@@ -57,7 +56,7 @@
                         </li>
                         <li>
                             <label for="">分集上传：</label>
-                            <input class="box-side width300" id="upload_episode" type="file" placeholder="上传分集" accept="video/mp4"/>
+                            <input class="box-side width300" id="upload_episode" type="file" placeholder="上传分集" />
                             <button class="btn btn-success" id="btn_upload">上传</button>
                             <a class="display_none" id="episode_url" href="" target="_blank">查看视频</a>
                         </li>
@@ -72,6 +71,7 @@
             <input id="url_episode" value="{{ url_episode }}" class="display_none">
             <input id="upload_url" value="{{ upload_url }}" class="display_none">
             <input id="url_upload_e" value="{{ url_upload_e }}" class="display_none">
+            <label id="lab_type_dict" class="display_none">{{ type_dict | tojson | safe }}</label>
         </div>
     </div>
 {% endblock %}

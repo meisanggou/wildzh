@@ -67,7 +67,7 @@ def index():
                          page_video=page_video, type_dict=type_dict)
     if "video_no" in request.args:
         return rt.render("episode.html", page_list=page_list, page_video=page_video, info_url=info_url,
-                         url_episode=url_episode, url_upload_e=url_upload_e, upload_url=upload_url)
+                         url_episode=url_episode, url_upload_e=url_upload_e, upload_url=upload_url, type_dict=type_dict)
     return rt.render("overview.html", page_video=page_video, info_url=info_url, online_url=online_url,
                      type_dict=type_dict)
 
