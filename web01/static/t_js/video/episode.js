@@ -137,6 +137,7 @@ function init_info(data) {
         $("#s_video_name").val(video_item["video_name"]);
         $("#s_video_type").val(video_item["video_type"]);
         $("#episode_num").val(video_item["episode_num"]);
+        $("#upload_episode").attr("accept", video_item["accept_formats"]);
         total_num = video_item["episode_num"];
         receive_episodes(null);
     }
