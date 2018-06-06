@@ -53,17 +53,17 @@ function init_info(data){
         return 0;
     }
     if(data.length > 0) {
-        var doctor_item = data[0];
+        var people_item = data[0];
         var keys = ["people_name", "degree", "company", "department", "domain", "labels", "star_level"];
         for(var i=0;i<keys.length;i++) {
-            $("#" + keys[i]).val(doctor_item[keys[i]]);
+            $("#" + keys[i]).val(people_item[keys[i]]);
         }
 
-        $("#people_photo").attr("src", doctor_item["people_photo"]);
-        var detail_href = location.pathname + "?action=detail&people_no=" + doctor_item["people_no"];
-        detail_href += "&people_name=" + doctor_item["people_name"];
+        $("#people_photo").attr("src", people_item["people_photo"]);
+        var detail_href = location.pathname + "?action=detail&people_no=" + people_item["people_no"];
+        detail_href += "&people_name=" + people_item["people_name"];
         $("#link_detail").attr("href", detail_href);
-        if((doctor_item["status"] & 2) == 2){
+        if((people_item["status"] & 2) == 2){
             $("#link_detail").text("更新详细");
         }
         $("#link_detail").show();
