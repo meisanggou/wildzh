@@ -147,13 +147,13 @@ def get_detail_tel():
 @required_people_no
 def add_detail_action():
     request_data = request.json
-    doctor_profile = request_data["doctor_profile"]
+    people_profile = request_data["people_profile"]
     tel = request_data["tel"]
     work_experience = request_data["work_experience"]
     study_experience = request_data["study_experience"]
     honor = request_data["honor"]
     unit_price = request_data["unit_price"]
-    l = c_doctor.new_detail(g.doctor_no, doctor_profile, tel, work_experience, study_experience, honor, unit_price)
+    l = c_doctor.new_detail(g.doctor_no, people_profile, tel, work_experience, study_experience, honor, unit_price)
     request_data["doctor_no"] = g.doctor_no
     return jsonify({"status": True, "data": request_data})
 
@@ -163,15 +163,15 @@ def add_detail_action():
 def update_detail_action():
     request_data = request.json
     c_doctor.update_detail(g.doctor_no, **request_data)
-    request_data["doctor_no"] = g.doctor_no
+    request_data["people_no"] = g.people_no
     return jsonify({"status": True, "data": [request_data]})
 
 
 @doctor_view.route("/online/", methods=["POST"])
-def online_music():
-    doctor_no = g.request_data["doctor_no"]
-    items = c_doctor.select_doctor(doctor_no)
+def online_people():
+    people_no = g.request_data["people_no"]
+    items = c_doctor.select_people(people_no)
     if len(items) != 1:
         return jsonify({"status": False, "data": "医生不存在"})
-    c_doctor.online_doctor(doctor_no)
+    c_doctor.online_people(people_no)
     return jsonify({"status": True, "data": "success"})

@@ -2,7 +2,7 @@
  * Created by meisa on 2018/5/15.
  */
 
-function update_doctor(){
+function update_people(){
     var r_data = new Object();
     var keys = ["people_name", "degree", "company", "department", "domain", "labels", "star_level"];
     for(var i=0;i<keys.length;i++){
@@ -82,6 +82,6 @@ $(function() {
             $("#people_photo").attr("src", data["pic"]);
         });
     });
-    $("#btn_update").click(update_doctor);
+    $("#btn_update").click(update_people);
     init_info(null);
 });

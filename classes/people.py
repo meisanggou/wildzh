@@ -67,7 +67,8 @@ class People(object):
         return l
 
     def update_people(self, people_no, **kwargs):
-        cols = ["people_name", "degree", "company", "department", "domain", "star_level", "labels"]
+        cols = ["people_name", "people_photo", "degree", "company", "department", "domain", "star_level",
+                "labels"]
         for key in kwargs.keys():
             if kwargs[key] is None or key not in cols:
                 del kwargs[key]
@@ -102,6 +103,10 @@ class People(object):
         items = self.db.execute_select(self.t_detail, cols=cols, where_value=where_value)
         if len(items) <= 0:
             return None
+        for item in items:
+            for k, v in item.items():
+                k = k.replace("people", "doctor")
+                item[k] = v
         if add_times is True:
             self._update_num(people_no)
         return items[0]
