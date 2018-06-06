@@ -4,7 +4,7 @@
 
 function new_doctor(){
     var r_data = new Object();
-    var keys = ["doctor_name", "degree", "company", "department", "domain", "labels", "star_level"];
+    var keys = ["people_name", "degree", "company", "department", "domain", "labels", "star_level"];
     for(var i=0;i<keys.length;i++){
         var item = $("#" + keys[i]);
         var v = item.val().trim();
@@ -15,12 +15,12 @@ function new_doctor(){
         }
         r_data[keys[i]] = v;
     }
-    var doctor_photo = $("#doctor_photo").attr("src");
-    if(doctor_photo.length <= 0){
+    var people_photo = $("#people_photo").attr("src");
+    if(people_photo.length <= 0){
         popup_show("请上传医生图片");
         return 2;
     }
-    r_data["doctor_photo"] = doctor_photo;
+    r_data["people_photo"] = people_photo;
 
     var info_url = $("#info_url").val();
     my_async_request2(info_url, "POST", r_data, function(data){
@@ -37,7 +37,7 @@ function new_doctor(){
             },
             function(isConfirm){
                 if (isConfirm){
-                    var j_url = location.pathname + "?doctor_no=" + data["doctor_no"] + "&action=detail&doctor_name=" + data["doctor_name"];
+                    var j_url = location.pathname + "?doctor_no=" + data["doctor_no"] + "&action=detail&people_name=" + data["people_name"];
                     location.href = j_url;
                 }
             }
@@ -53,7 +53,7 @@ $(function() {
         }
         var data = {"pic": $("#doctor_extend_pic")[0].files[0]};
         upload_request(upload_url, "POST", data, function(data){
-            $("#doctor_photo").attr("src", data["pic"]);
+            $("#people_photo").attr("src", data["pic"]);
         });
     });
     $("#btn_new").click(new_doctor);

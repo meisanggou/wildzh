@@ -9,40 +9,43 @@ from flask import request, g, jsonify
 from flask_login import login_required
 from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url
-from classes.doctor import Doctor
+from classes.people import People
 from web01 import create_blue
 
 __author__ = 'ZhouHeng'
 
-url_prefix = "/doctor"
+url_prefix = "/people"
 
-rt = RenderTemplate("doctor", url_prefix=url_prefix)
+rt = RenderTemplate("people", url_prefix=url_prefix)
 doctor_view = create_blue('doctor_view', url_prefix=url_prefix, menu_list={"title": u"医生管理"},
                           auth_required=False)
-c_doctor = Doctor(db_conf_path)
+c_doctor = People(db_conf_path)
 
 
-def referer_doctor_no(f):
+def referer_people_no(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if "Referer" not in request.headers:
             g.ref_url = ""
         else:
             g.ref_url = request.headers["Referer"]
-        find_no = re.findall("doctor_no=(\\w+)", g.ref_url)
+        find_no = re.findall("(people|doctor)_no=(\\w+)", g.ref_url)
         if len(find_no) > 0:
-            g.doctor_no = find_no[0]
+            g.people_no = find_no[0][1]
+        elif "people_no" in request.args:
+            g.people_no = request.args["people_no"]
         elif "doctor_no" in request.args:
-            g.doctor_no = request.args["doctor_no"]
+            g.people_no = request.args["doctor_no"]
         else:
-            g.doctor_no = None
+            g.people_no = None
+        g.doctor_no = g.people_no
         return f(*args, **kwargs)
     return decorated_function
 
 
-def required_doctor_no(f):
+def required_people_no(f):
     @wraps(f)
-    @referer_doctor_no
+    @referer_people_no
     def decorated_function(*args, **kwargs):
         if g.doctor_no is None:
             return jsonify({"status": False, "data": "Bad Request"})
@@ -64,14 +67,15 @@ def add_func():
     elif "action" in request.args and request.args["action"] == "detail":
         return rt.render("detail.html", page_list=page_list, page_doctor=page_doctor, detail_url=detail_url)
     elif "action" in request.args and request.args["action"] == "update":
-        return rt.render("update.html", page_list=page_list, page_doctor=page_doctor, info_url=info_url)
+        return rt.render("update.html", page_list=page_list, page_doctor=page_doctor, info_url=info_url,
+                         upload_url=upload_url)
     return rt.render("overview.html", info_url=info_url, page_doctor=page_doctor, online_url=online_url)
 
 
 @doctor_view.route("/info/", methods=["GET"])
-@referer_doctor_no
+@referer_people_no
 def get_doctor_info():
-    items = c_doctor.select_doctor(g.doctor_no)
+    items = c_doctor.select_people(g.people_no)
     if g.user_no is None:
         for i in range(len(items) - 1, -1, -1):
             if items[i]["status"] & 64 == 64:
@@ -86,23 +90,23 @@ support_upload2(doctor_view, upload_folder, file_prefix_url, ("doctor", "photo")
 @doctor_view.route("/info/", methods=["POST"])
 def add_doctor_action():
     request_data = request.json
-    doctor_name = request_data["doctor_name"]
-    doctor_photo = request_data["doctor_photo"]
+    people_name = request_data["people_name"]
+    people_photo = request_data["people_photo"]
     degree = request_data["degree"]
     company = request_data["company"]
     domain = request_data["domain"]
     department = request_data["department"]
     star_level = request_data["star_level"]
     labels = request_data["labels"]
-    data = c_doctor.new_info(doctor_name, doctor_photo, degree, company, department, domain, star_level, labels)
+    data = c_doctor.new_info(people_name, people_photo, degree, company, department, domain, star_level, labels)
     return jsonify({"status": True, "data": data})
 
 
 @doctor_view.route("/info/", methods=["PUT"])
-@required_doctor_no
+@required_people_no
 def update_doctor_action():
     request_data = request.json
-    c_doctor.update_doctor(g.doctor_no, **request_data)
+    c_doctor.update_people(g.doctor_no, **request_data)
     request_data["doctor_no"] = g.doctor_no
     return jsonify({"status": True, "data": request_data})
 
@@ -110,14 +114,14 @@ def update_doctor_action():
 @doctor_view.route("/info/", methods=["DELETE"])
 def delete_doctor_action():
     request_data = request.json
-    c_doctor.delete_doctor(request_data["doctor_no"])
+    c_doctor.delete_people(request_data["people_no"])
     return jsonify({"status": True, "data": request_data})
 
 
 @doctor_view.route("/detail/", methods=["GET"])
-@required_doctor_no
+@required_people_no
 def get_detail():
-    items = c_doctor.select_doctor(g.doctor_no)
+    items = c_doctor.select_people(g.people_no)
     if len(items) <= 0:
         return jsonify({"status": False, "data": "医生不存在"})
     doctor_item = items[0]
@@ -131,7 +135,7 @@ def get_detail():
 
 
 @doctor_view.route("/detail/tel/", methods=["GET"])
-@required_doctor_no
+@required_people_no
 def get_detail_tel():
     item = c_doctor.select_detail(g.doctor_no, add_times=True)
     if item is None:
@@ -140,7 +144,7 @@ def get_detail_tel():
 
 
 @doctor_view.route("/detail/", methods=["POST"])
-@required_doctor_no
+@required_people_no
 def add_detail_action():
     request_data = request.json
     doctor_profile = request_data["doctor_profile"]
@@ -155,7 +159,7 @@ def add_detail_action():
 
 
 @doctor_view.route("/detail/", methods=["PUT"])
-@required_doctor_no
+@required_people_no
 def update_detail_action():
     request_data = request.json
     c_doctor.update_detail(g.doctor_no, **request_data)

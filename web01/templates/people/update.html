@@ -1,20 +1,21 @@
 {% extends "base_menu.html" %}
 
-{% block title %}添加医生{% endblock %}
+{% block title %}更新医生信息{% endblock %}
 
 {% block css_content %}
     {{ 't_css/tabControls.css' | make_static_html | safe }}
 {% endblock %}
 
 {% block js_content %}
-    {{ 't_js/doctor/add.js' | make_static_html | safe }}
+    {{ 't_js/people/update.js' | make_static_html | safe }}
 {% endblock %}
 
 {% block center_content %}
     <div id="div_content">
         <ul id="ul_menu" class="nav nav-tabs comTab">
             <li class=""><a href="{{ page_list }}" data-toggle="tab">所有医生</a></li>
-            <li class="active"><a href="javascript:void(0)" data-toggle="tab">添加医生</a></li>
+            <li class=""><a href="{{ page_doctor }}" data-toggle="tab">添加医生</a></li>
+            <li class="active"><a href="javascript:void(0)" data-toggle="tab">更新医生</a></li>
         </ul>
         <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
             <fieldset>
@@ -23,12 +24,12 @@
                     <ul>
                         <li>
                             <label for="effective_days">医生姓名：</label>
-                            <input class="box-side width300" id="doctor_name" type="text" placeholder="" msg="请输入医生姓名"/>
+                            <input class="box-side width300" id="people_name" type="text" placeholder="" msg="请输入医生姓名"/>
                         </li>
                         <li>
                             <label for="effective_days">医生图片：</label>
-                            <input class="box-side width300" id="doctor_extend_pic" type="file" placeholder="上传图片"  accept="image/*"/>
-                            <img id="doctor_photo" src=""/>
+                            <input class="box-side width300" id="people_extend_pic" type="file" placeholder="上传图片"/>
+                            <img id="people_photo" src=""/>
                         </li>
                         <li>
                             <label for="effective_days">职称：</label>
@@ -58,7 +59,8 @@
 
                 </div>
             </fieldset>
-            <button class="btn btn-success btn-down api-newBtn" id="btn_new" >新建</button>
+            <button class="btn btn-success btn-down api-newBtn" id="btn_update" >更新</button>
+            <a class="left5 display_none" id="link_detail" >添加详细</a>
         </div>
         <input id="info_url" value="{{ info_url }}" class="display_none">
         <input id="upload_url" value="{{ upload_url }}" class="display_none">

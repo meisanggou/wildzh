@@ -22,7 +22,7 @@ function delete_doctor() {
         },
         function (isConfirm) {
             if (isConfirm) {
-                var r_d = {"doctor_no": tr_id};
+                var r_d = {"people_no": tr_id};
                 my_async_request2($("#info_url").val(), "DELETE", r_d, function (data) {
                     location.reload();
                 });
@@ -51,7 +51,7 @@ function online_doctor() {
         },
         function (isConfirm) {
             if (isConfirm) {
-                var r_d = {"doctor_no": tr_id};
+                var r_d = {"people_no": tr_id};
                 my_async_request2($("#online_url").val(), "POST", r_d, function (data) {
                     location.reload();
                 });
@@ -84,7 +84,7 @@ function init_info(data) {
         var t = $("#t_doctors");
         for (var i = 0; i < data.length; i++) {
             var add_tr = $("<tr></tr>");
-            add_tr.attr("id", data[i]["doctor_no"]);
+            add_tr.attr("id", data[i]["people_no"]);
 
             for (var j = 0; j < keys.length; j++) {
                 var td_t = new_td(keys[j], data[i]);
@@ -95,7 +95,7 @@ function init_info(data) {
             add_tr.append(td_status);
 
             var td_op = $("<td></td>");
-            var basic_url = AddUrlArg(location.pathname, "doctor_no", data[i]["doctor_no"]);
+            var basic_url = AddUrlArg(location.pathname, "people_no", data[i]["people_no"]);
             var detail_url = AddUrlArg(basic_url, "action", "update");
             td_op.append(new_link("查看", detail_url));
 

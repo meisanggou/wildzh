@@ -177,6 +177,7 @@ def online_video():
     c_video.online_video(video_no)
     return jsonify({"status": True, "data": "success"})
 
+
 @video_view.route("/records/", methods=["POST"])
 def record_video_action():
     data = g.request_data

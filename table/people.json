@@ -1,18 +1,18 @@
 [{
 		"table_cols": [{
 				"pri_key": true,
-				"col_comment": "医生编号",
-				"col_name": "doctor_no",
+				"col_comment": "人员编号",
+				"col_name": "people_no",
 				"col_type": "char(32)"
 			},
 			{
-				"col_comment": "医生姓名",
-				"col_name": "doctor_name",
+				"col_comment": "人员姓名",
+				"col_name": "people_name",
 				"col_type": "varchar(30)"
 			},
           {
-				"col_comment": "医生照片",
-				"col_name": "doctor_photo",
+				"col_comment": "人员照片",
+				"col_name": "people_photo",
 				"col_type": "varchar(100)"
 			},
 			{
@@ -56,7 +56,7 @@
 				"allow_null": true
 			},
 			{
-				"col_comment": "医生状态 1代表已录入基本信息 2代表已录入详细信息 4 8 16 32保留 64已上线 128代表已下线 0代表已删除",
+				"col_comment": "人员状态 1代表已录入基本信息 2代表已录入详细信息 4 8 16 32保留 64已上线 128代表已下线 0代表已删除",
 				"col_name": "status",
 				"col_type": "int",
 				"default_value": 1
@@ -67,19 +67,19 @@
 				"col_type": "int(11)"
 			}
 		],
-		"table_comment": "医生概要信息",
-		"table_name": "doctor_info"
+		"table_comment": "人员概要信息",
+		"table_name": "people_info"
 	},
 	{
 		"table_cols": [{
 				"pri_key": true,
-				"col_comment": "医生编号",
-				"col_name": "doctor_no",
+				"col_comment": "人员编号",
+				"col_name": "people_no",
 				"col_type": "char(32)"
 			},
 			{
 				"col_comment": "个人简介",
-				"col_name": "doctor_profile",
+				"col_name": "people_profile",
 				"col_type": "varchar(300)"
 			},
             {
@@ -110,7 +110,7 @@
 				"allow_null": true
 			}
 		],
-		"table_comment": "医生详细信息",
-		"table_name": "doctor_detail"
+		"table_comment": "人员详细信息",
+		"table_name": "people_detail"
 	}
 ]
