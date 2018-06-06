@@ -81,4 +81,8 @@ $(function() {
        var v = $(this).val();
        $(this).val(format_num(v).substr(0, 11));
    });
+    $("input[type=number]").change(function(){
+       var v = $(this).val();
+       $(this).val(format_num(v));
+   });
 });
