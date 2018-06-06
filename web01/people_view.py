@@ -38,7 +38,6 @@ def referer_people_no(f):
             g.people_no = request.args["doctor_no"]
         else:
             g.people_no = None
-        g.doctor_no = g.people_no
         return f(*args, **kwargs)
     return decorated_function
 
@@ -84,7 +83,7 @@ def get_people_info():
     return jsonify({"status": True, "data": items})
 
 
-support_upload2(people_view, upload_folder, file_prefix_url, ("doctor", "photo"), "upload")
+support_upload2(people_view, upload_folder, file_prefix_url, ("people", "photo"), "upload")
 
 
 @people_view.route("/info/", methods=["POST"])
