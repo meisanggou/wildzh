@@ -2,7 +2,7 @@
  * Created by meisa on 2018/5/15.
  */
 
-function new_doctor(){
+function new_people(){
     var r_data = new Object();
     var keys = ["people_name", "degree", "company", "department", "domain", "labels", "star_level"];
     for(var i=0;i<keys.length;i++){
@@ -37,7 +37,7 @@ function new_doctor(){
             },
             function(isConfirm){
                 if (isConfirm){
-                    var j_url = location.pathname + "?doctor_no=" + data["doctor_no"] + "&action=detail&people_name=" + data["people_name"];
+                    var j_url = location.pathname + "?people_no=" + data["people_no"] + "&action=detail&people_name=" + data["people_name"];
                     location.href = j_url;
                 }
             }
@@ -46,15 +46,15 @@ function new_doctor(){
 }
 
 $(function() {
-    $("#doctor_extend_pic").change(function(){
+    $("#people_extend_pic").change(function(){
         var upload_url= $("#upload_url").val();
-        if($("#doctor_extend_pic")[0].files.length <= 0){
+        if($("#people_extend_pic")[0].files.length <= 0){
             return 1;
         }
-        var data = {"pic": $("#doctor_extend_pic")[0].files[0]};
+        var data = {"pic": $("#people_extend_pic")[0].files[0]};
         upload_request(upload_url, "POST", data, function(data){
             $("#people_photo").attr("src", data["pic"]);
         });
     });
-    $("#btn_new").click(new_doctor);
+    $("#btn_new").click(new_people);
 });
