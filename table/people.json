@@ -1,116 +1,165 @@
-[{
-		"table_cols": [{
-				"pri_key": true,
-				"col_comment": "人员编号",
-				"col_name": "people_no",
-				"col_type": "char(32)"
-			},
-			{
-				"col_comment": "人员姓名",
-				"col_name": "people_name",
-				"col_type": "varchar(30)"
-			},
-          {
-				"col_comment": "人员照片",
-				"col_name": "people_photo",
-				"col_type": "varchar(100)"
-			},
-			{
-				"col_comment": "职称",
-				"col_name": "degree",
-				"col_type": "varchar(50)"
-			},
-			{
-				"col_comment": "工作单位 公司",
-				"col_name": "company",
-				"col_type": "varchar(40)"
-			},
-			{
-				"col_comment": "部门",
-				"col_name": "department",
-				"col_type": "varchar(50)",
-				"allow_null": true
-			},
-			{
-				"col_comment": "擅长领域",
-				"col_name": "domain",
-				"col_type": "varchar(100)",
-				"allow_null": true
-			},
-			{
-				"col_comment": "星级",
-				"col_name": "star_level",
-				"col_type": "int(11)",
-				"default_value": 0
-			},
-			{
-				"col_comment": "问诊数",
-				"col_name": "service_times",
-				"col_type": "int(11)",
-				"default_value": 0
-			},
-			{
-				"col_comment": "标签",
-				"col_name": "labels",
-				"col_type": "varchar(40)",
-				"allow_null": true
-			},
-			{
-				"col_comment": "人员状态 1代表已录入基本信息 2代表已录入详细信息 4 8 16 32保留 64已上线 128代表已下线 0代表已删除",
-				"col_name": "status",
-				"col_type": "int",
-				"default_value": 1
-			},
-			{
-				"col_comment": "插入时间",
-				"col_name": "insert_time",
-				"col_type": "int(11)"
-			}
-		],
-		"table_comment": "人员概要信息",
-		"table_name": "people_info"
-	},
-	{
-		"table_cols": [{
-				"pri_key": true,
-				"col_comment": "人员编号",
-				"col_name": "people_no",
-				"col_type": "char(32)"
-			},
-			{
-				"col_comment": "个人简介",
-				"col_name": "people_profile",
-				"col_type": "varchar(300)"
-			},
+[
+    {
+        "table_cols": [
             {
-				"col_comment": "手机号",
-				"col_name": "tel",
-				"col_type": "varchar(11)"
-			},
-			{
-				"col_comment": "执业经历",
-				"col_name": "work_experience",
-				"col_type": "varchar(1000)"
-			},
-			{
-				"col_comment": "学术经历",
-				"col_name": "study_experience",
-				"col_type": "varchar(800)"
-			},
-			{
-				"col_comment": "获得荣誉",
-				"col_name": "honor",
-				"col_type": "varchar(500)",
-				"allow_null": true
-			},
-			{
-				"col_comment": "收费情况",
-				"col_name": "unit_price",
-				"col_type": "varchar(20)",
-				"allow_null": true
-			}
-		],
-		"table_comment": "人员详细信息",
-		"table_name": "people_detail"
-	}
+                "pri_key": true,
+                "col_comment": "人员编号",
+                "col_name": "people_no",
+                "col_type": "char(32)"
+            },
+            {
+                "col_comment": "人员姓名",
+                "col_name": "people_name",
+                "col_type": "varchar(30)"
+            },
+            {
+                "col_comment": "人员照片",
+                "col_name": "people_photo",
+                "col_type": "varchar(100)"
+            },
+            {
+                "col_comment": "职称",
+                "col_name": "degree",
+                "col_type": "varchar(50)"
+            },
+            {
+                "col_comment": "工作单位 公司",
+                "col_name": "company",
+                "col_type": "varchar(40)"
+            },
+            {
+                "col_comment": "部门",
+                "col_name": "department",
+                "col_type": "varchar(50)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "擅长领域",
+                "col_name": "domain",
+                "col_type": "varchar(100)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "星级",
+                "col_name": "star_level",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "问诊数",
+                "col_name": "service_times",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "标签",
+                "col_name": "labels",
+                "col_type": "varchar(40)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "人员状态 1代表已录入基本信息 2代表已录入详细信息 4 8 16 32保留 64已上线 128代表已下线 0代表已删除",
+                "col_name": "status",
+                "col_type": "int",
+                "default_value": 1
+            },
+            {
+                "col_comment": "插入时间",
+                "col_name": "insert_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "人员概要信息",
+        "table_name": "people_info"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "人员编号",
+                "col_name": "people_no",
+                "col_type": "char(32)"
+            },
+            {
+                "col_comment": "个人简介",
+                "col_name": "people_profile",
+                "col_type": "varchar(300)"
+            },
+            {
+                "col_comment": "手机号",
+                "col_name": "tel",
+                "col_type": "varchar(11)"
+            },
+            {
+                "col_comment": "执业经历",
+                "col_name": "work_experience",
+                "col_type": "varchar(1000)"
+            },
+            {
+                "col_comment": "学术经历",
+                "col_name": "study_experience",
+                "col_type": "varchar(800)"
+            },
+            {
+                "col_comment": "获得荣誉",
+                "col_name": "honor",
+                "col_type": "varchar(500)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "收费情况",
+                "col_name": "unit_price",
+                "col_type": "varchar(20)",
+                "allow_null": true
+            }
+        ],
+        "table_comment": "人员详细信息",
+        "table_name": "people_detail"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "群组id",
+                "col_name": "group_id",
+                "col_type": "varchar(20)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "人员编号",
+                "col_name": "people_no",
+                "col_type": "char(32)"
+            },
+            {
+                "col_comment": "插入时间",
+                "col_name": "add_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "人员群组信息",
+        "table_name": "people_group"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "人员编号",
+                "col_name": "people_no",
+                "col_type": "char(32)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "资源 资源类别3位+类别内唯一标识32位",
+                "col_name": "resource_id",
+                "col_type": "varchar(35)"
+            },
+            {
+                "col_comment": "插入时间",
+                "col_name": "add_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "人员关联的资源",
+        "table_name": "people_resource"
+    }
 ]

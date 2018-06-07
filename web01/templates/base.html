@@ -13,6 +13,10 @@
     {% block css_content %} {% endblock %}
     <!--自定义的页面样式 -->
     {{ 't_js/jquery.min.js' | make_static_html2 | safe }}
+<!-- 开发环境版本，包含了用帮助的命令行警告 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    {{ 't_js/vue.js' | make_static_html2 | safe }}
+    <!-- 生产环境版本，优化了尺寸和速度 <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+{#    {{ 't_js/vue.pro.js' | make_static_html2 | safe }}#}
     {{ 't_js/my_requests.js' | make_static_html2 | safe }}
     {{ 't_js/url_tool.js' | make_static_html2 | safe }}
     {{ 't_js/handler_data.js' | make_static_html2 | safe }}

@@ -21,7 +21,9 @@ function new_people(){
         return 2;
     }
     r_data["people_photo"] = people_photo;
-
+    if($("#group_id").val().length > 0){
+        r_data["group_id"] = $("#group_id").val();
+    }
     var info_url = $("#info_url").val();
     my_async_request2(info_url, "POST", r_data, function(data){
         swal({
@@ -46,6 +48,10 @@ function new_people(){
 }
 
 $(function() {
+    var group_id = UrlArgsValue(location.search, "group_id");
+    if(group_id != null){
+        $("#group_id").val(group_id);
+    }
     $("#people_extend_pic").change(function(){
         var upload_url= $("#upload_url").val();
         if($("#people_extend_pic")[0].files.length <= 0){

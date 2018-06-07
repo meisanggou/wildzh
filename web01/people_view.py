@@ -17,7 +17,7 @@ __author__ = 'ZhouHeng'
 url_prefix = "/people"
 
 rt = RenderTemplate("people", url_prefix=url_prefix)
-people_view = create_blue('people_view', url_prefix=url_prefix, menu_list={"title": u"医生管理"},
+people_view = create_blue('people_view', url_prefix=url_prefix, menu_list={"title": u"人员管理"},
                           auth_required=False)
 c_people = People(db_conf_path)
 
@@ -55,8 +55,8 @@ def required_people_no(f):
 @people_view.route("/", methods=["GET"])
 @login_required
 def add_func():
-    page_list = url_prefix + "/"
-    page_people = url_prefix + "/?action=people"
+    page_list = url_prefix + "/?group_id=doctor"
+    page_people = url_prefix + "/?action=people&group_id=doctor"
     info_url = url_prefix + "/info/"
     upload_url = url_prefix + "/upload/"
     detail_url = url_prefix + "/detail/"
@@ -74,7 +74,12 @@ def add_func():
 @people_view.route("/info/", methods=["GET"])
 @referer_people_no
 def get_people_info():
-    items = c_people.select_people(g.people_no)
+    if g.people_no is not None:
+        items = c_people.select_people(g.people_no)
+    elif "group_id" in request.args:
+        items = c_people.select_group_people(request.args["group_id"])
+    else:
+        items = c_people.select_people(None)
     if g.user_no is None:
         for i in range(len(items) - 1, -1, -1):
             if items[i]["status"] & 64 == 64:
@@ -97,7 +102,9 @@ def add_people_action():
     department = request_data["department"]
     star_level = request_data["star_level"]
     labels = request_data["labels"]
-    data = c_people.new_info(people_name, people_photo, degree, company, department, domain, star_level, labels)
+    group_id = request_data.get("group_id", None)
+    data = c_people.new_info(people_name, people_photo, degree, company, department, domain, star_level, labels,
+                             group_id)
     return jsonify({"status": True, "data": data})
 
 

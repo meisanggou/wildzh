@@ -76,11 +76,16 @@ function explain_status(s) {
 function init_info(data) {
     if (data == null) {
         var info_url = $("#info_url").val();
-        my_async_request2(info_url, "GET", null, init_info);
+        var args = {};
+        var group_id = UrlArgsValue(location.search, "group_id");
+        if(group_id != null){
+            args["group_id"] = group_id;
+        }
+        my_async_request2(info_url, "GET", args, init_info);
         return 0;
     }
     if (data.length > 0) {
-        var keys = ["doctor_name", "degree", "company", "department"];
+        var keys = ["people_name", "degree", "company", "department"];
         var t = $("#t_doctors");
         for (var i = 0; i < data.length; i++) {
             var add_tr = $("<tr></tr>");
