@@ -68,6 +68,12 @@
         "col_type": "int(11)"
       },
       {
+        "col_comment": "关联人员",
+        "col_name": "link_people",
+        "col_type": "char(32)",
+        "allow_null": true
+      },
+      {
         "col_comment": "录入者",
         "col_name": "adder",
         "col_type": "varchar(30)"

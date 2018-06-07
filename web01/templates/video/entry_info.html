@@ -44,17 +44,25 @@
                             <input class="box-side width500" id="video_name" type="text" placeholder="" msg="请输入视频名称"/>
                         </li>
                         <li>
+                            <label for="">关联人员：</label>
+                            <select class="box-side width150" id="link_people" v-model="media_item.link_people">
+                                <option value="0">---- 不选 ----</option>
+                                <option v-for="item in people" :value="item.people_no">{{item.people_name}}</option>
+                                <option value="-1">--- 去新建 ---</option>
+                            </select>
+                        </li>
+                        <li>
                             <label for="">视频介绍：</label>
                             <input class="box-side width500" id="video_desc" type="text" msg="请输入视频介绍"/>
                         </li>
                         <li>
                             <label for="">视频图片：</label>
-                            <input class="box-side width300" id="video_extend_pic" type="file" placeholder="上传图片" accept="image/*"/>
+                            <input class="box-side width300" id="video_extend_pic" @change="start_upload" type="file" placeholder="上传图片" accept="image/*"/>
                             <img id="video_pic" src=""/>
                         </li>
                         <li>
                             <label for="">总集数：</label>
-                            <input class="box-side width100" id="episode_num" type="text" msg="请输入总集数"/>
+                            <input class="box-side width100" v-model.number="media_item.episode_num" type="number" msg="请输入总集数"/>
                             <span class="display_none" id="div_upload_status">
                                 <label>已上传</label>
                                 <label id="lab_upload_num"></label>
@@ -66,9 +74,10 @@
 
                 </div>
             </fieldset>
-            <button class="btn btn-success btn-down api-newBtn" id="btn_new">新建</button>
+            <button class="btn btn-success btn-down api-newBtn" id="btn_new" @click="new_media">新建</button>
         </div>
         <input id="info_url" value="{{ info_url }}" class="display_none">
         <input id="upload_url" value="{{ upload_url }}" class="display_none">
+        <input id="url_people" value="{{ url_people }}" class="display_none">
     </div>
 {% endblock %}

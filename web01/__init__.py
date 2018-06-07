@@ -66,6 +66,8 @@ def create_app():
     env.filters['make_default_static_url'] = make_default_static_url
     env.filters['make_static_html'] = make_static_html
     env.filters['make_static_html2'] = make_static_html2
+    env.variable_start_string = "{{ "
+    env.variable_end_string = " }}"
 
     one_web.handle_30x()
     one_web.cross_domain()

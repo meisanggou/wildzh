@@ -55,6 +55,7 @@ def required_video_no(f):
 @video_view.route("/", methods=["GET"])
 @login_required
 def index():
+    url_people = "/people/info/?group_id=doctor"
     upload_url = url_prefix + "/upload/"
     url_upload_e = url_prefix + "/upload/e/"
     info_url = url_prefix + "/info/"
@@ -64,7 +65,7 @@ def index():
     page_list = url_prefix + "/"
     if "action" in request.args and request.args["action"] == "video":
         return rt.render("entry_info.html", page_list=page_list, info_url=info_url, upload_url=upload_url,
-                         page_video=page_video, type_dict=type_dict, format_dict=format_dict)
+                         page_video=page_video, type_dict=type_dict, format_dict=format_dict, url_people=url_people)
     if "video_no" in request.args:
         return rt.render("episode.html", page_list=page_list, page_video=page_video, info_url=info_url,
                          url_episode=url_episode, url_upload_e=url_upload_e, upload_url=upload_url, type_dict=type_dict)
@@ -76,8 +77,10 @@ def index():
 @login_required
 def new_video():
     data = g.request_data
+    link_people = data.get("link_people", None)
     r, video_no = c_video.new_video(data["video_name"], data["video_type"], data["video_desc"],
-                                    data["episode_num"], data["video_pic"], data["accept_formats"], g.user_no)
+                                    data["episode_num"], data["video_pic"], data["accept_formats"], link_people,
+                                    g.user_no)
     if r is False:
         return jsonify({"status": False, "data": "请重试"})
     data["video_no"] = video_no

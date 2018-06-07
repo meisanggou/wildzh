@@ -3,6 +3,7 @@
  */
 
 var ascii = ["A", "B", "C", "D", "E", "F"];
+var p_vm = null;
 
 function init_info(data) {
     if (data == null) {
@@ -12,6 +13,7 @@ function init_info(data) {
     }
     if (data.length > 0) {
         var video_item = data[0];
+        p_vm.media_item = video_item;
         $("#video_name").val(video_item["video_name"]);
         $("#video_no").val(video_item["video_no"]);
         select_option("video_type", video_item["video_type"]);
@@ -70,7 +72,7 @@ function request_video(method, r_data) {
 }
 function new_or_update_video() {
     var r_data = new Object();
-    var keys = ["video_type", "accept_formats", "video_name", "video_desc", "episode_num"];
+    var keys = ["video_type", "accept_formats", "video_name", "video_desc"];
     for (var i = 0; i < keys.length; i++) {
         var item = $("#" + keys[i]);
         var v = item.val().trim();
@@ -81,17 +83,20 @@ function new_or_update_video() {
         }
         r_data[keys[i]] = v;
     }
-    if (isSuitableNaN(r_data["episode_num"], 0, 10000) == false) {
+    var episode_num = p_vm.media_item.episode_num;
+    if (isSuitableNaN(episode_num, 0, 10000) == false) {
         popup_show("请在总集数出输入一个0-10000的数字");
         return 2;
     }
-    r_data["episode_num"] = parseInt(r_data["episode_num"]);
+    r_data["episode_num"] = episode_num;
     var video_pic = $("#video_pic").attr("src");
     if (video_pic.length <= 0) {
         popup_show("请上传视频图片");
         return 3;
     }
-
+    if(p_vm.media_item.link_people.length == 32){
+        r_data["link_people"] = p_vm.media_item.link_people;
+    }
     r_data["video_pic"] = video_pic;
     var video_no = $("#video_no").val();
     var method = "POST";
@@ -129,22 +134,34 @@ function new_or_update_video() {
 
 $(function () {
     $("#li_add").hide();
-    $("#video_extend_pic").change(function () {
-        var upload_url = $("#upload_url").val();
-        if ($("#video_extend_pic")[0].files.length <= 0) {
-            return 1;
-        }
-        var data = {"pic": $("#video_extend_pic")[0].files[0]};
-        upload_request(upload_url, "POST", data, function (data) {
-            $("#video_pic").attr("src", data["pic"]);
-        });
-    });
+    var media_item = {"link_people": "0", "episode_num": ""};
     if (UrlArgsValue(location.href, "video_no") != null) {
         init_info(null);
     }
     $("#btn_new").click(new_or_update_video);
-    $("#episode_num").change(function (){
-        var that = $(this);
-        that.val(format_num(that.val()));
+    p_vm = new Vue({
+        el:"#myTabContent",
+        data:{
+            people: [],
+            media_item: media_item
+        },
+        methods:{
+            start_upload: function(){
+                var upload_url = $("#upload_url").val();
+                if ($("#video_extend_pic")[0].files.length <= 0) {
+                    return 1;
+                }
+                var data = {"pic": $("#video_extend_pic")[0].files[0]};
+                upload_request(upload_url, "POST", data, function (data) {
+                    $("#video_pic").attr("src", data["pic"]);
+                });
+            },
+            new_media: function () {
+                new_or_update_video();
+            }
+        }
     });
+    my_async_request2($("#url_people").val(), "GET", null, function(data){
+        p_vm.people = data;
+    })
 });
