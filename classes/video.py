@@ -74,7 +74,7 @@ class Video(object):
         return l
 
     def update_video(self, video_type, video_no, **kwargs):
-        cols = ["video_name", "video_desc", "episode_num", "video_extend", "video_pic", "link_people"]
+        cols = ["video_name", "video_desc", "episode_num", "video_extend", "video_pic"]
         update_value = dict()
         for key in kwargs.keys():
             if key not in cols:

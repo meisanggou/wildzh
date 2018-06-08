@@ -85,6 +85,10 @@ class People(object):
         self._update_status(people_no, add_status=2)
         return l
 
+    def add_resource(self, people_no, resource_id):
+        l = self._insert_resource(people_no, resource_id)
+        return l
+
     def update_people(self, people_no, **kwargs):
         cols = ["people_name", "people_photo", "degree", "company", "department", "domain", "star_level",
                 "labels"]
@@ -106,6 +110,9 @@ class People(object):
         if len(items) <= 0:
             return []
         p_nos = map(lambda x: x["people_no"], items)
+        return self.select_multi_people(p_nos)
+
+    def select_multi_people(self, p_nos):
         where_value = dict(people_no=p_nos)
         cols = ["people_no", "people_name", "degree", "company", "department", "domain", "star_level",
                 "service_times", "labels", "insert_time", "people_photo", "status"]

@@ -43,6 +43,14 @@ function request_video(method, r_data) {
             }
         }
         else {
+            if(data["link_people"] != null) {
+                var resource_data = {"people_no": data["link_people"]};
+                resource_data["resource_id"] = "005" + data["video_no"];
+                var url_resource = $("#url_people_resource").val();
+                my_async_request2(url_resource, "POST", resource_data, function (data) {
+                    console.info(data)
+                });
+            }
             swal({
                     title: "选择下一步",
                     text: msg,
@@ -134,7 +142,7 @@ function new_or_update_video() {
 
 $(function () {
     $("#li_add").hide();
-    var media_item = {"link_people": "0", "episode_num": ""};
+    var media_item = {"link_people": "0", "episode_num": "", "action_new": true};
     if (UrlArgsValue(location.href, "video_no") != null) {
         init_info(null);
     }

@@ -55,7 +55,8 @@ def required_video_no(f):
 @video_view.route("/", methods=["GET"])
 @login_required
 def index():
-    url_people = "/people/info/?group_id=doctor"
+    url_people = "/people/info/?group_id=doctor&online=true"
+    url_people_resource = "/people/resource/"
     upload_url = url_prefix + "/upload/"
     url_upload_e = url_prefix + "/upload/e/"
     info_url = url_prefix + "/info/"
@@ -65,7 +66,8 @@ def index():
     page_list = url_prefix + "/"
     if "action" in request.args and request.args["action"] == "video":
         return rt.render("entry_info.html", page_list=page_list, info_url=info_url, upload_url=upload_url,
-                         page_video=page_video, type_dict=type_dict, format_dict=format_dict, url_people=url_people)
+                         page_video=page_video, type_dict=type_dict, format_dict=format_dict, url_people=url_people,
+                         url_people_resource=url_people_resource)
     if "video_no" in request.args:
         return rt.render("episode.html", page_list=page_list, page_video=page_video, info_url=info_url,
                          url_episode=url_episode, url_upload_e=url_upload_e, upload_url=upload_url, type_dict=type_dict)

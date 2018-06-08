@@ -32,7 +32,7 @@
                         </li>
                     <li>
                             <label for="">音/视频集：</label>
-                            <select class="box-side width150" id="accept_formats" type="text">
+                            <select class="box-side width150" id="accept_formats" type="text" :disabled="media_item.accept_formats">
                                 {% for item in format_dict %}}
                                 <option value="{{ item[1] }}" >{{ item[0] }}</option>
                                 {% endfor %}
@@ -45,7 +45,7 @@
                         </li>
                         <li>
                             <label for="">关联人员：</label>
-                            <select class="box-side width150" id="link_people" v-model="media_item.link_people">
+                            <select class="box-side width150" id="link_people" v-model="media_item.link_people" :disabled="!media_item.action_new">
                                 <option value="0">---- 不选 ----</option>
                                 <option v-for="item in people" :value="item.people_no">{{item.people_name}}</option>
                                 <option value="-1">--- 去新建 ---</option>
@@ -79,5 +79,6 @@
         <input id="info_url" value="{{ info_url }}" class="display_none">
         <input id="upload_url" value="{{ upload_url }}" class="display_none">
         <input id="url_people" value="{{ url_people }}" class="display_none">
+        <input id="url_people_resource" value="{{ url_people_resource }}" class="display_none">
     </div>
 {% endblock %}

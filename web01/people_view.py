@@ -80,7 +80,7 @@ def get_people_info():
         items = c_people.select_group_people(request.args["group_id"])
     else:
         items = c_people.select_people(None)
-    if g.user_no is None:
+    if g.user_no is None or "online" in request.args:
         for i in range(len(items) - 1, -1, -1):
             if items[i]["status"] & 64 == 64:
                 continue
@@ -182,3 +182,12 @@ def online_people():
         return jsonify({"status": False, "data": "医生不存在"})
     c_people.online_people(people_no)
     return jsonify({"status": True, "data": "success"})
+
+
+@people_view.route("/resource/", methods=["POST"])
+def add_resource():
+    data = g.request_data
+    people_no = data["people_no"]
+    resource_id = data["resource_id"]
+    l = c_people.add_resource(people_no, resource_id)
+    return jsonify({"status": True, "data": l})
