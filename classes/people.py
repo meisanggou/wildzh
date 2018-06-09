@@ -89,6 +89,11 @@ class People(object):
         l = self._insert_resource(people_no, resource_id)
         return l
 
+    def select_resource(self, people_no):
+        cols = ["people_no", "resource_id"]
+        items = self.db.execute_select(self.t_resource, cols=cols)
+        return items
+
     def update_people(self, people_no, **kwargs):
         cols = ["people_name", "people_photo", "degree", "company", "department", "domain", "star_level",
                 "labels"]

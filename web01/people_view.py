@@ -183,6 +183,13 @@ def online_people():
     c_people.online_people(people_no)
     return jsonify({"status": True, "data": "success"})
 
+@people_view.route("/resource/", methods=["GET"])
+@required_people_no
+def list_people_resource_action():
+    items = c_people.select_resource(g.people_no)
+    resources = map(lambda x: x["resource_id"], items)
+    return jsonify({"status": True, "data": resources})
+
 
 @people_view.route("/resource/", methods=["POST"])
 def add_resource():
