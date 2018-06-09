@@ -112,6 +112,20 @@ def get_video_info():
     return jsonify({"status": True, "data": items})
 
 
+@video_view.route("/info/batch/", methods=["POST"])
+def batch_get_info_action():
+    data = g.request_data
+    video_type = data["video_type"]
+    multi_no = data["multi_no"]
+    items = c_video.select_multi_video(video_type, multi_no)
+    if g.user_no is None:
+        for i in range(len(items) - 1, -1, -1):
+            if items[i]["status"] & 64 == 64:
+                continue
+            del items[i]
+    return jsonify({"status": True, "data": items})
+
+
 @video_view.route("/info/", methods=["PUT"])
 @login_required
 def update_video():
@@ -131,8 +145,8 @@ def delete_video():
     return jsonify({"status": True, "data": "删除成功"})
 
 
-@login_required
 @video_view.route("/episode/", methods=["POST", "PUT"])
+@login_required
 @required_video_no
 def entry_questions():
     find_type = re.findall("video_type=(\\w+)", g.ref_url)

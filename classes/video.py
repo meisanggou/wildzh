@@ -4,6 +4,7 @@
 import time
 import json
 import uuid
+import re
 from mysqldb_rich import DB
 
 __author__ = 'meisa'
@@ -106,6 +107,22 @@ class Video(object):
             where_value = dict(video_type=video_type)
             if video_no is not None:
                 where_value["video_no"] = video_no
+        cols = ["video_type", "video_no", "video_name", "video_desc", "episode_num", "adder", "status",
+                "video_extend", "video_pic", "insert_time", "upload_num", "listen_num", "accept_formats",
+                "link_people"]
+        items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value, where_cond=where_cond)
+        for item in items:
+            if item["video_extend"] is not None:
+                item.update(json.loads(item["video_extend"]))
+                del item["video_extend"]
+        return items
+
+    def select_multi_video(self, video_type, multi_no):
+        multi_no = filter(lambda x: re.match("^[a-z0-9A-Z]{32}$", x), multi_no)
+        if len(multi_no) <= 0:
+            return []
+        where_value = dict(video_type=video_type)
+        where_cond = ["status<>0", "video_no in ('%s')" % "','".join(multi_no)]
         cols = ["video_type", "video_no", "video_name", "video_desc", "episode_num", "adder", "status",
                 "video_extend", "video_pic", "insert_time", "upload_num", "listen_num", "accept_formats",
                 "link_people"]
