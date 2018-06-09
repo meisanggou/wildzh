@@ -24,7 +24,7 @@ class MiniProgram(object):
         self.conf_path = conf_path
         self.conf_section = section
         self.init_conf()
-        self.refresh_token()
+        # self.refresh_token()
 
     @staticmethod
     def _request(method, url, **kwargs):
