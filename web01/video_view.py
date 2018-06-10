@@ -19,7 +19,8 @@ rt = RenderTemplate("video")
 video_view = create_blue("video", url_prefix=url_prefix, auth_required=False, menu_list={"title": u"音/视频集管理"})
 c_video = Video(db_conf_path)
 
-type_dict = dict(dongman=u"动漫", yingshi=u"影视", gxshipin=u"国学视频", gxyinpin=u"国学音频")
+type_dict = dict(dongman=u"动漫", yingshi=u"影视", gxshipin=u"国学视频", gxyinpin=u"国学音频",
+                 jtshipin=u"家庭视频", jtyinpin=u"家庭音频")
 format_dict = [[u"视频", "video/mp4"], [u"音频", "audio/mp3"]]
 
 
@@ -55,24 +56,31 @@ def required_video_no(f):
 @video_view.route("/", methods=["GET"])
 @login_required
 def index():
-    url_people = "/people/info/?group_id=doctor&online=true"
+    url_people = "/people/info/?group_id=media&online=true"
     url_people_resource = "/people/resource/"
     upload_url = url_prefix + "/upload/"
     url_upload_e = url_prefix + "/upload/e/"
     info_url = url_prefix + "/info/"
     online_url = url_prefix + "/online/"
-    url_episode = url_prefix + "/episode/"
     page_video = url_prefix + "/?action=video"
     page_list = url_prefix + "/"
+    type_desc = u"音视频"
+    if "video_type" in request.args and request.args["video_type"] in type_dict:
+        video_type = request.args["video_type"]
+        page_list += "?video_type=" + video_type
+        page_video += "&video_type=" + video_type
+        type_desc = type_dict[video_type]
+    url_episode = url_prefix + "/episode/"
+
     if "action" in request.args and request.args["action"] == "video":
         return rt.render("entry_info.html", page_list=page_list, info_url=info_url, upload_url=upload_url,
                          page_video=page_video, type_dict=type_dict, format_dict=format_dict, url_people=url_people,
-                         url_people_resource=url_people_resource)
+                         url_people_resource=url_people_resource, type_desc=type_desc)
     if "video_no" in request.args:
         return rt.render("episode.html", page_list=page_list, page_video=page_video, info_url=info_url,
                          url_episode=url_episode, url_upload_e=url_upload_e, upload_url=upload_url, type_dict=type_dict)
     return rt.render("overview.html", page_video=page_video, info_url=info_url, online_url=online_url,
-                     type_dict=type_dict)
+                     type_dict=type_dict, type_desc=type_desc)
 
 
 @video_view.route("/info/", methods=["POST"])

@@ -25,7 +25,8 @@ function init_info(data) {
         $("#btn_new").text("更新");
         $("#li_add").show();
         $("#div_upload_status").show();
-        $("#li_update a").text("更新视频");
+        var link_update = $("#li_update a");
+        link_update.text(link_update.text().replace("添加", "更新"));
     }
 }
 

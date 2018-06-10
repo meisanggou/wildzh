@@ -28,20 +28,20 @@ def index2_page():
 def get_menu_action():
     m_xl = {"title": u"心理健康", "sub": [
         {"title": u"心理科普", "url": "/article/?version=2&article_type=xlts"},
-        {"title": u"心理测试", "url": "/exam/"},
+        {"title": u"心理测试", "url": "/exam/?version=2"},
         {"title": u"心理调适", "sub": [
             {"title": u"美文", "url": "/article/?version=2&article_type=meiwen"},
-            {"title": u"动漫", "url": "/video/"},
-            {"title": u"影视", "url": "/video/"},
+            {"title": u"动漫", "url": "/video/?version=2&video_type=dongman"},
+            {"title": u"影视", "url": "/video/?version=2&video_type=yingshi"},
             {"title": u"音乐", "url": "/music/"}
         ]},
         {"title": u"心理咨询", "url": "/people/"},
         {"title": u"心理电台", "url": "/music/"}]}
     m_gx = {"title": u"国学教育", "sub": [
-        {"title": u"视频", "url": "/video/"},
-        {"title": u"音频"}]}
+        {"title": u"视频", "url": "/video/?version=2&video_type=gxshipin"},
+        {"title": u"音频", "url": "/video/?version=2&video_type=gxyinpin"}]}
     m_jt = {"title": u"家庭教育", "sub": [
-        {"title": u"视频", "url": "/video/"},
-        {"title": u"音频", "url": "/video/"}]}
+        {"title": u"视频", "url": "/video/?version=2&video_type=jtshipin"},
+        {"title": u"音频", "url": "/video/?version=2&video_type=jtyinpin"}]}
     menu = [m_xl, m_gx, m_jt]
     return jsonify({"status": True, "data": menu})

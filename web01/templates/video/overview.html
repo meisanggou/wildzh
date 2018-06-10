@@ -1,6 +1,6 @@
 {% extends "base_menu.html" %}
 
-{% block title %}音视频集管理{% endblock %}
+{% block title %}{{ type_desc }}管理{% endblock %}
 
 {% block css_content %}
     {{ 't_css/tabControls.css' | make_static_html | safe }}
@@ -13,8 +13,8 @@
 {% block center_content %}
     <div id="div_content">
         <ul id="ul_menu" class="nav nav-tabs comTab">
-            <li class="active"><a href="#div_overview" >所有音视频集</a></li>
-            <li class=""><a href="{{ page_video }}">添加音视频集</a></li>
+            <li class="active"><a href="#div_overview" >所有{{ type_desc }}</a></li>
+            <li class=""><a href="{{ page_video }}">添加{{ type_desc }}</a></li>
         </ul>
         <div class="tab-content" style="padding-top: 20px;">
             <div class="tab-pane fade in active" id="div_overview">
