@@ -100,4 +100,9 @@ $(document).ready(function () {
             $("#pic_url").attr("src", data["pic"]);
         });
     });
+    if(UrlArgsValue(location.search, "article_type") != null){
+        var article_type = UrlArgsValue(location.search, "article_type");
+        $("#article_type").val(article_type);
+        $("#li_article_type").hide();
+    }
 });

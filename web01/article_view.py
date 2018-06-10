@@ -39,7 +39,7 @@ def add_func():
         article_no = request.args["article_no"]
     if "action" in request.args and request.args["action"] == "look":
         return rt.render("look.html", article_no=article_no, page_article=page_article, page_list=page_list,
-                         url_info=url_info)
+                         url_info=url_info, type_desc=type_desc)
     elif "action" in request.args and request.args["action"] == "article":
         return rt.render("add.html", article_no=article_no, page_list=page_list, upload_url=upload_url,
                          url_info=url_info, type_desc=type_desc)
