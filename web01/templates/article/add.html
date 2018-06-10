@@ -1,7 +1,7 @@
 {% extends "base_menu.html" %}
 
 
-{% block title %}添加文章{% endblock %}
+{% block title %}添加{{ type_desc }}文章{% endblock %}
 
 {% block css_content %}
     {{ 't_css/tabControls.css' | make_static_html | safe }}
@@ -18,8 +18,8 @@
     <!-- 加载编辑器的容器 -->
     <div id="div_content">
         <ul id="ul_menu" class="nav nav-tabs comTab">
-            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有文章</a></li>
-            <li class="active"><a href="javascript:void(0)" data-toggle="tab">录入文章</a></li>
+            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有{{ type_desc }}文章</a></li>
+            <li class="active"><a href="javascript:void(0)" data-toggle="tab">录入{{ type_desc }}文章</a></li>
         </ul>
         <div style="padding-top: 50px">
             <div class="form-group apiContentLine">

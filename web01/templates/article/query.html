@@ -1,6 +1,6 @@
 {% extends "base_menu.html" %}
 
-{% block title %}文章管理{% endblock %}
+{% block title %}{{ type_desc }}文章管理{% endblock %}
 
 {% block css_content %}
     {{ 't_css/tabControls.css' | make_static_html | safe }}
@@ -13,8 +13,8 @@
 {% block center_content %}
     <div id="div_content">
         <ul id="ul_menu" class="nav nav-tabs comTab">
-            <li class="active"><a href="javascript:void(0)" data-toggle="tab">所有文章</a></li>
-            <li class=""><a href="{{ page_article }}" data-toggle="tab">录入文章</a></li>
+            <li class="active"><a href="javascript:void(0)" data-toggle="tab">所有{{ type_desc }}文章</a></li>
+            <li class=""><a href="{{ page_article }}" data-toggle="tab">录入{{ type_desc }}文章</a></li>
         </ul>
     <!-- 加载编辑器的容器 -->
     <div class="paddingTop50" id="article_container">

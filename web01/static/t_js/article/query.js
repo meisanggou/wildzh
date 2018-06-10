@@ -160,9 +160,14 @@ function handler_query_article(data) {
 }
 
 $(document).ready(function () {
-
     var r_url = $("#query_url").val();
-    my_async_request2(r_url, "GET", null, fill_table);
+    if(UrlArgsValue(location.search, "article_type") != null){
+        var q_data = {"article_type": UrlArgsValue(location.search, "article_type")}
+    }
+    else{
+        var q_data = null;
+    }
+    my_async_request2(r_url, "GET", q_data, fill_table);
     $("#btn_add_article").click(function () {
         window.open($("#page_article").val());
     });

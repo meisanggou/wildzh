@@ -27,7 +27,7 @@ def index2_page():
 @index_view.route("/menu/", methods=["GET"])
 def get_menu_action():
     m_xl = {"title": u"心理健康", "sub": [
-        {"title": u"心理科普", "url": "/article/"},
+        {"title": u"心理科普", "url": "/article/?version=2&article_type=xlts"},
         {"title": u"心理测试", "url": "/exam/"},
         {"title": u"心理调适", "sub": [
             {"title": u"美文", "url": "/article/"},

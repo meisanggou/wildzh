@@ -19,6 +19,7 @@ article_view = create_blue('article_view', url_prefix=url_prefix, menu_list={"ti
                            auth_required=False)
 c_article = ArticleManager(db_conf_path)
 
+article_dict = dict(xlts=u"心理调适", meiwen=u"美文")
 
 @article_view.route("/", methods=["GET"])
 @login_required
@@ -28,6 +29,12 @@ def add_func():
     url_info = url_prefix + "/info/"
     page_article = url_prefix + "/?action=article"
     page_list = url_prefix + "/"
+    type_desc = ""
+    if "article_type" in request.args and request.args["article_type"] in article_dict:
+        article_type = request.args["article_type"]
+        type_desc = article_dict[article_type]
+        page_article += "&article_type=" + article_type
+        page_list += "?article_type=" + article_type
     if "article_no" in request.args:
         article_no = request.args["article_no"]
     if "action" in request.args and request.args["action"] == "look":
@@ -35,10 +42,11 @@ def add_func():
                          url_info=url_info)
     elif "action" in request.args and request.args["action"] == "article":
         return rt.render("add.html", article_no=article_no, page_list=page_list, upload_url=upload_url,
-                         url_info=url_info)
+                         url_info=url_info, type_desc=type_desc)
     online_url = url_prefix + "/online/"
     info_url = url_prefix + "/info/"
-    return rt.render("query.html", page_article=page_article, online_url=online_url, info_url=info_url)
+    return rt.render("query.html", page_article=page_article, online_url=online_url, info_url=info_url,
+                     type_desc=type_desc)
 
 
 support_upload2(article_view, upload_folder, file_prefix_url, ("article", "pic"), "upload")
