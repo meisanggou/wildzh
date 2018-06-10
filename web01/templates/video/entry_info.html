@@ -19,11 +19,11 @@
         </ul>
         <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
             <fieldset>
-                <legend>视频信息</legend>
+                <legend>{{ type_desc }}信息</legend>
                 <div class="form-group apiContentLine">
                     <ul>
                         <li>
-                            <label for="">视频分类：</label>
+                            <label for="">{{ type_desc }}分类：</label>
                             <select class="box-side width150" id="video_type" type="text">
                                 {% for k, v in type_dict.items() %}}
                                 <option value="{{ k }}" >{{ v }}</option>
@@ -31,7 +31,7 @@
                             </select>
                         </li>
                     <li>
-                            <label for="">音/视频集：</label>
+                            <label for="">{{ type_desc }}集：</label>
                             <select class="box-side width150" id="accept_formats" type="text" :disabled="media_item.accept_formats">
                                 {% for item in format_dict %}}
                                 <option value="{{ item[1] }}" >{{ item[0] }}</option>
@@ -39,9 +39,9 @@
                             </select>
                         </li>
                         <li>
-                            <label for="">视频名称：</label>
+                            <label for="">{{ type_desc }}名称：</label>
                             <input class="display_none" id="video_no" type="text"/>
-                            <input class="box-side width500" id="video_name" type="text" placeholder="" msg="请输入视频名称"/>
+                            <input class="box-side width500" id="video_name" type="text" placeholder="" msg="请输入{{ type_desc }}名称"/>
                         </li>
                         <li>
                             <label for="">关联人员：</label>
@@ -52,11 +52,11 @@
                             </select>
                         </li>
                         <li>
-                            <label for="">视频介绍：</label>
-                            <input class="box-side width500" id="video_desc" type="text" msg="请输入视频介绍"/>
+                            <label for="">{{ type_desc }}介绍：</label>
+                            <input class="box-side width500" id="video_desc" type="text" msg="请输入{{ type_desc }}介绍"/>
                         </li>
                         <li>
-                            <label for="">视频图片：</label>
+                            <label for="">{{ type_desc }}图片：</label>
                             <input class="box-side width300" id="video_extend_pic" @change="start_upload" type="file" placeholder="上传图片" accept="image/*"/>
                             <img id="video_pic" src=""/>
                         </li>

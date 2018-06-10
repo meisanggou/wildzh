@@ -39,9 +39,13 @@ def get_menu_action():
         {"title": u"心理电台", "url": "/music/"}]}
     m_gx = {"title": u"国学教育", "sub": [
         {"title": u"视频", "url": "/video/?version=2&video_type=gxshipin"},
-        {"title": u"音频", "url": "/video/?version=2&video_type=gxyinpin"}]}
+        {"title": u"音频", "url": "/video/?version=2&video_type=gxyinpin"},
+        {"title": u"国学教育专家", "url": "/people/?version=2&group_id=gxedu"}
+    ]}
     m_jt = {"title": u"家庭教育", "sub": [
         {"title": u"视频", "url": "/video/?version=2&video_type=jtshipin"},
-        {"title": u"音频", "url": "/video/?version=2&video_type=jtyinpin"}]}
+        {"title": u"音频", "url": "/video/?version=2&video_type=jtyinpin"},
+        {"title": u"家庭教育专家", "url": "/people/?version=2&group_id=jtedu"}
+    ]}
     menu = [m_xl, m_gx, m_jt]
     return jsonify({"status": True, "data": menu})

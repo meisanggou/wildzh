@@ -19,8 +19,12 @@ rt = RenderTemplate("video")
 video_view = create_blue("video", url_prefix=url_prefix, auth_required=False, menu_list={"title": u"音/视频集管理"})
 c_video = Video(db_conf_path)
 
-type_dict = dict(dongman=u"动漫", yingshi=u"影视", gxshipin=u"国学视频", gxyinpin=u"国学音频",
-                 jtshipin=u"家庭视频", jtyinpin=u"家庭音频")
+type_dict = dict(dongman=u"动漫",
+                 yingshi=u"影视",
+                 gxshipin=u"国学视频",
+                 gxyinpin=u"国学音频",
+                 jtshipin=u"家庭视频",
+                 jtyinpin=u"家庭音频")
 format_dict = [[u"视频", "video/mp4"], [u"音频", "audio/mp3"]]
 
 
