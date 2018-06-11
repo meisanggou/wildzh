@@ -27,12 +27,12 @@ type_dict = dict(dongman=u"动漫",
                  jtyinpin=u"家庭音频")
 format_dict = [[u"视频", "video/mp4"], [u"音频", "audio/mp3"]]
 
-type_desc = dict(dongman={"title": u"动漫"},
-                 yingshi={"title": u"影视"},
-                 gxshipin={"title": u"国学视频"},
-                 gxyinpin={"title": u"国学音频"},
-                 jtshipin={"title": u"家庭视频"},
-                 jtyinpin={"title": u"家庭音频"})
+type_info = dict(dongman={"title": u"动漫", "format": "video/mp4"},
+                 yingshi={"title": u"影视", "format": "video/mp4"},
+                 gxshipin={"title": u"国学视频", "format": "video/mp4"},
+                 gxyinpin={"title": u"国学音频", "format": "audio/mp3"},
+                 jtshipin={"title": u"家庭视频", "format": "video/mp4"},
+                 jtyinpin={"title": u"家庭音频", "format": "audio/mp3"})
 
 def referer_video_no(f):
     @wraps(f)
@@ -104,6 +104,7 @@ def new_video():
     if r is False:
         return jsonify({"status": False, "data": "请重试"})
     data["video_no"] = video_no
+    data["upload_num"] = 0
     return jsonify({"status": True, "data": data})
 
 
@@ -223,3 +224,9 @@ def record_video_action():
     episode_index = data["episode_index"]
     c_video.add_record(video_type, video_no, episode_index)
     return jsonify({"status": True, "data": "success"})
+
+
+@video_view.route("/type/info/", methods=["GET"])
+@login_required
+def type_desc_action():
+    return jsonify({"status": True, "data": type_info})

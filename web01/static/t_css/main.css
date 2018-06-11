@@ -608,6 +608,13 @@ ul, ol, li {
     color: red
 }
 
+.error_label {
+    color: red;
+    font-size: 12px;
+    font-weight: 500;
+
+}
+
 .top_div {
     margin-top: 50px;
     font-size: 16px;

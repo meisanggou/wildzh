@@ -14,17 +14,8 @@ function init_info(data) {
     if (data.length > 0) {
         var video_item = data[0];
         p_vm.media_item = video_item;
-        $("#video_name").val(video_item["video_name"]);
-        $("#video_no").val(video_item["video_no"]);
-        select_option("video_type", video_item["video_type"]);
-        $("#episode_num").val(video_item["episode_num"]);
-        $("#video_desc").val(video_item["video_desc"]);
-        $("#video_pic").attr("src", video_item["video_pic"]);
-        $("#video_type").attr("disabled", "disabled");
-        $("#lab_upload_num").text(video_item["upload_num"]);
         $("#btn_new").text("更新");
         $("#li_add").show();
-        $("#div_upload_status").show();
         var link_update = $("#li_update a");
         link_update.text(link_update.text().replace("添加", "更新"));
     }
@@ -44,6 +35,8 @@ function request_video(method, r_data) {
             }
         }
         else {
+            p_vm.media_item = data;
+            p_vm.action_new = false;
             if(data["link_people"] != null) {
                 var resource_data = {"people_no": data["link_people"]};
                 resource_data["resource_id"] = "005" + data["video_no"];
@@ -81,40 +74,32 @@ function request_video(method, r_data) {
 }
 function new_or_update_video() {
     var r_data = new Object();
-    var keys = ["video_type", "accept_formats", "video_name", "video_desc"];
+    var keys = ["video_type", "video_name", "video_desc", "video_pic"];
     for (var i = 0; i < keys.length; i++) {
-        var item = $("#" + keys[i]);
-        var v = item.val().trim();
-        if (v.length <= 0) {
-            var msg = item.attr("msg");
-            popup_show(msg);
+        if (p_vm.media_item[keys[i]].length <= 0) {
             return 1;
         }
-        r_data[keys[i]] = v;
+        r_data[keys[i]] = p_vm.media_item[keys[i]];
     }
     var episode_num = p_vm.media_item.episode_num;
     if (isSuitableNaN(episode_num, 0, 10000) == false) {
-        popup_show("请在总集数出输入一个0-10000的数字");
         return 2;
     }
     r_data["episode_num"] = episode_num;
-    var video_pic = $("#video_pic").attr("src");
-    if (video_pic.length <= 0) {
-        popup_show("请上传视频图片");
-        return 3;
-    }
-    if(p_vm.media_item.link_people.length == 32){
+    r_data['accept_formats'] = p_vm.type_info[p_vm.media_item.video_type].format;
+    console.info(p_vm.media_item.link_people);
+    if(p_vm.media_item.link_people!=null&&p_vm.media_item.link_people.length == 32){
         r_data["link_people"] = p_vm.media_item.link_people;
     }
-    r_data["video_pic"] = video_pic;
-    var video_no = $("#video_no").val();
+
+    var video_no = p_vm.media_item.video_no;
     var method = "POST";
     if (video_no.length == 32) {
         method = "PUT";
         r_data["video_no"] = video_no;
     }
-    if ($("#lab_upload_num").text().length > 0) {
-        var upload_num = parseInt($("#lab_upload_num").text());
+    if (p_vm.media_item.upload_num.length > 0) {
+        var upload_num = p_vm.media_item.upload_num;
         if (r_data["episode_num"] < upload_num) {
             r_data["upload_num"] = r_data["episode_num"];
             var msg = "更新后总集数【" + r_data["episode_num"] + "】小于已上传集数【" + upload_num + "】，多上传的将会删除！";
@@ -143,16 +128,18 @@ function new_or_update_video() {
 
 $(function () {
     $("#li_add").hide();
-    var media_item = {"link_people": "0", "episode_num": "", "action_new": true};
+    var media_item = {"link_people": "0", "episode_num": "", "action_new": true, "video_name": "",
+        "video_type": "", "video_desc": "", "video_pic": "", "video_no": "", "upload_num": ""};
     if (UrlArgsValue(location.href, "video_no") != null) {
         init_info(null);
     }
-    $("#btn_new").click(new_or_update_video);
     p_vm = new Vue({
         el:"#myTabContent",
         data:{
             people: [],
-            media_item: media_item
+            media_item: media_item,
+            submit_count: 0,
+            type_info: []
         },
         methods:{
             start_upload: function(){
@@ -162,15 +149,20 @@ $(function () {
                 }
                 var data = {"pic": $("#video_extend_pic")[0].files[0]};
                 upload_request(upload_url, "POST", data, function (data) {
-                    $("#video_pic").attr("src", data["pic"]);
+                    p_vm.media_item.video_pic = data["pic"];
                 });
             },
             new_media: function () {
+                this.submit_count += 1;
+                console.info(this.submit_count);
                 new_or_update_video();
             }
         }
     });
     my_async_request2($("#url_people").val(), "GET", null, function(data){
         p_vm.people = data;
-    })
+    });
+    my_async_request2("/video/type/info/", "GET", null, function(data){
+        p_vm.type_info = data;
+    });
 });
