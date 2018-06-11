@@ -27,6 +27,12 @@ type_dict = dict(dongman=u"动漫",
                  jtyinpin=u"家庭音频")
 format_dict = [[u"视频", "video/mp4"], [u"音频", "audio/mp3"]]
 
+type_desc = dict(dongman={"title": u"动漫"},
+                 yingshi={"title": u"影视"},
+                 gxshipin={"title": u"国学视频"},
+                 gxyinpin={"title": u"国学音频"},
+                 jtshipin={"title": u"家庭视频"},
+                 jtyinpin={"title": u"家庭音频"})
 
 def referer_video_no(f):
     @wraps(f)
