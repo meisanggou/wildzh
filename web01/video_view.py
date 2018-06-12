@@ -66,7 +66,7 @@ def required_video_no(f):
 @video_view.route("/", methods=["GET"])
 @login_required
 def index():
-    url_people = "/people/info/?group_id=media&online=true"
+    url_people = "/people/info/?online=true"
     url_people_resource = "/people/resource/"
     upload_url = url_prefix + "/upload/"
     url_upload_e = url_prefix + "/upload/e/"

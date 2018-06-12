@@ -87,7 +87,7 @@ function new_or_update_video() {
     }
     r_data["episode_num"] = episode_num;
     r_data['accept_formats'] = p_vm.type_info[p_vm.media_item.video_type].format;
-    if(p_vm.media_item.link_people!=null&&p_vm.media_item.link_people.length == 32){
+    if(p_vm.media_item.link_people!=null&&p_vm.media_item.link_people.length == 32&&p_vm.can_link_people){
         r_data["link_people"] = p_vm.media_item.link_people;
     }
 
@@ -136,9 +136,13 @@ $(function () {
         el:"#myTabContent",
         data:{
             people: [],
+            all_people: {},
+            can_link_people: false,
+            given_type: false,  //是否指定了煤体类型 指定后不可更改
+            video_type: "",
             media_item: media_item,
             submit_count: 0,
-            type_info: []
+            type_info: {}
         },
         methods:{
             start_upload: function(){
@@ -156,12 +160,48 @@ $(function () {
                 console.info(this.submit_count);
                 new_or_update_video();
             }
+        },
+        watch: {
+            video_type: function (value, old_value) {
+                this.media_item.video_type = value;
+                if(value.length <= 0){
+                    this.can_link_people = false;
+                    return;
+                }
+                if(!value in this.type_info){
+                    this.can_link_people = false;
+                    return;
+                }
+                if(this.type_info[value].p_group.length <= 0){
+                    this.can_link_people = false;
+                    return;
+                }
+                else{
+                    this.can_link_people = true;
+                }
+                var p_group = this.type_info[value].p_group;
+                if(p_group in this.all_people){
+                    this.people = this.all_people[p_group];
+                    console.info("use exist")
+                }
+                else{
+
+                    console.info("request new");
+                    my_async_request2($("#url_people").val(), "GET", {"group_id": p_group}, function(data){
+                            p_vm.people = data;
+                            p_vm.all_people[p_group] = data;
+                    });
+                    console.info(p_group);
+                }
+            }
         }
     });
-    my_async_request2($("#url_people").val(), "GET", null, function(data){
-        p_vm.people = data;
-    });
     my_async_request2("/video/type/info/", "GET", null, function(data){
-        p_vm.type_info = data;
+        var video_type = UrlArgsValue(location.search, "video_type");
+        if(video_type in data) {
+            p_vm.given_type = true;
+            p_vm.video_type = video_type;
+            p_vm.type_info = data;
+        }
     });
 });

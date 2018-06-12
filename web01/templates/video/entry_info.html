@@ -22,9 +22,9 @@
                 <legend>{{ type_desc }}信息</legend>
                 <div class="form-group apiContentLine">
                     <ul>
-                        <li v-if="media_item.action_new==true">
+                        <li v-if="media_item.action_new==true&&given_type==false">
                             <label for="">{{ type_desc }}分类：</label>
-                            <select class="box-side width150" type="text" v-model="media_item.video_type">
+                            <select class="box-side width150" type="text" v-model="video_type">
                                 <option v-for="(value, key) in type_info" :value="key">{{value.title}}</option>
                             </select>
                             <label v-if="media_item.video_type.length==0&&submit_count>0" class="error_label">请选择{{ type_desc }}分类</label>
@@ -35,7 +35,7 @@
                             <input class="box-side width500" v-model="media_item.video_name" type="text" placeholder="" />
                             <label v-if="media_item.video_name.length==0&&submit_count>0" class="error_label">请输入{{ type_desc }}名称</label>
                         </li>
-                        <li v-if="media_item.action_new==true">
+                        <li v-if="media_item.action_new==true&&can_link_people">
                             <label for="">关联人员：</label>
                             <select class="box-side width150" id="link_people" v-model="media_item.link_people" :disabled="!media_item.action_new">
                                 <option value="0">---- 不选 ----</option>
