@@ -29,10 +29,10 @@ format_dict = [[u"视频", "video/mp4"], [u"音频", "audio/mp3"]]
 
 type_info = dict(dongman={"title": u"动漫", "format": "video/mp4", "p_group": ""},
                  yingshi={"title": u"影视", "format": "video/mp4", "p_group": ""},
-                 gxshipin={"title": u"国学视频", "format": "video/mp4", "p_group": "guoxue"},
-                 gxyinpin={"title": u"国学音频", "format": "audio/mp3", "p_group": "guoxue"},
-                 jtshipin={"title": u"家庭视频", "format": "video/mp4", "p_group": "jiating"},
-                 jtyinpin={"title": u"家庭音频", "format": "audio/mp3", "p_group": "jiating"})
+                 gxshipin={"title": u"国学视频", "format": "video/mp4", "p_group": "gxedu"},
+                 gxyinpin={"title": u"国学音频", "format": "audio/mp3", "p_group": "gxedu"},
+                 jtshipin={"title": u"家庭视频", "format": "video/mp4", "p_group": "jtedu"},
+                 jtyinpin={"title": u"家庭音频", "format": "audio/mp3", "p_group": "jtedu"})
 
 def referer_video_no(f):
     @wraps(f)
@@ -75,11 +75,11 @@ def index():
     page_video = url_prefix + "/?action=video"
     page_list = url_prefix + "/"
     type_desc = u"音视频"
-    if "video_type" in request.args and request.args["video_type"] in type_dict:
+    if "video_type" in request.args and request.args["video_type"] in type_info:
         video_type = request.args["video_type"]
         page_list += "?video_type=" + video_type
         page_video += "&video_type=" + video_type
-        type_desc = type_dict[video_type]
+        type_desc = type_info[video_type]["title"]
     url_episode = url_prefix + "/episode/"
 
     if "action" in request.args and request.args["action"] == "video":

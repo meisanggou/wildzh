@@ -21,6 +21,11 @@ people_view = create_blue('people_view', url_prefix=url_prefix, menu_list={"titl
                           auth_required=False)
 c_people = People(db_conf_path)
 
+group_dict = dict(
+    gxedu={"cn": u"国学教育专家"},
+    jtedu={"cn": u"家庭教育专家"},
+    doctor={"cn": u"医生"}
+)
 
 def referer_people_no(f):
     @wraps(f)
@@ -54,21 +59,30 @@ def required_people_no(f):
 
 @people_view.route("/", methods=["GET"])
 @login_required
-def add_func():
-    page_list = url_prefix + "/?group_id=doctor"
-    page_people = url_prefix + "/?action=people&group_id=doctor"
+def index_page():
+    page_list = url_prefix + "/"
+    page_people = url_prefix + "/?action=people"
     info_url = url_prefix + "/info/"
     upload_url = url_prefix + "/upload/"
     detail_url = url_prefix + "/detail/"
     online_url = url_prefix + "/online/"
+    cn_group = u"人员"
+    if "group_id" in request.args and request.args["group_id"] in group_dict:
+        group_id = request.args["group_id"]
+        page_list += "?group_id=" + group_id
+        page_people += "&group_id=" + group_id
+        detail_url += "?group_id=" + group_id
+        cn_group = group_dict[group_id]["cn"]
     if "action" in request.args and request.args["action"] == "people":
-        return rt.render("add.html", page_list=page_list, upload_url=upload_url, info_url=info_url)
+        return rt.render("add.html", page_list=page_list, upload_url=upload_url, info_url=info_url, cn_group=cn_group)
     elif "action" in request.args and request.args["action"] == "detail":
-        return rt.render("detail.html", page_list=page_list, page_people=page_people, detail_url=detail_url)
+        return rt.render("detail.html", page_list=page_list, page_people=page_people, detail_url=detail_url,
+                         cn_group=cn_group)
     elif "action" in request.args and request.args["action"] == "update":
         return rt.render("update.html", page_list=page_list, page_people=page_people, info_url=info_url,
-                         upload_url=upload_url)
-    return rt.render("overview.html", info_url=info_url, page_people=page_people, online_url=online_url)
+                         upload_url=upload_url, cn_group=cn_group)
+    return rt.render("overview.html", info_url=info_url, page_people=page_people, online_url=online_url,
+                     cn_group=cn_group)
 
 
 @people_view.route("/info/", methods=["GET"])

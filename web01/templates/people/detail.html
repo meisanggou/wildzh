@@ -1,6 +1,6 @@
 {% extends "base_menu.html" %}
 
-{% block title %}医生详细信息{% endblock %}
+{% block title %}{{ cn_group }}详细信息{% endblock %}
 
 {% block css_content %}
     {{ 't_css/tabControls.css' | make_static_html | safe }}
@@ -13,8 +13,8 @@
 {% block center_content %}
     <div id="div_content">
         <ul id="ul_menu" class="nav nav-tabs comTab">
-            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有医生</a></li>
-            <li class=""><a href="{{ page_people }}" data-toggle="tab">添加医生</a></li>
+            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有{{ cn_group }}</a></li>
+            <li class=""><a href="{{ page_people }}" data-toggle="tab">添加{{ cn_group }}</a></li>
             <li class="active"><a href="javascript:void(0)" data-toggle="tab">详细信息</a></li>
         </ul>
         <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
@@ -23,7 +23,7 @@
                 <div class="form-group apiContentLine">
                     <ul>
                         <li>
-                            <label for="effective_days">医生姓名：</label>
+                            <label for="effective_days">姓 名：</label>
                             <input class="box-side width300" id="people_name" type="text" placeholder="" disabled/>
                         </li>
                         <li>

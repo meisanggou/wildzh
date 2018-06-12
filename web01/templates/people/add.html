@@ -1,6 +1,6 @@
 {% extends "base_menu.html" %}
 
-{% block title %}添加医生{% endblock %}
+{% block title %}添加{{ cn_group }}{% endblock %}
 
 {% block css_content %}
     {{ 't_css/tabControls.css' | make_static_html | safe }}
@@ -13,8 +13,8 @@
 {% block center_content %}
     <div id="div_content">
         <ul id="ul_menu" class="nav nav-tabs comTab">
-            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有医生</a></li>
-            <li class="active"><a href="javascript:void(0)" data-toggle="tab">添加医生</a></li>
+            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有{{ cn_group }}</a></li>
+            <li class="active"><a href="javascript:void(0)" data-toggle="tab">添加{{ cn_group }}</a></li>
         </ul>
         <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
             <fieldset>
@@ -22,38 +22,38 @@
                 <div class="form-group apiContentLine">
                     <ul>
                         <li>
-                            <label for="effective_days">医生姓名：</label>
+                            <label for="effective_days">{{ cn_group }}姓名：</label>
                             <input class="display_none" id="group_id" value="" />
-                            <input class="box-side width300" id="people_name" type="text" placeholder="" msg="请输入医生姓名"/>
+                            <input class="box-side width300" id="people_name" type="text" placeholder="" msg="请输入{{ cn_group }}姓名"/>
                         </li>
                         <li>
-                            <label for="effective_days">医生图片：</label>
+                            <label for="effective_days">{{ cn_group }}图片：</label>
                             <input class="box-side width300" id="people_extend_pic" type="file" placeholder="上传图片"  accept="image/*"/>
                             <img id="people_photo" src=""/>
                         </li>
                         <li>
                             <label for="effective_days">职称：</label>
-                            <input class="box-side width500" id="degree" type="text" msg="请输入医生职称"/>
+                            <input class="box-side width500" id="degree" type="text" msg="请输入{{ cn_group }}职称"/>
                         </li>
                         <li>
                             <label for="effective_days">单位：</label>
-                            <input class="box-side width500" id="company" type="text" msg="请输入医生单位"/>
+                            <input class="box-side width500" id="company" type="text" msg="请输入{{ cn_group }}单位"/>
                         </li>
                         <li>
                             <label for="effective_days">部门：</label>
-                            <input class="box-side width500" id="department" type="text" msg="请输入医生部门"/>
+                            <input class="box-side width500" id="department" type="text" msg="请输入{{ cn_group }}部门"/>
                         </li>
                         <li>
                             <label for="effective_days">擅长领域：</label>
-                            <input class="box-side width500" id="domain" type="text" msg="请输入医生擅长领域"/>
+                            <input class="box-side width500" id="domain" type="text" msg="请输入{{ cn_group }}擅长领域"/>
                         </li>
                         <li>
                             <label for="effective_days">标签：</label>
-                            <input class="box-side width500" id="labels" type="text" msg="请输入医生标签"/>
+                            <input class="box-side width500" id="labels" type="text" msg="请输入{{ cn_group }}标签"/>
                         </li>
                         <li>
                             <label for="effective_days">星级：</label>
-                            <input class="box-side width100" id="star_level" type="number" msg="请输入医生星级"/>
+                            <input class="box-side width100" id="star_level" type="number" msg="请输入{{ cn_group }}星级"/>
                         </li>
                     </ul>
 
