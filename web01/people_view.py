@@ -90,7 +90,7 @@ def index_page():
 def get_people_info():
     if g.people_no is not None:
         items = c_people.select_people(g.people_no)
-    elif "group_id" in request.args:
+    elif "group_id" in request.args and request.args["group_id"] != "":
         items = c_people.select_group_people(request.args["group_id"])
     else:
         items = c_people.select_people(None)

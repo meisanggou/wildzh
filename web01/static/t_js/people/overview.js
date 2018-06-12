@@ -16,6 +16,10 @@ function explain_status(s) {
 }
 
 $(function () {
+    var group_id = UrlArgsValue(location.search, "group_id");
+    if(group_id == null){
+        group_id = "";
+    }
     g_p_vm = new Vue({
         el: "#div_overview",
         data: {
@@ -80,16 +84,15 @@ $(function () {
         }
     });
     var info_url = $("#info_url").val();
-    my_async_request2(info_url, "GET", null, function(data){
-
+    my_async_request2(info_url, "GET", {"group_id": group_id}, function(data){
+        var basic_url = AddUrlArg(location.pathname, "group_id", group_id);
         for (var i = 0; i < data.length; i++) {
             var item = data[i];
             item.cn_status = explain_status(item.status);
-            var basic_url = AddUrlArg(location.pathname, "people_no", data[i]["people_no"]);
-            var detail_url = AddUrlArg(basic_url, "action", "update");
+            var detail_url = AddUrlArg(basic_url, "people_no", data[i]["people_no"]);
+            detail_url = AddUrlArg(basic_url, "action", "update");
             item.detail_url = detail_url;
             g_p_vm.p_items.push(item);
         }
     });
-    //init_info(null);
 });
