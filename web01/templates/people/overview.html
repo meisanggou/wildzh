@@ -29,8 +29,20 @@
                                 <th scope="col" width=10%">状态</th>
                                 <th scope="col" width=20%">操作</th>
                             </tr>
-                            <tr id="tr_none" class="display_none">
+                            <tr v-if="p_items.length<=0">
                                 <td colSpan="9" class="text-center">一条记录都没有</td>
+                            </tr>
+                            <tr v-for="(item, index) in p_items">
+                                <td>{{item.people_name}}</td>
+                                <td>{{item.degree}}</td>
+                                <td>{{item.company}}</td>
+                                <td>{{item.department}}</td>
+                                <td>{{item.cn_status}}</td>
+                                <td>
+                                    <a class="status_move" :href="item.detail_url" @click="look_p(index)">查看</a>
+                                    <a class="status_move" @click="delete_p(index)">删除</a>
+                                    <a v-if="item.status==3" class="status_move" @click="online_p(index)">上线</a>
+                                </td>
                             </tr>
                         </table>
                     </div>
