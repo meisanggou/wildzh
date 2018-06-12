@@ -87,7 +87,6 @@ function new_or_update_video() {
     }
     r_data["episode_num"] = episode_num;
     r_data['accept_formats'] = p_vm.type_info[p_vm.media_item.video_type].format;
-    console.info(p_vm.media_item.link_people);
     if(p_vm.media_item.link_people!=null&&p_vm.media_item.link_people.length == 32){
         r_data["link_people"] = p_vm.media_item.link_people;
     }
