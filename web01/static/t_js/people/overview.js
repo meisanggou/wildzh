@@ -89,8 +89,8 @@ $(function () {
         for (var i = 0; i < data.length; i++) {
             var item = data[i];
             item.cn_status = explain_status(item.status);
-            var detail_url = AddUrlArg(basic_url, "people_no", data[i]["people_no"]);
-            detail_url = AddUrlArg(basic_url, "action", "update");
+            var detail_url = AddUrlArg(basic_url, "people_no", item.people_no);
+            detail_url = AddUrlArg(detail_url, "action", "update");
             item.detail_url = detail_url;
             g_p_vm.p_items.push(item);
         }

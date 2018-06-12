@@ -1,7 +1,10 @@
 /**
  * Created by meisa on 2018/5/15.
  */
-
+var group_id = UrlArgsValue(location.search, "group_id");
+if(group_id == null){
+    group_id = "";
+}
 function add_or_update_detail(){
     var r_data = new Object();
     var keys = ["people_profile", "tel", "work_experience", "study_experience", "honor", "unit_price"];
@@ -35,7 +38,7 @@ function add_or_update_detail(){
             },
             function(isConfirm){
                 if (isConfirm){
-                    var j_url = location.pathname;
+                    var j_url = location.pathname + "?group_id=" + group_id;
                     location.href = j_url;
                 }
                 else{
@@ -69,8 +72,4 @@ $(function() {
     $("#btn_new").click(add_or_update_detail);
     init_detail(null);
     $("#people_name").val(decodeURI(UrlArgsValue(location.href, "people_name")));
-    //$("#tel").change(function(){
-    //    console.info("change");
-    //    $("#tel").val(format_num($("#tel").val().substr(0, 11)));
-    //});
 });

@@ -47,6 +47,10 @@ function update_people(){
 }
 
 function init_info(data){
+    var group_id = UrlArgsValue(location.search, "group_id");
+    if(group_id == null){
+        group_id = "";
+    }
     if(data == null){
         var info_url = $("#info_url").val();
         my_async_request2(info_url, "GET", null, init_info);
@@ -61,7 +65,7 @@ function init_info(data){
 
         $("#people_photo").attr("src", people_item["people_photo"]);
         var detail_href = location.pathname + "?action=detail&people_no=" + people_item["people_no"];
-        detail_href += "&people_name=" + people_item["people_name"];
+        detail_href += "&people_name=" + people_item["people_name"] + "&group_id=" + group_id;
         $("#link_detail").attr("href", detail_href);
         if((people_item["status"] & 2) == 2){
             $("#link_detail").text("更新详细");
