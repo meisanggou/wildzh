@@ -79,7 +79,7 @@ def index_page():
         return rt.render("detail.html", page_list=page_list, page_people=page_people, detail_url=detail_url,
                          cn_group=cn_group)
     elif "action" in request.args and request.args["action"] == "update":
-        return rt.render("update.html", page_list=page_list, page_people=page_people, info_url=info_url,
+        return rt.render("add.html", page_list=page_list, page_people=page_people, info_url=info_url,
                          upload_url=upload_url, cn_group=cn_group)
     return rt.render("overview.html", info_url=info_url, page_people=page_people, online_url=online_url,
                      cn_group=cn_group)

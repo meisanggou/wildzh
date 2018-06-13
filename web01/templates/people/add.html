@@ -14,52 +14,63 @@
     <div id="div_content">
         <ul id="ul_menu" class="nav nav-tabs comTab">
             <li class=""><a href="{{ page_list }}" data-toggle="tab">所有{{ cn_group }}</a></li>
-            <li class="active"><a href="javascript:void(0)" data-toggle="tab">添加{{ cn_group }}</a></li>
+            <li class="" id="li_add"><a href="{{ page_people }}" data-toggle="tab">添加{{ cn_group }}</a></li>
+            <li class="active" id="li_update"><a href="javascript:void(0)" data-toggle="tab">添加{{ cn_group }}</a></li>
         </ul>
-        <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
+        <div id="div_add" class="tab-content" style="padding-top: 20px;">
             <fieldset>
                 <legend>基本信息</legend>
                 <div class="form-group apiContentLine">
                     <ul>
                         <li>
-                            <label for="effective_days">{{ cn_group }}姓名：</label>
-                            <input class="display_none" id="group_id" value="" />
-                            <input class="box-side width300" id="people_name" type="text" placeholder="" msg="请输入{{ cn_group }}姓名"/>
+                            <label >{{ cn_group }}姓名：</label>
+                            <input class="box-side width300" v-model="p_item.people_name" type="text" placeholder="" />
+                            <label v-if="p_item.people_name.length==0&&submit_count>0" class="error_label">请输入姓名</label>
                         </li>
                         <li>
-                            <label for="effective_days">{{ cn_group }}图片：</label>
-                            <input class="box-side width300" id="people_extend_pic" type="file" placeholder="上传图片"  accept="image/*"/>
-                            <img id="people_photo" src=""/>
+                            <label>{{ cn_group }}图片：</label>
+                            <input class="box-side width300" id="people_extend_pic" @change="upload_photo" type="file" placeholder="上传图片"  accept="image/*"/>
+                            <label v-if="p_item.people_photo.length==0&&submit_count>0" class="error_label">请上传图片</label>
+                            <img :src="p_item.people_photo"/>
                         </li>
                         <li>
-                            <label for="effective_days">职称：</label>
-                            <input class="box-side width500" id="degree" type="text" msg="请输入{{ cn_group }}职称"/>
+                            <label >职称：</label>
+                            <input class="box-side width500" v-model="p_item.degree" type="text"/>
+                            <label v-if="p_item.degree.length==0&&submit_count>0" class="error_label">请输入职称</label>
+
                         </li>
                         <li>
-                            <label for="effective_days">单位：</label>
-                            <input class="box-side width500" id="company" type="text" msg="请输入{{ cn_group }}单位"/>
+                            <label >单位：</label>
+                            <input class="box-side width500" v-model="p_item.company" type="text"/>
+                            <label v-if="p_item.company.length==0&&submit_count>0" class="error_label">请输入单位</label>
                         </li>
                         <li>
-                            <label for="effective_days">部门：</label>
-                            <input class="box-side width500" id="department" type="text" msg="请输入{{ cn_group }}部门"/>
+                            <label >部门：</label>
+                            <input class="box-side width500" v-model="p_item.department" type="text"/>
+                            <label v-if="p_item.department.length==0&&submit_count>0" class="error_label">请输入部门</label>
                         </li>
                         <li>
-                            <label for="effective_days">擅长领域：</label>
-                            <input class="box-side width500" id="domain" type="text" msg="请输入{{ cn_group }}擅长领域"/>
+                            <label >擅长领域：</label>
+                            <input class="box-side width500" v-model="p_item.domain" type="text" />
+                            <label v-if="p_item.domain.length==0&&submit_count>0" class="error_label">请输入擅长领域</label>
                         </li>
                         <li>
-                            <label for="effective_days">标签：</label>
-                            <input class="box-side width500" id="labels" type="text" msg="请输入{{ cn_group }}标签"/>
+                            <label >标签：</label>
+                            <input class="box-side width500" v-model="p_item.labels" type="text" />
+                            <label v-if="p_item.labels.length==0&&submit_count>0" class="error_label">请输入标签</label>
                         </li>
                         <li>
-                            <label for="effective_days">星级：</label>
-                            <input class="box-side width100" id="star_level" type="number" msg="请输入{{ cn_group }}星级"/>
+                            <label >星级：</label>
+                            <input class="box-side width100" v-model.number="p_item.star_level" type="number"/>
+                            <label v-if="p_item.star_level.length==0&&submit_count>0" class="error_label">请输入星级</label>
                         </li>
                     </ul>
 
                 </div>
             </fieldset>
-            <button class="btn btn-success btn-down api-newBtn" id="btn_new" >新建</button>
+            <button v-if="action_new" class="btn btn-success btn-down api-newBtn" @click="action_submit" >新建</button>
+            <button v-else class="btn btn-success btn-down api-newBtn" @click="action_submit" >更新</button>
+            <a v-if="!action_new" class="left5 status_move" @click="to_detail">详细信息</a>
         </div>
         <input id="info_url" value="{{ info_url }}" class="display_none">
         <input id="upload_url" value="{{ upload_url }}" class="display_none">
