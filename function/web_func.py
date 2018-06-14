@@ -42,7 +42,7 @@ def make_static_url(filename):
 
 
 def make_default_static_url(filename):
-    return "/static" + web_pro + filename
+    return "/static" + web_pro + "/" + filename
 
 
 def _make_static_html(filename, static_url):
