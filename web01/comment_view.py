@@ -36,8 +36,9 @@ def get_my_project():
 
 
 @comment_view.route("/", methods=["POST"])
+@login_required
 def new_project_action():
-    g.user_no = 1
+    # g.user_no = 1
     data = g.request_data
     resource_id = data["resource_id"]
     if len(resource_id) != 35:
