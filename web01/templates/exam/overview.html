@@ -31,6 +31,25 @@
                             <tr id="tr_none" class="display_none">
                                 <td colSpan="9" class="text-center">一条记录都没有</td>
                             </tr>
+                            <tr v-for="(item, index) in all_exams">
+                                <td>{{cn_exam_type[item["exam_type"]]}}</td>
+                                <td>{{item.exam_name}}</td>
+                                <td>{{item.add_time}}</td>
+                                <td>{{item.cn_status}}</td>
+                                <td>
+                                    <a href='javascript:void(0)' @click="delete_exam(index)">删除</a>
+                                    <template v-if="(item.status & 64) == 0">
+                                        <label>|</label>
+                                        <a href='javascript:void(0)' @click="to_action(index, 'question')">管理试题</a>
+                                        <label>|</label>
+                                        <a href='javascript:void(0)' @click="to_action(index, 'exam')">更新信息</a>
+                                    </template>
+                                    <template v-if="item.status == 7">
+                                        <label>|</label>
+                                        <a href='javascript:void(0)' @click="online(index)">上线</a>
+                                    </template>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                 </div>

@@ -204,7 +204,7 @@ $(function () {
         });
     }
     var cn_video_type =  JSON.parse($("#lab_type_dict").text());
-    for(key in cn_video_type)
+    for(var key in cn_video_type)
     {
         add_option("s_video_type", key, cn_video_type[key]);
     }

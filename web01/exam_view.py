@@ -130,7 +130,9 @@ def update_exam():
 def delete_exam():
     exam_no = g.request_data["exam_no"]
     exam_type = g.request_data["exam_type"]
-    l = c_exam.delete_exam(exam_type, exam_no)
+    print(exam_no)
+    print(exam_type)
+    # l = c_exam.delete_exam(exam_type, exam_no)
     return jsonify({"status": True, "data": "删除成功"})
 
 
