@@ -24,6 +24,7 @@ def index2_page():
     menu = [m_xl, m_gx, m_jt]
     return rt.render("index2.html")
 
+
 @index_view.route("/menu/", methods=["GET"])
 def get_menu_action():
     m_xl = {"title": u"心理健康", "sub": [
