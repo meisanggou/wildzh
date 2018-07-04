@@ -79,6 +79,8 @@ portal_menu_list = []
 
 
 def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=False, menu_list=None):
+    if url_prefix == "/":
+        url_prefix = None
     add_blue = Blueprint(blue_name, __name__, url_prefix=url_prefix)
     if auth_required:
         @add_blue.before_request
