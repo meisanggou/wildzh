@@ -91,7 +91,8 @@ class People(object):
 
     def select_resource(self, people_no):
         cols = ["people_no", "resource_id"]
-        items = self.db.execute_select(self.t_resource, cols=cols)
+        where_value = dict(people_no=people_no)
+        items = self.db.execute_select(self.t_resource, cols=cols, where_value=where_value)
         return items
 
     def update_people(self, people_no, **kwargs):
