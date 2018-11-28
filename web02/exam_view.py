@@ -92,6 +92,7 @@ support_upload2(exam_view, upload_folder, file_prefix_url, ("exam", "pic"), "upl
 
 
 @exam_view.route("/info/", methods=["GET"])
+@login_required
 @referer_exam_no
 def get_exam_info():
     find_type = re.findall("exam_type=(\\w+)", g.ref_url)
