@@ -243,5 +243,5 @@ class Exam(object):
         return min(l, l2)
 
     def delete_exam(self, exam_type, exam_no):
-        l = self._update_info(exam_type, exam_no, status=0)
+        l = self._update_info(exam_no, status=0)
         return l
