@@ -1,262 +1,298 @@
 [
-  {
-    "table_cols": [
-      {
-        "pri_key": true,
-        "col_comment": "测试编号",
-        "col_name": "exam_no",
-        "col_type": "int(11)"
-      },
-      {
-        "col_comment": "测试名称",
-        "col_name": "exam_name",
-        "col_type": "varchar(50)"
-      },
-      {
-        "col_comment": "测试介绍",
-        "col_name": "exam_desc",
-        "col_type": "varchar(500)"
-      },
-      {
-        "col_comment": "结果评定类型",
-        "col_name": "eval_type",
-        "col_type": "tinyint(4)"
-      },
-      {
-        "col_comment": "测试扩展信息",
-        "col_name": "exam_extend",
-        "col_type": "text",
-        "allow_null": true
-      },
-      {
-        "col_comment": "测试状态 1代表已录入基本信息 2代表已录入测试题目 4代表已录入结果 8 16 32 64代表已上线 128代表已下线 0代表已删除",
-        "col_name": "status",
-        "col_type": "int",
-        "default_value": 1
-      },
-      {
-        "col_comment": "题目顺序",
-        "col_name": "exam_order",
-        "col_type": "text",
-        "allow_null": true
-      },
-      {
-        "col_comment": "题目数",
-        "col_name": "question_num",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试人数",
-        "col_name": "exam_num",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "录入者",
-        "col_name": "adder",
-        "col_type": "varchar(30)"
-      }
-    ],
-    "table_comment": "记录测试的属性",
-    "table_name": "exam_info"
-  },
-  {
-    "table_cols": [
-      {
-        "pri_key": true,
-        "col_comment": "测试编号",
-        "col_name": "exam_no",
-        "col_type": "int(32)"
-      },
-      {
-        "col_comment": "测试结果为第1种情况的解释",
-        "col_name": "case_a",
-        "col_type": "varchar(500)"
-      },
-      {
-        "col_comment": "测试结果为第2种情况的解释",
-        "col_name": "case_b",
-        "col_type": "varchar(500)"
-      },
-      {
-        "col_comment": "测试结果为第3种情况的解释",
-        "col_name": "case_c",
-        "col_type": "varchar(500)",
-        "allow_null": true
-      },
-      {
-        "col_comment": "测试结果为第4种情况的解释",
-        "col_name": "case_d",
-        "col_type": "varchar(500)",
-        "allow_null": true
-      },
-      {
-        "col_comment": "测试结果为第5种情况的解释",
-        "col_name": "case_e",
-        "col_type": "varchar(500)",
-        "allow_null": true
-      },
-      {
-        "col_comment": "测试结果为第6种情况的解释",
-        "col_name": "case_f",
-        "col_type": "varchar(500)",
-        "allow_null": true
-      }
-    ],
-    "table_comment": "测试结果解释",
-    "table_name": "exam_result_explain"
-  },
-  {
-    "table_cols": [
-      {
-        "pri_key": true,
-        "col_comment": "测试编号",
-        "col_name": "exam_no",
-        "col_type": "int(11)"
-      },
-      {
-        "col_comment": "测试结果为第1种情况的测试数",
-        "col_name": "amount_a",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试结果为第2种情况的测试数",
-        "col_name": "amount_b",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试结果为第3种情况的测试数",
-        "col_name": "amount_c",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试结果为第4种情况的测试数",
-        "col_name": "amount_d",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试结果为第5种情况的测试数",
-        "col_name": "amount_e",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试结果为第6种情况的测试数",
-        "col_name": "amount_f",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试结果为第1种情况的虚拟测试数",
-        "col_name": "amount_va",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试结果为第2种情况的虚拟测试数",
-        "col_name": "amount_vb",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试结果为第3种情况的虚拟测试数",
-        "col_name": "amount_vc",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试结果为第4种情况的虚拟测试数",
-        "col_name": "amount_vd",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试结果为第5种情况的虚拟测试数",
-        "col_name": "amount_ve",
-        "col_type": "int(11)",
-        "default_value": 0
-      },
-      {
-        "col_comment": "测试结果为第6种情况的虚拟测试数",
-        "col_name": "amount_vf",
-        "col_type": "int(11)",
-        "default_value": 0
-      }
-    ],
-    "table_comment": "记录测试的统计信息",
-    "table_name": "exam_tj"
-  },
-  {
-    "table_cols": [
-      {
-        "pri_key": true,
-        "col_comment": "测试者",
-        "col_name": "user_id",
-        "col_type": "varchar(50)"
-      },
-      {
-        "pri_key": true,
-        "col_comment": "测试编号",
-        "col_name": "exam_no",
-        "col_type": "int(11)"
-      },
-      {
-        "pri_key": true,
-        "col_comment": "测试时间",
-        "col_name": "insert_time",
-        "col_type": "int(11)"
-      },
-      {
-        "col_comment": "测试结果",
-        "col_name": "result",
-        "col_type": "char(1)"
-      }
-    ],
-    "table_comment": "记录每次测试的结果",
-    "table_name": "exam_records"
-  },
-  {
-    "table_cols": [
-      {
-        "pri_key": true,
-        "col_comment": "测试编号",
-        "col_name": "exam_no",
-        "col_type": "char(32)"
-      },
-      {
-        "pri_key": true,
-        "col_comment": "题目编号",
-        "col_name": "question_no",
-        "col_type": "int(11)"
-      },
-      {
-        "col_comment": "题目描述",
-        "col_name": "question_desc",
-        "col_type": "varchar(250)"
-      },
-      {
-        "col_comment": "选择模式",
-        "col_name": "select_mode",
-        "col_type": "tinyint(4)"
-      },
-      {
-        "col_comment": "选项信息",
-        "col_name": "options",
-        "col_type": "text"
-      },
-      {
-        "col_comment": "答案信息",
-        "col_name": "answer",
-        "col_type": "text",
-        "allow_null": true
-      }
-    ],
-    "table_comment": "测试题目",
-    "table_name": "exam_questions"
-  }
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "测试编号",
+                "col_name": "exam_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "测试名称",
+                "col_name": "exam_name",
+                "col_type": "varchar(50)"
+            },
+            {
+                "col_comment": "测试介绍",
+                "col_name": "exam_desc",
+                "col_type": "varchar(500)"
+            },
+            {
+                "col_comment": "结果评定类型",
+                "col_name": "eval_type",
+                "col_type": "tinyint(4)"
+            },
+            {
+                "col_comment": "测试扩展信息",
+                "col_name": "exam_extend",
+                "col_type": "text",
+                "allow_null": true
+            },
+            {
+                "col_comment": "测试状态 1代表已录入基本信息 2代表已录入测试题目 4代表已录入结果 8 16 32 64代表已上线 128代表已下线 0代表已删除",
+                "col_name": "status",
+                "col_type": "int",
+                "default_value": 1
+            },
+            {
+                "col_comment": "题目顺序",
+                "col_name": "exam_order",
+                "col_type": "text",
+                "allow_null": true
+            },
+            {
+                "col_comment": "题目数",
+                "col_name": "question_num",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试人数",
+                "col_name": "exam_num",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "录入者",
+                "col_name": "adder",
+                "col_type": "varchar(30)"
+            }
+        ],
+        "table_comment": "记录测试的属性",
+        "table_name": "exam_info"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "测试编号",
+                "col_name": "exam_no",
+                "col_type": "int(32)"
+            },
+            {
+                "col_comment": "测试结果为第1种情况的解释",
+                "col_name": "case_a",
+                "col_type": "varchar(500)"
+            },
+            {
+                "col_comment": "测试结果为第2种情况的解释",
+                "col_name": "case_b",
+                "col_type": "varchar(500)"
+            },
+            {
+                "col_comment": "测试结果为第3种情况的解释",
+                "col_name": "case_c",
+                "col_type": "varchar(500)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "测试结果为第4种情况的解释",
+                "col_name": "case_d",
+                "col_type": "varchar(500)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "测试结果为第5种情况的解释",
+                "col_name": "case_e",
+                "col_type": "varchar(500)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "测试结果为第6种情况的解释",
+                "col_name": "case_f",
+                "col_type": "varchar(500)",
+                "allow_null": true
+            }
+        ],
+        "table_comment": "测试结果解释",
+        "table_name": "exam_result_explain"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "测试编号",
+                "col_name": "exam_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "测试结果为第1种情况的测试数",
+                "col_name": "amount_a",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试结果为第2种情况的测试数",
+                "col_name": "amount_b",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试结果为第3种情况的测试数",
+                "col_name": "amount_c",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试结果为第4种情况的测试数",
+                "col_name": "amount_d",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试结果为第5种情况的测试数",
+                "col_name": "amount_e",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试结果为第6种情况的测试数",
+                "col_name": "amount_f",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试结果为第1种情况的虚拟测试数",
+                "col_name": "amount_va",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试结果为第2种情况的虚拟测试数",
+                "col_name": "amount_vb",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试结果为第3种情况的虚拟测试数",
+                "col_name": "amount_vc",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试结果为第4种情况的虚拟测试数",
+                "col_name": "amount_vd",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试结果为第5种情况的虚拟测试数",
+                "col_name": "amount_ve",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "测试结果为第6种情况的虚拟测试数",
+                "col_name": "amount_vf",
+                "col_type": "int(11)",
+                "default_value": 0
+            }
+        ],
+        "table_comment": "记录测试的统计信息",
+        "table_name": "exam_tj"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "测试者",
+                "col_name": "user_id",
+                "col_type": "varchar(50)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "测试编号",
+                "col_name": "exam_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "测试时间",
+                "col_name": "insert_time",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "测试结果",
+                "col_name": "result",
+                "col_type": "char(1)"
+            }
+        ],
+        "table_comment": "记录每次测试的结果",
+        "table_name": "exam_records"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "测试编号",
+                "col_name": "exam_no",
+                "col_type": "char(32)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "题目编号",
+                "col_name": "question_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "题目描述",
+                "col_name": "question_desc",
+                "col_type": "varchar(250)"
+            },
+            {
+                "col_comment": "选择模式",
+                "col_name": "select_mode",
+                "col_type": "tinyint(4)"
+            },
+            {
+                "col_comment": "选项信息",
+                "col_name": "options",
+                "col_type": "text"
+            },
+            {
+                "col_comment": "答案信息",
+                "col_name": "answer",
+                "col_type": "text",
+                "allow_null": true
+            }
+        ],
+        "table_comment": "测试题目",
+        "table_name": "exam_questions"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "用户编号",
+                "col_name": "user_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "测试编号",
+                "col_name": "exam_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "题目编号",
+                "col_name": "question_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "错误次数",
+                "col_name": "wrong_freq",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "最近错误时间",
+                "col_name": "wrong_time",
+                "col_type": "int(11)",
+                "default_value": 0
+            }
+        ],
+        "table_comment": "记录错题",
+        "table_name": "exam_wrong_answer"
+    }
 ]

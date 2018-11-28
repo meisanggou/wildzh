@@ -222,3 +222,12 @@ def get_explains():
         else:
             l_explains.append(explain_item[key])
     return jsonify({"status": True, "data": l_explains})
+
+
+@exam_view.route("/wrong/", methods=["POST"])
+@login_required
+def wrong_answer_action():
+    exam_no = g.request_data["exam_no"]
+    question_no = g.request_data["question_no"]
+    c_exam.new_exam_wrong(g.user_no, exam_no, question_no)
+    return jsonify({"status": True, "data": "success"})

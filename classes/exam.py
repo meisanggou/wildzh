@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 
+import re
 import time
 import json
 import random
@@ -19,6 +20,7 @@ class Exam(object):
         self.t_tj = "exam_tj"
         self.t_records = "exam_records"
         self.t_q = "exam_questions"
+        self.t_w = "exam_wrong_answer"
 
     def _insert_info(self, exam_no, exam_name, exam_desc, eval_type, adder, status=1, exam_extend=None):
         kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, eval_type=eval_type, status=status,
@@ -55,6 +57,14 @@ class Exam(object):
         kwargs = dict(exam_no=exam_no, question_no=question_no, question_desc=question_desc, select_mode=select_mode,
                       options=options, answer=answer)
         l = self.db.execute_insert(self.t_q, kwargs=kwargs, ignore=True)
+        return l
+
+    def _insert_wrong_answer(self, user_no, exam_no, question_nos):
+        cols = ["user_no", "exam_no", "question_no", "wrong_time", "wrong_freq"]
+        wrong_time = int(time.time())
+        values = map(lambda x: [user_no, exam_no, x, wrong_time, 1], question_nos)
+        l = self.db.execute_duplicate_insert_mul(self.t_w, cols, values, u_keys=["wrong_time"],
+                                                 p1_keys=["wrong_freq"])
         return l
 
     def _update_info(self, exam_no, **update_value):
@@ -111,6 +121,17 @@ class Exam(object):
         self._add_tj(exam_no, "amount_%s" % result)
         self._update_num(exam_no)
         return True, None
+
+    def new_exam_wrong(self, user_no, exam_no, question_no):
+        if isinstance(question_no, list):
+            question_nos = question_no
+        elif isinstance(question_no, int):
+            question_nos = [question_no]
+        else:
+            question_nos = filter(lambda x: len(x) > 0, re.split("\D", question_no))
+        if len(question_nos) <= 0:
+            return 0
+        return self._insert_wrong_answer(user_no, exam_no, question_nos)
 
     def update_exam(self, exam_no, exam_name, exam_desc, eval_type, **exam_extend):
         update_value = dict(exam_name=exam_name, exam_desc=exam_desc, eval_type=eval_type, exam_extend=exam_extend)
