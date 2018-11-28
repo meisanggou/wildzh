@@ -270,22 +270,22 @@ class User(object):
 
 if __name__ == "__main__":
     # import os
-    # import sys
+    import sys
     # script_dir = os.path.abspath(os.path.dirname(__file__))
     # sys.path.append(script_dir)
-    # from zh_config import db_conf_path
-    # um = User(db_conf_path)
-    # if len(sys.argv) >= 3:
-    # u = sys.argv[1]
-    #     p = sys.argv[2]
-    # else:
-    #     u = p = "admin"
-    # r, item = um.new_user(u, password=p)
+    from zh_config import db_conf_path
+    um = User(db_conf_path)
+    if len(sys.argv) >= 3:
+        u = sys.argv[1]
+        p = sys.argv[2]
+    else:
+        u = p = "admin"
+    r, item = um.new_user(u, password=p)
     # if r is False:
     #     print("update password")
     #     um.update_password(u, p)
-    e = EncryptActor()
-    s = e.encrypt_msg("this is a message")
-    print(s)
-    ds = e.decrypt_msg("F36QT3Zse4Zr9bSVAn9wjd9+LJDEc8w/GPTulTbGY/4CcUvRnm04+3n8hjsk4WlZKlU0MuaOb2qhUGr7A182pA==")
-    print(ds)
+    # e = EncryptActor()
+    # s = e.encrypt_msg("this is a message")
+    # print(s)
+    # ds = e.decrypt_msg("F36QT3Zse4Zr9bSVAn9wjd9+LJDEc8w/GPTulTbGY/4CcUvRnm04+3n8hjsk4WlZKlU0MuaOb2qhUGr7A182pA==")
+    # print(ds)

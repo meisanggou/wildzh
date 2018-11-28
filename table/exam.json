@@ -248,6 +248,12 @@
         "col_comment": "选项信息",
         "col_name": "options",
         "col_type": "text"
+      },
+      {
+        "col_comment": "答案信息",
+        "col_name": "answer",
+        "col_type": "text",
+        "allow_null": true
       }
     ],
     "table_comment": "测试题目",

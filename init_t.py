@@ -13,7 +13,7 @@ if __name__ == "__main__":
     if len(sys.argv) >= 2:
         root_password = sys.argv[1]
     else:
-        root_password = "rootsql"
+        root_password = "JingD1017##m"
     db = DB(conf_path=db_conf_path, user="root", password=root_password)
     db.root_init_conf('%')
     db2 = TableDB(conf_path=db_conf_path)

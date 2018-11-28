@@ -74,9 +74,22 @@ Page({
     console.info("index on Ready")
   },
   join: function () {
-    wx.navigateTo({
-      url: '../business/join'
+    wx.downloadFile({
+      // 示例 url，并非真实存在
+      url: 'http://172.16.110.10/d/3.pdf',
+      success: function (res) {
+        const filePath = res.tempFilePath
+        wx.openDocument({
+          filePath: filePath,
+          success: function (res) {
+            console.log('打开文档成功')
+          }
+        })
+      }
     })
+    // wx.navigateTo({
+    //   url: '../business/join'
+    // })
   },
   business_main: function () {
     wx.navigateTo({

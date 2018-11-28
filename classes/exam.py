@@ -4,7 +4,7 @@
 import time
 import json
 import string
-from mysqldb_rich import DB
+from mysqldb_rich.db2 import DB
 
 __author__ = 'meisa'
 
