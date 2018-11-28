@@ -3,12 +3,6 @@
     "table_cols": [
       {
         "pri_key": true,
-        "col_comment": "测试类型",
-        "col_name": "exam_type",
-        "col_type": "varchar(10)"
-      },
-      {
-        "pri_key": true,
         "col_comment": "测试编号",
         "col_name": "exam_no",
         "col_type": "int(11)"
@@ -45,6 +39,12 @@
         "col_name": "exam_order",
         "col_type": "text",
         "allow_null": true
+      },
+      {
+        "col_comment": "题目数",
+        "col_name": "question_num",
+        "col_type": "int(11)",
+        "default_value": 0
       },
       {
         "col_comment": "测试人数",

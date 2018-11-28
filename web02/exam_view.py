@@ -101,7 +101,7 @@ def get_exam_info():
         exam_type = request.args["exam_type"]
     else:
         exam_type = None
-    items = c_exam.select_exam(exam_type, g.exam_no)
+    items = c_exam.select_exam(g.exam_no)
     if g.user_no is None:
         for i in range(len(items) - 1, -1, -1):
             if items[i]["status"] & 64 == 64:
@@ -138,14 +138,16 @@ def delete_exam():
 @required_exam_no
 def entry_questions():
     data = g.request_data
+    exam_type = data["exam_type"]
     question_no = data["question_no"]
     question_desc = data["question_desc"]
     select_mode = data["select_mode"]
     options = data["options"]
+    answer = data["answer"]
     if request.method == "POST":
-        r, l = c_exam.new_exam_questions(g.exam_no, question_no, question_desc, select_mode, options)
+        r, l = c_exam.new_exam_questions(g.exam_no, question_no, question_desc, select_mode, options, answer)
     else:
-        l = c_exam.update_exam_questions(g.exam_no, question_no, question_desc, select_mode, options)
+        l = c_exam.update_exam_questions(g.exam_no, question_no, question_desc, select_mode, options, answer)
         r = True
     return jsonify({"status": r, "data": dict(action=request.method, data=data)})
 
@@ -153,7 +155,11 @@ def entry_questions():
 @exam_view.route("/questions/", methods=["GET"])
 @required_exam_no
 def get_exam_questions():
-    items = c_exam.select_questions(g.exam_no)
+    num = request.args.get("num", None)
+    if num is None:
+        items = c_exam.select_questions(g.exam_no)
+    else:
+        items = c_exam.select_random_questions(g.exam_no, int(num))
     if g.user_no is None:
         for item in items:
             options = item["options"]

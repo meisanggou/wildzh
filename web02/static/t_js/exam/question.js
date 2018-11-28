@@ -36,7 +36,9 @@ function load_question(index)
         $("#question_desc").val("");
         $("#options li[name='li_option']").find("input:eq(1)").val("");
         $("#options li[name='li_option']").find("input:eq(2)").val("");
+        $("#options li[name='li_option']").find("input")[2].checked = false;
         $("#questions_num").attr("about", next_question_no);
+        $("#answer").val("");
     }
     return 0;
 }
@@ -107,6 +109,8 @@ function add_question()
     var btn = $(this);
     var btn_text = btn.text();
     var r_data = new Object();
+    var exam_type = $("#s_exam_type").val();
+    r_data["exam_type"] = exam_type;
     r_data["question_no"] = parseInt($("#questions_num").attr("about"));
     var msg = "";
     var question_desc = $("#question_desc").val().trim();
@@ -154,6 +158,8 @@ function add_question()
         popup_show("请至少录入两个选项！");
         return 2;
     }
+    var answer_desc = $("#answer").val();
+    r_data["answer"] = answer_desc;
     if(answer == ""){
         popup_show("请选择一个选项作为答案！");
         return 3;
