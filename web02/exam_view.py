@@ -169,6 +169,14 @@ def get_exam_questions():
     return jsonify({"status": True, "data": items})
 
 
+@exam_view.route("/questions/no/", methods=["GET"])
+@required_exam_no
+def get_max_exam_questions():
+    max_no = c_exam.select_max_question(g.exam_no)
+    next_no = (max_no + 1) if isinstance(max_no, int) else 1
+    return jsonify({"status": True, "data": dict(max_no=max_no, next_no=next_no)})
+
+
 @exam_view.route("/online/", methods=["POST"])
 @login_required
 def online_exam():

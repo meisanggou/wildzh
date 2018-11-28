@@ -180,6 +180,13 @@ class Exam(object):
             item["options"] = json.loads(item["options"])
         return items
 
+    def select_max_question(self, exam_no):
+        cols = ["max(question_no)"]
+        items = self.db.execute_select(self.t_q, where_value=dict(exam_no=exam_no), cols=cols)
+        if len(items) <= 0:
+            return 0
+        return items[0]["max(question_no)"]
+
     def select_random_questions(self, exam_no, num):
         exam_items = self.select_exam(exam_no)
         if len(exam_items) <= 0:
@@ -245,3 +252,7 @@ class Exam(object):
     def delete_exam(self, exam_type, exam_no):
         l = self._update_info(exam_no, status=0)
         return l
+
+if __name__ == "__main__":
+    e = Exam("../mysql_app.conf")
+    e.select_max_question("1543289889")
