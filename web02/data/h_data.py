@@ -60,7 +60,9 @@ def login(user_name, password):
 
 
 def get_questions(exam_no):
-    url = remote_host + "/exam/questions/"
+    url = remote_host + "/exam/questions/no/"
+    response = req.get(url, params=dict(exam_no=exam_no))
+    print(response.text)
 
 
 if __name__ == "__main__":
@@ -69,3 +71,4 @@ if __name__ == "__main__":
         q_item = get_question(item)
         # break
     login("admin", "admin")
+    get_questions("1543289888")
