@@ -1,5 +1,6 @@
 # !/usr/bin/env python
 # coding: utf-8
+import os
 import re
 import requests
 __author__ = 'meisa'
@@ -8,7 +9,7 @@ req = requests.session()
 headers = {"User-Agent": "jyrequests"}
 req.headers = headers
 remote_host = "https://meisanggou.vicp.net"
-remote_host = "http://127.0.0.1:2400"
+# remote_host = "http://127.0.0.1:2400"
 
 
 def read_file(file_path):
@@ -31,7 +32,7 @@ def read_file(file_path):
     return questions_s[1:]
 
 
-def get_question(question_items):
+def get_question(question_items, s_c=u"、"):
     desc = ""
     i = 0
     while i < len(question_items):
@@ -45,9 +46,9 @@ def get_question(question_items):
     def replace(match_r):
         mgs = match_r.groups()
         return "\n" + mgs[0] + u"、"
-
+    r_compile = re.compile(u"(A|B|C|D)" + re.escape(s_c))
     for item in question_items[i:]:
-        r_item = re.sub(u"(A|B|C|D)、", replace, item.decode("utf-8"))
+        r_item = r_compile.sub(replace, item.decode("utf-8"))
         options.extend(r_item.split("\n"))
     real_options = map(lambda x: x[2:].strip(), options)
     real_options = filter(lambda x: len(x) > 0, real_options)
@@ -71,7 +72,7 @@ def req_max_no(exam_no):
     return res["data"]
 
 
-def post_questions(exam_no, start_no, questions_obj):
+def post_questions(exam_name, exam_no, start_no, questions_obj):
     url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
     question_no = start_no
     for q_item in questions_obj:
@@ -79,24 +80,30 @@ def post_questions(exam_no, start_no, questions_obj):
         data["question_desc"] = q_item["desc"]
         data["options"] = map(lambda x: dict(desc=x, socre=0), q_item["options"])
         data["options"][0]["score"] = 1
-        data["answer"] = ""
+        data["answer"] = exam_name
         resp = req.post(url, json=data)
         print(resp.text)
         question_no += 1
 
 
 if __name__ == "__main__":
-    questions = read_file("exam_file.txt")
+    file_path = u"2016经济学真题.txt"
+    exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
+    error_path = file_path + ".error"
+    questions = read_file(file_path)
     f_questions = []
+    we = open(error_path, "w")
     for item in questions:
-        q_item = get_question(item)
+        q_item = get_question(item, ".")
         if q_item is None:
-            pass
-            print(item)
+            t_s = "\n".join(item)
+            we.write(t_s + "\n")
         else:
             f_questions.append(q_item)
         # break
     login("admin", "admin")
-    exam_no = 1543289888
+    exam_no = 1543459550
     no_info = req_max_no(exam_no)
-    post_questions(exam_no, no_info["next_no"], f_questions)
+    post_questions(exam_name, exam_no, no_info["next_no"], f_questions)
+
+    we.close()

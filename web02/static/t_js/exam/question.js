@@ -33,6 +33,7 @@ function load_question(index)
         var pro_msg = (index + 1) + "/" + exists_questions.length;
         $("#questions_num").val(pro_msg);
         $("#questions_num").attr("about", item["question_no"]);
+        $("#answer").val(item["answer"]);
     }
     else{
         $("#questions_num").val("录入第" + (exists_questions.length + 1));
