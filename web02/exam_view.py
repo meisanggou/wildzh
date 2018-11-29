@@ -139,7 +139,7 @@ def delete_exam():
 @required_exam_no
 def entry_questions():
     data = g.request_data
-    exam_type = data["exam_type"]
+    # exam_type = data["exam_type"]
     question_no = data["question_no"]
     question_desc = data["question_desc"]
     select_mode = data["select_mode"]

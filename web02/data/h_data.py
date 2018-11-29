@@ -9,6 +9,7 @@ headers = {"User-Agent": "jyrequests"}
 req.headers = headers
 remote_host = "https://meisanggou.vicp.net"
 
+
 def read_file(file_path):
     with open(file_path, "r") as r:
         c = r.read()
@@ -16,11 +17,13 @@ def read_file(file_path):
         questions_s = []
         current_question = []
         for line in all_lines:
-            # print(line)
             s_line = line.strip()
-            if re.match("\d+", s_line) is not None:
+            if len(s_line) <= 0:
+                continue
+            m_no = re.match("(\d+\.)", s_line)
+            if m_no is not None:
                 questions_s.append(current_question)
-                current_question = [s_line]
+                current_question = [s_line[len(m_no.groups()[0]):]]
             else:
                 current_question.append(s_line)
         questions_s.append(current_question)
@@ -37,18 +40,19 @@ def get_question(question_items):
         desc += qs_item
         i += 1
     options = []
+
     def replace(match_r):
         mgs = match_r.groups()
         return "\n" + mgs[0] + u"、"
+
     for item in question_items[i:]:
         r_item = re.sub(u"(A|B|C|D)、", replace, item.decode("utf-8"))
         options.extend(r_item.split("\n"))
-    # option_s = "\n".join(question_items[i:]).decode("utf-8")
-    # print(option_s)
-    # options = re.findall(u"((A|B|C|D)、[\s\S]*?)[ABCD$\n]", option_s, re.I)
-    assert len(options) != 4
-    # for o in options:
-    #     print(o[0])
+    real_options = map(lambda x: x[2:].strip(), options)
+    real_options = filter(lambda x: len(x) > 0, real_options)
+    if len(real_options) != 4:
+        return None
+    return dict(desc=desc, options=real_options)
 
 
 def login(user_name, password):
@@ -59,16 +63,39 @@ def login(user_name, password):
     print(response.text)
 
 
-def get_questions(exam_no):
+def req_max_no(exam_no):
     url = remote_host + "/exam/questions/no/"
     response = req.get(url, params=dict(exam_no=exam_no))
-    print(response.text)
+    res = response.json()
+    return res["data"]
+
+
+def post_questions(exam_no, start_no, questions_obj):
+    url = remote_host + "/exam/questions/"
+    question_no = start_no
+    for q_item in questions_obj:
+        data = dict(exam_no=exam_no, question_no=question_no, select_mode=0)
+        data["question_desc"] = q_item["desc"]
+        data["options"] = map(lambda x: dict(desc=x, socre=0), q_item["options"])
+        data["options"][0]["score"] = 1
+        data["answer"] = ""
+        resp = req.post(url, json=data)
+        print(resp.text)
+        question_no += 1
 
 
 if __name__ == "__main__":
     questions = read_file("exam_file.txt")
+    f_questions = []
     for item in questions:
         q_item = get_question(item)
+        if q_item is None:
+            pass
+            print(item)
+        else:
+            f_questions.append(q_item)
         # break
-    login("admin", "admin")
-    get_questions("1543289888")
+    # login("admin", "admin")
+    # exam_no = 1543289888
+    # no_info = req_max_no(exam_no)
+    # post_questions(exam_no, no_info["next_no"], f_questions)
