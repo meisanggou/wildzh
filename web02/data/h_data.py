@@ -87,7 +87,7 @@ def post_questions(exam_name, exam_no, start_no, questions_obj):
 
 
 if __name__ == "__main__":
-    file_path = u"2016经济学真题.txt"
+    file_path = u"2009年经济真题.txt"
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     error_path = file_path + ".error"
     questions = read_file(file_path)

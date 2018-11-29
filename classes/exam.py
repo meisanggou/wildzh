@@ -172,12 +172,26 @@ class Exam(object):
                 del item["exam_extend"]
         return items
 
-    def select_questions(self, exam_no):
+    def select_questions(self, exam_no, start_no=None, num=None, desc=False):
         where_value = dict(exam_no=exam_no)
+        where_cond = []
+        where_cond_args = []
+        if start_no is not None:
+            if desc is False:
+                where_cond.append("question_no>=%s")
+            else:
+                where_cond.append("question_no<=%s")
+
+            where_cond_args.append(start_no)
+        limit = num
         cols = ["exam_no", "question_no", "question_desc", "select_mode", "options", "answer"]
-        items = self.db.execute_select(self.t_q, cols=cols, where_value=where_value)
+        items = self.db.execute_select(self.t_q, cols=cols, where_value=where_value, where_cond=where_cond,
+                                       where_cond_args=where_cond_args, limit=limit, order_by=["question_no"],
+                                       order_desc=desc, print_sql=True)
         for item in items:
             item["options"] = json.loads(item["options"])
+        if desc is True:
+            items.reverse()
         return items
 
     def select_max_question(self, exam_no):

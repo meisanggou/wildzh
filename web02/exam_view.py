@@ -157,10 +157,16 @@ def entry_questions():
 @required_exam_no
 def get_exam_questions():
     num = request.args.get("num", None)
+    start_no = int(request.args.get("start_no", -1))
     if num is None:
         items = c_exam.select_questions(g.exam_no)
-    else:
+    elif start_no == -1:
         items = c_exam.select_random_questions(g.exam_no, int(num))
+    else:
+        desc = False
+        if "desc" in request.args and request.args["desc"] == "true":
+            desc = True
+        items = c_exam.select_questions(g.exam_no, start_no=start_no, num=int(num), desc=desc)
     if g.user_no is None:
         for item in items:
             options = item["options"]
