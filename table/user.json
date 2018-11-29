@@ -27,9 +27,9 @@
                 "col_type": "int(11)"
             },
             {
-                "col_comment": "昵称",
+                "col_comment": "昵称base64",
                 "col_name": "nick_name",
-                "col_type": "varchar(20)"
+                "col_type": "varchar(100)"
             },
             {
                 "uni_key": true,

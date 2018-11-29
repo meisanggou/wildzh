@@ -157,13 +157,17 @@ class User(object):
         if kwargs.pop("need_password", None) is not None:
             cols.append("password")
         db_items = self.db.execute_select(self.t, where_value=kwargs, cols=cols, package=True)
+        for u_item in db_items:
+            try:
+                u_item["nick_name"] = base64.b64decode(u_item["nick_name"])
+            except Exception as e:
+                print(e)
         return db_items
 
     def new_user(self, user_name, password=None, nick_name=None, creator=None, role=1):
         items = self.verify_user_exist(user_name=user_name)
         if len(items) > 0:
             return False, u"用户名已存在"
-
         if nick_name is None:
             nick_name = user_name
         self.insert_user(user_name, password, nick_name=nick_name, creator=creator, role=role)
