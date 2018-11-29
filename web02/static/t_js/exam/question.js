@@ -21,6 +21,9 @@ function load_question(index)
             var option_item = $(options[i]);
             option_item.find("input:eq(1)").val(item["options"][i]["desc"]);
             option_item.find("input:eq(2)").val(item["options"][i]["score"]);
+            if(item["options"][i]["score"] > 0){
+                option_item.find("input")[2].checked = true;
+            }
         }
         for(;i<options.length;i++){
             var option_item = $(options[i]);

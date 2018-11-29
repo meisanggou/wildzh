@@ -8,6 +8,7 @@ req = requests.session()
 headers = {"User-Agent": "jyrequests"}
 req.headers = headers
 remote_host = "https://meisanggou.vicp.net"
+remote_host = "http://127.0.0.1:2400"
 
 
 def read_file(file_path):
@@ -71,10 +72,10 @@ def req_max_no(exam_no):
 
 
 def post_questions(exam_no, start_no, questions_obj):
-    url = remote_host + "/exam/questions/"
+    url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
     question_no = start_no
     for q_item in questions_obj:
-        data = dict(exam_no=exam_no, question_no=question_no, select_mode=0)
+        data = dict(question_no=question_no, select_mode=0)
         data["question_desc"] = q_item["desc"]
         data["options"] = map(lambda x: dict(desc=x, socre=0), q_item["options"])
         data["options"][0]["score"] = 1
@@ -95,7 +96,7 @@ if __name__ == "__main__":
         else:
             f_questions.append(q_item)
         # break
-    # login("admin", "admin")
-    # exam_no = 1543289888
-    # no_info = req_max_no(exam_no)
-    # post_questions(exam_no, no_info["next_no"], f_questions)
+    login("admin", "admin")
+    exam_no = 1543289888
+    no_info = req_max_no(exam_no)
+    post_questions(exam_no, no_info["next_no"], f_questions)
