@@ -187,7 +187,7 @@ class Exam(object):
         cols = ["exam_no", "question_no", "question_desc", "select_mode", "options", "answer"]
         items = self.db.execute_select(self.t_q, cols=cols, where_value=where_value, where_cond=where_cond,
                                        where_cond_args=where_cond_args, limit=limit, order_by=["question_no"],
-                                       order_desc=desc, print_sql=True)
+                                       order_desc=desc)
         for item in items:
             item["options"] = json.loads(item["options"])
         if desc is True:
