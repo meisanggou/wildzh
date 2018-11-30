@@ -21,40 +21,20 @@
                 <legend>测试信息</legend>
                 <div class="form-group apiContentLine">
                     <ul>
-{#                        <li>#}
-{#                            <label for="">测试分类：</label>#}
-{#                            <select class="box-side width150" id="exam_type" type="text">#}
-{#                                <option value="xlcp1" about="4">专业测评</option>#}
-{#                                <option value="xlcp2" about="5">兴趣测评</option>#}
-{#                            </select>#}
-{#                        </li>#}
                         <li>
                             <label for="effective_days">测试名称：</label>
-                            <input class="box-side width500" id="exam_name" type="text" placeholder="" msg="请输入测试名称"/>
+                            <input class="box-side width500" v-model="exam_name" type="text"/>
                         </li>
                         <li>
                             <label for="effective_days">测试介绍：</label>
-                            <textarea class="box-side width500" id="exam_desc" type="text" msg="请输入测试介绍">
+                            <textarea class="box-side width500" v-model="exam_desc" type="text">
                             </textarea>
                         </li>
                     </ul>
 
                 </div>
             </fieldset>
-{#            <fieldset>#}
-{#                <legend>结果解释</legend>#}
-{#                <div class="form-group apiContentLine" id="result_explain">#}
-{#                    <ul>#}
-{#                        <li name="li_explain" class="display_none">#}
-{#                            <input class="box-side width100" type="text" placeholder="" readonly/>#}
-{#                            <label> : </label>#}
-{#                            <input class="box-side width300" type="text" placeholder="情况解释"/>#}
-{#                            <input class="box-side width100" type="text" placeholder="结果打分"/>#}
-{#                        </li>#}
-{#                    </ul>#}
-{#                </div>#}
-{#            </fieldset>#}
-            <button class="btn btn-success btn-down api-newBtn" id="btn_new">新建</button>
+            <button class="btn btn-success btn-down api-newBtn" @click="add">新建</button>
         </div>
         <input id="add_url" value="{{ add_url }}" class="display_none">
         <input id="upload_url" value="{{ upload_url }}" class="display_none">
