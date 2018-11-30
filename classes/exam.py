@@ -209,6 +209,9 @@ class Exam(object):
         if num > question_num:
             num = question_num
         q_nos = random.sample(range(1, question_num + 1), num)
+        return self.select_multi_question(exam_no, q_nos)
+
+    def select_multi_question(self, exam_no, q_nos):
         if len(q_nos) <= 0:
             return []
         cols = ["exam_no", "question_no", "question_desc", "select_mode", "options", "answer"]
@@ -224,6 +227,12 @@ class Exam(object):
             d_item["options"] = json.loads(d_item["options"])
             d_items.append(d_item)
         return d_items
+
+    def select_wrong(self, user_no, exam_no):
+        where_value = dict(user_no=user_no, exam_no=exam_no)
+        cols = ["user_no", "exam_no", "question_no", "wrong_time", "wrong_freq"]
+        items = self.db.execute_select(self.t_w, where_value=where_value, cols=cols)
+        return items
 
     def select_result_explain(self, exam_no, result=None):
         cols = ["exam_no"]
@@ -266,6 +275,12 @@ class Exam(object):
     def delete_exam(self, exam_type, exam_no):
         l = self._update_info(exam_no, status=0)
         return l
+
+    def delete_wrong(self, user_no, exam_no, question_no):
+        where_value = dict(user_no=user_no, exam_no=exam_no, question_no=question_no)
+        l = self.db.execute_delete(self.t_w, where_value=where_value)
+        return l
+
 
 if __name__ == "__main__":
     e = Exam("../mysql_app.conf")

@@ -156,13 +156,20 @@ def entry_questions():
 @exam_view.route("/questions/", methods=["GET"])
 @required_exam_no
 def get_exam_questions():
+    nos = request.args.get("nos", None)
     num = request.args.get("num", None)
     start_no = int(request.args.get("start_no", -1))
-    if num is None:
+    if nos is not None:
+        q_nos = filter(lambda x: len(x) > 0, re.split("\D", nos))
+        items = c_exam.select_multi_question(g.exam_no, q_nos)
+    elif num is None:
+        # 获取全部试题
         items = c_exam.select_questions(g.exam_no)
     elif start_no == -1:
+        # 获得随机试题num个
         items = c_exam.select_random_questions(g.exam_no, int(num))
     else:
+        # 获得从start_no 获取试题num个
         desc = False
         if "desc" in request.args and request.args["desc"] == "true":
             desc = True
@@ -246,3 +253,21 @@ def wrong_answer_action():
     question_no = g.request_data["question_no"]
     c_exam.new_exam_wrong(g.user_no, exam_no, question_no)
     return jsonify({"status": True, "data": "success"})
+
+
+@exam_view.route("/wrong/", methods=["GET"])
+@login_required
+@required_exam_no
+def my_wrong_action():
+    items = c_exam.select_wrong(g.user_no, g.exam_no)
+    return jsonify({"status": True, "data": items})
+
+
+@exam_view.route("/wrong/", methods=["DELETE"])
+@login_required
+@required_exam_no
+def remove_my_wrong_action():
+    question_no = g.request_data["question_no"]
+    l = c_exam.delete_wrong(g.user_no, g.exam_no, question_no)
+    d_item = dict(exam_no=g.exam_no, question_no=question_no, l=l)
+    return jsonify({"status": True, "data": d_item})

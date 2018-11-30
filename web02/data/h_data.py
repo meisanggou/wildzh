@@ -87,7 +87,7 @@ def post_questions(exam_name, exam_no, start_no, questions_obj):
 
 
 if __name__ == "__main__":
-    file_path = u"2009年经济真题.txt"
+    file_path = u"2011年经济学真题.txt"
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     error_path = file_path + ".error"
     questions = read_file(file_path)
@@ -101,9 +101,9 @@ if __name__ == "__main__":
         else:
             f_questions.append(q_item)
         # break
-    login("admin", "admin")
-    exam_no = 1543459550
-    no_info = req_max_no(exam_no)
-    post_questions(exam_name, exam_no, no_info["next_no"], f_questions)
+    # login("admin", "admin")
+    # exam_no = 1543459550
+    # no_info = req_max_no(exam_no)
+    # post_questions(exam_name, exam_no, no_info["next_no"], f_questions)
 
     we.close()
