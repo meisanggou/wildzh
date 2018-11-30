@@ -130,6 +130,10 @@ class User(object):
     def insert_user(self, user_name=None, password=None, tel=None, nick_name=None, email=None, wx_id=None, creator=None,
                     role=1):
         add_time = int(time.time())
+        if nick_name is not None:
+            if isinstance(nick_name, unicode):
+                nick_name = nick_name.encode("utf-8")
+            nick_name = base64.b64encode(nick_name)
         kwargs = dict(user_name=user_name, password=password, tel=tel, nick_name=nick_name, email=email, wx_id=wx_id,
                       creator=creator, add_time=add_time, role=role)
         if password is not None:
@@ -148,6 +152,11 @@ class User(object):
         for key in update_value:
             if key not in allow_keys:
                 del update_value[key]
+        if "nick_name" in update_value:
+            nick_name = update_value["nick_name"]
+            if isinstance(nick_name, unicode):
+                nick_name = nick_name.encode("utf-8")
+            update_value["nick_name"] = base64.b64encode(nick_name)
         l = self.db.execute_update(self.t, update_value=update_value, where_value=dict(user_no=user_no))
         return l
 
@@ -242,6 +251,11 @@ class User(object):
         cols = ["user_no", "nick_name", "avatar_url"]
         user_list = set(user_list)
         items = self.db.execute_multi_select(self.t, where_value=dict(user_no=user_list), cols=cols)
+        for u_item in items:
+            try:
+                u_item["nick_name"] = base64.b64decode(u_item["nick_name"])
+            except Exception as e:
+                print(e)
         return items
 
     def my_qc_code(self, user_no):

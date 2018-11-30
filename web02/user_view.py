@@ -134,8 +134,6 @@ def user_info():
 @login_required
 def update_info_action():
     data = g.request_data
-    nick_name = data["nick_name"]
-    data["nick_name"] = base64.b64encode(nick_name.encode("utf-8"))
     c_user.update_info(g.user_no, **data)
     items = c_user.verify_user_exist(user_no=g.user_no)
     if len(items) <= 0:
