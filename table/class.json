@@ -1,0 +1,126 @@
+[
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "auto_increment": true,
+                "col_comment": "班级编号",
+                "col_name": "class_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "班级名称",
+                "col_name": "class_name",
+                "col_type": "varchar(22)"
+            },
+            {
+                "col_comment": "班级描述",
+                "col_name": "class_desc",
+                "col_type": "varchar(255)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "创建者",
+                "col_name": "user_no",
+                "col_type": "int(11)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "班级人数",
+                "col_name": "num",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "班级最多人数",
+                "col_name": "quota",
+                "col_type": "int(11)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "添加时间",
+                "col_name": "add_time",
+                "col_type": "int(11)",
+                "allow_null": true
+            }
+        ],
+        "table_comment": "班级信息",
+        "table_name": "class_info"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "班级编号",
+                "col_name": "class_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "mul_key": true,
+                "col_comment": "账户编号",
+                "col_name": "user_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "用户备注信息",
+                "col_name": "user_remark",
+                "col_type": "varchar(50)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "角色值 0创建者 1管理员 2-9保留 10成员 11-19保留 20申请者 21申请者（曾被拒绝） 22申请者（曾被踢出） 23申请者（曾自己退出） 23-29保留 30拒绝加入 31被踢出 32自己退出",
+                "col_name": "role",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "添加时间",
+                "col_name": "add_time",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "更新时间",
+                "col_name": "update_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "班级成员信息",
+        "table_name": "class_member"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "班级编号",
+                "col_name": "class_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "资源类型",
+                "col_name": "resource_type",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "资源ID",
+                "col_name": "resource_id",
+                "col_type": "varchar(50)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "添加者",
+                "col_name": "user_no",
+                "col_type": "int(11)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "添加时间",
+                "col_name": "add_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "班级资源信息",
+        "table_name": "class_resource"
+    }
+]
