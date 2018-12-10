@@ -32,6 +32,7 @@ function init_info(data) {
             e_vm.all_exams.push(e_item);
         }
     }
+
 }
 
 $(function () {

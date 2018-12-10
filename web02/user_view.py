@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 import base64
-from flask import g, jsonify, session, request, redirect, make_response, send_file, send_from_directory
+from flask import g, jsonify, session, request, redirect, make_response, send_file, send_from_directory, views
 from flask_login import UserMixin, login_user, current_user, logout_user, login_required
 from flask_helper import RenderTemplate
 from zh_config import db_conf_path, web_pro, min_program_conf, upload_folder
@@ -16,8 +16,8 @@ rt = RenderTemplate("user")
 c_user = User(db_conf_path=db_conf_path, upload_folder=upload_folder)
 mp = MiniProgram(conf_path=min_program_conf, section=web_pro)
 user_view = create_blue("user", url_prefix=url_prefix, auth_required=False,
-                        menu_list=[{"index": -2, "url": "/password/", "title": u"密码修改"},
-                                   {"index": -1, "url": "/login/", "title": u"退出"}])
+                        menu_list=[{"index": -2, "url": "/password/", "title": u"个人中心", "icon_class": "icon-personal2"},
+                                   {"index": -1, "url": "/login/", "title": u"退出", "icon_class": "icon-exit"}])
 
 
 class FlaskUser(UserMixin):
@@ -39,11 +39,11 @@ def load_user(user_id):
     return user
 
 
-@user_view.route("/login/", methods=["GET"])
+@user_view.route("/login/", methods=["GET", "POST", "DELETE", "PUT"])
 def login_page():
     if current_user.is_authenticated is True:
         logout_user()
-    login_url = url_prefix + "/login/"
+    login_url = url_prefix + "/login/password/"
     if "next" in request.args:
         next_url = request.args["next"]
     else:
@@ -52,13 +52,13 @@ def login_page():
         return make_response("登录状态已过期，需要重新登录", 302)
     elif "rf" in request.args and request.args["rf"] == "async":
         return make_response("登录状态已过期，需要重新登录", 302)
-    return rt.render("login.html", login_url=login_url, next_url=next_url)
+    return rt.render("login_a.html", login_url=login_url, next_url=next_url)
 
 
 login_manager.login_view = "user.login_page"
 
 
-@user_view.route("/login/", methods=["POST"])
+@user_view.route("/login/password/", methods=["POST"])
 def login_action():
     rd = g.request_data
     user_name = rd["user_name"]
@@ -78,6 +78,7 @@ def login_action():
     if len(next_url) == 0:
         next_url = "/"
     data = dict(location=next_url, user_name=item["user_name"])
+    print(data)
     return jsonify({"status": True, "data": data})
 
 

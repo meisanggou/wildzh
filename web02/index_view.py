@@ -6,8 +6,9 @@ from web02 import create_blue
 
 __author__ = 'meisa'
 
+menu_list = {"title": u"首页", "icon_class": "icon-home", "menu_id": "home", "index": 0}
 rt = RenderTemplate()
-index_view = create_blue("index", url_prefix="/")
+index_view = create_blue("index", url_prefix="/", menu_list=menu_list)
 
 
 @index_view.route("/", methods=["GET"])

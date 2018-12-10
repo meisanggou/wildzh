@@ -1,4 +1,4 @@
-{% extends "base_menu.html" %}
+{% extends "base_a.html" %}
 
 {% block title %}测试管理{% endblock %}
 
@@ -7,15 +7,16 @@
 {% endblock %}
 
 {% block js_content %}
+    {{ 'plugins/bootstrap-editable/js/bootstrap-editable.min.js' | make_static_html | safe }}
     {{ 't_js/exam/overview.js' | make_static_html | safe }}
 {% endblock %}
 
 {% block center_content %}
     <div id="div_content">
-        <ul id="ul_menu" class="nav nav-tabs comTab">
-            <li class="active"><a href="#div_overview" >所有测试</a></li>
-            <li class=""><a href="{{ page_exam }}">录入测试</a></li>
-        </ul>
+{#        <ul id="ul_menu" class="nav nav-tabs comTab">#}
+{#            <li class="active"><a href="#div_overview" >所有测试</a></li>#}
+{#            <li class=""><a href="{{ page_exam }}">录入测试</a></li>#}
+{#        </ul>#}
         <div class="tab-content" style="padding-top: 20px;">
             <div class="tab-pane fade in active" id="div_overview">
                 <div>
@@ -33,7 +34,7 @@
                             </tr>
                             <tr v-for="(item, index) in all_exams">
 {#                                <td>{{cn_exam_type[item["exam_type"]]}}</td>#}
-                                <td>{{item.exam_name}}</td>
+                                <td><a href="#" name="exam_name" data-type="text" data-pk="1" data-title="Enter username" class="editable editable-click" data-original-title="">{{item.exam_name}}</a></td>
                                 <td>{{item.add_time}}</td>
                                 <td>{{item.cn_status}}</td>
                                 <td>

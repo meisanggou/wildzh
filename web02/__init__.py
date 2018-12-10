@@ -79,9 +79,11 @@ portal_menu_list = []
 
 
 def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=False, menu_list=None):
-    if url_prefix == "/":
-        url_prefix = None
-    add_blue = Blueprint(blue_name, __name__, url_prefix=url_prefix)
+    if url_prefix == "/" or url_prefix is None:
+        add_blue = Blueprint(blue_name, __name__)
+        url_prefix = ""
+    else:
+        add_blue = Blueprint(blue_name, __name__, url_prefix=url_prefix)
     if auth_required:
         @add_blue.before_request
         @login_required
@@ -99,7 +101,7 @@ def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=
         if isinstance(menu_list, (list, tuple)) is True:
             for item in menu_list:
                 if "index" not in item:
-                    item["index"] = len(portal_menu_list)
+                    item["index"] = len(portal_menu_list) + 10
                 if "url" not in item:
                     item["url"] = url_prefix + "/"
                 else:
@@ -107,7 +109,7 @@ def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=
                 portal_menu_list.append(item)
         elif isinstance(menu_list, dict) is True:
             if "index" not in menu_list:
-                menu_list["index"] = len(portal_menu_list)
+                menu_list["index"] = len(portal_menu_list) + 10
             if "url" not in menu_list:
                 menu_list["url"] = url_prefix + "/"
             portal_menu_list.append(menu_list)

@@ -15,8 +15,14 @@ __author__ = 'meisa'
 
 url_prefix = "/exam"
 
-rt = RenderTemplate("exam")
-exam_view = create_blue("exam", url_prefix=url_prefix, auth_required=False, menu_list={"title": u"测试管理"})
+rt = RenderTemplate("exam", menu_active="exam")
+menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam", "sub_menu": [
+    {"title": u"试题库管理", "url": url_prefix + "/"},
+    {"title": u"添加试题库", "url": url_prefix + "/?action=exam"},
+    {"title": u"试题管理", "url": url_prefix + "/question/"}
+]}
+
+exam_view = create_blue("exam", url_prefix=url_prefix, auth_required=False, menu_list=menu_list)
 c_exam = Exam(db_conf_path)
 
 
@@ -64,11 +70,19 @@ def index():
         if "exam_no" in request.args:
             return rt.render("update_info.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
                              upload_url=upload_url, explain_url=explain_url)
-        return rt.render("entry_info.html", page_list=page_list, add_url=add_url, upload_url=upload_url)
+        return rt.render("entry_info.html", add_url=add_url, upload_url=upload_url, page_title=u"新建题库")
     if "exam_no" in request.args:
         return rt.render("entry_questions.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
                          questions_url=questions_url)
-    return rt.render("overview.html", page_exam=page_exam, info_url=info_url, online_url=online_url)
+    return rt.render("overview.html", info_url=info_url, online_url=online_url, page_title=u"试题库")
+
+
+@exam_view.route("/question/", methods=["GET"])
+@login_required
+def question_page():
+    info_url = url_prefix + "/info/"
+    questions_url = url_prefix + "/questions/"
+    return rt.render("entry_questions.html", info_url=info_url, questions_url=questions_url, page_title=u"试题管理")
 
 
 @exam_view.route("/", methods=["POST"])
@@ -78,12 +92,6 @@ def new_exam():
     r, exam_no = c_exam.new_exam(data["exam_name"], data["exam_type"], data["exam_desc"], 0, g.user_no)
     if r is False:
         return jsonify({"status": False, "data": "请重试"})
-    # cases = dict()
-    # for i in range(len(data["result_explain"])):
-    #     cases["case_%s" % string.letters[i]] = data["result_explain"][i]
-    # l = c_exam.new_exam_result_explain(exam_no, **cases)
-    # if l <= 0:
-    #     return jsonify({"status": False, "data": "请重试"})
     data["exam_no"] = exam_no
     return jsonify({"status": True, "data": data})
 
@@ -134,8 +142,8 @@ def delete_exam():
     return jsonify({"status": True, "data": "删除成功"})
 
 
-@login_required
 @exam_view.route("/questions/", methods=["POST", "PUT"])
+@login_required
 @required_exam_no
 def entry_questions():
     data = g.request_data
@@ -154,6 +162,7 @@ def entry_questions():
 
 
 @exam_view.route("/questions/", methods=["GET"])
+@login_required
 @required_exam_no
 def get_exam_questions():
     nos = request.args.get("nos", None)

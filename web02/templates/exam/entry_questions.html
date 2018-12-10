@@ -1,4 +1,4 @@
-{% extends "base_menu.html" %}
+{% extends "base_a.html" %}
 
 {% block title %}测试管理{% endblock %}
 
@@ -12,11 +12,6 @@
 
 {% block center_content %}
     <div id="div_content">
-        <ul id="ul_menu" class="nav nav-tabs comTab">
-            <li class=""><a href="{{ page_list }}" data-toggle="tab">所有测试</a></li>
-            <li class=""><a href="{{ page_exam }}" data-toggle="tab">录入测试</a></li>
-            <li class="active"><a href="javascript:void(0)" data-toggle="tab">录入试题</a></li>
-        </ul>
         <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
             <fieldset>
                 <legend>题目信息</legend>

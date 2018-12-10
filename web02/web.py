@@ -17,7 +17,7 @@ for view_file in view_files:
         __import__("web02.%s" % view_file[:-3])
 
 app.register_blues()
-l_menu = len(portal_menu_list)
+l_menu = len(portal_menu_list) + 10
 for item in portal_menu_list:
     if item["index"] < 0:
         item["index"] += l_menu * 2
