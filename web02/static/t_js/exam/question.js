@@ -4,16 +4,36 @@
 
 var q_vm = null;
 
+function popup_waring(head, text){
+    $.toast().reset('all');
+    $("body").removeAttr('class');
+    $.toast({
+        heading: head,
+        text: text,
+        position: 'top-right',
+        loaderBg:'#FFBD4A',
+        icon: 'error',
+        hideAfter: 5500
+    });
+}
 function entry_success(r_d){
-    var data= r_d.data;
     var action = r_d.action;
+    var msg = "更新成功";
     if(action == "POST") {
-        popup_show("录入成功，可继续录入");
+        msg = "录入成功，可继续录入";
         init_info(null);
     }
-    else{
-        popup_show("更新成功");
-    }
+    $.toast().reset('all');
+    $("body").removeAttr('class');
+    $.toast({
+        heading: '操作成功',
+        text: msg,
+        position: 'top-right',
+        loaderBg:'#FFBD4A',
+        icon: 'success',
+        hideAfter: 3500,
+        stack: 6
+      });
 }
 
 function add_question()
@@ -25,17 +45,7 @@ function add_question()
     var msg = "";
     var question_desc = q_vm.question_desc;
     if(question_desc.length <= 0){
-        $.toast().reset('all');
-        $("body").removeAttr('class');
-        $.toast({
-           heading: '数据格式有误',
-            text: '请输入 题目描述',
-            position: 'top-right',
-            loaderBg:'#FFBD4A',
-            icon: 'warning',
-            hideAfter: 3500,
-            stack: 6
-        });
+        popup_waring("数据格式有误", "请输入 题目描述");
         return 1;
     }
     msg += "题目描述：";
@@ -67,18 +77,18 @@ function add_question()
     for(;i<options.length;i++){
         t = options[i];
         if(t.length != 0){
-            popup_show("请录入【" + c +"】选项");
+            popup_waring("缺少选项", "请录入【" + c +"】选项");
             return 2;
         }
     }
     if(r_data["options"].length < 2){
-        popup_show("请至少录入两个选项！");
+        popup_waring("缺少选项", "请至少录入两个选项！");
         return 2;
     }
     var answer_desc = q_vm.answer;
     r_data["answer"] = answer_desc;
     if(answer == ""){
-        popup_show("请选择一个选项作为答案！");
+        popup_waring("信息不完整", "请选择一个选项作为答案！");
         return 3;
     }
     msg += "答案：" + answer;
@@ -179,9 +189,25 @@ $(function() {
             action_pre: function(){
                 var c_qno = this.current_question_no;
                 if(c_qno <= 1){
-                    return false;
+                    this.current_question_no = 1;
+                    c_qno = 1;
                 }
                 var data = {"exam_no": this.current_exam.exam_no, "start_no": c_qno - 1, "num": 1, "desc": "true"};
+                my_async_request2(questions_url, "GET", data, receive_questions);
+            },
+            change_question: function(){
+                var question_no = this.current_question_no;
+                if(question_no > this.current_exam.question_num + 1){
+                    popup_waring("题号错误", "请确保输入题号的小于当前试题库的题目数");
+                    this.action_next();
+                    return false;
+                }
+                else if(question_no <= 0){
+                     popup_waring("题号错误", "请确保输入题号大于0");
+                    this.action_pre();
+                    return false;
+                }
+                var data = {"exam_no": this.current_exam.exam_no, "start_no": question_no, "num": 1};
                 my_async_request2(questions_url, "GET", data, receive_questions);
             },
             action_next: function(){

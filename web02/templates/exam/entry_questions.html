@@ -26,7 +26,7 @@
                         </li>
                         <li>
                             <label for="effective_days">当前题号：</label>
-                            <input class="box-side width100" type="text" v-model.number="current_question_no" />
+                            <input class="box-side width100" type="text" v-model.number="current_question_no" @change="change_question"/>
                             <label>已录入</label>
                             <input class="width100" readonly disabled about="" :value="current_exam.question_num">
                             <label>题</label>
@@ -35,12 +35,6 @@
                             <label class="api-describe" for="">题目描述：</label>
                             <textarea class="box-side" rows="3" required="" v-model.trim="question_desc"></textarea>
                         </li>
-                    </ul>
-                </div>
-            </fieldset>
-            <fieldset>
-                <div class="form-group apiContentLine" id="options">
-                    <ul>
                         <li name="li_option">
                             <label>A、</label>
                             <input class="box-side width500" type="text" v-model.trim="option_a"/>
@@ -73,8 +67,8 @@
                 </div>
             </fieldset>
             <a class="status_move" v-if="current_question_no>1" @click="action_pre">上一题</a>
-            <button class="btn btn-success btn-down " v-if="action == 'new'" @click="new_question">新建</button>
-            <button class="btn btn-success btn-down " v-else @click="update_question">更新</button>
+            <button class="btn btn-success btn-down" v-if="action == 'new'" @click="new_question">新建</button>
+            <button class="btn btn-success btn-down" v-else @click="update_question">更新</button>
             <a class="status_move" v-if="current_question_no<=current_exam.question_num" @click="action_next">下一题</a>
             <input id="info_url" value="{{ info_url }}" class="display_none">
             <input id="questions_url" value="{{ questions_url }}" class="display_none">
