@@ -250,21 +250,18 @@
     </div>
 
     <!--Start  Footer -->
-    <footer class="footer-main">Copyright &copy; 2018.Company name All rights reserved.<a target="_blank"
-                                                                                          href="http://www.17sucai.com/">
-        &#x7F51;&#x9875;&#x6A21;&#x677F;</a></footer>
+    <footer class="footer-main">Copyright &copy; 2018.MSG All rights reserved.</footer>
     <!--End footer -->
 
 </div>
 <!--End main content -->
-
+{{ 'js/jquery.min.js' | make_static_html | safe }}
 {{ 't_js/vue.js' | make_static_html2 | safe }}
 {{ 't_js/handler_data.js' | make_static_html2 | safe }}
 {{ 't_js/copy.js' | make_static_html2 | safe }}
 {{ 't_js/my_requests.js' | make_static_html2 | safe }}
 {{ 't_js/datetime_tools.js' | make_static_html2 | safe }}
 {{ 't_js/url_tool.js' | make_static_html2 | safe }}
-{{ 'js/jquery.min.js' | make_static_html | safe }}
 {{ 'js/bootstrap.min.js' | make_static_html | safe }}
 {{ 'plugins/moment/moment.js' | make_static_html | safe }}
 {{ 'js/jquery.slimscroll.js' | make_static_html | safe }}

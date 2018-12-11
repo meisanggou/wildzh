@@ -2,108 +2,16 @@
  * Created by meisa on 2018/5/6.
  */
 
-var exists_questions = [];
-var next_question_no = 1;
-var current_question_index = 0;
-
-function load_question(index)
-{
-    if(index < 0){
-        return 1;
-    }
-    if(index < exists_questions.length){
-        var item = exists_questions[index];
-        $("#question_desc").val(item["question_desc"]);
-        $("#select_mode").val(item["select_mode"]);
-        var options = $("#options li[name='li_option']");
-        var i = 0;
-        for(i=0;i<options.length&&i<item["options"].length;i++){
-            var option_item = $(options[i]);
-            option_item.find("input:eq(1)").val(item["options"][i]["desc"]);
-            option_item.find("input:eq(2)").val(item["options"][i]["score"]);
-            if(item["options"][i]["score"] > 0){
-                option_item.find("input")[2].checked = true;
-            }
-        }
-        for(;i<options.length;i++){
-            var option_item = $(options[i]);
-            option_item.find("input:eq(1)").val("");
-            option_item.find("input:eq(2)").val("");
-        }
-        var pro_msg = (index + 1) + "/" + exists_questions.length;
-        $("#questions_num").val(pro_msg);
-        $("#questions_num").attr("about", item["question_no"]);
-        $("#answer").val(item["answer"]);
-    }
-    else{
-        $("#questions_num").val("录入第" + (exists_questions.length + 1));
-        $("#question_desc").val("");
-        $("#options li[name='li_option']").find("input:eq(1)").val("");
-        $("#options li[name='li_option']").find("input:eq(2)").val("");
-        $("#options li[name='li_option']").find("input")[2].checked = false;
-        $("#questions_num").attr("about", next_question_no);
-        $("#answer").val("");
-    }
-    return 0;
-}
-
-function execute_action(action)
-{
-    if(action == "pre"){
-        if(current_question_index <= 0){
-            return 1
-        }
-        current_question_index -= 1;
-    }
-    else if(action == "next"){
-        if(current_question_index >= exists_questions.length){
-            return 2
-        }
-        current_question_index += 1;
-    }
-    else if(action == "current"){
-        if(current_question_index > exists_questions.length || current_question_index < 0){
-            return 3
-        }
-    }
-    else{
-        return 4;
-    }
-    $("#link_pre").hide();
-    $("#btn_update").hide();
-    $("#btn_new_question").hide();
-    $("#link_next").hide();
-    if(current_question_index > 0){
-        $("#link_pre").show();
-    }
-    if(current_question_index == exists_questions.length){
-        $("#btn_new_question").show();
-    }
-    if(current_question_index < exists_questions.length){
-        $("#link_next").show();
-        $("#btn_update").show();
-    }
-    load_question(current_question_index);
-}
+var q_vm = null;
 
 function entry_success(r_d){
     var data= r_d.data;
     var action = r_d.action;
     if(action == "POST") {
-        exists_questions[exists_questions.length] = data;
-        if(next_question_no <= data.question_no){
-            next_question_no = data.question_no + 1;
-        }
         popup_show("录入成功，可继续录入");
-        current_question_index = exists_questions.length;
-        load_question(current_question_index);
+        init_info(null);
     }
     else{
-        for(var i=0; i<exists_questions.length;i++){
-            if(exists_questions[i].question_no == data.question_no){
-                exists_questions[i] = data;
-            }
-        }
         popup_show("更新成功");
     }
 }
@@ -113,34 +21,40 @@ function add_question()
     var btn = $(this);
     var btn_text = btn.text();
     var r_data = new Object();
-    var exam_type = $("#s_exam_type").val();
-    r_data["exam_type"] = exam_type;
-    r_data["question_no"] = parseInt($("#questions_num").attr("about"));
+    r_data["question_no"] = parseInt(q_vm.current_question_no);
     var msg = "";
-    var question_desc = $("#question_desc").val().trim();
+    var question_desc = q_vm.question_desc;
     if(question_desc.length <= 0){
-        popup_show("请录入题目描述");
+        $.toast().reset('all');
+        $("body").removeAttr('class');
+        $.toast({
+           heading: '数据格式有误',
+            text: '请输入 题目描述',
+            position: 'top-right',
+            loaderBg:'#FFBD4A',
+            icon: 'warning',
+            hideAfter: 3500,
+            stack: 6
+        });
         return 1;
     }
     msg += "题目描述：";
     msg += question_desc + "\n";
-    var select_mode = $("#select_mode").val();
     r_data["question_desc"] = question_desc;
-    r_data["select_mode"] = select_mode;
     r_data["options"] = new Array();
-    var options = $("#options li[name='li_option']");
+    var chars_o = ["A", "B", "C", "D"];
+    var options = [q_vm.option_a, q_vm.option_b, q_vm.option_c, q_vm.option_d];
+    var selected_option = q_vm.selected_option;
     var i = 0;
     var c = "";
     var t= "";
     var answer = "";
     msg += "选项：\n";
     for(;i<options.length;i++){
-        var option_item = $(options[i]);
-        c = option_item.find("input:eq(0)").val();
-        t = option_item.find("input:eq(1)").val().trim();
-        var is_answer = option_item.find("input")[2].checked;
+        c = chars_o[i];
+        t = options[i];
         var score = 0;
-        if(is_answer == true){
+        if(selected_option == i){
             score = 1;
             answer = c;
         }
@@ -151,8 +65,7 @@ function add_question()
         msg += c + ":" + t + "\n";
     }
     for(;i<options.length;i++){
-        var option_item = $(options[i]);
-        t = option_item.find("input:eq(1)").val().trim();
+        t = options[i];
         if(t.length != 0){
             popup_show("请录入【" + c +"】选项");
             return 2;
@@ -162,7 +75,7 @@ function add_question()
         popup_show("请至少录入两个选项！");
         return 2;
     }
-    var answer_desc = $("#answer").val();
+    var answer_desc = q_vm.answer;
     r_data["answer"] = answer_desc;
     if(answer == ""){
         popup_show("请选择一个选项作为答案！");
@@ -182,8 +95,8 @@ function add_question()
         },
         function(isConfirm){
             if (isConfirm){
-                var questions_url = $("#questions_url").val();
-                if(next_question_no == r_data["question_no"]) {
+                var questions_url = $("#questions_url").val() + "?exam_no=" + q_vm.current_exam.exam_no;
+                if(q_vm.action == "new") {
                     my_async_request2(questions_url, "POST", r_data, entry_success);
                 }
                 else{
@@ -201,42 +114,97 @@ function init_info(data){
         return 0;
     }
     if(data.length > 0) {
-        var exam_item = data[0];
-        $("#s_exam_name").val(exam_item["exam_name"]);
-        $("#s_exam_type").val(exam_item["exam_type"]);
+        q_vm.all_exams = [];
+        for(var index in data){
+            q_vm.all_exams.push(data[index]);
+            if(data[index].exam_no == q_vm.current_exam.exam_no){
+                q_vm.current_exam_index = index;
+                q_vm.select_exam();
+            }
+        }
     }
 }
 
 function receive_questions(data){
-    if(data == null){
-        var questions_url = $("#questions_url").val();
-        my_async_request2(questions_url, "GET", null, receive_questions);
-        return 0;
+    var current_question = data[0];
+    q_vm.current_question_no = current_question.question_no;
+    q_vm.question_desc = current_question.question_desc;
+    q_vm.answer = current_question.answer;
+    q_vm.action = "update";
+    q_vm.option_a = current_question.options[0]["desc"];
+    q_vm.option_b = current_question.options[1]["desc"];
+    if(current_question.options.length >= 4){
+        q_vm.option_c = current_question.options[2]["desc"];
+        q_vm.option_d = current_question.options[3]["desc"];
     }
-    exists_questions = data;
-    for(var i=0;i<exists_questions.length;i++){
-        if(next_question_no <= exists_questions[i].question_no){
-            next_question_no = exists_questions[i].question_no + 1;
-            console.info(next_question_no);
+    else if(current_question.options.length >= 3){
+        q_vm.option_c = current_question.options[2]["desc"];
+    }
+    for(var index in current_question.options){
+        if(parseInt(current_question.options[index]["score"]) > 0){
+            q_vm.selected_option = index;
+            break;
         }
     }
-    $("#questions_num").val(exists_questions.length);
-    $("#btn_new_question").removeAttr("disabled");
-    current_question_index = exists_questions.length;
-    execute_action("current");
 }
 
 $(function() {
-    if(UrlArgsValue(location.href, "exam_no") != null) {
-        $("#btn_new_question").click(add_question);
-        $("#btn_update").click(add_question);
-        init_info(null);
-        receive_questions(null);
-        $("#link_pre").click(function(){
-           execute_action("pre");
-        });
-        $("#link_next").click(function(){
-           execute_action("next");
-        });
+    var exam_no = UrlArgsValue(location.href, "exam_no");
+    if(exam_no != null) {
+        exam_no = parseInt(exam_no);
     }
+    var questions_url = $("#questions_url").val();
+    q_vm = new Vue({
+        el: "#myTabContent",
+        data:{
+            all_exams: [],
+            current_exam_index: -1,
+            current_exam: {question_num: 0, exam_no: exam_no},
+            action: "new",
+            current_question_no: 0,
+            question_desc: "",
+            answer: "",
+            option_a: "",
+            option_b: "",
+            option_c: "",
+            option_d: "",
+            selected_option: -1
+        },
+        methods: {
+            select_exam: function(){
+                this.current_exam =this.all_exams[this.current_exam_index];
+                this.current_question_no = this.current_exam.question_num;
+                this.action_next();
+            },
+            action_pre: function(){
+                var c_qno = this.current_question_no;
+                if(c_qno <= 1){
+                    return false;
+                }
+                var data = {"exam_no": this.current_exam.exam_no, "start_no": c_qno - 1, "num": 1, "desc": "true"};
+                my_async_request2(questions_url, "GET", data, receive_questions);
+            },
+            action_next: function(){
+                var c_qno = this.current_question_no;
+                if(c_qno >= this.current_exam.question_num){
+                    this.current_question_no = this.current_exam.question_num + 1;
+                    this.question_desc = "";
+                    this.answer = "";
+                    this.action = "new";
+                    this.option_a = this.option_b = this.option_c = this.option_d = "";
+                    this.selected_option = -1;
+                    return true;
+                }
+                var data = {"exam_no": this.current_exam.exam_no, "start_no": c_qno + 1, "num": 1};
+                my_async_request2(questions_url, "GET", data, receive_questions);
+            },
+            update_question: function(){
+                add_question();
+            },
+            new_question: function(){
+                add_question();
+            }
+        }
+    });
+    init_info(null);
 });

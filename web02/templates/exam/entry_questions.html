@@ -1,12 +1,14 @@
 {% extends "base_a.html" %}
 
 {% block title %}测试管理{% endblock %}
-
+{##}
 {% block css_content %}
-    {{ 't_css/tabControls.css' | make_static_html | safe }}
+{#    <link href="assets/plugins/jquery-toast/jquery.toast.min.css" rel="stylesheet" type="text/css">#}
+    {{ 'plugins/jquery-toast/jquery.toast.min.css' | make_static_html | safe }}
 {% endblock %}
 
 {% block js_content %}
+    {{ 'plugins/jquery-toast/jquery.toast.min.js' | make_static_html | safe }}
     {{ 't_js/exam/question.js' | make_static_html | safe }}
 {% endblock %}
 
@@ -14,83 +16,66 @@
     <div id="div_content">
         <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
             <fieldset>
-                <legend>题目信息</legend>
                 <div class="form-group apiContentLine">
                     <ul>
-                        <li class="display_none">
-                            <label for="">测试分类：</label>
-                            <select class="box-side width150" id="s_exam_type" type="text" disabled>
-                                <option value="xlcp1" about="4">专业测评</option>
-                                <option value="xlcp2" about="5">兴趣测评</option>
-                                <option value="tiku" about="5">题库</option>
+                        <li>
+                            <label for="">测试名称：</label>
+                            <select class="box-side width150" type="text" @change="select_exam" v-model="current_exam_index">
+                                <option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>
                             </select>
                         </li>
                         <li>
-                            <label for="effective_days">测试名称：</label>
-                            <input class="box-side width300" id="s_exam_name" type="text" readonly/>
-                            <label>当前</label>
-                            <input id="questions_num" class="width100" readonly disabled about="">
+                            <label for="effective_days">当前题号：</label>
+                            <input class="box-side width100" type="text" v-model.number="current_question_no" />
+                            <label>已录入</label>
+                            <input class="width100" readonly disabled about="" :value="current_exam.question_num">
                             <label>题</label>
                         </li>
                         <li>
                             <label class="api-describe" for="">题目描述：</label>
-                            <textarea class="box-side" rows="3" id="question_desc"
-                                      required=""></textarea>
-                        </li>
-                        <li class="display_none">
-                            <label for="">选择模式：</label>
-                            <select class="box-side width150" id="select_mode" type="text">
-                                <option value="1" selected>单选</option>
-                                <option value="2">复选</option>
-                            </select>
+                            <textarea class="box-side" rows="3" required="" v-model.trim="question_desc"></textarea>
                         </li>
                     </ul>
                 </div>
             </fieldset>
             <fieldset>
-                <legend>选项及答案</legend>
                 <div class="form-group apiContentLine" id="options">
                     <ul>
                         <li name="li_option">
-                            <input class="box-side width100" type="text" placeholder="" value="A" readonly/>
-                            <label> : </label>
-                            <input class="box-side width500" type="text" value=""/>
+                            <label>A、</label>
+                            <input class="box-side width500" type="text" v-model.trim="option_a"/>
                             <label>答案</label>
-                            <input class="box-side" type="radio" name="answer"/>
+                            <input class="box-side" type="radio" name="answer" v-model="selected_option" :value="0" />
                         </li>
                         <li name="li_option">
-                            <input class="box-side width100" type="text" placeholder="" value="B" readonly/>
-                            <label> : </label>
-                            <input class="box-side width500" type="text" value=""/>
+                            <label>B、</label>
+                            <input class="box-side width500" type="text" v-model.trim="option_b"/>
                             <label>答案</label>
-                            <input class="box-side" type="radio" name="answer"/>
+                            <input class="box-side" type="radio" name="answer" v-model="selected_option" :value="1" />
                         </li>
                         <li name="li_option">
-                            <input class="box-side width100" type="text" placeholder="" value="C" readonly/>
-                            <label> : </label>
-                            <input class="box-side width500" type="text" value=""/>
+                            <label>C、 </label>
+                            <input class="box-side width500" type="text" v-model.trim="option_c"/>
                             <label>答案</label>
-                            <input class="box-side" type="radio" name="answer"/>
+                            <input class="box-side" type="radio" name="answer" v-model="selected_option" :value="2" />
                         </li>
                         <li name="li_option">
-                            <input class="box-side width100" type="text" placeholder="" value="D" readonly/>
-                            <label> : </label>
-                            <input class="box-side width500" type="text" value=""/>
+                            <label> D、</label>
+                            <input class="box-side width500" type="text" v-model.trim="option_d"/>
                             <label>答案</label>
-                            <input class="box-side" type="radio" name="answer"/>
+                            <input class="box-side" type="radio" name="answer" v-model="selected_option" :value="3" />
                         </li>
                         <li>
                             <label class="api-describe" for="">答案解析：</label>
-                            <textarea class="box-side" rows="3" id="answer"
-                                      required=""></textarea>
+                            <textarea class="box-side" rows="3" required="" v-model="answer"></textarea>
                         </li>
                     </ul>
                 </div>
             </fieldset>
-            <a class="status_move display_none" id="link_pre">上一题</a>
-            <button class="btn btn-success btn-down display_none" id="btn_update">更新</button>
-            <button class="btn btn-success btn-down " id="btn_new_question" disabled>新建</button>
-            <a class="status_move display_none" id="link_next">下一题</a>
+            <a class="status_move" v-if="current_question_no>1" @click="action_pre">上一题</a>
+            <button class="btn btn-success btn-down " v-if="action == 'new'" @click="new_question">新建</button>
+            <button class="btn btn-success btn-down " v-else @click="update_question">更新</button>
+            <a class="status_move" v-if="current_question_no<=current_exam.question_num" @click="action_next">下一题</a>
             <input id="info_url" value="{{ info_url }}" class="display_none">
             <input id="questions_url" value="{{ questions_url }}" class="display_none">
         </div>

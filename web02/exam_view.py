@@ -150,7 +150,7 @@ def entry_questions():
     # exam_type = data["exam_type"]
     question_no = data["question_no"]
     question_desc = data["question_desc"]
-    select_mode = data["select_mode"]
+    select_mode = 1  # data["select_mode"]
     options = data["options"]
     answer = data["answer"]
     if request.method == "POST":
