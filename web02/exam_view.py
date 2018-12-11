@@ -73,7 +73,7 @@ def index():
         return rt.render("entry_info.html", add_url=add_url, upload_url=upload_url, page_title=u"新建题库")
     if "exam_no" in request.args:
         return rt.render("entry_questions.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
-                         questions_url=questions_url)
+                         questions_url=questions_url, page_title=u"试题管理")
     return rt.render("overview.html", info_url=info_url, online_url=online_url, page_title=u"试题库")
 
 
