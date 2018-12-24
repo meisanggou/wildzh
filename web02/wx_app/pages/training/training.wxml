@@ -1,0 +1,40 @@
+<view wx:if="{{examNo == null}}">
+  <picker bindchange="choseExam" class='picker' value="{{index}}" range="{{allExams}}" range-key="exam_name">
+    <view class='pickerContent'>选择试题库</view>
+  </picker>
+</view>
+<view wx:else class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
+  <view class='top'>
+    <view>{{ examName }}</view>
+  </view>
+
+  <view class='middle'>
+    <view bindtap='before1' class='switch'>‹</view>
+    <view bindtap='before10' class='switch'>‹‹</view>
+    <view>{{nowQuestion.question_no}}/{{questionNum}}</view>
+    <view bindtap='after10' class='switch'>››</view>
+    <view bindtap='after1' class='switch'>›</view>
+  </view>
+
+  <view class='content'>
+    <view>{{nowQuestion.question_no}}.{{nowQuestion.question_desc}}</view>
+
+    <view class='questionOption'>
+      <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、{{item["desc"]}}</view>
+    </view>
+
+    <view class='line'>
+      <view class='showAnswer' bindtap='showAnswer'>显示答案</view>
+    </view>
+
+    <view wx:if="{{showAnswer}}">
+      <view class='item'>{{questionAnswer}}</view>
+      <scroll-view scroll-y="true" class='item'>解析：{{nowQuestion.answer}}</scroll-view>
+    </view>
+  </view>
+  <view class='bottom'>
+    <view bindtap='before1' class='switch'>‹</view>
+    <view class='afterQuestion' bindtap='showAnswer'>显示答案</view>
+    <view bindtap='after1' class='switch'>›</view>
+  </view>
+</view>

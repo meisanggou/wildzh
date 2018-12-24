@@ -1,0 +1,35 @@
+<view class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
+  <view class="loading_box" wx:if="{{loading}}">
+    <view class="loading3 loading3_1"></view>
+    <view class="loading3 loading3_2"></view>
+    <view class="loading3 loading3_3"></view>
+  </view>
+  <view class='top'>
+    <view class='topLeft'>
+      <text style='margin-left:20rpx;'>{{examName}}</text>
+    </view>
+    <view class='topRight'>
+      <view class='topRightContent'>
+        <text style='font-style:italic;margin-right:10rpx;'>{{nowQuestionIndex+1}}</text>
+        <text> / {{ totalQuestionNumber }}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class='questionTitle'>
+    {{nowQuestion.question_desc}}
+  </view>
+
+  <view class='questionOption'>
+    <view class="{{nowQuestion.options[idx].chosed==true? 'chose':'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}">{{optionChar[idx]}}、{{item["desc"]}}</view>
+  </view>
+
+
+
+  <view class='bottom'>
+    <view bindtap='before1' class='switch'>‹</view>
+    <view class='afterQuestion' bindtap='submit'>交卷</view>
+    <view bindtap='after1' class='switch'>›</view>
+  </view>
+
+</view>

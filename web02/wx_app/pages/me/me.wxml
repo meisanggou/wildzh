@@ -1,0 +1,15 @@
+<view class="page">
+  <view class='top'>
+      <image class='userPic' src='{{userPic}}' ></image>
+  </view>
+
+  <view class='item'>姓名：{{realName}}</view>
+  <view class='item'>班级：{{department}}</view>
+  <view class='item'>上次答题：{{lastTime}}</view>
+
+  <view style='display:flex; align-items:center; justify-content:space-around;'>
+    <view class='feedBack' bindtap='feedBack'>问题反馈</view>
+  </view>
+  
+</view>
+

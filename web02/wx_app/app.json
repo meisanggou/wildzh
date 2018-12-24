@@ -1,0 +1,23 @@
+{
+  "pages":[
+   
+    "pages/homePage/homePage",
+    "pages/me/me",
+    "pages/feedBack/feedBack",
+    "pages/rank/rank",
+    "pages/training/training",
+    "pages/showDetail/showDetail",
+
+    "pages/wrongAnswer/wrongAnswer",
+   
+    "pages/answer/answer",
+    "pages/result/result",
+    "pages/register/register"
+  ],
+  "window":{
+    "backgroundTextStyle":"light",
+    "navigationBarBackgroundColor": "#ff5757",
+    "navigationBarTitleText": "河南省专升本经济学刷题",
+    "navigationBarTextStyle":"white"
+  }
+}
