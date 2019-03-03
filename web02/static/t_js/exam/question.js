@@ -140,7 +140,12 @@ function receive_questions(data){
     var current_question = data[0];
     q_vm.current_question_no = current_question.question_no;
     q_vm.question_desc = current_question.question_desc;
-    q_vm.question_desc_url = current_question.question_desc_url;
+    if(current_question.question_desc_url == null){
+        q_vm.question_desc_url = "";
+    }
+    else{
+        q_vm.question_desc_url = current_question.question_desc_url;
+    }
     q_vm.answer = current_question.answer;
     q_vm.action = "update";
     q_vm.option_a = current_question.options[0]["desc"];
