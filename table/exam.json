@@ -240,6 +240,11 @@
                 "col_type": "varchar(250)"
             },
             {
+                "col_comment": "题目描述图片URL",
+                "col_name": "question_desc_url",
+                "col_type": "varchar(150)"
+            },
+            {
                 "col_comment": "选择模式",
                 "col_name": "select_mode",
                 "col_type": "tinyint(4)"
