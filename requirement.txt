@@ -4,4 +4,6 @@ Flask
 Flask-Login
 Flask-Helper
 pycrypto
+Image
 qrcode
+requests
