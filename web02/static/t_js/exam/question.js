@@ -51,6 +51,7 @@ function add_question()
     msg += "题目描述：";
     msg += question_desc + "\n";
     r_data["question_desc"] = question_desc;
+    r_data["question_desc_url"] = q_vm.question_desc_url;
     r_data["options"] = new Array();
     var chars_o = ["A", "B", "C", "D"];
     var options = [q_vm.option_a, q_vm.option_b, q_vm.option_c, q_vm.option_d];
@@ -139,6 +140,7 @@ function receive_questions(data){
     var current_question = data[0];
     q_vm.current_question_no = current_question.question_no;
     q_vm.question_desc = current_question.question_desc;
+    q_vm.question_desc_url = current_question.question_desc_url;
     q_vm.answer = current_question.answer;
     q_vm.action = "update";
     q_vm.option_a = current_question.options[0]["desc"];
@@ -164,6 +166,7 @@ $(function() {
         exam_no = parseInt(exam_no);
     }
     var questions_url = $("#questions_url").val();
+    var url_upload= $("#url_upload").val();
     q_vm = new Vue({
         el: "#myTabContent",
         data:{
@@ -173,6 +176,7 @@ $(function() {
             action: "new",
             current_question_no: 0,
             question_desc: "",
+            question_desc_url: "",
             answer: "",
             option_a: "",
             option_b: "",
@@ -185,6 +189,19 @@ $(function() {
                 this.current_exam =this.all_exams[this.current_exam_index];
                 this.current_question_no = this.current_exam.question_num;
                 this.action_next();
+            },
+            upload_pic: function(){
+                var u_files = this.$refs.filElem.files;
+                if(u_files.length <= 0){
+                    return 1;
+                }
+                var data = {"pic": u_files[0]};
+                upload_request(url_upload, "POST", data, function(data){
+                    q_vm.question_desc_url = data["pic"];
+                });
+            },
+            remove_pic: function(){
+                q_vm.question_desc_url = "";
             },
             action_pre: function(){
                 var c_qno = this.current_question_no;
@@ -215,6 +232,7 @@ $(function() {
                 if(c_qno >= this.current_exam.question_num){
                     this.current_question_no = this.current_exam.question_num + 1;
                     this.question_desc = "";
+                    this.question_desc_url = "";
                     this.answer = "";
                     this.action = "new";
                     this.option_a = this.option_b = this.option_c = this.option_d = "";

@@ -59,7 +59,7 @@ def required_exam_no(f):
 @login_required
 def index():
     add_url = url_prefix + "/"
-    upload_url = url_prefix + "/upload/"
+    url_upload = url_prefix + "/upload/"
     info_url = url_prefix + "/info/"
     online_url = url_prefix + "/online/"
     explain_url = url_prefix + "/explain/"
@@ -69,11 +69,11 @@ def index():
     if "action" in request.args and request.args["action"] == "exam":
         if "exam_no" in request.args:
             return rt.render("update_info.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
-                             upload_url=upload_url, explain_url=explain_url)
-        return rt.render("entry_info.html", add_url=add_url, upload_url=upload_url, page_title=u"新建题库")
+                             upload_url=url_upload, explain_url=explain_url)
+        return rt.render("entry_info.html", add_url=add_url, upload_url=url_upload, page_title=u"新建题库")
     if "exam_no" in request.args:
         return rt.render("entry_questions.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
-                         questions_url=questions_url, page_title=u"试题管理")
+                         questions_url=questions_url, page_title=u"试题管理", url_upload=url_upload)
     return rt.render("overview.html", info_url=info_url, online_url=online_url, page_title=u"试题库")
 
 
@@ -82,7 +82,9 @@ def index():
 def question_page():
     info_url = url_prefix + "/info/"
     questions_url = url_prefix + "/questions/"
-    return rt.render("entry_questions.html", info_url=info_url, questions_url=questions_url, page_title=u"试题管理")
+    url_upload = url_prefix + "/upload/"
+    return rt.render("entry_questions.html", info_url=info_url, questions_url=questions_url, page_title=u"试题管理",
+                     url_upload=url_upload)
 
 
 @exam_view.route("/", methods=["POST"])
@@ -153,10 +155,16 @@ def entry_questions():
     select_mode = 1  # data["select_mode"]
     options = data["options"]
     answer = data["answer"]
-    if request.method == "POST":
-        r, l = c_exam.new_exam_questions(g.exam_no, question_no, question_desc, select_mode, options, answer)
+    if "question_desc_url" in data:
+        question_desc_url = data["question_desc_url"]
     else:
-        l = c_exam.update_exam_questions(g.exam_no, question_no, question_desc, select_mode, options, answer)
+        question_desc_url = None
+    if request.method == "POST":
+        r, l = c_exam.new_exam_questions(g.exam_no, question_no, question_desc, question_desc_url, select_mode,
+                                         options, answer)
+    else:
+        l = c_exam.update_exam_questions(g.exam_no, question_no, question_desc, question_desc_url, select_mode,
+                                         options, answer)
         r = True
     return jsonify({"status": r, "data": dict(action=request.method, data=data)})
 

@@ -242,7 +242,8 @@
             {
                 "col_comment": "题目描述图片URL",
                 "col_name": "question_desc_url",
-                "col_type": "varchar(150)"
+                "col_type": "varchar(150)",
+                "allow_null": true
             },
             {
                 "col_comment": "选择模式",

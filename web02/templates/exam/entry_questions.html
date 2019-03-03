@@ -34,6 +34,9 @@
                         <li>
                             <label class="api-describe" for="">题目描述：</label>
                             <textarea class="box-side" rows="3" required="" v-model.trim="question_desc"></textarea>
+                            <input class="box-side width300" @change="upload_pic" ref="filElem" type="file" placeholder="上传图片" accept="image/*"/>
+                            <img :src="question_desc_url" width="500px"/>
+                            <a v-if="question_desc_url.length>0" @click="remove_pic" class="status_move">删除描述图片</a>
                         </li>
                         <li name="li_option">
                             <label>A、</label>
@@ -72,6 +75,7 @@
             <a class="status_move" v-if="current_question_no<=current_exam.question_num" @click="action_next">下一题</a>
             <input id="info_url" value="{{ info_url }}" class="display_none">
             <input id="questions_url" value="{{ questions_url }}" class="display_none">
+            <input id="url_upload" value="{{ url_upload }}" class="display_none">
         </div>
     </div>
 {% endblock %}
