@@ -52,6 +52,10 @@ page {
   font-size: 30rpx;
 }
 
+.descPic {
+  width: 100%;
+}
+
 .lastQuestion {
   font-size: 30rpx;
   padding: 10rpx;

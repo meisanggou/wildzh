@@ -10,7 +10,7 @@
 
   <view class='middle'>
     <view bindtap='before1' class='switch'>‹</view>
-    <view bindtap='before10' class='switch'>‹‹</view>
+    <view bindtap='be、fore10' class='switch'>‹‹</view>
     <view>{{nowQuestion.question_no}}/{{questionNum}}</view>
     <view bindtap='after10' class='switch'>››</view>
     <view bindtap='after1' class='switch'>›</view>
@@ -18,7 +18,7 @@
 
   <view class='content'>
     <view>{{nowQuestion.question_no}}.{{nowQuestion.question_desc}}</view>
-
+    <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
     <view class='questionOption'>
       <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、{{item["desc"]}}</view>
     </view>

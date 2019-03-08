@@ -8,6 +8,7 @@ var app = getApp();
 Page({
 
   data: {
+    remote_host: app.globalData.remote_host,
     optionChar: app.globalData.optionChar,
     exam_no: 0,
     examName: "测试",

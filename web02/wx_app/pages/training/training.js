@@ -7,6 +7,7 @@ var touchInterval = null;
 Page({
 
   data: {
+    remote_host: app.globalData.remote_host,
     allExams: [],
     optionChar: app.globalData.optionChar,
     examNo: null,

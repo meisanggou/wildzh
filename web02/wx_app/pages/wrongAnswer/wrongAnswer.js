@@ -6,6 +6,7 @@ var touchStartY = 0;
 var touchInterval = null;
 Page({
   data: {
+    remote_host: app.globalData.remote_host,
     optionChar: app.globalData.optionChar,
     examNo: null,
     examName: "",
@@ -134,6 +135,7 @@ Page({
           for (var j = 0; j < newItems.length; j++) {
             if (questionItems[i].question_no == newItems[j].question_no) {
               questionItems[i]["question_desc"] = newItems[j]["question_desc"];
+              questionItems[i]["question_desc_url"] = newItems[j]["question_desc_url"];
               questionItems[i]["options"] = newItems[j]["options"];
               questionItems[i]["answer"] = newItems[j]["answer"];
               break;

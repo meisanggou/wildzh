@@ -178,6 +178,7 @@ def get_exam_questions():
     start_no = int(request.args.get("start_no", -1))
     if nos is not None:
         q_nos = filter(lambda x: len(x) > 0, re.split("\D", nos))
+        print(q_nos)
         items = c_exam.select_multi_question(g.exam_no, q_nos)
     elif num is None:
         # 获取全部试题

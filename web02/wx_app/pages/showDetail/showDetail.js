@@ -6,8 +6,8 @@ var touchInterval = null;
 var app = getApp();
 Page({
 
-
   data: {
+    remote_host: app.globalData.remote_host,
     questionList: [],
     nowQuestion: null,
     nowQuestionIndex: 0,

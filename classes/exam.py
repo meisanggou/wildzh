@@ -219,7 +219,7 @@ class Exam(object):
     def select_multi_question(self, exam_no, q_nos):
         if len(q_nos) <= 0:
             return []
-        cols = ["exam_no", "question_no", "question_desc", "select_mode", "options", "answer"]
+        cols = ["exam_no", "question_no", "question_desc", "question_desc_url", "select_mode", "options", "answer"]
         sql_f = "SELECT %s FROM %s WHERE exam_no=%s AND question_no={0}" % (",".join(cols), self.t_q, exam_no)
         sql = " UNION ".join(map(lambda x: sql_f.format(x), q_nos))
         self.db.execute(sql)

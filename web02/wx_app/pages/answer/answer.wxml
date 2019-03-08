@@ -19,7 +19,7 @@
   <view class='questionTitle'>
     {{nowQuestion.question_desc}}
   </view>
-
+  <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
   <view class='questionOption'>
     <view class="{{nowQuestion.options[idx].chosed==true? 'chose':'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}">{{optionChar[idx]}}、{{item["desc"]}}</view>
   </view>

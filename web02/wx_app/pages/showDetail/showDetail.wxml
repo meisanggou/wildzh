@@ -7,6 +7,7 @@
 
    <view class='content'>
     <view class='title'>{{nowQuestionIndex+1}}.{{nowQuestion.question_desc}}</view>
+    <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
    </view>
 
    <view class='options'>
