@@ -1,6 +1,6 @@
 var remote_host = "https://meisanggou.vicp.net"
 // var remote_host = "http://172.16.110.10:2401"
-// remote_host = "http://127.0.0.1:2400"
+remote_host = "http://127.0.0.1:2400"
 App({
   onLaunch: function () {
     var that = this;
