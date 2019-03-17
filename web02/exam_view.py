@@ -19,7 +19,8 @@ rt = RenderTemplate("exam", menu_active="exam")
 menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam", "sub_menu": [
     {"title": u"试题库管理", "url": url_prefix + "/"},
     {"title": u"添加试题库", "url": url_prefix + "/?action=exam"},
-    {"title": u"试题管理", "url": url_prefix + "/question/"}
+    {"title": u"试题管理", "url": url_prefix + "/question/"},
+    {"title": u"试题搜索", "url": url_prefix + "/search/"}
 ]}
 
 exam_view = create_blue("exam", url_prefix=url_prefix, auth_required=False, menu_list=menu_list)
@@ -288,3 +289,9 @@ def remove_my_wrong_action():
     l = c_exam.delete_wrong(g.user_no, g.exam_no, question_no)
     d_item = dict(exam_no=g.exam_no, question_no=question_no, l=l)
     return jsonify({"status": True, "data": d_item})
+
+
+@exam_view.route("/search/", methods=["GET"])
+@login_required
+def search_question_page():
+    return rt.render("search.html", page_title=u"试题搜索")
