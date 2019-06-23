@@ -246,7 +246,7 @@
                 "allow_null": true
             },
             {
-                "col_comment": "选择模式",
+                "col_comment": "题型",
                 "col_name": "select_mode",
                 "col_type": "tinyint(4)"
             },
@@ -256,9 +256,27 @@
                 "col_type": "text"
             },
             {
+                "col_comment": "题目来源",
+                "col_name": "question_source",
+                "col_type": "varchar(30)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "题目所属科目",
+                "col_name": "question_subject",
+                "col_type": "tinyint(4)",
+                "allow_null": true
+            },
+            {
                 "col_comment": "答案信息",
                 "col_name": "answer",
                 "col_type": "text",
+                "allow_null": true
+            },
+            {
+                "col_comment": "答案图片",
+                "col_name": "answer_pic_url",
+                "col_type": "varchar(150)",
                 "allow_null": true
             }
         ],

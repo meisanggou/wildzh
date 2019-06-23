@@ -22,3 +22,6 @@ upload_folder = os.environ.get("ZH_UPLOAD_FOLDER", os.path.join(script_dir, "dat
 
 
 accept_agent = "firefox|chrome|safari|window|GitHub|jyrequests|micro|Aliyun"
+
+
+elastic_search = ""

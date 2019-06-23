@@ -26,6 +26,9 @@ menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam"
 exam_view = create_blue("exam", url_prefix=url_prefix, auth_required=False, menu_list=menu_list)
 c_exam = Exam(db_conf_path)
 
+G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题"]
+G_SUBJECT = ["无", "微观经济学", "宏观经济学", "政治经济学"]
+
 
 def referer_exam_no(f):
     @wraps(f)
@@ -114,6 +117,9 @@ def get_exam_info():
     else:
         exam_type = None
     items = c_exam.select_exam(g.exam_no)
+    for item in items:
+        item["select_modes"] = G_SELECT_MODE
+        item["subjects"] = G_SUBJECT
     if g.user_no is None:
         for i in range(len(items) - 1, -1, -1):
             if items[i]["status"] & 64 == 64:
@@ -150,22 +156,29 @@ def delete_exam():
 @required_exam_no
 def entry_questions():
     data = g.request_data
-    # exam_type = data["exam_type"]
+    extra_data = dict()
     question_no = data["question_no"]
     question_desc = data["question_desc"]
-    select_mode = 1  # data["select_mode"]
+    select_mode = data["select_mode"]
+    question_subject = data["question_subject"]
+    question_source = data["question_source"]
+    if question_source and question_source.strip():
+        extra_data["question_source"] = question_source.strip()
+    if question_subject:
+        extra_data["question_subject"] = question_subject
     options = data["options"]
     answer = data["answer"]
     if "question_desc_url" in data:
-        question_desc_url = data["question_desc_url"]
-    else:
-        question_desc_url = None
+        extra_data["question_desc_url"] = data["question_desc_url"]
+
     if request.method == "POST":
-        r, l = c_exam.new_exam_questions(g.exam_no, question_no, question_desc, question_desc_url, select_mode,
-                                         options, answer)
+        r, l = c_exam.new_exam_questions(g.exam_no, question_no,
+                                         question_desc, select_mode,
+                                         options, answer, **extra_data)
     else:
-        l = c_exam.update_exam_questions(g.exam_no, question_no, question_desc, question_desc_url, select_mode,
-                                         options, answer)
+        l = c_exam.update_exam_questions(g.exam_no, question_no,
+                                         question_desc, select_mode,
+                                         options, answer, **extra_data)
         r = True
     return jsonify({"status": r, "data": dict(action=request.method, data=data)})
 

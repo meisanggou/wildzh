@@ -50,8 +50,11 @@ function add_question()
     }
     msg += "题目描述：";
     msg += question_desc + "\n";
+    r_data["select_mode"] = q_vm.select_mode;
     r_data["question_desc"] = question_desc;
     r_data["question_desc_url"] = q_vm.question_desc_url;
+    r_data["question_subject"] = q_vm.question_subject;
+    r_data["question_source"] = q_vm.question_source;
     r_data["options"] = new Array();
     var chars_o = ["A", "B", "C", "D"];
     var options = [q_vm.option_a, q_vm.option_b, q_vm.option_c, q_vm.option_d];
@@ -139,6 +142,9 @@ function init_info(data){
 function receive_questions(data){
     var current_question = data[0];
     q_vm.current_question_no = current_question.question_no;
+    q_vm.select_mode = current_question.select_mode;
+    q_vm.question_source = current_question.question_source;
+    q_vm.question_subject = current_question.question_subject;
     q_vm.question_desc = current_question.question_desc;
     if(current_question.question_desc_url == null){
         q_vm.question_desc_url = "";
@@ -176,12 +182,17 @@ $(function() {
         el: "#myTabContent",
         data:{
             all_exams: [],
+            select_modes: [],
+            subjects: [],
             current_exam_index: -1,
             current_exam: {question_num: 0, exam_no: exam_no},
             action: "new",
             current_question_no: 0,
+            select_mode: 0,
             question_desc: "",
             question_desc_url: "",
+            question_subject: 0,
+            question_source: "",
             answer: "",
             option_a: "",
             option_b: "",
@@ -192,6 +203,8 @@ $(function() {
         methods: {
             select_exam: function(){
                 this.current_exam =this.all_exams[this.current_exam_index];
+                this.select_modes = this.all_exams[this.current_exam_index]["select_modes"]
+                this.subjects = this.all_exams[this.current_exam_index]["subjects"]
                 this.current_question_no = this.current_exam.question_num;
                 this.action_next();
             },
@@ -240,6 +253,8 @@ $(function() {
                     this.question_desc_url = "";
                     this.answer = "";
                     this.action = "new";
+                    this.select_mode = 0;
+                    this.question_subject = 0;
                     this.option_a = this.option_b = this.option_c = this.option_d = "";
                     this.selected_option = -1;
                     return true;

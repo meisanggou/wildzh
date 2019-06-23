@@ -89,7 +89,7 @@ def post_questions(exam_name, exam_no, start_no, questions_obj):
     for q_item in questions_obj:
         data = dict(question_no=question_no, select_mode=0)
         data["question_desc"] = q_item["desc"].strip()
-        data["options"] = map(lambda x: dict(desc=x.strip(), socre=0), q_item["options"])
+        data["options"] = map(lambda x: dict(desc=x.strip(), score=0), q_item["options"])
         data["options"][0]["score"] = 1
         data["answer"] = exam_name
         resp = req.post(url, json=data)

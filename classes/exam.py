@@ -21,6 +21,10 @@ class Exam(object):
         self.t_records = "exam_records"
         self.t_q = "exam_questions"
         self.t_w = "exam_wrong_answer"
+        self.q_cols = ["exam_no", "question_no", "question_desc",
+                       "question_desc_url", "select_mode", "options",
+                       "answer", "question_subject", "question_source",
+                       "answer_pic_url"]
 
     def _insert_info(self, exam_no, exam_name, exam_desc, eval_type, adder, status=1, exam_extend=None):
         kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, eval_type=eval_type, status=status,
@@ -53,11 +57,15 @@ class Exam(object):
         l = self.db.execute_insert(self.t_records, kwargs=kwargs, ignore=True)
         return l
 
-    def _insert_question(self, exam_no, question_no, question_desc, question_desc_url, select_mode, options, answer):
-        kwargs = dict(exam_no=exam_no, question_no=question_no, question_desc=question_desc,
-                      question_desc_url=question_desc_url, select_mode=select_mode,
-                      options=options, answer=answer)
-        l = self.db.execute_insert(self.t_q, kwargs=kwargs, ignore=True)
+    def _insert_question(self, exam_no, question_no, question_desc,
+                         select_mode, options, answer, **kwargs):
+        data = dict(exam_no=exam_no, question_no=question_no,
+                    question_desc=question_desc, select_mode=select_mode,
+                    options=options, answer=answer)
+        for key, value in kwargs.items():
+            if key in self.q_cols:
+                data[key] = value
+        l = self.db.execute_insert(self.t_q, kwargs=data, ignore=True)
         return l
 
     def _insert_wrong_answer(self, user_no, exam_no, question_nos):
@@ -107,8 +115,8 @@ class Exam(object):
         l2 = self._update_status(exam_no, add_status=4)
         return min(l, l2)
 
-    def new_exam_questions(self, exam_no, question_no, question_desc, question_desc_url, select_mode, options, answer):
-        l = self._insert_question(exam_no, question_no, question_desc, question_desc_url, select_mode, options, answer)
+    def new_exam_questions(self, exam_no, question_no, question_desc, select_mode, options, answer, **kwargs):
+        l = self._insert_question(exam_no, question_no, question_desc, select_mode, options, answer, **kwargs)
         if l <= 0:
             return False, l
         self._update_info(exam_no, question_num=question_no)
@@ -144,8 +152,8 @@ class Exam(object):
         l = self.db.execute_update(self.t_result_explain, update_value=kwargs, where_value=dict(exam_no=exam_no))
         return l
 
-    def update_exam_questions(self, exam_no, question_no, question_desc=None, question_desc_url=None, select_mode=None,
-                              options=None, answer=None):
+    def update_exam_questions(self, exam_no, question_no, question_desc=None, select_mode=None,
+                              options=None, answer=None, question_desc_url=None, **update_data):
         kwargs = dict()
         if question_desc is not None:
             kwargs["question_desc"] = question_desc
@@ -155,10 +163,14 @@ class Exam(object):
             kwargs["options"] = options
         if answer is not None:
             kwargs["answer"] = answer
+
         if question_desc_url is not None:
             kwargs["question_desc_url"] = question_desc_url
         elif len(question_desc_url) == 0:
             kwargs["question_desc_url"] = None
+        for key, value in update_data.items():
+            if key in self.q_cols:
+                kwargs[key] = value
         l = self._update_question(exam_no, question_no, **kwargs)
         return l
 
@@ -189,7 +201,7 @@ class Exam(object):
 
             where_cond_args.append(start_no)
         limit = num
-        cols = ["exam_no", "question_no", "question_desc", "question_desc_url", "select_mode", "options", "answer"]
+        cols = self.q_cols
         items = self.db.execute_select(self.t_q, cols=cols, where_value=where_value, where_cond=where_cond,
                                        where_cond_args=where_cond_args, limit=limit, order_by=["question_no"],
                                        order_desc=desc)
@@ -219,7 +231,7 @@ class Exam(object):
     def select_multi_question(self, exam_no, q_nos):
         if len(q_nos) <= 0:
             return []
-        cols = ["exam_no", "question_no", "question_desc", "question_desc_url", "select_mode", "options", "answer"]
+        cols = self.q_cols
         sql_f = "SELECT %s FROM %s WHERE exam_no=%s AND question_no={0}" % (",".join(cols), self.t_q, exam_no)
         sql = " UNION ".join(map(lambda x: sql_f.format(x), q_nos))
         self.db.execute(sql)

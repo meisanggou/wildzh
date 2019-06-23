@@ -90,6 +90,9 @@ Page({
     that.reqQuestion(examNo, start_no, 0);
   },
   after: function(afterNum) {
+    if(that.data.nowQuestion == null){
+      return false;
+    }
     var nowQuestion = that.data.nowQuestion;
     var nowQuestionIndex = that.data.nowQuestionIndex;
     var questionItems = that.data.questionItems;
@@ -312,7 +315,7 @@ Page({
   },
   onUnload: function() {
     console.info("un load")
-    if(that.data.examNo == null){
+    if(that.data.examNo == null || that.data.nowQuestion == null){
       return false;
     }
     var process = wx.getStorageSync(app.globalData.studyProcessKey);

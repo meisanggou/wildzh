@@ -19,7 +19,7 @@
     </view>
     <view class='row2'>
       <picker bindchange="rank" class='picker' value="{{index}}" range="{{QBArray}}" disabled='disabled'>
-        <view class='rank'>排名</view>
+        <view class='rank'>搜题</view>
       </picker>
       <picker bindchange="wrong" class='picker' value="{{index}}" range="{{allExams}}" range-key="exam_name">
         <view class='wrong'>错题</view>
