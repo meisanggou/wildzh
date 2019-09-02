@@ -113,9 +113,9 @@ if __name__ == "__main__":
             f_questions.append(q_item)
         # break
 
-    # login("admin", "admin")
-    # exam_no = 1543459550
-    # no_info = req_max_no(exam_no)
+    login("admin", "admin")
+    exam_no = 1566699611
+    no_info = req_max_no(exam_no)
     # post_questions(exam_name, exam_no, no_info["next_no"], f_questions)
 
     we.close()

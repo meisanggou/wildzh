@@ -18,10 +18,31 @@
     </view>
 
     <view class='content'>
-      <view>{{nowQuestion.question_no}}.{{nowQuestion.question_desc}}</view>
+        <view >{{nowQuestion.question_no}}.
+          <block wx:for="{{nowQuestion.question_desc_rich}}">
+            <block wx:if="{{item.url}}">
+              <image  mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+            </block>
+            <block wx:else>
+              {{item}}
+            </block>
+          </block>
+        </view>
+      <!-- <view></view> -->
       <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
+
       <view class='questionOption'>
-        <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、{{item["desc"]}}</view>
+        <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、
+          <block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item">
+              <block wx:if="{{desc_item.url}}">
+                <image  mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;' src="{{remote_host}}{{desc_item.url}}"></image>
+              </block>
+              <block wx:else>
+                {{desc_item}}
+              </block>
+              
+            </block>
+        </view>
       </view>
 
       <view class='line'>
@@ -30,7 +51,16 @@
 
       <view wx:if="{{showAnswer}}">
         <view class='item'>{{questionAnswer}}</view>
-        <scroll-view scroll-y="true" class='item'>解析：{{nowQuestion.answer}}</scroll-view>
+        <scroll-view scroll-y="true" class='item'>解析：
+          <block wx:for="{{nowQuestion.answer_rich}}">
+              <block wx:if="{{item.url}}">
+                <image  mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+              </block>
+              <block wx:else>
+                {{item}}
+              </block>
+            </block>
+        </scroll-view>
       </view>
     </view>
   </view>

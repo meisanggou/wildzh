@@ -30,6 +30,24 @@ G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "
 G_SUBJECT = ["无", "微观经济学", "宏观经济学", "政治经济学"]
 
 
+def separate_image(text):
+    text_groups = []
+    s_l = re.findall(r"(\[\[([/\w.]+?):([\d.]+?):([\d.]+?)\]\])", text)
+    last_point = 0
+    for items in s_l:
+        item = items[0]
+        point = text[last_point:].index(item)
+        prefix_s = text[last_point: last_point + point]
+        if len(prefix_s) > 0:
+            text_groups.append(prefix_s)
+        o_item = dict(url=items[1], width=float(items[2]), height=float(items[3]))
+        text_groups.append(o_item)
+        last_point = last_point + point + len(item)
+    if last_point < len(text):
+        text_groups.append(text[last_point:])
+    return text_groups
+
+
 def referer_exam_no(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -205,6 +223,13 @@ def get_exam_questions():
         if "desc" in request.args and request.args["desc"] == "true":
             desc = True
         items = c_exam.select_questions(g.exam_no, start_no=start_no, num=int(num), desc=desc)
+    for item in items:
+        question_desc_rich = separate_image(item["question_desc"])
+        item["question_desc_rich"] = question_desc_rich
+        for option in item["options"]:
+            option["desc_rich"] = separate_image(option["desc"])
+        item["answer_rich"] = separate_image(item["answer"])
+
     if g.user_no is None:
         for item in items:
             options = item["options"]
