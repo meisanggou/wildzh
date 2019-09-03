@@ -138,7 +138,7 @@ def get_exam_info():
     for item in items:
         item["select_modes"] = G_SELECT_MODE
         item["subjects"] = G_SUBJECT
-    if g.user_role & 2 != 2:  # 内部用户全部返回
+    if (g.user_role & 2) != 2:  # 内部用户全部返回
         for i in range(len(items) - 1, -1, -1):
             if (items[i]["status"] & 64 == 64) or (int(items[i]["adder"]) == g.user_no):
                 continue
