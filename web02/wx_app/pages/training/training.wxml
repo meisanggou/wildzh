@@ -50,7 +50,16 @@
       </view>
 
       <view wx:if="{{showAnswer}}">
-        <view class='item'>{{questionAnswer}}</view>
+        <view class='item'>
+          <block wx:for="{{questionAnswer}}">
+                <block wx:if="{{item.url}}">
+                  <image  mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+                </block>
+                <block wx:else>
+                  {{item}}
+                </block>
+              </block>
+        </view>
         <scroll-view scroll-y="true" class='item'>解析：
           <block wx:for="{{nowQuestion.answer_rich}}">
               <block wx:if="{{item.url}}">

@@ -45,9 +45,13 @@
                                         <label>|</label>
                                         <a href='javascript:void(0)' @click="to_action(index, 'exam')">更新信息</a>
                                     </template>
-                                    <template v-if="item.status == 7">
+                                    <template v-if="(item.status & 3) == 3 && (item.status & 64) == 0">
                                         <label>|</label>
                                         <a href='javascript:void(0)' @click="online(index)">上线</a>
+                                    </template>
+                                    <template v-if="(item.status & 64) == 64">
+                                        <label>|</label>
+                                        <a href='javascript:void(0)' @click="offline(index)">下线</a>
                                     </template>
                                 </td>
                             </tr>

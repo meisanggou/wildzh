@@ -289,6 +289,11 @@ class Exam(object):
         l2 = self._insert_tj(exam_no)
         return min(l, l2)
 
+    def offline_exam(self, exam_no):
+        l = self._update_status(exam_no, sub_status=64)
+        l2 = self._insert_tj(exam_no)
+        return min(l, l2)
+
     def delete_exam(self, exam_type, exam_no):
         l = self._update_info(exam_no, status=0)
         return l

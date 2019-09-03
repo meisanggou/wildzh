@@ -97,6 +97,29 @@ $(function () {
                         }
                     }
                 );
+            },
+            offline: function(index){
+                var e_item = this.all_exams[index];
+                var msg = "确定下线【" + e_item["exam_name"] + "】\n下线后用户将不可见！";
+                swal({
+                        title: "下线提醒",
+                        text: msg,
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: '#DD6B55',
+                        confirmButtonText: '下线',
+                        cancelButtonText: "取消",
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            my_async_request2($("#online_url").val(), "DELETE", e_item, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                );
             }
         }
     });

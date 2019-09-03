@@ -22,7 +22,7 @@
                 "allow_null": true
             },
            {
-                "col_comment": "角色值",
+                "col_comment": "角色值 1为默认普通用户 2为内部用户",
                 "col_name": "role",
                 "col_type": "int(11)"
             },

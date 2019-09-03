@@ -138,9 +138,9 @@ def get_exam_info():
     for item in items:
         item["select_modes"] = G_SELECT_MODE
         item["subjects"] = G_SUBJECT
-    if g.user_no is None:
+    if g.user_role & 2 != 2:  # 内部用户全部返回
         for i in range(len(items) - 1, -1, -1):
-            if items[i]["status"] & 64 == 64:
+            if (items[i]["status"] & 64 == 64) or (int(items[i]["adder"]) == g.user_no):
                 continue
             del items[i]
     return jsonify({"status": True, "data": items})
@@ -251,12 +251,21 @@ def get_max_exam_questions():
 def online_exam():
     exam_no = g.request_data["exam_no"]
     exam_type = g.request_data["exam_type"]
-    items = c_exam.select_exam(exam_type, exam_no)
+    items = c_exam.select_exam(exam_no)
     if len(items) != 1:
         return jsonify({"status": False, "data": "测试不存在"})
-    if items[0]["status"] & 7 != 7:
+    if items[0]["status"] & 3 != 3:
         return jsonify({"status": False, "data": "测试状态未达到不可上线"})
     c_exam.online_exam(exam_no)
+    return jsonify({"status": True, "data": "success"})
+
+
+@exam_view.route("/online/", methods=["DELETE"])
+@login_required
+def offline_exam():
+    exam_no = g.request_data["exam_no"]
+    exam_type = g.request_data["exam_type"]
+    c_exam.offline_exam(exam_no)
     return jsonify({"status": True, "data": "success"})
 
 
