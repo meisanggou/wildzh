@@ -74,11 +74,11 @@ def login_action():
 
     user = FlaskUser()
     user.user_no = item["user_no"]
+    session["role"] = item["role"]
     login_user(user, remember=True)
     if len(next_url) == 0:
         next_url = "/"
     data = dict(location=next_url, user_name=item["user_name"])
-    print(data)
     return jsonify({"status": True, "data": data})
 
 
@@ -99,6 +99,7 @@ def wx_login_action():
         return jsonify({"status": False, "data": "内部错误"})
     user = FlaskUser()
     user.user_no = item["user_no"]
+    session["role"] = item["role"]
     login_user(user)
     return jsonify({"status": True, "data": item})
 
@@ -152,6 +153,7 @@ def who_i_am_action():
     user_item = items[0]
     user_item["shy_me"] = en_s
     return jsonify({"status": True, "data": user_item})
+
 
 @user_view.route("/whoIsHe/", methods=["POST"])
 @login_required
