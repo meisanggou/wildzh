@@ -13,7 +13,7 @@ Page({
     nowQuestionIndex: 0,
     totalQuestionNum: 0,
     showAnswer: false,
-    questionAnswer: "",
+    questionAnswer: new Array(),
     optionChar: app.globalData.optionChar
   },
 
@@ -48,11 +48,16 @@ Page({
   showAnswer: function() {
     var nowQuestionIndex = that.data.nowQuestionIndex;
     var nowQuestion = that.data.nowQuestion;
-    var questionAnswer = "没有答案"
+    var questionAnswer = new Array();
     for (var index in nowQuestion.options) {
       if (parseInt(nowQuestion.options[index]["score"]) > 0) {
-        questionAnswer = app.globalData.optionChar[index] + "、" + nowQuestion.options[index]["desc"];
+        var tmp_answer = new Array(app.globalData.optionChar[index], "、");
+        questionAnswer = questionAnswer.concat(tmp_answer);
+        questionAnswer = questionAnswer.concat(nowQuestion.options[index]["desc_rich"]);
       }
+    }
+    if (questionAnswer.length == 0) {
+      questionAnswer[0] = "没有答案"
     }
     that.setData({
       showAnswer: true,

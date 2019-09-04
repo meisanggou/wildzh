@@ -17,11 +17,28 @@
   </view>
 
   <view class='questionTitle'>
-    {{nowQuestion.question_desc}}
+    <block wx:for="{{nowQuestion.question_desc_rich}}">
+      <block wx:if="{{item.url}}">
+        <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+      </block>
+      <block wx:else>
+        {{item}}
+      </block>
+    </block>
   </view>
   <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
   <view class='questionOption'>
-    <view class="{{nowQuestion.options[idx].chosed==true? 'chose':'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}">{{optionChar[idx]}}、{{item["desc"]}}</view>
+    <view class="{{nowQuestion.options[idx].chosed==true? 'chose':'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}">{{optionChar[idx]}}、
+      <block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item">
+        <block wx:if="{{desc_item.url}}">
+          <image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;' src="{{remote_host}}{{desc_item.url}}"></image>
+        </block>
+        <block wx:else>
+          {{desc_item}}
+        </block>
+
+      </block>
+    </view>
   </view>
 
 

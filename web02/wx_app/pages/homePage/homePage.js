@@ -6,7 +6,7 @@ Page({
     name: '未登录',
     department: '未登录',
     userPic: '../../images/signIn.png',
-    register: null,
+    register: true,
     allExams: null
   },
 
