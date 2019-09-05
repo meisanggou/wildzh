@@ -17,5 +17,39 @@
     "navigationBarBackgroundColor": "#ff5757",
     "navigationBarTitleText": "河南省专升本经济学刷题",
     "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/homePage/homePage",
+        "iconPath": "images/practise.png",
+        "selectedIconPath": "images/practise_fill.png",
+        "text": "练习"
+      },
+      {
+        "pagePath": "pages/homePage/homePage",
+        "iconPath": "images/exam.png",
+        "selectedIconPath": "images/exam_fill.png",
+        "text": "测试"
+      },
+      {
+        "pagePath": "pages/homePage/homePage",
+        "iconPath": "images/wrong.png",
+        "selectedIconPath": "images/wrong_fill.png",
+        "text": "错题"
+      },
+      {
+        "pagePath": "pages/homePage/homePage",
+        "iconPath": "images/query.png",
+        "selectedIconPath": "images/query_fill.png",
+        "text": "搜题"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "iconPath": "images/me.png",
+        "selectedIconPath": "images/me-fill.png",
+        "text": "我"
+      }
+    ]
   }
 }
