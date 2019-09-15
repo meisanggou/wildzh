@@ -8,7 +8,7 @@
   <view class='item'>上次答题：{{lastTime}}</view>
 
   <view style='display:flex; align-items:center; justify-content:space-around;'>
-    <view class='feedBack' bindtap='feedBack'>问题反馈</view>
+    <!-- <view class='feedBack' bindtap='feedBack'>问题反馈</view> -->
   </view>
   
 </view>

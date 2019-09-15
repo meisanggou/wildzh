@@ -84,14 +84,13 @@ def index():
     url_upload = url_prefix + "/upload/"
     info_url = url_prefix + "/info/"
     online_url = url_prefix + "/online/"
-    explain_url = url_prefix + "/explain/"
     questions_url = url_prefix + "/questions/"
     page_exam = url_prefix + "/?action=exam"
     page_list = url_prefix + "/"
     if "action" in request.args and request.args["action"] == "exam":
         if "exam_no" in request.args:
-            return rt.render("update_info.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
-                             upload_url=url_upload, explain_url=explain_url)
+            return rt.render("entry_info.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
+                             upload_url=url_upload)
         return rt.render("entry_info.html", add_url=add_url, upload_url=url_upload, page_title=u"新建题库")
     if "exam_no" in request.args:
         return rt.render("entry_questions.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
@@ -250,7 +249,6 @@ def get_max_exam_questions():
 @login_required
 def online_exam():
     exam_no = g.request_data["exam_no"]
-    exam_type = g.request_data["exam_type"]
     items = c_exam.select_exam(exam_no)
     if len(items) != 1:
         return jsonify({"status": False, "data": "测试不存在"})
@@ -267,48 +265,6 @@ def offline_exam():
     exam_type = g.request_data["exam_type"]
     c_exam.offline_exam(exam_no)
     return jsonify({"status": True, "data": "success"})
-
-
-@exam_view.route("/records/", methods=["POST"])
-def add_exam_records():
-    data = g.request_data
-    exam_type = data["exam_type"]
-    exam_no = data["exam_no"]
-    user_id = data["user_id"]
-    result = data["result"]
-    c_exam.new_exam_record(user_id, exam_no, result)
-    explains = c_exam.select_result_explain(exam_no, result)
-    tj = c_exam.select_tj(exam_no)
-    r = dict(result=result)
-    if len(tj) > 0:
-        r["tj"] = tj[0]
-    else:
-        r["tj"] = None
-    if len(explains) > 0:
-        r["result_explain"] = explains[0]
-    else:
-        r["result_explain"] = None
-    return jsonify({"status": True, "data": r})
-
-
-@exam_view.route("/explain/", methods=["GET"])
-@required_exam_no
-def get_explains():
-    explains = c_exam.select_result_explain(g.exam_no)
-    if len(explains) <= 0:
-        return jsonify({"status": False, "data": "结果解释不存在"})
-    if "list" not in request.args:
-        return jsonify({"status": True, "data": explains[0]})
-    explain_item = explains[0]
-    keys = filter(lambda x: x.startswith("case_"), explain_item.keys())
-    keys.sort()
-    l_explains = []
-    for key in keys:
-        if explain_item[key] is None:
-            break
-        else:
-            l_explains.append(explain_item[key])
-    return jsonify({"status": True, "data": l_explains})
 
 
 @exam_view.route("/wrong/", methods=["POST"])

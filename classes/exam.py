@@ -16,9 +16,6 @@ class Exam(object):
     def __init__(self, db_conf_path):
         self.db = DB(conf_path=db_conf_path)
         self.t_info = "exam_info"
-        self.t_result_explain = "exam_result_explain"
-        self.t_tj = "exam_tj"
-        self.t_records = "exam_records"
         self.t_q = "exam_questions"
         self.t_w = "exam_wrong_answer"
         self.q_cols = ["exam_no", "question_no", "question_desc",
@@ -30,31 +27,6 @@ class Exam(object):
         kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, eval_type=eval_type, status=status,
                       exam_extend=exam_extend, adder=adder)
         l = self.db.execute_insert(self.t_info, kwargs=kwargs, ignore=True)
-        return l
-
-    def _insert_result_explain(self, exam_no, case_a, case_b, case_c=None, case_d=None, case_e=None, case_f=None):
-        kwargs = dict(exam_no=exam_no, case_a=case_a, case_b=case_b, case_c=case_c, case_d=case_d, case_e=case_e,
-                      case_f=case_f)
-        l = self.db.execute_insert(self.t_result_explain, kwargs=kwargs, ignore=True)
-        return l
-
-    def _insert_tj(self, exam_no):
-        kwargs = dict(exam_no=exam_no)
-        l = self.db.execute_insert(self.t_tj, kwargs=kwargs, ignore=True)
-        return l
-
-    def _add_tj(self, exam_no, *amount_case):
-        update_value_list = []
-        for key in amount_case:
-            update_value_list.append("{key}={key}+1".format(key=key))
-        where_value = dict(exam_no=exam_no)
-        l = self.db.execute_update(self.t_tj, update_value_list=update_value_list, where_value=where_value)
-        return l
-
-    def _insert_records(self, user_id, exam_no, result):
-        insert_time = int(time.time())
-        kwargs = dict(exam_no=exam_no, result=result, insert_time=insert_time, user_id=user_id)
-        l = self.db.execute_insert(self.t_records, kwargs=kwargs, ignore=True)
         return l
 
     def _insert_question(self, exam_no, question_no, question_desc,
@@ -110,11 +82,6 @@ class Exam(object):
             return False, l
         return True, exam_no
 
-    def new_exam_result_explain(self, exam_no, case_a, case_b, case_c=None, case_d=None, case_e=None, case_f=None):
-        l = self._insert_result_explain(exam_no, case_a, case_b, case_c, case_d, case_e, case_f)
-        l2 = self._update_status(exam_no, add_status=4)
-        return min(l, l2)
-
     def new_exam_questions(self, exam_no, question_no, question_desc, select_mode, options, answer, **kwargs):
         l = self._insert_question(exam_no, question_no, question_desc, select_mode, options, answer, **kwargs)
         if l <= 0:
@@ -122,14 +89,6 @@ class Exam(object):
         self._update_info(exam_no, question_num=question_no)
         self._update_status(exam_no, add_status=2)
         return True, l
-
-    def new_exam_record(self, user_id, exam_no, result):
-        if len(result) != 1 or result not in string.letters[:6]:
-            return False, result
-        self._insert_records(user_id, exam_no, result)
-        self._add_tj(exam_no, "amount_%s" % result)
-        self._update_num(exam_no)
-        return True, None
 
     def new_exam_wrong(self, user_no, exam_no, question_no):
         if isinstance(question_no, list):
@@ -145,11 +104,6 @@ class Exam(object):
     def update_exam(self, exam_no, exam_name, exam_desc, eval_type, **exam_extend):
         update_value = dict(exam_name=exam_name, exam_desc=exam_desc, eval_type=eval_type, exam_extend=exam_extend)
         l = self._update_info(exam_no, **update_value)
-        return l
-
-    def update_result_explain(self, exam_no, case_a, case_b, case_c=None, case_d=None, case_e=None, case_f=None):
-        kwargs = dict(case_a=case_a, case_b=case_b, case_c=case_c, case_d=case_d, case_e=case_e, case_f=case_f)
-        l = self.db.execute_update(self.t_result_explain, update_value=kwargs, where_value=dict(exam_no=exam_no))
         return l
 
     def update_exam_questions(self, exam_no, question_no, question_desc=None, select_mode=None,
@@ -251,48 +205,13 @@ class Exam(object):
         items = self.db.execute_select(self.t_w, where_value=where_value, cols=cols)
         return items
 
-    def select_result_explain(self, exam_no, result=None):
-        cols = ["exam_no"]
-        if result is None:
-            for c in string.letters[:6]:
-                cols.append("case_%s" % c)
-        else:
-            cols.append("case_%s" % result)
-        items = self.db.execute_select(self.t_result_explain, cols=cols, where_value=dict(exam_no=exam_no))
-        for item in items:
-            for key, v in item.items():
-                if key.startswith("case_") is False:
-                    continue
-                if v is None:
-                    continue
-                item[key] = json.loads(item[key])
-        return items
-
-    def select_tj(self, exam_no, merge_v=True):
-        cols = ["exam_no"]
-        for c in string.letters[:6]:
-            cols.append("amount_%s" % c)
-            cols.append("amount_v%s" % c)
-        items = self.db.execute_select(self.t_tj, cols=cols, where_value=dict(exam_no=exam_no))
-        if merge_v is False:
-            return items
-        for item in items:
-            for c in string.letters[:6]:
-                o_key = "amount_%s" % c
-                v_key = "amount_v%s" % c
-                item[o_key] += item[v_key]
-                del item[v_key]
-        return items
-
     def online_exam(self, exam_no):
         l = self._update_status(exam_no, add_status=64)
-        l2 = self._insert_tj(exam_no)
-        return min(l, l2)
+        return l
 
     def offline_exam(self, exam_no):
         l = self._update_status(exam_no, sub_status=64)
-        l2 = self._insert_tj(exam_no)
-        return min(l, l2)
+        return l
 
     def delete_exam(self, exam_type, exam_no):
         l = self._update_info(exam_no, status=0)
