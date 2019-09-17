@@ -1,38 +1,41 @@
-<view class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
-  <!-- <view class='toptitle'>
+<view wx:if="{{questionItems.length <= 0}}">
+无错题
+</view>
+<view wx:else class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
+    <!-- <view class='toptitle'>
     <view>{{nowQuestionIndex}}/{{questionNum}}</view>
     <view>{{ examName }}</view>
   </view> -->
-  <view class='top'>
-    <view bindtap='before1'>‹</view>
-    <view bindtap='before10'>‹‹</view>
-    <view>{{nowQuestionIndex + 1}} / {{questionNum}}</view>
-    <!-- <view bindtap='remove'>移除该题</view> -->
-    <view bindtap='after10'>››</view>
-    <view bindtap='after1'>›</view>
-  </view>
+    <view class='top'>
+        <view bindtap='before1'>‹</view>
+        <view bindtap='before10'>‹‹</view>
+        <view>{{nowQuestionIndex + 1}} / {{questionNum}}</view>
+        <!-- <view bindtap='remove'>移除该题</view> -->
+        <view bindtap='after10'>››</view>
+        <view bindtap='after1'>›</view>
+    </view>
 
-  <view class='content'>
-    <view class='title'>【{{nowQuestionIndex + 1}}】 {{nowQuestion.question_desc}}</view>
-    <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
-  </view>
+    <view class='content'>
+        <view class='title'>【{{nowQuestionIndex + 1}}】 {{nowQuestion.question_desc}}</view>
+        <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
+    </view>
 
-  <view class='options'>
-    <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、{{item["desc"]}}</view>
-  </view>
+    <view class='options'>
+        <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、{{item["desc"]}}</view>
+    </view>
 
-  <view wx:if="{{showAnswer}}" class='answer'>
-    <view class='answerTitle'>答案</view>
-    <view class='item'>{{questionAnswer}}</view>
-    <scroll-view scroll-y="true" class='item'>解析：{{nowQuestion.answer}}</scroll-view>
-  </view>
-   <view class='bottom' wx:if="{{showRemove}}">
-    <view class='bottomRemove' bindtap='remove'>移除该题</view>
-    <view>|</view>
-    <view class='bottomShow' bindtap='showAnswer'>显示答案</view>
-  </view>
-  <view class='bottom' wx:else>
-    <view class='bottomShow' bindtap='showAnswer'>显示答案</view>
-  </view>
- 
+    <view wx:if="{{showAnswer}}" class='answer'>
+        <view class='answerTitle'>答案</view>
+        <view class='item'>{{questionAnswer}}</view>
+        <scroll-view scroll-y="true" class='item'>解析：{{nowQuestion.answer}}</scroll-view>
+    </view>
+    <view class='bottom' wx:if="{{showRemove}}">
+        <view class='bottomRemove' bindtap='remove'>移除该题</view>
+        <view>|</view>
+        <view class='bottomShow' bindtap='showAnswer'>显示答案</view>
+    </view>
+    <view class='bottom' wx:else>
+        <view class='bottomShow' bindtap='showAnswer'>显示答案</view>
+    </view>
+
 </view>

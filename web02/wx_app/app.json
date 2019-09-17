@@ -1,56 +1,58 @@
 {
-  "pages": [
-    "pages/homePage/homePage",
-    "pages/me/me",
-    "pages/rank/rank",
-    "pages/training/training",
-    "pages/showDetail/showDetail",
-    "pages/wrongAnswer/wrongAnswer",
-    "pages/answer/answer",
-    "pages/result/result",
-    "pages/register/register",
-    "pages/admin",
-    "pages/training/training_home",
-    "pages/query/query"
-  ],
-  "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#ff5757",
-    "navigationBarTitleText": "河南省专升本经济学刷题",
-    "navigationBarTextStyle": "white"
-  },
-  "tabBar": {
-    "list": [
-      {
-        "pagePath": "pages/training/training_home",
-        "iconPath": "images/practise.png",
-        "selectedIconPath": "images/practise_fill.png",
-        "text": "练习"
-      },
-      {
-        "pagePath": "pages/homePage/homePage",
-        "iconPath": "images/exam.png",
-        "selectedIconPath": "images/exam_fill.png",
-        "text": "测试"
-      },
-      {
-        "pagePath": "pages/homePage/homePage",
-        "iconPath": "images/wrong.png",
-        "selectedIconPath": "images/wrong_fill.png",
-        "text": "错题"
-      },
-      {
-        "pagePath": "pages/query/query",
-        "iconPath": "images/query.png",
-        "selectedIconPath": "images/query_fill.png",
-        "text": "搜题"
-      },
-      {
-        "pagePath": "pages/me/me",
-        "iconPath": "images/me.png",
-        "selectedIconPath": "images/me-fill.png",
-        "text": "我"
-      }
-    ]
-  }
+    "pages": [
+        "pages/training/training_home",
+        "pages/homePage/homePage",
+        "pages/me/me",
+        "pages/rank/rank",
+        "pages/training/training",
+        "pages/showDetail/showDetail",
+        "pages/wrongAnswer/wrongAnswer",
+        "pages/answer/answer",
+        "pages/result/result",
+        "pages/register/register",
+        "pages/admin",
+        "pages/query/query",
+        "pages/answer/answer_home"
+    ],
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#ff5757",
+        "navigationBarTitleText": "河南省专升本经济学刷题",
+        "navigationBarTextStyle": "white"
+    },
+    "tabBar": {
+        "list": [
+            {
+                "pagePath": "pages/training/training_home",
+                "iconPath": "images/practise.png",
+                "selectedIconPath": "images/practise_fill.png",
+                "text": "练习"
+            },
+            {
+                "pagePath": "pages/answer/answer_home",
+                "iconPath": "images/exam.png",
+                "selectedIconPath": "images/exam_fill.png",
+                "text": "测试"
+            },
+            {
+                "pagePath": "pages/wrongAnswer/wrongAnswer",
+                "iconPath": "images/wrong.png",
+                "selectedIconPath": "images/wrong_fill.png",
+                "text": "错题"
+            },
+            {
+                "pagePath": "pages/query/query",
+                "iconPath": "images/query.png",
+                "selectedIconPath": "images/query_fill.png",
+                "text": "搜题"
+            },
+            {
+                "pagePath": "pages/me/me",
+                "iconPath": "images/me.png",
+                "selectedIconPath": "images/me-fill.png",
+                "text": "我"
+            }
+        ]
+    },
+    "sitemapLocation": "sitemap.json"
 }

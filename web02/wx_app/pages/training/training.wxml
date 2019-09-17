@@ -12,7 +12,7 @@
     <view class='middle'>
       <view bindtap='before1' class='switch'>‹</view>
       <view bindtap='be、fore10' class='switch'>‹‹</view>
-      <view>{{nowQuestion.question_no}}/{{questionNum}}</view>
+      <view>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
       <view bindtap='after10' class='switch'>››</view>
       <view bindtap='after1' class='switch'>›</view>
     </view>

@@ -239,7 +239,14 @@ def get_exam_questions():
 
 @exam_view.route("/questions/no/", methods=["GET"])
 @required_exam_no
-def get_max_exam_questions():
+def get_exam_questions_nos():
+    if "select_mode" in request.args:
+        select_mode = request.args["select_mode"]
+        question_subject = request.args.get("question_subject", None)
+        items = c_exam.select_question_no(g.exam_no, select_mode=select_mode,
+                                          question_subject=question_subject)
+        nos = map(lambda x: x["question_no"], items)
+        return jsonify({"status": True, "data": dict(exam_no=g.exam_no, questions=items)})
     max_no = c_exam.select_max_question(g.exam_no)
     next_no = (max_no + 1) if isinstance(max_no, (int, long)) else 1
     return jsonify({"status": True, "data": dict(max_no=max_no, next_no=next_no)})

@@ -172,6 +172,16 @@ class Exam(object):
             return 0
         return items[0]["max(question_no)"]
 
+    def select_question_no(self, exam_no, select_mode=None, question_subject=None):
+        where_value = dict(exam_no=exam_no)
+        if select_mode is not None:
+            where_value['select_mode'] = select_mode
+        if question_subject is not None:
+            where_value['question_subject'] = question_subject
+        cols = self.q_cols[:2]
+        items = self.db.execute_select(self.t_q, cols=cols, where_value=where_value)
+        return items
+
     def select_random_questions(self, exam_no, num):
         exam_items = self.select_exam(exam_no)
         if len(exam_items) <= 0:

@@ -1,56 +1,56 @@
 <import src="../common/head.wxml" />
 
 <view class="container">
-  <template is="head" data="{{title: '选择科目和题型'}}" />
+    <template is="head" data="{{title: '选择科目和题型'}}" />
 
-  <view class="page-body">
-    <view class="page-section">
-      <view class="weui-cells__title">练习模式</view>
-      <view class="weui-cells weui-cells_after-title">
-        <view class="weui-cell weui-cell_input">
-          <view class="weui-cell__hd">
-            <view class="weui-label">模式</view>
-          </view>
-          <view class="weui-cell__bd">
-            <picker bindchange="bindPickerChange" value="{{index}}" range="{{training_modes}}">
-              <view class="weui-input">{{training_modes[index]}}</view>
-            </picker>
-          </view>
-        </view>
-      </view>
-
-      <view wx:if="{{index==0}}">
-        <view class="weui-cells__title">练习的科目</view>
-        <view class="weui-cells weui-cells_after-title">
-          <view class="weui-cell weui-cell_input">
-            <view class="weui-cell__hd">
-              <view class="weui-label">科目</view>
+    <view class="page-body">
+        <view class="page-section">
+            <view class="weui-cells__title">练习模式</view>
+            <view class="weui-cells weui-cells_after-title">
+                <view class="weui-cell weui-cell_input">
+                    <view class="weui-cell__hd">
+                        <view class="weui-label">模式</view>
+                    </view>
+                    <view class="weui-cell__bd">
+                        <picker bindchange="bindPickerChange" value="{{index}}" range="{{training_modes}}">
+                            <view class="weui-input">{{training_modes[index]}}</view>
+                        </picker>
+                    </view>
+                </view>
             </view>
-            <view class="weui-cell__bd">
-              <picker bindchange="bindPickerChange" value="{{subject_index}}" range="{{subjects_array}}">
-                <view class="weui-input">{{subjects_array[subject_index]}}</view>
-              </picker>
+
+            <view wx:if="{{index==0}}">
+                <view class="weui-cells__title">练习科目</view>
+                <view class="weui-cells weui-cells_after-title">
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">科目</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <picker bindchange="subjectChange" value="{{subject_index}}" range="{{subjects_array}}">
+                                <view class="weui-input">{{subjects_array[subject_index]}}</view>
+                            </picker>
+                        </view>
+                    </view>
+                </view>
             </view>
-          </view>
-        </view>
-      </view>
 
-      <view class="weui-cells__title">练习的题型</view>
-      <view class="weui-cells weui-cells_after-title">
-        <view class="weui-cell weui-cell_input">
-          <view class="weui-cell__hd">
-            <view class="weui-label">题型</view>
-          </view>
-          <view class="weui-cell__bd">
-            <picker bindchange="bindPickerChange" value="{{mode_index}}" range="{{select_modes}}">
-              <view class="weui-input">{{select_modes[mode_index]}}</view>
-            </picker>
-          </view>
-        </view>
-      </view>
+            <view class="weui-cells__title">练习题型</view>
+            <view class="weui-cells weui-cells_after-title">
+                <view class="weui-cell weui-cell_input">
+                    <view class="weui-cell__hd">
+                        <view class="weui-label">题型</view>
+                    </view>
+                    <view class="weui-cell__bd">
+                        <picker bindchange="selectModeChange" value="{{mode_index}}" range="{{select_modes}}">
+                            <view class="weui-input">{{select_modes[mode_index]}}</view>
+                        </picker>
+                    </view>
+                </view>
+            </view>
 
+        </view>
     </view>
-  </view>
-  <button type="default" plain="true">开始练习</button>
+    <button type="default" plain="true" bindtap='startTraining'>开始练习</button>
 
 </view>
