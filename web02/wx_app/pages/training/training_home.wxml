@@ -27,8 +27,8 @@
                             <view class="weui-label">科目</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <picker bindchange="subjectChange" value="{{subject_index}}" range="{{subjects_array}}">
-                                <view class="weui-input">{{subjects_array[subject_index]}}</view>
+                            <picker bindchange="subjectChange" value="{{subjectIndex}}" range="{{subjects_array}}">
+                                <view class="weui-input">{{subjects_array[subjectIndex]}}</view>
                             </picker>
                         </view>
                     </view>
@@ -42,8 +42,8 @@
                         <view class="weui-label">题型</view>
                     </view>
                     <view class="weui-cell__bd">
-                        <picker bindchange="selectModeChange" value="{{mode_index}}" range="{{select_modes}}">
-                            <view class="weui-input">{{select_modes[mode_index]}}</view>
+                        <picker bindchange="selectModeChange" value="{{modeIndex}}" range="{{select_modes}}">
+                            <view class="weui-input">{{select_modes[modeIndex]}}</view>
                         </picker>
                     </view>
                 </view>

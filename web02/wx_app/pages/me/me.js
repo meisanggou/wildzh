@@ -1,16 +1,17 @@
 var app = getApp();
 var that;
 Page({
-
     data: {
         examIndex: -1,
         allExams: [],
         examName: "未选择"
     },
     onLoad: function(options) {
-        this.setData({
-            examName: app.globalData.defaultExamName
-        })
+        if (app.globalData.defaultExamNo != null) {
+            this.setData({
+                examName: app.globalData.defaultExamName
+            })
+        }
         this.getExams();
     },
 

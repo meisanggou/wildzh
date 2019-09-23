@@ -3,7 +3,7 @@ var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 remote_host = "https://wild.gene.ac"
 // var remote_host = "http://172.16.110.10:2401"
-remote_host = "http://127.0.0.1:2400"
+// remote_host = "http://127.0.0.1:2400"
 App({
     onLaunch: function() {
         var that = this;
@@ -99,6 +99,14 @@ App({
             this.globalData.defaultExamNo = currentExam["exam_no"];
             this.globalData.defaultExamName = currentExam["exam_name"];
         }
+    },
+    getOrSetCacheData: function(key, value=null){
+        var g_key = "wildzh_cache_" + key;
+        if(value == null){
+            return wx.getStorageSync(g_key);
+        }
+        wx.setStorageSync(g_key, value);
+        return value
     },
     globalData: {
         userInfo: null,

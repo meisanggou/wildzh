@@ -27,12 +27,12 @@ Page({
         var examName = app.globalData.defaultExamNo;
         if (examNo == null) {
             wx.showModal({
-                title: '页面加载失败',
-                content: "页面缺少必要的参数，确定返回首页",
+                title: '未选择题库',
+                content: "未选择题库,确定进入【我的】选择题库",
                 showCancel: false,
                 success(res) {
-                    wx.navigateBack({
-                        delta: 1
+                    wx.switchTab({
+                        url: "/pages/me/me"
                     })
                 }
             })
@@ -101,6 +101,21 @@ Page({
                 })
             }
         })
+    },
+    onShow:function(){
+        if (this.data.examNo == null) {
+            wx.showModal({
+                title: '未选择题库',
+                content: "未选择题库,确定进入【我的】选择题库",
+                showCancel: false,
+                success(res) {
+                    wx.switchTab({
+                        url: "/pages/me/me"
+                    })
+                }
+            })
+            return false;
+        }
     },
     reqQuestion: function(exam_no, startIndex, showIndex) {
         if (exam_no == null) {

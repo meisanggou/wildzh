@@ -62,7 +62,16 @@ Page({
                 }
             })
         } else {
-            // that.getExams();
+            wx.showModal({
+                title: '未选择题库',
+                content: "未选择题库,确定进入【我的】选择题库",
+                showCancel: false,
+                success(res) {
+                    wx.switchTab({
+                        url: "/pages/me/me"
+                    })
+                }
+            })
         }
 
     },

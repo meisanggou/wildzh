@@ -10,8 +10,8 @@ Page({
     data: {
         remote_host: app.globalData.remote_host,
         optionChar: app.globalData.optionChar,
-        examNo: 0,
-        examName: "测试",
+        examNo: null,
+        examName: "",
         questionItems: [],
         nowQuestion: null,
         nowQuestionIndex: 0,
@@ -25,15 +25,14 @@ Page({
             examName: app.globalData.defaultExamName
         });
         that = this;
-        that = this;
         if (that.data.examNo == null) {
             wx.showModal({
-                title: '页面加载失败',
-                content: "页面缺少必要的参数，确定返回首页",
+                title: '未选择题库',
+                content: "未选择题库,确定进入【我的】选择题库",
                 showCancel: false,
                 success(res) {
-                    wx.navigateBack({
-                        delta: 1
+                    wx.switchTab({
+                        url: "/pages/me/me"
                     })
                 }
             })
@@ -41,9 +40,15 @@ Page({
             wx.showLoading({
                 title: '加载中',
             })
-
+            var url = '/exam/questions/?exam_no=' + that.data.examNo + "&num=20";
+            if ("select_mode" in options) {
+                url += "&select_mode=" + options["select_mode"];
+            }
+            if ("question_subject" in options) {
+                url += "&question_subject=" + options["question_subject"];
+            }
             wx.request2({
-                url: '/exam/questions/?exam_no=' + that.data.examNo + "&num=20",
+                url: url,
                 method: 'GET',
                 success: res => {
                     if (res.data.status == false) {

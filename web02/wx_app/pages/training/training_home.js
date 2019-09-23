@@ -1,3 +1,4 @@
+var app = getApp();
 Page({
 
     data: {
@@ -5,9 +6,10 @@ Page({
         subjects_array: ['微观经济学', '宏观经济学', '政治经济学'],
         select_modes: ['选择题', '名词解释', '简答题', '计算题', '论述题'],
         index: 1,
-        subject_index: 0,
-        mode_index: 0,
-        to: "training"
+        subjectIndex: 0,
+        modeIndex: 0,
+        to: "training",
+        cacheSelectedKey: "selectedTrainingOptions"
     },
     onLoad: function(options) {
         console.info(options);
@@ -15,6 +17,10 @@ Page({
             this.setData({
                 to: options["to"]
             })
+        }
+        var selectedOptions = app.getOrSetCacheData(this.data.cacheSelectedKey);
+        if (selectedOptions != null) {
+            this.setData(selectedOptions);
         }
     },
     bindPickerChange(e) {
@@ -24,15 +30,16 @@ Page({
     },
     subjectChange(e) {
         this.setData({
-            subject_index: parseInt(e.detail.value)
+            subjectIndex: parseInt(e.detail.value)
         })
     },
     selectModeChange(e) {
         this.setData({
-            mode_index: parseInt(e.detail.value)
+            modeIndex: parseInt(e.detail.value)
         })
     },
     startTraining() {
+        app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
         var url = "";
         if(this.data.to == "answer"){
             url += "../answer/answer"
@@ -40,9 +47,9 @@ Page({
         else{
             url += "training"
         }
-        url += "?select_mode=" + (this.data.mode_index + 1);
+        url += "?select_mode=" + (this.data.modeIndex + 1);
         if (this.data.index == 0) {
-            url += "&question_subject=" + (this.data.subject_index + 1);
+            url += "&question_subject=" + (this.data.subjectIndex + 1);
         }
         wx.navigateTo({
             url: url
