@@ -20,11 +20,36 @@ Page({
         isReq: false
     },
 
+    onLoad: function(options) {},
+    onShow: function() {
+        var initR = this.initExam();
+        console.info(initR);
+        if (initR != false) {
+            this.reqWrongAnswer();
+        }
 
-    onLoad: function(options) {
+    },
+    initExam: function() {
         that = this;
         var examNo = app.globalData.defaultExamNo;
+        console.info("app no " + examNo);
+        console.info("this no " + this.data.examNo);
         var examName = app.globalData.defaultExamNo;
+        if (this.data.examNo != null && this.data.examNo != examNo) {
+            this.setData({
+                questionNum: 0,
+                nowQuestionIndex: 0,
+                questionItems: [],
+                questionAnswer: "",
+                nowQuestion: null,
+                showAnswer: false,
+                showRemove: false,
+            })
+        }
+        that.setData({
+            examNo: examNo,
+            examName: examName
+        })
         if (examNo == null) {
             wx.showModal({
                 title: '未选择题库',
@@ -38,11 +63,17 @@ Page({
             })
             return false;
         }
+        return true;
+    },
+    reqWrongAnswer: function() {
+        that = this
+        var examNo = this.data.examNo;
+        if (examNo == null) {
+            return false;
+        }
         wx.showLoading({
             title: '加载中...',
         })
-        
-        // 获取错题列表
         wx.request2({
             url: '/exam/wrong/?exam_no=' + examNo,
             methods: "GET",
@@ -78,12 +109,10 @@ Page({
                 }
                 // 按照一定规则 排序 questionItems
                 that.setData({
-                    examNo: examNo,
-                    examName: examName,
                     questionItems: questionItems
                 })
                 // 请求questionItems
-                that.reqQuestion(examNo, 0, 0);
+                that.reqQuestion(examNo, 0, that.data.nowQuestionIndex);
             },
             fail: function({
                 errMsg
@@ -101,21 +130,6 @@ Page({
                 })
             }
         })
-    },
-    onShow:function(){
-        if (this.data.examNo == null) {
-            wx.showModal({
-                title: '未选择题库',
-                content: "未选择题库,确定进入【我的】选择题库",
-                showCancel: false,
-                success(res) {
-                    wx.switchTab({
-                        url: "/pages/me/me"
-                    })
-                }
-            })
-            return false;
-        }
     },
     reqQuestion: function(exam_no, startIndex, showIndex) {
         if (exam_no == null) {
