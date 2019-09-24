@@ -207,6 +207,8 @@ def get_exam_questions():
     nos = request.args.get("nos", None)
     num = request.args.get("num", None)
     start_no = int(request.args.get("start_no", -1))
+    select_mode = request.args.get("select_mode", None)
+    question_subject = request.args.get("question_subject", None)
     if nos is not None:
         q_nos = filter(lambda x: len(x) > 0, re.split("\D", nos))
         items = c_exam.select_multi_question(g.exam_no, q_nos)
@@ -215,7 +217,7 @@ def get_exam_questions():
         items = c_exam.select_questions(g.exam_no)
     elif start_no == -1:
         # 获得随机试题num个
-        items = c_exam.select_random_questions(g.exam_no, int(num))
+        items = c_exam.select_random_questions(g.exam_no, int(num), select_mode, question_subject)
     else:
         # 获得从start_no 获取试题num个
         desc = False

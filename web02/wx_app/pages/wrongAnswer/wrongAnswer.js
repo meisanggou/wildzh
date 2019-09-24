@@ -36,6 +36,7 @@ Page({
         console.info("this no " + this.data.examNo);
         var examName = app.globalData.defaultExamNo;
         if (this.data.examNo != null && this.data.examNo != examNo) {
+            // 切换题库后 又再次进入
             this.setData({
                 questionNum: 0,
                 nowQuestionIndex: 0,

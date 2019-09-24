@@ -182,14 +182,14 @@ class Exam(object):
         items = self.db.execute_select(self.t_q, cols=cols, where_value=where_value)
         return items
 
-    def select_random_questions(self, exam_no, num):
-        exam_items = self.select_exam(exam_no)
-        if len(exam_items) <= 0:
+    def select_random_questions(self, exam_no, num, select_mode=None, question_subject=None):
+        m_nos = self.select_question_no(exam_no, select_mode, question_subject)
+        m_nos_len = len(m_nos)
+        if m_nos_len <= 0:
             return []
-        question_num = exam_items[0]["question_num"]
-        if num > question_num:
-            num = question_num
-        q_nos = random.sample(range(1, question_num + 1), num)
+        if num > m_nos_len:
+            return self.select_multi_question(exam_no, m_nos)
+        q_nos = random.sample(m_nos, num)
         return self.select_multi_question(exam_no, q_nos)
 
     def select_multi_question(self, exam_no, q_nos):

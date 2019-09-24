@@ -64,13 +64,27 @@ Page({
                         })
                         return;
                     }
+                    wx.hideLoading();
                     var questionItems = res.data.data;
+                    if(questionItems.length <= 0){
+                        wx.showModal({
+                            title: '无试题',
+                            content: "未获得试题，暂无相关试题，重新选择试题",
+                            showCancel: false,
+                            success(res) {
+                                wx.navigateBack({
+                                    delta: 1
+                                })
+                            }
+                        })
+                        return;
+                        
+                    }
                     that.setData({
                         questionItems: questionItems,
                         nowQuestion: questionItems[0],
                         totalQuestionNumber: questionItems.length
                     });
-                    wx.hideLoading();
                 }
             })
         }
