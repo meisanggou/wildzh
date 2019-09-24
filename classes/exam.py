@@ -183,7 +183,8 @@ class Exam(object):
         return items
 
     def select_random_questions(self, exam_no, num, select_mode=None, question_subject=None):
-        m_nos = self.select_question_no(exam_no, select_mode, question_subject)
+        m_items = self.select_question_no(exam_no, select_mode, question_subject)
+        m_nos = map(lambda x: x["question_no"], m_items)
         m_nos_len = len(m_nos)
         if m_nos_len <= 0:
             return []
