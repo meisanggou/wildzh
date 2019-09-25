@@ -17,7 +17,8 @@ Page({
         questionAnswer: new Array(),
         nowQuestion: null,
         showAnswer: false,
-        isReq: false
+        isReq: false,
+        progressStorageKey: ""
     },
 
     onLoad: function(options) {
@@ -28,13 +29,25 @@ Page({
         });
         that = this;
         var args_url = "";
+        var progressStorageKey = "training";
         if (that.data.examNo != null) {
             if ("select_mode" in options) {
                 args_url += "select_mode=" + options["select_mode"] + "&";
+                progressStorageKey += "_" + options["select_mode"];
+            }
+            else{
+                progressStorageKey += "_" + 0;
             }
             if ("question_subject" in options) {
                 args_url += "question_subject=" + options["question_subject"] + "&";
+                progressStorageKey += "_" + options["question_subject"];
             }
+            else{
+                progressStorageKey += "_" + 0;
+            }
+            this.setData({
+                progressStorageKey: progressStorageKey
+            });
             args_url += "exam_no=" + that.data.examNo;
             wx.request2({
                 url: '/exam/questions/no/?' + args_url,
@@ -57,7 +70,11 @@ Page({
                         })
                     } else {
                         // 请求questionItems
-                        that.reqQuestion(0, 0);
+                        var progressIndex = app.getOrSetExamCacheData(that.data.progressStorageKey);
+                        if (progressIndex == null || typeof progressIndex != 'number' || progressIndex <= 0){
+                            progressIndex = 0;
+                        }
+                        that.reqQuestion(0, progressIndex);
                     }
                 }
             })
@@ -293,17 +310,11 @@ Page({
         if (that.data.examNo == null || that.data.nowQuestion == null) {
             return false;
         }
-        var process = wx.getStorageSync(app.globalData.studyProcessKey);
-        if (process) {
-            process[that.data.examNo] = that.data.nowQuestion.question_no;
-        } else {
-            process = {};
-            process[that.data.examNo] = that.data.nowQuestion.question_no;
+        if (this.data.progressStorageKey == "" || this.data.nowQuestionIndex <= 0){
+            return false;
         }
-        wx.setStorage({
-            key: app.globalData.studyProcessKey,
-            data: process,
-        })
+        app.getOrSetExamCacheData(this.data.progressStorageKey, this.data.nowQuestionIndex);
+
     },
     // 触摸开始事件
     touchStart: function(e) {

@@ -40,12 +40,7 @@
                 "selectedIconPath": "images/wrong_fill.png",
                 "text": "错题"
             },
-            {
-                "pagePath": "pages/query/query",
-                "iconPath": "images/query.png",
-                "selectedIconPath": "images/query_fill.png",
-                "text": "搜题"
-            },
+
             {
                 "pagePath": "pages/me/me",
                 "iconPath": "images/me.png",

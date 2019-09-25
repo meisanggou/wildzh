@@ -4,6 +4,12 @@ var exam_storage_key = "wildzh_current_exam";
 remote_host = "https://wild.gene.ac"
 // var remote_host = "http://172.16.110.10:2401"
 // remote_host = "http://127.0.0.1:2400"
+// {
+//     "pagePath": "pages/query/query",
+//         "iconPath": "images/query.png",
+//             "selectedIconPath": "images/query_fill.png",
+//                 "text": "搜题"
+// },
 App({
     onLaunch: function() {
         var that = this;
@@ -108,6 +114,13 @@ App({
         wx.setStorageSync(g_key, value);
         return value
     },
+    getOrSetExamCacheData: function (key, value = null) {
+        if(this.globalData.defaultExamNo == null){
+            return null;
+        }
+        var g_key = this.globalData.defaultExamNo + "_" + key;
+        return this.getOrSetCacheData(g_key, value);
+    },
     globalData: {
         userInfo: null,
         nowQuestionList: [],
@@ -118,7 +131,7 @@ App({
         sessionStorageKey: session_storage_key,
         userInfoStorageKey: "wildzh_current_user",
         myProjectStorageKey: "wildzh_my_projects",
-        studyProcessKey: "wildzh_study_process",
+        studyProcessKey: "wildzh_study_process", //待废弃
         examStorageKey: exam_storage_key,
         remote_host: remote_host,
         userItem: {},

@@ -69,7 +69,7 @@ Page({
                     if(questionItems.length <= 0){
                         wx.showModal({
                             title: '无试题',
-                            content: "未获得试题，暂无相关试题，重新选择试题",
+                            content: "暂无相关试题，请重新选择试题类型或者更换试题库",
                             showCancel: false,
                             success(res) {
                                 wx.navigateBack({
