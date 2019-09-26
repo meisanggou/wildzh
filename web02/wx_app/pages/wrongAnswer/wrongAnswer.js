@@ -77,8 +77,7 @@ Page({
             wx.showLoading({
                 title: '加载中...',
             })
-        }
-        else{
+        } else {
             minWrongTime = this.data.questionItems[0].wrong_time;
         }
         wx.request2({
@@ -99,11 +98,18 @@ Page({
                     })
                     return false;
                 }
-                var latestQuestionItems = res.data.data;
-                // 按照错误时间排序 最新错题排到前面
-                latestQuestionItems.sort(function (a, b) {
-                    return b.wrong_time - a.wrong_time;
-                })
+                var addQuestionItems = res.data.data;
+                // 如果有新的错题，显示第一个，没有保持原来的显示
+                var showIndex = that.data.nowQuestionIndex;
+                var latestQuestionItems = that.data.questionItems;
+                if (addQuestionItems.length > 0) {
+                    // 按照错误时间排序 最新错题排到前面
+                    addQuestionItems.sort(function(a, b) {
+                        return b.wrong_time - a.wrong_time;
+                    })
+                    latestQuestionItems = addQuestionItems.concat(that.data.questionItems);
+                    showIndex = 0;
+                }
                 // 判定最新的试题是否在
                 that.setData({
                     questionItems: latestQuestionItems
@@ -122,9 +128,10 @@ Page({
                     })
                     return false;
                 }
-                
-                // 请求questionItems
-                that.reqQuestion(examNo, 0, that.data.nowQuestionIndex);
+                if (addQuestionItems.length > 0) {
+                    // 请求questionItems
+                    that.reqQuestion(examNo, 0, 0);
+                }
             },
             fail: function({
                 errMsg
@@ -163,6 +170,9 @@ Page({
             endIndex = questionItems.length;
         }
         for (var i = startIndex; i < endIndex; i++) {
+            if ("options" in questionItems[i]){
+                continue;
+            }
             nos += "," + questionItems[i].question_no;
         }
         wx.request2({
@@ -229,9 +239,12 @@ Page({
         })
         questionItems.splice(nowQuestionIndex, 1);
         if (questionItems.length <= 0) {
+            that.setData({
+                questionItems: []
+            });
             wx.showModal({
                 title: '无错题',
-                content: "已经没有错题，确定返回首页",
+                content: "已经没有错题",
                 showCancel: false,
                 success(res) {
                     wx.navigateBack({

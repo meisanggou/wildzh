@@ -82,7 +82,7 @@ App({
                     },
                     success: res => {
                         console.info("App Wx Login Success")
-                        wx.setStorageSync(that.globalData.userInfoStorageKey, res.data.data)
+                        that.getOrSetCurrentUserData(res.data.data)
                         wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
                     }
                 })
@@ -114,6 +114,9 @@ App({
         wx.setStorageSync(g_key, value);
         return value
     },
+    getOrSetCurrentUserData: function(value=null){
+        return this.getOrSetCacheData(this.globalData.userInfoStorageKey, value);
+    },
     getOrSetExamCacheData: function (key, value = null) {
         if(this.globalData.defaultExamNo == null){
             return null;
@@ -129,7 +132,7 @@ App({
         allTestIdKey: "wildzh_testids",
         testIdPrefix: "wildzh_test_",
         sessionStorageKey: session_storage_key,
-        userInfoStorageKey: "wildzh_current_user",
+        userInfoStorageKey: "current_user",
         myProjectStorageKey: "wildzh_my_projects",
         studyProcessKey: "wildzh_study_process", //待废弃
         examStorageKey: exam_storage_key,

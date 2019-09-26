@@ -263,6 +263,9 @@ Page({
 
     showAnswer: function(e) {
         var nowQuestion = that.data.nowQuestion;
+        if (nowQuestion == null){
+            return false;
+        }
         var questionAnswer = new Array();
 
         for (var index in nowQuestion.options) {

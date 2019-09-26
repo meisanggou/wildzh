@@ -2,6 +2,7 @@ var app = getApp();
 var that;
 Page({
     data: {
+        userNo: "",
         examIndex: -1,
         allExams: [],
         examName: "未选择"
@@ -11,6 +12,15 @@ Page({
             this.setData({
                 examName: app.globalData.defaultExamName
             })
+        }
+        var currentUser = app.getOrSetCurrentUserData();
+        console.info(currentUser);
+        if(currentUser != null){
+            if("user_no" in currentUser){
+                this.setData({
+                    userNo: currentUser.user_no
+                })
+            }
         }
         this.getExams();
     },

@@ -21,6 +21,16 @@
 
                     <view class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
+                            <view class="weui-label">编号</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <view class="weui-input">{{userNo}}
+                            </view>
+                        </view>
+                    </view>
+
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
                             <view class="weui-label">性别</view>
                         </view>
                         <view class="weui-cell__bd">
