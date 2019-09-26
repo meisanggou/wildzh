@@ -72,11 +72,17 @@ Page({
         if (examNo == null) {
             return false;
         }
-        wx.showLoading({
-            title: '加载中...',
-        })
+        var minWrongTime = 0;
+        if (this.data.questionItems.length <= 0) {
+            wx.showLoading({
+                title: '加载中...',
+            })
+        }
+        else{
+            minWrongTime = this.data.questionItems[0].wrong_time;
+        }
         wx.request2({
-            url: '/exam/wrong/?exam_no=' + examNo,
+            url: '/exam/wrong/?exam_no=' + examNo + "&min_wrong_time=" + minWrongTime,
             methods: "GET",
             success: function(res) {
                 if (res.data.status != true) {
@@ -93,8 +99,16 @@ Page({
                     })
                     return false;
                 }
-                var questionItems = res.data.data;
-                if (questionItems.length <= 0) {
+                var latestQuestionItems = res.data.data;
+                // 按照错误时间排序 最新错题排到前面
+                latestQuestionItems.sort(function (a, b) {
+                    return b.wrong_time - a.wrong_time;
+                })
+                // 判定最新的试题是否在
+                that.setData({
+                    questionItems: latestQuestionItems
+                })
+                if (that.data.questionItems.length <= 0) {
                     wx.hideLoading();
                     wx.showModal({
                         title: '无错题',
@@ -108,10 +122,7 @@ Page({
                     })
                     return false;
                 }
-                // 按照一定规则 排序 questionItems
-                that.setData({
-                    questionItems: questionItems
-                })
+                
                 // 请求questionItems
                 that.reqQuestion(examNo, 0, that.data.nowQuestionIndex);
             },

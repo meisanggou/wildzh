@@ -289,7 +289,8 @@ def wrong_answer_action():
 @login_required
 @required_exam_no
 def my_wrong_action():
-    items = c_exam.select_wrong(g.user_no, g.exam_no)
+    min_wrong_time = int(request.args.get("min_wrong_time", 0))
+    items = c_exam.select_wrong(g.user_no, g.exam_no, min_wrong_time)
     return jsonify({"status": True, "data": items})
 
 

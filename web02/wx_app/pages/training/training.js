@@ -74,7 +74,7 @@ Page({
                         if (progressIndex == null || typeof progressIndex != 'number' || progressIndex <= 0){
                             progressIndex = 0;
                         }
-                        that.reqQuestion(0, progressIndex);
+                        that.reqQuestion(progressIndex, progressIndex);
                     }
                 }
             })
@@ -114,6 +114,9 @@ Page({
             endIndex = questionItems.length;
         }
         for (var i = startIndex; i < endIndex; i++) {
+            if ("options" in questionItems[i]){
+                continue;
+            }
             nos += "," + questionItems[i].question_no;
         }
         wx.request2({
@@ -231,13 +234,22 @@ Page({
         if (preIndex <= 0) {
             preIndex = 0;
         }
-        var nowQuestion = questionItems[preIndex];
-        that.setData({
-            nowQuestion: nowQuestion,
-            nowQuestionIndex: preIndex,
-            showAnswer: false
-        })
-
+        if ("options" in questionItems[preIndex]) {
+            //已经获取内容
+            var nowQuestion = questionItems[preIndex];
+            that.setData({
+                nowQuestion: nowQuestion,
+                nowQuestionIndex: preIndex,
+                showAnswer: false
+            })
+        } else {
+            // 没有获取内容
+            wx.showLoading({
+                title: '加载中...',
+                mask: true
+            })
+            that.reqQuestion(preIndex, preIndex)
+        }
 
     },
     before1: function() {

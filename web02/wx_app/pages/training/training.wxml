@@ -11,14 +11,14 @@
 
     <view class='middle'>
       <view bindtap='before1' class='switch'>‹</view>
-      <view bindtap='be、fore10' class='switch'>‹‹</view>
+      <view bindtap='before10' class='switch'>‹‹</view>
       <view>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
       <view bindtap='after10' class='switch'>››</view>
       <view bindtap='after1' class='switch'>›</view>
     </view>
 
     <view class='content'>
-      <view>{{nowQuestion.question_no}}.
+      <view>{{nowQuestionIndex + 1}}.
         <block wx:for="{{nowQuestion.question_desc_rich}}">
           <block wx:if="{{item.url}}">
             <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>

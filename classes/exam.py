@@ -210,10 +210,13 @@ class Exam(object):
             d_items.append(d_item)
         return d_items
 
-    def select_wrong(self, user_no, exam_no):
+    def select_wrong(self, user_no, exam_no, min_wrong_time=0):
         where_value = dict(user_no=user_no, exam_no=exam_no)
+        where_cond = ["wrong_time>"]
+        where_cond_args = (min_wrong_time, )
         cols = ["user_no", "exam_no", "question_no", "wrong_time", "wrong_freq"]
-        items = self.db.execute_select(self.t_w, where_value=where_value, cols=cols)
+        items = self.db.execute_select(self.t_w, where_value=where_value, cols=cols, where_cond=where_cond,
+                                       where_cond_args=where_cond_args)
         return items
 
     def online_exam(self, exam_no):
