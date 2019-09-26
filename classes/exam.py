@@ -212,7 +212,7 @@ class Exam(object):
 
     def select_wrong(self, user_no, exam_no, min_wrong_time=0):
         where_value = dict(user_no=user_no, exam_no=exam_no)
-        where_cond = ["wrong_time>"]
+        where_cond = ["wrong_time>%s"]
         where_cond_args = (min_wrong_time, )
         cols = ["user_no", "exam_no", "question_no", "wrong_time", "wrong_freq"]
         items = self.db.execute_select(self.t_w, where_value=where_value, cols=cols, where_cond=where_cond,
