@@ -198,7 +198,7 @@ def entry_questions():
 @exam_view.route("/questions/", methods=["PUT"])
 @login_required
 @required_exam_no
-def entry_questions():
+def update_question():
     data = g.request_data
     extra_data = dict()
     question_no = data["question_no"]
