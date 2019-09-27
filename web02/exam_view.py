@@ -168,7 +168,7 @@ def delete_exam():
     return jsonify({"status": True, "data": "删除成功"})
 
 
-@exam_view.route("/questions/", methods=["POST", "PUT"])
+@exam_view.route("/questions/", methods=["POST"])
 @login_required
 @required_exam_no
 def entry_questions():
@@ -188,16 +188,27 @@ def entry_questions():
     if "question_desc_url" in data:
         extra_data["question_desc_url"] = data["question_desc_url"]
 
-    if request.method == "POST":
-        r, l = c_exam.new_exam_questions(g.exam_no, question_no,
-                                         question_desc, select_mode,
-                                         options, answer, **extra_data)
-    else:
-        l = c_exam.update_exam_questions(g.exam_no, question_no,
-                                         question_desc, select_mode,
-                                         options, answer, **extra_data)
-        r = True
+    r, l = c_exam.new_exam_questions(g.exam_no, question_no, question_desc,
+                                     select_mode, options, answer,
+                                     **extra_data)
+
     return jsonify({"status": r, "data": dict(action=request.method, data=data)})
+
+
+@exam_view.route("/questions/", methods=["PUT"])
+@login_required
+@required_exam_no
+def entry_questions():
+    data = g.request_data
+    extra_data = dict()
+    question_no = data["question_no"]
+    keys = ("question_desc", "select_mode", "question_subject",
+            "question_source", "options", "answer", "question_desc_url")
+    for key in keys:
+        if key in data:
+            extra_data[key] = data[key]
+    l = c_exam.update_exam_questions(g.exam_no, question_no, **extra_data)
+    return jsonify({"status": True, "data": dict(action=request.method, data=data)})
 
 
 @exam_view.route("/questions/", methods=["GET"])

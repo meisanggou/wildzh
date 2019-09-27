@@ -18,7 +18,8 @@ Page({
         nowQuestion: null,
         showAnswer: false,
         isReq: false,
-        progressStorageKey: ""
+        progressStorageKey: "",
+        canUpdate: true
     },
 
     onLoad: function(options) {
@@ -34,15 +35,13 @@ Page({
             if ("select_mode" in options) {
                 args_url += "select_mode=" + options["select_mode"] + "&";
                 progressStorageKey += "_" + options["select_mode"];
-            }
-            else{
+            } else {
                 progressStorageKey += "_" + 0;
             }
             if ("question_subject" in options) {
                 args_url += "question_subject=" + options["question_subject"] + "&";
                 progressStorageKey += "_" + options["question_subject"];
-            }
-            else{
+            } else {
                 progressStorageKey += "_" + 0;
             }
             this.setData({
@@ -71,10 +70,10 @@ Page({
                     } else {
                         // 请求questionItems
                         var progressIndex = app.getOrSetExamCacheData(that.data.progressStorageKey);
-                        if (progressIndex == null || typeof progressIndex != 'number' || progressIndex <= 0){
+                        if (progressIndex == null || typeof progressIndex != 'number' || progressIndex <= 0) {
                             progressIndex = 0;
                         }
-                        that.reqQuestion(progressIndex, progressIndex);
+                        that.reqQuestion(progressIndex, true);
                     }
                 }
             })
@@ -92,7 +91,7 @@ Page({
         }
 
     },
-    reqQuestion: function(startIndex, showIndex) {
+    reqQuestion: function(startIndex, updateShow = false, stepNum = 13) {
         that = this;
         var exam_no = that.data.examNo;
         if (that.data.examNo == null) {
@@ -109,12 +108,23 @@ Page({
         }
         var questionItems = that.data.questionItems;
         var nos = "";
-        var endIndex = startIndex + 13;
-        if (endIndex > questionItems.length) {
-            endIndex = questionItems.length;
+        var _start = -1;
+        var _end = -1;
+        if (stepNum < 0) {
+            _start = startIndex + stepNum;
+            _end = startIndex + 1
+        } else {
+            _start = startIndex;
+            _end = startIndex + stepNum;
         }
-        for (var i = startIndex; i < endIndex; i++) {
-            if ("options" in questionItems[i]){
+        if(_end > questionItems.length){
+            _end = questionItems.length;
+        }
+        if(_start < 0){
+            _start = 0
+        }
+        for (var i = _start; i < _end; i++) {
+            if ("options" in questionItems[i]) {
                 continue;
             }
             nos += "," + questionItems[i].question_no;
@@ -128,7 +138,7 @@ Page({
                     return;
                 }
                 var newItems = res.data.data;
-                for (var i = endIndex - 1; i >= startIndex; i--) {
+                for (var i = _end - 1; i >= _start; i--) {
                     for (var j = 0; j < newItems.length; j++) {
                         if (questionItems[i].question_no == newItems[j].question_no) {
                             questionItems[i]["question_desc"] = newItems[j]["question_desc"];
@@ -145,11 +155,11 @@ Page({
                 if (questionItems.length <= 0) {
                     // 没有错题 有问题
                 }
-                if (showIndex != null) {
+                if (updateShow) {
                     that.setData({
                         questionItems: questionItems,
-                        nowQuestion: questionItems[showIndex],
-                        nowQuestionIndex: showIndex,
+                        nowQuestion: questionItems[startIndex],
+                        nowQuestionIndex: startIndex,
                         questionNum: questionItems.length
                     });
                 }
@@ -197,7 +207,7 @@ Page({
             // 判断紧接着10条是否都已预获取数据
             for (var i = 1; i < 11 && nextIndex + i < questionLen; i++) {
                 if (!("options" in questionItems[nextIndex + i])) {
-                    that.reqQuestion(nextIndex + i, null);
+                    that.reqQuestion(nextIndex + i);
                     break;
                 }
             }
@@ -207,7 +217,7 @@ Page({
                 title: '加载中...',
                 mask: true
             })
-            that.reqQuestion(nextIndex, nextIndex)
+            that.reqQuestion(nextIndex, true)
         }
     },
     after1: function() {
@@ -248,7 +258,7 @@ Page({
                 title: '加载中...',
                 mask: true
             })
-            that.reqQuestion(preIndex, preIndex)
+            that.reqQuestion(preIndex, true, -13)
         }
 
     },
@@ -263,7 +273,7 @@ Page({
 
     showAnswer: function(e) {
         var nowQuestion = that.data.nowQuestion;
-        if (nowQuestion == null){
+        if (nowQuestion == null) {
             return false;
         }
         var questionAnswer = new Array();
@@ -310,6 +320,51 @@ Page({
             nowQuestion: nowQuestion
         })
     },
+    updateAnswer: function(event) {
+        var selected = event.detail.value;
+        var nowQuestion = this.data.nowQuestion;
+        var options = nowQuestion.options;
+        var optLen = options.length;
+        for (var i = 0; i < optLen; i++) {
+            if (i == selected) {
+                if (parseInt(options[i]["score"]) > 0) {
+                    return false;
+                }
+                options[i]["score"] = 1;
+            } else {
+                options[i]["score"] = 0;
+            }
+        }
+        this.updateQuestion(nowQuestion.question_no, options);
+    },
+    updateQuestion: function(questionNo, options = null, answer = null) {
+        var uData = new Object();
+        uData["question_no"] = questionNo;
+        if (options != null) {
+            uData["options"] = options;
+        }
+        if (answer != null) {
+            uData["answer"] = answer;
+        }
+        wx.request2({
+            url: '/exam/questions/?exam_no=' + this.data.examNo,
+            method: 'PUT',
+            data: uData,
+            success: res => {
+                if (res.data.status == false) {
+                    return;
+                }
+                wx.showToast({
+                    title: "更新成功",
+                    icon: "none",
+                    duration: 1000
+                });
+                if (that.data.showAnswer) {
+                    that.showAnswer();
+                }
+            }
+        })
+    },
     recordWrong: function(exam_no, wrong_question) {
         wx.request2({
             url: '/exam/wrong/',
@@ -325,7 +380,7 @@ Page({
         if (that.data.examNo == null || that.data.nowQuestion == null) {
             return false;
         }
-        if (this.data.progressStorageKey == "" || this.data.nowQuestionIndex <= 0){
+        if (this.data.progressStorageKey == "" || this.data.nowQuestionIndex <= 0) {
             return false;
         }
         app.getOrSetExamCacheData(this.data.progressStorageKey, this.data.nowQuestionIndex);

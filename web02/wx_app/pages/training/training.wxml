@@ -1,81 +1,88 @@
+<wxs src="../common/tools/array.wxs" module="tools" />
 <view wx:if="{{examNo == null}}">
-  <picker bindchange="choseExam" class='picker' value="{{index}}" range="{{allExams}}" range-key="exam_name">
-    <view class='pickerContent'>选择试题库</view>
-  </picker>
+    <picker bindchange="choseExam" class='picker' value="{{index}}" range="{{allExams}}" range-key="exam_name">
+        <view class='pickerContent'>选择试题库</view>
+    </picker>
 </view>
 <view wx:else class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
-  <view class='pageContent'>
-    <view class='top'>
-      <view>{{ examName }}</view>
-    </view>
+    <view class='pageContent'>
+        <view class='top'>
+            <view>{{ examName }}</view>
+        </view>
 
-    <view class='middle'>
-      <view bindtap='before1' class='switch'>‹</view>
-      <view bindtap='before10' class='switch'>‹‹</view>
-      <view>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
-      <view bindtap='after10' class='switch'>››</view>
-      <view bindtap='after1' class='switch'>›</view>
-    </view>
+        <view class='middle'>
+            <view bindtap='before1' class='switch'>‹</view>
+            <view bindtap='before10' class='switch'>‹‹</view>
+            <view>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
+            <view bindtap='after10' class='switch'>››</view>
+            <view bindtap='after1' class='switch'>›</view>
+        </view>
 
-    <view class='content'>
-      <view>{{nowQuestionIndex + 1}}.
-        <block wx:for="{{nowQuestion.question_desc_rich}}">
-          <block wx:if="{{item.url}}">
-            <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
-          </block>
-          <block wx:else>
-            {{item}}
-          </block>
+        <view class='content'>
+            <view>{{nowQuestionIndex + 1}}.
+                <block wx:for="{{nowQuestion.question_desc_rich}}">
+                    <block wx:if="{{item.url}}">
+                        <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+                    </block>
+                    <block wx:else>
+                        {{item}}
+                    </block>
+                </block>
+            </view>
+            <!-- <view></view> -->
+            <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
+
+            <view class='questionOption'>
+                <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、
+                    <block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item">
+                        <block wx:if="{{desc_item.url}}">
+                            <image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;' src="{{remote_host}}{{desc_item.url}}"></image>
+                        </block>
+                        <block wx:else>
+                            {{desc_item}}
+                        </block>
+
+                    </block>
+                </view>
+            </view>
+
+            <view class='line'>
+                <view class='showAnswer' bindtap='showAnswer'>显示答案</view>
+            </view>
+
+            <view wx:if="{{showAnswer}}">
+                <view class='item'>
+                    <block wx:for="{{questionAnswer}}">
+                        <block wx:if="{{item.url}}">
+                            <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+                        </block>
+                        <block wx:else>
+                            {{item}}
+                        </block>
+                    </block>
+                </view>
+                <scroll-view scroll-y="true" class='item'>解析：
+                    <block wx:for="{{nowQuestion.answer_rich}}">
+                        <block wx:if="{{item.url}}">
+                            <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+                        </block>
+                        <block wx:else>
+                            {{item}}
+                        </block>
+                    </block>
+                </scroll-view>
+            </view>
+        </view>
+    </view>
+    <view class='bottom'>
+        <view bindtap='before1' class='switch'>‹</view>
+        <block wx:if="{{ canUpdate && showAnswer}}">
+            <picker class='afterQuestion' bindchange='updateAnswer' range="{{tools.slice(optionChar,0,nowQuestion.options.length)}}">更新答案</picker>
+            <view class='afterQuestion' bindtap='showAnswer'>更新解析</view>
         </block>
-      </view>
-      <!-- <view></view> -->
-      <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
-
-      <view class='questionOption'>
-        <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、
-          <block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item">
-            <block wx:if="{{desc_item.url}}">
-              <image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;' src="{{remote_host}}{{desc_item.url}}"></image>
-            </block>
-            <block wx:else>
-              {{desc_item}}
-            </block>
-
-          </block>
-        </view>
-      </view>
-
-      <view class='line'>
-        <view class='showAnswer' bindtap='showAnswer'>显示答案</view>
-      </view>
-
-      <view wx:if="{{showAnswer}}">
-        <view class='item'>
-          <block wx:for="{{questionAnswer}}">
-            <block wx:if="{{item.url}}">
-              <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
-            </block>
-            <block wx:else>
-              {{item}}
-            </block>
-          </block>
-        </view>
-        <scroll-view scroll-y="true" class='item'>解析：
-          <block wx:for="{{nowQuestion.answer_rich}}">
-            <block wx:if="{{item.url}}">
-              <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
-            </block>
-            <block wx:else>
-              {{item}}
-            </block>
-          </block>
-        </scroll-view>
-      </view>
+        <block wx:else>
+            <view class='afterQuestion' bindtap='showAnswer'>显示答案</view>
+        </block>
+        <view bindtap='after1' class='switch'>›</view>
     </view>
-  </view>
-  <view class='bottom'>
-    <view bindtap='before1' class='switch'>‹</view>
-    <view class='afterQuestion' bindtap='showAnswer'>显示答案</view>
-    <view bindtap='after1' class='switch'>›</view>
-  </view>
 </view>

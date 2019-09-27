@@ -14,7 +14,6 @@ Page({
             })
         }
         var currentUser = app.getOrSetCurrentUserData();
-        console.info(currentUser);
         if(currentUser != null){
             if("user_no" in currentUser){
                 this.setData({
