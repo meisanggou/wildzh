@@ -19,14 +19,23 @@ Page({
         showAnswer: false,
         isReq: false,
         progressStorageKey: "",
-        canUpdate: true
+        canUpdate: false
     },
 
     onLoad: function(options) {
-        console.info(app.globalData)
+        var canUpdate = false;
+        var currentUser = app.getOrSetCurrentUserData();
+        if (currentUser != null) {
+            if ("role" in currentUser) {
+                if((currentUser.role & 2) == 2){
+                    canUpdate = true;
+                }
+            }
+        }
         this.setData({
             examNo: app.globalData.defaultExamNo,
-            examName: app.globalData.defaultExamName
+            examName: app.globalData.defaultExamName,
+            canUpdate: canUpdate
         });
         that = this;
         var args_url = "";
@@ -124,7 +133,7 @@ Page({
             _start = 0
         }
         for (var i = _start; i < _end; i++) {
-            if ("options" in questionItems[i]) {
+            if (("options" in questionItems[i]) && questionItems[i].forceUpdate != true) {
                 continue;
             }
             nos += "," + questionItems[i].question_no;
@@ -147,6 +156,7 @@ Page({
                             questionItems[i]["options"] = newItems[j]["options"];
                             questionItems[i]["answer"] = newItems[j]["answer"];
                             questionItems[i]["answer_rich"] = newItems[j]["answer_rich"]
+                            questionItems[i].forceUpdate = false;
                             break;
                         }
                     }
@@ -162,6 +172,12 @@ Page({
                         nowQuestionIndex: startIndex,
                         questionNum: questionItems.length
                     });
+                }
+                else if(startIndex == that.data.nowQuestionIndex){
+                    // 如果当前请求的内容正好是当前显示的，需要重新更新一下答案显示。答案显示是拼出来的没和变量关联
+                    if (that.data.showAnswer) {
+                        that.showAnswer();
+                    }
                 }
                 that.setData({
                     isReq: false
@@ -323,6 +339,7 @@ Page({
     updateAnswer: function(event) {
         var selected = event.detail.value;
         var nowQuestion = this.data.nowQuestion;
+        var index = this.data.nowQuestionIndex;
         var options = nowQuestion.options;
         var optLen = options.length;
         for (var i = 0; i < optLen; i++) {
@@ -335,9 +352,10 @@ Page({
                 options[i]["score"] = 0;
             }
         }
-        this.updateQuestion(nowQuestion.question_no, options);
+        nowQuestion.forceUpdate = true;
+        this.updateQuestion(nowQuestion.question_no, index, options);
     },
-    updateQuestion: function(questionNo, options = null, answer = null) {
+    updateQuestion: function(questionNo, index, options = null, answer = null) {
         var uData = new Object();
         uData["question_no"] = questionNo;
         if (options != null) {
@@ -359,9 +377,7 @@ Page({
                     icon: "none",
                     duration: 1000
                 });
-                if (that.data.showAnswer) {
-                    that.showAnswer();
-                }
+                that.reqQuestion(index, false)
             }
         })
     },
