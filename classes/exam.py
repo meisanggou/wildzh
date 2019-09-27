@@ -120,8 +120,8 @@ class Exam(object):
 
         if question_desc_url is not None:
             kwargs["question_desc_url"] = question_desc_url
-        elif len(question_desc_url) == 0:
-            kwargs["question_desc_url"] = None
+            if len(question_desc_url) == 0:
+                kwargs["question_desc_url"] = None
         for key, value in update_data.items():
             if key in self.q_cols:
                 kwargs[key] = value
