@@ -150,12 +150,8 @@ def get_exam_info():
 def update_exam():
     data = g.request_data
     exam_no = data["exam_no"]
-    l = c_exam.update_exam(data["exam_type"], exam_no, data["exam_name"], data["exam_desc"],
-                           data["eval_type"], pic_url=data["pic_url"])
-    cases = dict()
-    for i in range(len(data["result_explain"])):
-        cases["case_%s" % string.letters[i]] = data["result_explain"][i]
-    l2 = c_exam.update_result_explain(exam_no, **cases)
+    l = c_exam.update_exam(exam_no, data["exam_name"], data["exam_desc"],
+                           pic_url=data["pic_url"])
     return jsonify({"status": True, "data": data})
 
 

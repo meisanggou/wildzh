@@ -19,7 +19,8 @@ Page({
         showAnswer: false,
         isReq: false,
         progressStorageKey: "",
-        canUpdate: false
+        canUpdate: false,
+        isUpdateAnswer: false
     },
 
     onLoad: function(options) {
@@ -215,11 +216,7 @@ Page({
         if ("options" in questionItems[nextIndex]) {
             //已经获取内容
             var nowQuestion = questionItems[nextIndex];
-            that.setData({
-                nowQuestion: nowQuestion,
-                nowQuestionIndex: nextIndex,
-                showAnswer: false
-            })
+            that.changeNowQuestion(nextIndex);
             // 判断紧接着10条是否都已预获取数据
             for (var i = 1; i < 11 && nextIndex + i < questionLen; i++) {
                 if (!("options" in questionItems[nextIndex + i])) {
@@ -262,12 +259,7 @@ Page({
         }
         if ("options" in questionItems[preIndex]) {
             //已经获取内容
-            var nowQuestion = questionItems[preIndex];
-            that.setData({
-                nowQuestion: nowQuestion,
-                nowQuestionIndex: preIndex,
-                showAnswer: false
-            })
+            that.changeNowQuestion(preIndex);
         } else {
             // 没有获取内容
             wx.showLoading({
@@ -286,7 +278,15 @@ Page({
     before10: function() {
         that.before(10)
     },
-
+    changeNowQuestion: function(index){
+        var nowQuestion = this.data.questionItems[index];
+        this.setData({
+            nowQuestion: nowQuestion,
+            nowQuestionIndex: index,
+            showAnswer: false,
+            isUpdateAnswer: false
+        })
+    },
     showAnswer: function(e) {
         var nowQuestion = that.data.nowQuestion;
         if (nowQuestion == null) {
@@ -336,7 +336,7 @@ Page({
             nowQuestion: nowQuestion
         })
     },
-    updateAnswer: function(event) {
+    updateAnswerOption: function(event) {
         var selected = event.detail.value;
         var nowQuestion = this.data.nowQuestion;
         var index = this.data.nowQuestionIndex;
@@ -354,6 +354,17 @@ Page({
         }
         nowQuestion.forceUpdate = true;
         this.updateQuestion(nowQuestion.question_no, index, options);
+    },
+    updateAnswer: function () {
+        this.setData({
+            isUpdateAnswer: true
+        });
+    },
+    actionUpdateAnswer: function(){
+        var nowQuestion = this.data.nowQuestion;
+        var index = this.data.nowQuestionIndex;
+        nowQuestion.forceUpdate = true;
+        this.updateQuestion(nowQuestion.question_no, index, null, nowQuestion.answer);
     },
     updateQuestion: function(questionNo, index, options = null, answer = null) {
         var uData = new Object();

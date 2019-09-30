@@ -23,8 +23,8 @@ class Exam(object):
                        "answer", "question_subject", "question_source",
                        "answer_pic_url"]
 
-    def _insert_info(self, exam_no, exam_name, exam_desc, eval_type, adder, status=1, exam_extend=None):
-        kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, eval_type=eval_type, status=status,
+    def _insert_info(self, exam_no, exam_name, exam_desc, adder, status=1, exam_extend=None):
+        kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, status=status,
                       exam_extend=exam_extend, adder=adder)
         l = self.db.execute_insert(self.t_info, kwargs=kwargs, ignore=True)
         return l
@@ -75,9 +75,9 @@ class Exam(object):
         l = self.db.execute_update(self.t_q, update_value=kwargs, where_value=where_value)
         return l
 
-    def new_exam(self, exam_name, exam_type, exam_desc, eval_type, adder, **exam_extend):
+    def new_exam(self, exam_name, exam_type, exam_desc, adder, **exam_extend):
         exam_no = int(time.time())
-        l = self._insert_info(exam_no, exam_name, exam_desc, eval_type, adder, exam_extend=exam_extend)
+        l = self._insert_info(exam_no, exam_name, exam_desc, adder, exam_extend=exam_extend)
         if l <= 0:
             return False, l
         return True, exam_no
@@ -101,8 +101,8 @@ class Exam(object):
             return 0
         return self._insert_wrong_answer(user_no, exam_no, question_nos)
 
-    def update_exam(self, exam_no, exam_name, exam_desc, eval_type, **exam_extend):
-        update_value = dict(exam_name=exam_name, exam_desc=exam_desc, eval_type=eval_type, exam_extend=exam_extend)
+    def update_exam(self, exam_no, exam_name, exam_desc, **exam_extend):
+        update_value = dict(exam_name=exam_name, exam_desc=exam_desc, exam_extend=exam_extend)
         l = self._update_info(exam_no, **update_value)
         return l
 
@@ -133,7 +133,7 @@ class Exam(object):
         where_cond = ["status<>0"]
         if exam_no is not None:
             where_value["exam_no"] = exam_no
-        cols = ["exam_no", "exam_name", "exam_desc", "eval_type", "adder", "status",
+        cols = ["exam_no", "exam_name", "exam_desc", "adder", "status",
                 "exam_extend", "exam_num", "question_num"]
         items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value, where_cond=where_cond)
         for item in items:

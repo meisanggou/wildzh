@@ -6,7 +6,7 @@ var ascii = ["A", "B", "C", "D", "E", "F"];
 
 function update_exam(){
     var r_data = new Object();
-    var keys = ["exam_no", "exam_type", "exam_name", "exam_desc", "eval_type"];
+    var keys = ["exam_no", "exam_type", "exam_name", "exam_desc"];
     for(var i=0;i<keys.length;i++){
         var item = $("#" + keys[i]);
         var v = item.val().trim();
@@ -75,7 +75,6 @@ function init_info(data){
         $("#exam_name").val(exam_item["exam_name"]);
         $("#exam_no").val(exam_item["exam_no"]);
         select_option("exam_type", exam_item["exam_type"]);
-        $("#eval_type").val(exam_item["eval_type"]);
         $("#exam_type").change();
         $("#exam_desc").val(exam_item["exam_desc"]);
         $("#exam_extend_pic_url").attr("src", exam_item["pic_url"]);
