@@ -380,15 +380,16 @@ Page({
         var touchEndX = e.changedTouches[0].pageX;
         var touchEndY = e.changedTouches[0].pageY;
         var touchMoveX = touchEndX - touchStartX;
+        console.info(touchMoveX)
         var touchMoveY = touchEndY - touchStartY;
         if (Math.abs(touchMoveY) < 0.618 * Math.abs(touchMoveX)) {
             // 向左滑动   
-            if (touchMoveX <= -30 && touchTime < 10) {
+            if (touchMoveX <= -93 && touchTime < 10) {
                 //执行切换页面的方法
                 that.after1();
             }
             // 向右滑动   
-            if (touchMoveX >= 30 && touchTime < 10) {
+            if (touchMoveX >= 93 && touchTime < 10) {
                 that.before1();
             }
         }
