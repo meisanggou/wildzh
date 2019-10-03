@@ -1,0 +1,58 @@
+<wxs src="../common/tools/array.wxs" module="tools" />
+<view wx:if="{{examNo == null}}">
+    <picker bindchange="choseExam" class='picker' value="{{index}}" range="{{allExams}}" range-key="exam_name">
+        <view class='pickerContent'>选择试题库</view>
+    </picker>
+</view>
+<view wx:else class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
+    <form bindsubmit="updateQuestion">
+        <view class='pageContent'>
+            <view class='top'>
+                <view>{{ examName }}</view>
+            </view>
+
+            <view class='middle'>
+                <view bindtap='before1' class='switch'>‹</view>
+                <view bindtap='before10' class='switch'>‹‹</view>
+                <view>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
+                <view bindtap='after10' class='switch'>››</view>
+                <view bindtap='after1' class='switch'>›</view>
+            </view>
+
+            <view class='content'>
+                <view>{{nowQuestionIndex + 1}}.
+                    <textarea auto-height="true" value="{{nowQuestion.question_desc}}" name="question_desc"></textarea>
+                </view>
+                <!-- <view></view> -->
+
+                <view class='questionOption'>
+                    <view class='noChose' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、
+                        <textarea auto-height="true" name="option_{{idx}}" value="{{item['desc']}}"></textarea>
+                    </view>
+                </view>
+
+                <view class='item'> 科目：
+                    <picker bindchange='changeSubject' range="{{subjectsArray}}">{{ subjectsArray[nowQuestion.question_subject] }}</picker>
+                </view>
+                <view class='item'> 答案：
+                    <picker bindchange='updateAnswerOption' range="{{tools.slice(optionChar,0,nowQuestion.options.length)}}">{{ optionChar[answerIndex] }}</picker>
+                </view>
+
+                <scroll-view scroll-y="true" class='item'>解析：
+                    <textarea auto-height="true" name="answer" value="{{nowQuestion.answer}}">
+                    </textarea>
+                </scroll-view>
+
+            </view>
+
+        </view>
+        <view class='bottom'>
+            <view bindtap='before1' class='switch'>‹</view>
+
+            <button class='afterQuestion' form-type="submit">更新</button>
+
+            <view bindtap='after1' class='switch'>›</view>
+        </view>
+
+    </form>
+</view>
