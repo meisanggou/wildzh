@@ -52,5 +52,5 @@
         </view>
     </view>
     <button type="default" plain="true" bindtap='startTraining'>开始练习</button>
-
+    <button wx:if="{{ canUpdate }}" type="default" plain="true" bindtap='startUpdateQuestion'>更新题目</button>
 </view>

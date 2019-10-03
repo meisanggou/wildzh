@@ -17,7 +17,7 @@ Page({
         questionAnswer: new Array(),
         nowQuestion: null,
         showAnswer: false,
-        isShowSubject: true,
+        isShowSubject: false,
         isReq: false,
         progressStorageKey: "",
         canUpdate: false,

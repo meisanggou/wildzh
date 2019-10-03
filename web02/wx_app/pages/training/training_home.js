@@ -9,10 +9,23 @@ Page({
         subjectIndex: 0,
         modeIndex: 0,
         to: "training",
-        cacheSelectedKey: "selectedTrainingOptions"
+        cacheSelectedKey: "selectedTrainingOptions",
+        canUpdate: false
     },
     onLoad: function(options) {
-        console.info(options);
+        var canUpdate = false;
+        var currentUser = app.getOrSetCurrentUserData();
+        if (currentUser != null) {
+            if ("role" in currentUser) {
+                if ((currentUser.role & 2) == 2) {
+                    canUpdate = true;
+                }
+            }
+        }
+        this.setData({
+            canUpdate: canUpdate
+        })
+
         if("to" in options){
             this.setData({
                 to: options["to"]
@@ -45,9 +58,19 @@ Page({
             url += "../answer/answer"
         }
         else{
-            url += "../questions/question"
+            url += "training"
         }
         url += "?select_mode=" + (this.data.modeIndex + 1);
+        if (this.data.index == 0) {
+            url += "&question_subject=" + (this.data.subjectIndex + 1);
+        }
+        wx.navigateTo({
+            url: url
+        })
+    },
+    startUpdateQuestion: function(){
+        app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
+        var url = "../questions/question?select_mode=" + (this.data.modeIndex + 1);
         if (this.data.index == 0) {
             url += "&question_subject=" + (this.data.subjectIndex + 1);
         }
