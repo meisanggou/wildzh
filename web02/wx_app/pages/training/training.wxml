@@ -28,6 +28,9 @@
                         {{item}}
                     </block>
                 </block>
+                <block wx:if="{{isShowSubject}}">
+                【{{nowQuestion.question_subject}}】
+                </block>
             </view>
             <!-- <view></view> -->
             <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
@@ -43,6 +46,7 @@
                         </block>
 
                     </block>
+                    
                 </view>
             </view>
 

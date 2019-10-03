@@ -45,7 +45,7 @@ Page({
             url += "../answer/answer"
         }
         else{
-            url += "training"
+            url += "../questions/question"
         }
         url += "?select_mode=" + (this.data.modeIndex + 1);
         if (this.data.index == 0) {

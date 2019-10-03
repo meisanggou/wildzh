@@ -10,6 +10,17 @@ from mysqldb_rich.db2 import DB
 
 __author__ = 'meisa'
 
+"""
+题库角色exam_role
+1 拥有者： 所有权限
+2 超级管理员：可更新题库信息 授权新的管理员
+3 管理员：新增试题，更新试题
+4 普通成员： 可做题
+
+
+
+"""
+
 
 class Exam(object):
 

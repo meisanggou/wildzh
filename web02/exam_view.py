@@ -63,6 +63,12 @@ def referer_exam_no(f):
             g.exam_no = request.args["exam_no"]
         else:
             g.exam_no = None
+        if g.exam_no:
+            # 判定用户 对exam_no的权限
+            # 判断session中是否有权限信息
+            # 判断session中的信息是否过期
+            # 重新获取权限信息
+            pass
         return f(*args, **kwargs)
     return decorated_function
 

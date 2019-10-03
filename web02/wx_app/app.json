@@ -12,7 +12,8 @@
         "pages/register/register",
         "pages/admin",
         "pages/query/query",
-        "pages/answer/answer_home"
+        "pages/answer/answer_home",
+        "pages/questions/question"
     ],
     "window": {
         "backgroundTextStyle": "light",
@@ -40,7 +41,6 @@
                 "selectedIconPath": "images/wrong_fill.png",
                 "text": "错题"
             },
-
             {
                 "pagePath": "pages/me/me",
                 "iconPath": "images/me.png",

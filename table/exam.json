@@ -159,5 +159,45 @@
         ],
         "table_comment": "记录错题",
         "table_name": "exam_wrong_answer"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "用户编号",
+                "col_name": "user_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "测试编号",
+                "col_name": "exam_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "题库角色值 1拥有者 2超级管理员（可授权） 3管理员",
+                "col_name": "exam_role",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "授权者 用户编号",
+                "col_name": "authorizer",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "加入时间",
+                "col_name": "insert_time",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "更新时间",
+                "col_name": "update_time",
+                "col_type": "int(11)",
+                "default_value": 0
+            }
+        ],
+        "table_comment": "记录错题",
+        "table_name": "exam_member"
     }
 ]

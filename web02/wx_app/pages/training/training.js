@@ -17,6 +17,7 @@ Page({
         questionAnswer: new Array(),
         nowQuestion: null,
         showAnswer: false,
+        isShowSubject: true,
         isReq: false,
         progressStorageKey: "",
         canUpdate: false,
@@ -51,6 +52,9 @@ Page({
             if ("question_subject" in options) {
                 args_url += "question_subject=" + options["question_subject"] + "&";
                 progressStorageKey += "_" + options["question_subject"];
+                that.setData({
+                    isShowSubject: false
+                })
             } else {
                 progressStorageKey += "_" + 0;
             }
