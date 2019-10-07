@@ -103,6 +103,12 @@
                 "allow_null": true
             },
             {
+                "col_comment": "内部标记",
+                "col_name": "inside_mark",
+                "col_type": "varchar(80)",
+                "allow_null": true
+            },
+            {
                 "col_comment": "题目所属科目",
                 "col_name": "question_subject",
                 "col_type": "tinyint(4)",

@@ -20,28 +20,41 @@
             </view>
 
             <view class='content'>
-                <view>{{nowQuestionIndex + 1}}.
-                    <textarea auto-height="true" value="{{nowQuestion.question_desc}}" name="question_desc"></textarea>
+                <view class="weui-cell weui-cell_input">
+                    <!-- <view class="weui-label">{{nowQuestionIndex + 1}}.</view> -->
+                    <view class="">
+                        <textarea auto-height="true" maxlength="65535" value="{{nowQuestion.question_desc}}" name="question_desc"></textarea>
+                    </view>
                 </view>
                 <!-- <view></view> -->
 
                 <view class='questionOption'>
-                    <view class='noChose' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、
-                        <textarea auto-height="true" name="option_{{idx}}" value="{{item['desc']}}"></textarea>
+                    <view class='weui-cell weui-cell_input noChose' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">
+                        <view class="weui-label">{{optionChar[idx]}}、</view>
+                        <view class="weui-input">
+                            <textarea auto-height="true" name="option_{{idx}}" value="{{item['desc']}}"></textarea>
+                        </view>
                     </view>
                 </view>
 
-                <view class='item'> 科目：
-                    <picker bindchange='changeSubject' range="{{subjectsArray}}">{{ subjectsArray[nowQuestion.question_subject] }}</picker>
-                </view>
-                <view class='item'> 答案：
-                    <picker bindchange='updateAnswerOption' range="{{tools.slice(optionChar,0,nowQuestion.options.length)}}">{{ optionChar[answerIndex] }}</picker>
+                <view class="weui-cell weui-cell_input">
+                    <view class="weui-label">科目：</view>
+                    <view class="weui-input">
+                        <picker bindchange='changeSubject' range="{{subjectsArray}}">{{ subjectsArray[nowQuestion.question_subject] }}</picker>
+                    </view>
                 </view>
 
-                <scroll-view scroll-y="true" class='item'>解析：
-                    <textarea auto-height="true" name="answer" value="{{nowQuestion.answer}}">
+                <view class="weui-cell weui-cell_input">
+                    <view class="weui-label">答案：</view>
+                    <view class="weui-input">
+                        <picker bindchange='updateAnswerOption' range="{{tools.slice(optionChar,0,nowQuestion.options.length)}}">{{ optionChar[answerIndex] }}</picker>
+                    </view>
+                </view>
+
+                <view class='item'>解析：
+                    <textarea auto-height="true" maxlength="65535" placeholder="暂无解析" name="answer" value="{{nowQuestion.answer}}">
                     </textarea>
-                </scroll-view>
+                </view>
 
             </view>
 

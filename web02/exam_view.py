@@ -189,6 +189,8 @@ def entry_questions():
     answer = data["answer"]
     if "question_desc_url" in data:
         extra_data["question_desc_url"] = data["question_desc_url"]
+    if "inside_mark" in data:
+        extra_data["inside_mark"] = data["inside_mark"]
 
     r, l = c_exam.new_exam_questions(g.exam_no, question_no, question_desc,
                                      select_mode, options, answer,

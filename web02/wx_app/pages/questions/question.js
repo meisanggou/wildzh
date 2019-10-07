@@ -356,7 +356,7 @@ Page({
     },
 
     onUnload: function () {
-        console.info("un load")
+
         if (that.data.examNo == null || that.data.nowQuestion == null) {
             return false;
         }
@@ -380,7 +380,7 @@ Page({
         var touchEndX = e.changedTouches[0].pageX;
         var touchEndY = e.changedTouches[0].pageY;
         var touchMoveX = touchEndX - touchStartX;
-        console.info(touchMoveX)
+
         var touchMoveY = touchEndY - touchStartY;
         if (Math.abs(touchMoveY) < 0.618 * Math.abs(touchMoveX)) {
             // 向左滑动   
