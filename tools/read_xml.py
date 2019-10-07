@@ -458,6 +458,7 @@ def handle_exam(file_path):
                 option["desc"] = replace_media(option["desc"], q_rl, uploaded_q_rl)
             # 获取答案中的图片
             q_item["answer"] = replace_media(q_item["answer"], aw_rl, uploaded_aw_rl)
+            q_item["inside_mark"] = "%s %s" % (exam_name, q_no)
         post_questions(exam_name, exam_no, next_no, question_list)
     return True, "success"
 
@@ -525,7 +526,7 @@ def post_questions(exam_name, exam_no, start_no, questions_obj):
 
 
 login("admin", "admin")
-find_from_dir(r'D:\Project\word')
+find_from_dir(r'D:\Project\word\app\upload')
 # print(all_members)
 # d_path = ur'D:\Project\word\河南省专升本经济学测试题（二十）.docx'
 # read_docx(d_path)

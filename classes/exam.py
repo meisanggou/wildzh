@@ -86,7 +86,7 @@ class Exam(object):
         l = self.db.execute_update(self.t_q, update_value=kwargs, where_value=where_value)
         return l
 
-    def new_exam(self, exam_name, exam_type, exam_desc, adder, **exam_extend):
+    def new_exam(self, exam_name, exam_desc, adder, **exam_extend):
         exam_no = int(time.time())
         l = self._insert_info(exam_no, exam_name, exam_desc, adder, exam_extend=exam_extend)
         if l <= 0:

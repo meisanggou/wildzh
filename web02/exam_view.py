@@ -118,7 +118,7 @@ def question_page():
 @login_required
 def new_exam():
     data = g.request_data
-    r, exam_no = c_exam.new_exam(data["exam_name"], data["exam_type"], data["exam_desc"], 0, g.user_no)
+    r, exam_no = c_exam.new_exam(data["exam_name"], data["exam_desc"], g.user_no)
     if r is False:
         return jsonify({"status": False, "data": "请重试"})
     data["exam_no"] = exam_no
