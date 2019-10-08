@@ -126,6 +126,10 @@ class Exam(object):
             kwargs["select_mode"] = select_mode
         if options is not None:
             kwargs["options"] = options
+            for item in options:
+                for key in item.keys():
+                    if key not in ("score", "desc"):
+                        del item[key]
         if answer is not None:
             kwargs["answer"] = answer
 

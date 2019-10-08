@@ -51,6 +51,13 @@
                     </view>
                 </view>
 
+                <view class="weui-cell weui-cell_input">
+                    <view class="weui-label">标记：</view>
+                    <view>
+                        {{nowQuestion.inside_mark}}
+                    </view>
+                </view>
+
                 <view class='item'>解析：
                     <textarea auto-height="true" maxlength="65535" placeholder="暂无解析" name="answer" value="{{nowQuestion.answer}}">
                     </textarea>

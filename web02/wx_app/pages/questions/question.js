@@ -152,6 +152,7 @@ Page({
                             questionItems[i]["options"] = newItems[j]["options"];
                             questionItems[i]["answer"] = newItems[j]["answer"];
                             questionItems[i]["question_subject"] = newItems[j]["question_subject"];
+                            questionItems[i]["inside_mark"] = newItems[j]["inside_mark"];
                             questionItems[i].forceUpdate = false;
                             break;
                         }

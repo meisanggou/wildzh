@@ -224,6 +224,7 @@ def get_exam_questions():
     start_no = int(request.args.get("start_no", -1))
     select_mode = request.args.get("select_mode", None)
     question_subject = request.args.get("question_subject", None)
+    no_rich = request.args.get("auto_rich", False)
     if nos is not None:
         q_nos = filter(lambda x: len(x) > 0, re.split("\D", nos))
         items = c_exam.select_multi_question(g.exam_no, q_nos)
@@ -239,18 +240,21 @@ def get_exam_questions():
         if "desc" in request.args and request.args["desc"] == "true":
             desc = True
         items = c_exam.select_questions(g.exam_no, start_no=start_no, num=int(num), desc=desc)
-    for item in items:
-        question_desc_rich = separate_image(item["question_desc"])
-        item["question_desc_rich"] = question_desc_rich
-        for option in item["options"]:
-            option["desc_rich"] = separate_image(option["desc"])
-        item["answer_rich"] = separate_image(item["answer"])
 
     if g.user_no is None:
         for item in items:
             options = item["options"]
             new_options = map(lambda x: x["desc"], options)
             item["options"] = new_options
+
+    if not (no_rich is False):
+        for item in items:
+            question_desc_rich = separate_image(item["question_desc"])
+            item["question_desc_rich"] = question_desc_rich
+            for option in item["options"]:
+                option["desc_rich"] = separate_image(option["desc"])
+            item["answer_rich"] = separate_image(item["answer"])
+
     return jsonify({"status": True, "data": items})
 
 
