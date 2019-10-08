@@ -247,7 +247,7 @@ def get_exam_questions():
             new_options = map(lambda x: x["desc"], options)
             item["options"] = new_options
 
-    if not (no_rich is False):
+    if no_rich is False:
         for item in items:
             question_desc_rich = separate_image(item["question_desc"])
             item["question_desc_rich"] = question_desc_rich

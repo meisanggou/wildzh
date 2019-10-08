@@ -2,6 +2,7 @@
 # coding: utf-8
 
 from contextlib import contextmanager
+import json
 import os
 import pdb
 import re
@@ -520,8 +521,9 @@ def post_questions(exam_name, exam_no, start_no, questions_obj):
         q_item["question_source"] = exam_name
         q_item["question_subject"] = 0
         q_item["question_desc"] = q_item.pop("desc").strip()
-        resp = req.post(url, json=q_item)
-        print(resp.text)
+        print(json.dumps(q_item))
+        # resp = req.post(url, json=q_item)
+        # print(resp.text)
         question_no += 1
 
 

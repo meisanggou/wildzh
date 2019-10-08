@@ -31,8 +31,8 @@
                 <view class='questionOption'>
                     <view class='weui-cell weui-cell_input noChose' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">
                         <view class="weui-label">{{optionChar[idx]}}、</view>
-                        <view class="weui-input">
-                            <textarea auto-height="true" name="option_{{idx}}" value="{{item['desc']}}"></textarea>
+                        <view class="">
+                            <textarea auto-height="true" maxlength="65535" name="option_{{idx}}" value="{{item['desc']}}"></textarea>
                         </view>
                     </view>
                 </view>

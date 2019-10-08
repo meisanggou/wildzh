@@ -137,7 +137,7 @@ Page({
             nos += "," + questionItems[i].question_no;
         }
         wx.request2({
-            url: '/exam/questions/?exam_no=' + exam_no + "&nos=" + nos,
+            url: '/exam/questions/?no_rich=true&exam_no=' + exam_no + "&nos=" + nos,
             method: 'GET',
             success: res => {
                 wx.hideLoading();
