@@ -29,7 +29,7 @@
                     </block>
                 </block>
                 <block wx:if="{{isShowSubject}}">
-                【{{nowQuestion.question_subject}}】
+                    【{{nowQuestion.question_subject}}】
                 </block>
             </view>
             <!-- <view></view> -->
@@ -46,7 +46,7 @@
                         </block>
 
                     </block>
-                    
+
                 </view>
             </view>
 
@@ -66,31 +66,22 @@
                     </block>
                 </view>
                 <scroll-view scroll-y="true" class='item'>解析：
-                    <block wx:if="{{ !isUpdateAnswer }}" wx:for="{{nowQuestion.answer_rich}}">
+                    <block wx:for="{{nowQuestion.answer_rich}}">
                         <block wx:if="{{item.url}}">
-                            <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+                            <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}" data-src="{{remote_host}}{{item.url}}" bindtap="previewImage"></image>
                         </block>
                         <block wx:else>
-                            {{item}}
+                            <text>{{item}}</text>
                         </block>
                     </block>
-                    <textarea wx:if="{{ canUpdate && isUpdateAnswer}}" auto-focus="true" value="{{nowQuestion.answer}}">
-                    </textarea>
+
                 </scroll-view>
             </view>
         </view>
     </view>
     <view class='bottom'>
         <view bindtap='before1' class='switch'>‹</view>
-        <block wx:if="{{ canUpdate && showAnswer}}">
-            <picker class='afterQuestion' bindchange='updateAnswerOption' range="{{tools.slice(optionChar,0,nowQuestion.options.length)}}">更新答案</picker>
-
-            <view wx:if="{{ !isUpdateAnswer }}" class='afterQuestion' bindtap='updateAnswer'>更新解析</view>
-            <view wx:else class='afterQuestion' bindtap='actionUpdateAnswer'>确认更新</view>
-        </block>
-        <block wx:else>
-            <view class='afterQuestion' bindtap='showAnswer'>显示答案</view>
-        </block>
+        <view class='afterQuestion' bindtap='showAnswer'>显示答案</view>
         <view bindtap='after1' class='switch'>›</view>
     </view>
 </view>

@@ -69,7 +69,7 @@
         <view class='bottom'>
             <view bindtap='before1' class='switch'>‹</view>
 
-            <button class='afterQuestion' form-type="submit">更新</button>
+            <button class='updateButton' form-type="submit">更新</button>
 
             <view bindtap='after1' class='switch'>›</view>
         </view>

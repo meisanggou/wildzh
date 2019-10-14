@@ -335,7 +335,7 @@ Page({
             uData.options[i].desc = pData["option_" + i]
         }
         uData.question_subject = nowQuestion.question_subject;
-        uData.forceUpdate = true;
+        nowQuestion.forceUpdate = true;
 
         var index = this.data.nowQuestionIndex;
         wx.request2({

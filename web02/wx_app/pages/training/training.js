@@ -29,7 +29,7 @@ Page({
         var currentUser = app.getOrSetCurrentUserData();
         if (currentUser != null) {
             if ("role" in currentUser) {
-                if((currentUser.role & 2) == 2){
+                if ((currentUser.role & 2) == 2) {
                     canUpdate = true;
                 }
             }
@@ -131,10 +131,10 @@ Page({
             _start = startIndex;
             _end = startIndex + stepNum;
         }
-        if(_end > questionItems.length){
+        if (_end > questionItems.length) {
             _end = questionItems.length;
         }
-        if(_start < 0){
+        if (_start < 0) {
             _start = 0
         }
         for (var i = _start; i < _end; i++) {
@@ -161,6 +161,12 @@ Page({
                             questionItems[i]["options"] = newItems[j]["options"];
                             questionItems[i]["answer"] = newItems[j]["answer"];
                             questionItems[i]["answer_rich"] = newItems[j]["answer_rich"]
+                            for (var ar_index in questionItems[i]["answer_rich"]) {
+                                var ar_item = questionItems[i]["answer_rich"][ar_index];
+                                if (typeof ar_item == "string") {
+                                    questionItems[i]["answer_rich"][ar_index] = ar_item.replace(/\\n/g, '\n')
+                                }
+                            }
                             questionItems[i].forceUpdate = false;
                             break;
                         }
@@ -177,8 +183,7 @@ Page({
                         nowQuestionIndex: startIndex,
                         questionNum: questionItems.length
                     });
-                }
-                else if(startIndex == that.data.nowQuestionIndex){
+                } else if (startIndex == that.data.nowQuestionIndex) {
                     // 如果当前请求的内容正好是当前显示的，需要重新更新一下答案显示。答案显示是拼出来的没和变量关联
                     if (that.data.showAnswer) {
                         that.showAnswer();
@@ -282,7 +287,7 @@ Page({
     before10: function() {
         that.before(10)
     },
-    changeNowQuestion: function(index){
+    changeNowQuestion: function(index) {
         var nowQuestion = this.data.questionItems[index];
         this.setData({
             nowQuestion: nowQuestion,
@@ -359,16 +364,25 @@ Page({
         nowQuestion.forceUpdate = true;
         this.updateQuestion(nowQuestion.question_no, index, options);
     },
-    updateAnswer: function () {
+    updateAnswer: function() {
         this.setData({
             isUpdateAnswer: true
         });
     },
-    actionUpdateAnswer: function(){
+    actionUpdateAnswer: function() {
         var nowQuestion = this.data.nowQuestion;
         var index = this.data.nowQuestionIndex;
         nowQuestion.forceUpdate = true;
         this.updateQuestion(nowQuestion.question_no, index, null, nowQuestion.answer);
+    },
+    previewImage: function (event){
+        var src = event.currentTarget.dataset.src;//获取data-src
+        //图片预览
+        wx.previewImage({
+            current: src, // 当前显示图片的http链接
+            urls: [src] // 需要预览的图片http链接列表
+        })
+        
     },
     updateQuestion: function(questionNo, index, options = null, answer = null) {
         var uData = new Object();

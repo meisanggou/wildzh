@@ -78,7 +78,7 @@
             {
                 "col_comment": "题目描述",
                 "col_name": "question_desc",
-                "col_type": "varchar(650)"
+                "col_type": "varchar(2000)"
             },
             {
                 "col_comment": "题目描述图片URL",

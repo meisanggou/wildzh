@@ -2,6 +2,7 @@
 # coding: utf-8
 
 from contextlib import contextmanager
+import cv2
 import json
 import os
 import pdb
@@ -34,6 +35,8 @@ remote_host = "https://wild.gene.ac"
 Q_TYPE_COMP = re.compile(u"((一|二|三|四|五)、|^)(单选|选择|名词解释|简答题|计算题|论述题)")
 S_ANSWER_COMP = re.compile(r"(\d+)-(\d+)([a-d]+)", re.I)
 G_SELECT_MODE = [u"无", u"选择", u"名词解释", u"简答题", u"计算题", u"论述题"]
+
+REAL_UPLOAD = True
 
 
 def get_select_mode(content):
@@ -95,7 +98,14 @@ def get_deep_node(p_node, node_name):
     p_nodes = [p_node]
     for name in _names:
         p_nodes = _get_node(p_nodes[0], name)
+        if len(p_nodes) <= 0:
+            return []
     return p_nodes
+
+
+def get_deep_one_node(p_node, node_name):
+    nodes = get_deep_node(p_node, node_name)
+    return nodes[0]
 
 
 def analysis_style(style):
@@ -106,6 +116,31 @@ def analysis_style(style):
     return width, height
 
 
+def _handle_drawing(drawing_node):
+    # 可能是文本框
+    blip_fills = drawing_node.getElementsByTagName("pic:blipFill")
+    if len(blip_fills) <= 0:
+        return None
+    blip_fill = blip_fills[0]
+    pic_el = blip_fill.parentNode
+    pic_extent_el = get_deep_one_node(pic_el, "pic:spPr.a:xfrm.a:ext")
+    cx = int(pic_extent_el.getAttribute("cx"))
+    cy = int(pic_extent_el.getAttribute("cy"))
+    lip = _get_one_node(blip_fill, "a:blip")
+    r_id = lip.getAttribute("r:embed")
+    values = "%s:%s:%s" % (r_id, cx / 10000, cy / 10000)
+    src_rects = _get_node(blip_fill, "a:srcRect")  # 可能不存在裁剪
+    if len(src_rects) == 1:
+        src_rect = src_rects[0]
+        left = src_rect.getAttribute("l")
+        top = src_rect.getAttribute("t")
+        right = src_rect.getAttribute("r")
+        bottom = src_rect.getAttribute("b")
+        values += ":%s|%s|%s|%s" % (left, top, right, bottom)
+    print(values)
+    return "[[%s]]" % values
+
+
 def handle_paragraph(p_node):
     run_children = _get_node(p_node, "w:r")
     p_contents = []
@@ -114,10 +149,8 @@ def handle_paragraph(p_node):
         text_children = _get_node(child, "w:t")
         for c in text_children:
             p_contents.append(c.firstChild.nodeValue)
-        # if len(text_children) > 0 and is_bold:
-        #     bold_children = get_deep_node(child, "w:rPr.w:bCs")
-        #     if len(bold_children) <= 0:
-        #         is_bold = False
+
+        # 获得
         object_children = _get_node(child, "w:object")
         for oc in object_children:
             v_shape = _get_node(oc, "v:shape")[0]
@@ -129,17 +162,21 @@ def handle_paragraph(p_node):
         br_children = _get_node(child, "w:br")
         if len(br_children) == 1:
             p_contents.append("\n")
+        # 获得直接嵌入的图片
+        drawing_nodes = _get_node(child, "w:drawing")
+        # 获得兼容显示的图片  可能是文本框
+        # mc:AlternateContent
+        mc_drawings = get_deep_node(child, "mc:AlternateContent.mc:Choice.w:drawing")
+        drawing_nodes.extend(mc_drawings)
+        if len(drawing_nodes) > 0:
+            drawing_data = _handle_drawing(drawing_nodes[0])
+            if drawing_data is not None:
+                p_contents.append(drawing_data)
+
     if len(p_contents) <= 0:
         is_bold = False
     # TODO 返回字符串是否加粗
-    # if is_bold is True and len(p_contents) > 0:
-    #     print("---------------------rpr")
-    #     print("".join(p_contents))
-    # p_bold_children = get_deep_node(p_node, "w:pPr.w:rPr.w:bCs")
-    # if len(p_bold_children) > 0:
-    #     if p_bold_children[0].getAttribute("w:val") != "0":
-    #         print("---------------------ppr")
-    #         print("".join(p_contents))
+
     return "".join(p_contents)
 
 
@@ -397,11 +434,46 @@ def wmf_2_png(wmf_path, width, height, multiple=3):
     return output.strip()
 
 
-def upload_media(r_id, rl, width, height, cache_rl):
+def _clip_pic(pic_file, clip_data):
+    file_values = pic_file.rsplit(".", 1)
+    clip_pic_path = "".join(file_values[:-1])
+    clip_pic_path += ".clip-%s.%s" % (uuid.uuid4().hex, file_values[-1])
+    img = cv2.imread(pic_file)
+    height = img.shape[0]
+    width = img.shape[1]
+    start_y = int(height * (clip_data[1] / 100.0))
+    end_y = int(height - (height * (clip_data[3] / 100.0)))
+    start_x = int(width * (clip_data[0] / 100.0))
+    end_x = int(width - (width * (clip_data[2] / 100.0)))
+    # import pdb
+    # pdb.set_trace()
+    cropped = img[start_y:end_y, start_x:end_x]  # 裁剪坐标为[y0:y1, x0:x1]
+    cv2.imwrite(clip_pic_path, cropped)
+    return clip_pic_path
+
+
+def upload_media(r_id, rl, width, height, cache_rl, clip_data=None):
     if r_id in cache_rl:
         return cache_rl[r_id]
 
-    png_file = wmf_2_png(rl[r_id], width, height)
+    o_pic = rl[r_id]
+    o_pic_ext = o_pic.rsplit(".")[-1].lower()
+    if o_pic_ext in ("jpeg", "png"):
+        png_file = o_pic
+    else:
+        png_file = wmf_2_png(rl[r_id], width, height)
+    if clip_data is not None:
+        # 需要裁剪
+        for i in range(4):
+            if clip_data[i] == "":
+                clip_data[i] = 0
+            elif clip_data[i].startswith("-"):
+                clip_data[i] = 0
+            else:
+                clip_data[i] = float(clip_data[i]) / 1000.0
+        png_file = _clip_pic(png_file, clip_data)
+    if REAL_UPLOAD is False:
+        return "/dummy/%s" % r_id
     url = remote_host + "/exam/upload/"
     files = dict(pic=open(png_file, "rb"))
     resp = req.post(url, files=files)
@@ -409,20 +481,26 @@ def upload_media(r_id, rl, width, height, cache_rl):
 
 
 def replace_media(text, q_rl, cache_rl):
-    media_comp = re.compile(r"(\[\[([a-z0-9]+?):([\d.]+?):([\d.]+?)\]\])", re.I)
+    media_comp = re.compile(r"(\[\[([a-z0-9]+?):([\d.]+?):([\d.]+?)(|:[\d\.\-|]+?)\]\])", re.I)
     found_rs = media_comp.findall(text)
     for r_item in found_rs:
         r_t = r_item[0]
         m_id = r_item[1]
         width = r_item[2]
         height = r_item[3]
-        r_url = upload_media(m_id, q_rl, width, height, cache_rl)
+        clip_data = None
+        if len(r_item[4]) != 0:
+            # 需要裁剪
+            left, top, right, bottom = r_item[4][1:].split("|")
+            clip_data = [left, top, right, bottom]
+        r_url = upload_media(m_id, q_rl, width, height, cache_rl, clip_data)
         text = text.replace(r_t, "[[%s:%s:%s]]" % (r_url, width, height))
     return text
 
 
 def handle_exam(file_path):
-    exam_no = 1570447137
+    exam_no = 1567506833  # 测试包含图片
+    exam_no = 1570447137  # 专升本经济学题库2
     no_info = req_max_no(exam_no)
     next_no = no_info["next_no"]
 
@@ -522,8 +600,9 @@ def post_questions(exam_name, exam_no, start_no, questions_obj):
         q_item["question_subject"] = 0
         q_item["question_desc"] = q_item.pop("desc").strip()
         print(json.dumps(q_item))
-        # resp = req.post(url, json=q_item)
-        # print(resp.text)
+        # if REAL_UPLOAD is True:
+        #     resp = req.post(url, json=q_item)
+        #     print(resp.text)
         question_no += 1
 
 
