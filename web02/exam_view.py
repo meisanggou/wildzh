@@ -41,7 +41,7 @@ def separate_image(text, max_width=None):
         if len(prefix_s) > 0:
             text_groups.append(prefix_s)
         o_item = dict(url=items[1], width=float(items[2]), height=float(items[3]))
-        if max_width:
+        if max_width and max_width < o_item["with"]:
             o_item["height"] = o_item["height"] * max_width / o_item["width"]
             o_item["with"] = max_width
         text_groups.append(o_item)
@@ -253,7 +253,7 @@ def get_exam_questions():
     if no_rich is False:
         max_width = None
         if "X-Device-Screen-Width" in request.headers:
-            max_width = int(request.headers["X-Device-Screen-Width"])
+            max_width = int(request.headers["X-Device-Screen-Width"]) * 0.95
         for item in items:
             question_desc_rich = separate_image(item["question_desc"])
             item["question_desc_rich"] = question_desc_rich

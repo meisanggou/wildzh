@@ -17,16 +17,19 @@ App({
         wx.remote_host = remote_host
         wx.session_storage_key = session_storage_key;
         wx.request2 = function(req) {
+            var screenData = that.getScreenInfo();
             var origin_req = req;
             if ("header" in req) {
                 req.header["rf"] = "async"
                 req.header["Cookie"] = wx.getStorageSync(wx.session_storage_key)
+                
             } else {
                 req.header = {
                     rf: "async",
-                    Cookie: wx.getStorageSync(wx.session_storage_key)
+                    Cookie: wx.getStorageSync(wx.session_storage_key),
                 }
             }
+            req.header['X-Device-Screen-Width'] = screenData.width;
             if (req.url[0] == "/") {
                 req.url = wx.remote_host + req.url
             }

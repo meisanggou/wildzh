@@ -160,15 +160,15 @@ Page({
                             var screenData = app.getScreenInfo();
                             var screenWidth = screenData.width;
                             // 防止图片宽度超过屏幕
-                            for (var ar_index in questionItems[i]["answer_rich"]) {
-                                var ar_item = questionItems[i]["answer_rich"][ar_index];
-                                if (typeof ar_item == "object") {
-                                    if (ar_item.width > screenWidth){
-                                        ar_item.height = ar_item.height * screenWidth / ar_item.width;
-                                        ar_item.width = screenWidth;
-                                    }
-                                }
-                            }
+                            // for (var ar_index in questionItems[i]["answer_rich"]) {
+                            //     var ar_item = questionItems[i]["answer_rich"][ar_index];
+                            //     if (typeof ar_item == "object") {
+                            //         if (ar_item.width > screenWidth){
+                            //             ar_item.height = ar_item.height * screenWidth / ar_item.width;
+                            //             ar_item.width = screenWidth;
+                            //         }
+                            //     }
+                            // }
                             questionItems[i].forceUpdate = false;
                             break;
                         }
