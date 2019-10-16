@@ -41,9 +41,9 @@ def separate_image(text, max_width=None):
         if len(prefix_s) > 0:
             text_groups.append(prefix_s)
         o_item = dict(url=items[1], width=float(items[2]), height=float(items[3]))
-        if max_width and max_width < o_item["with"]:
+        if max_width and max_width < o_item["width"]:
             o_item["height"] = o_item["height"] * max_width / o_item["width"]
-            o_item["with"] = max_width
+            o_item["width"] = max_width
         text_groups.append(o_item)
         last_point = last_point + point + len(item)
     if last_point < len(text):
