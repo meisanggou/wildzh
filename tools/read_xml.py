@@ -599,10 +599,10 @@ def post_questions(exam_name, exam_no, start_no, questions_obj):
         q_item["question_source"] = exam_name
         q_item["question_subject"] = 0
         q_item["question_desc"] = q_item.pop("desc").strip()
-        print(json.dumps(q_item))
-        # if REAL_UPLOAD is True:
-        #     resp = req.post(url, json=q_item)
-        #     print(resp.text)
+        # print(json.dumps(q_item))
+        if REAL_UPLOAD is True:
+            resp = req.post(url, json=q_item)
+            print(resp.text)
         question_no += 1
 
 

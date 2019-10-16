@@ -25,19 +25,9 @@ Page({
     },
 
     onLoad: function(options) {
-        var canUpdate = false;
-        var currentUser = app.getOrSetCurrentUserData();
-        if (currentUser != null) {
-            if ("role" in currentUser) {
-                if ((currentUser.role & 2) == 2) {
-                    canUpdate = true;
-                }
-            }
-        }
         this.setData({
             examNo: app.globalData.defaultExamNo,
-            examName: app.globalData.defaultExamName,
-            canUpdate: canUpdate
+            examName: app.globalData.defaultExamName
         });
         that = this;
         var args_url = "";
@@ -161,10 +151,22 @@ Page({
                             questionItems[i]["options"] = newItems[j]["options"];
                             questionItems[i]["answer"] = newItems[j]["answer"];
                             questionItems[i]["answer_rich"] = newItems[j]["answer_rich"]
+                            // for (var qd_index in questionItems[i]["question_desc_rich"]) {
+                            //     var qd_item = questionItems[i]["question_desc_rich"][qd_index];
+                            //     if (typeof qd_item == "string") {
+                            //         questionItems[i]["question_desc_rich"][qd_index] = qd_item.replace(/\\n/g, '\n')
+                            //     }
+                            // }
+                            var screenData = app.getScreenInfo();
+                            var screenWidth = screenData.width;
+                            // 防止图片宽度超过屏幕
                             for (var ar_index in questionItems[i]["answer_rich"]) {
                                 var ar_item = questionItems[i]["answer_rich"][ar_index];
-                                if (typeof ar_item == "string") {
-                                    questionItems[i]["answer_rich"][ar_index] = ar_item.replace(/\\n/g, '\n')
+                                if (typeof ar_item == "object") {
+                                    if (ar_item.width > screenWidth){
+                                        ar_item.height = ar_item.height * screenWidth / ar_item.width;
+                                        ar_item.width = screenWidth;
+                                    }
                                 }
                             }
                             questionItems[i].forceUpdate = false;
@@ -378,9 +380,18 @@ Page({
     previewImage: function (event){
         var src = event.currentTarget.dataset.src;//获取data-src
         //图片预览
+        console.info(src)
         wx.previewImage({
-            current: src, // 当前显示图片的http链接
-            urls: [src] // 需要预览的图片http链接列表
+            // current: src, // 当前显示图片的http链接
+            urls: [src], // 需要预览的图片http链接列表
+            fail: function(e){
+                console.info("preview fail");
+                console.info(e);
+            },
+            complete: function(e){
+                console.info("preview complete");
+                console.info(e);
+            }
         })
         
     },

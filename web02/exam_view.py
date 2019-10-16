@@ -30,7 +30,7 @@ G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "
 G_SUBJECT = ["无", "微观经济学", "宏观经济学", "政治经济学"]
 
 
-def separate_image(text):
+def separate_image(text, max_width=None):
     text_groups = []
     s_l = re.findall(r"(\[\[([/\w.]+?):([\d.]+?):([\d.]+?)\]\])", text)
     last_point = 0
@@ -41,6 +41,9 @@ def separate_image(text):
         if len(prefix_s) > 0:
             text_groups.append(prefix_s)
         o_item = dict(url=items[1], width=float(items[2]), height=float(items[3]))
+        if max_width:
+            o_item["height"] = o_item["height"] * max_width / o_item["width"]
+            o_item["with"] = max_width
         text_groups.append(o_item)
         last_point = last_point + point + len(item)
     if last_point < len(text):
@@ -248,12 +251,15 @@ def get_exam_questions():
             item["options"] = new_options
 
     if no_rich is False:
+        max_width = None
+        if "X-Device-Screen-Width" in request.headers:
+            max_width = int(request.headers["X-Device-Screen-Width"])
         for item in items:
             question_desc_rich = separate_image(item["question_desc"])
             item["question_desc_rich"] = question_desc_rich
             for option in item["options"]:
                 option["desc_rich"] = separate_image(option["desc"])
-            item["answer_rich"] = separate_image(item["answer"])
+            item["answer_rich"] = separate_image(item["answer"], max_width)
 
     return jsonify({"status": True, "data": items})
 

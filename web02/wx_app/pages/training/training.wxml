@@ -25,7 +25,7 @@
                         <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
                     </block>
                     <block wx:else>
-                        {{item}}
+                        <text>{{item}}</text>
                     </block>
                 </block>
                 <block wx:if="{{isShowSubject}}">
@@ -68,7 +68,7 @@
                 <scroll-view scroll-y="true" class='item'>解析：
                     <block wx:for="{{nowQuestion.answer_rich}}">
                         <block wx:if="{{item.url}}">
-                            <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}" data-src="{{remote_host}}{{item.url}}" bindtap="previewImage"></image>
+                            <image mode='scaleToFill' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}" data-src="{{remote_host}}{{item.url}}" bindtap="previewImage"></image>
                         </block>
                         <block wx:else>
                             <text>{{item}}</text>

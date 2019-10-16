@@ -13,13 +13,6 @@ remote_host = "https://wild.gene.ac"
 App({
     onLaunch: function() {
         var that = this;
-        wx.getSystemInfo({
-            success: function(res) {
-                that.screenWidth = res.windowWidth;
-                that.screenHeight = res.windowHeight;
-                that.pixelRatio = res.pixelRatio;
-            }
-        });
         console.info("App Lunch")
         wx.remote_host = remote_host
         wx.session_storage_key = session_storage_key;
@@ -92,6 +85,7 @@ App({
 
         })
         this.getDefaultExam();
+        this.getScreenInfo(false);
     },
     setDefaultExam: function(examItem) {
         this.globalData.defaultExamNo = examItem["exam_no"];
@@ -106,23 +100,46 @@ App({
             this.globalData.defaultExamName = currentExam["exam_name"];
         }
     },
-    getOrSetCacheData: function(key, value=null){
+    getOrSetCacheData: function(key, value = null) {
         var g_key = "wildzh_cache_" + key;
-        if(value == null){
+        if (value == null) {
             return wx.getStorageSync(g_key);
         }
         wx.setStorageSync(g_key, value);
         return value
     },
-    getOrSetCurrentUserData: function(value=null){
+    getOrSetCurrentUserData: function(value = null) {
         return this.getOrSetCacheData(this.globalData.userInfoStorageKey, value);
     },
-    getOrSetExamCacheData: function (key, value = null) {
-        if(this.globalData.defaultExamNo == null){
+    getOrSetExamCacheData: function(key, value = null) {
+        if (this.globalData.defaultExamNo == null) {
             return null;
         }
         var g_key = this.globalData.defaultExamNo + "_" + key;
         return this.getOrSetCacheData(g_key, value);
+    },
+    getScreenInfo: function(needReturn = true) {
+        if (this.globalData.screenData != null) {
+            return this.globalData.screenData;
+        }
+        var that = this;
+        if (needReturn == true) {
+            var res = wx.getSystemInfoSync()
+            that.globalData.screenData = new Object();
+            that.globalData.screenData["width"] = res.windowWidth;
+            that.globalData.screenData["height"] = res.windowHeight;
+            return that.globalData.screenData;
+        } else {
+            wx.getSystemInfo({
+                success(res) {
+                    console.info(res.safeArea);
+                    that.globalData.screenData = new Object();
+                    that.globalData.screenData["width"] = res.windowWidth;
+                    that.globalData.screenData["height"] = res.windowHeight;
+                }
+            })
+            return null;
+        }
     },
     globalData: {
         userInfo: null,
@@ -140,6 +157,7 @@ App({
         userItem: {},
         optionChar: ["A", "B", "C", "D", "E", "F", "G", "H"],
         defaultExamNo: null,
-        defaultExamName: ""
+        defaultExamName: "",
+        screenData: null,
     }
 })
