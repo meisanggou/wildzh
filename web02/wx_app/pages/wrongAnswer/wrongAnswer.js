@@ -187,10 +187,12 @@ Page({
                 for (var i = endIndex - 1; i >= startIndex; i--) {
                     for (var j = 0; j < newItems.length; j++) {
                         if (questionItems[i].question_no == newItems[j].question_no) {
-                            questionItems[i]["question_desc"] = newItems[j]["question_desc"];
-                            questionItems[i]["question_desc_url"] = newItems[j]["question_desc_url"];
+                            // questionItems[i]["question_desc"] = newItems[j]["question_desc"];
+                            questionItems[i]["question_desc_rich"] = newItems[j]["question_desc_rich"]
+                            // questionItems[i]["question_desc_url"] = newItems[j]["question_desc_url"];
                             questionItems[i]["options"] = newItems[j]["options"];
-                            questionItems[i]["answer"] = newItems[j]["answer"];
+                            // questionItems[i]["answer"] = newItems[j]["answer"];
+                            questionItems[i]["answer_rich"] = newItems[j]["answer_rich"]
                             break;
                         }
                     }
@@ -375,11 +377,16 @@ Page({
     },
     showAnswer: function(e) {
         var nowQuestion = that.data.nowQuestion;
-        var questionAnswer = "没有答案"
+        var questionAnswer = new Array();
         for (var index in nowQuestion.options) {
             if (parseInt(nowQuestion.options[index]["score"]) > 0) {
-                questionAnswer = app.globalData.optionChar[index] + "、" + nowQuestion.options[index]["desc"];
+                var tmp_answer = new Array(app.globalData.optionChar[index], "、");
+                questionAnswer = questionAnswer.concat(tmp_answer);
+                questionAnswer = questionAnswer.concat(nowQuestion.options[index]["desc_rich"]);
             }
+        }
+        if (questionAnswer.length == 0) {
+            questionAnswer[0] = "没有答案"
         }
         that.setData({
             showAnswer: true,

@@ -5,7 +5,8 @@ Page({
         userNo: "",
         examIndex: -1,
         allExams: [],
-        examName: "未选择"
+        examName: "未选择",
+        version: "4.0"
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {

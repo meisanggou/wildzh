@@ -18,6 +18,8 @@ from win32com import client as wc
 import xml.dom.minidom as minidom
 import zipfile
 
+from parse_option import ParseOptions
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -36,7 +38,7 @@ Q_TYPE_COMP = re.compile(u"((一|二|三|四|五)、|^)(单选|选择|名词解�
 S_ANSWER_COMP = re.compile(r"(\d+)-(\d+)([a-d]+)", re.I)
 G_SELECT_MODE = [u"无", u"选择", u"名词解释", u"简答题", u"计算题", u"论述题"]
 
-REAL_UPLOAD = True
+REAL_UPLOAD = False
 
 
 def get_select_mode(content):
@@ -110,20 +112,30 @@ def get_deep_one_node(p_node, node_name):
 
 def analysis_style(style):
     h_comp = re.compile(r"height:([\d.]+?)pt")
-    w_comp = re.compile(r"width:([\d.]+?)pt")
-    height = h_comp.findall(style)[0]
-    width = w_comp.findall(style)[0]
+    w_comp = re.compile(r"width:([\d.]+?)(pt|in)")
+    try:
+        height = h_comp.findall(style)[0]
+        width, unit = w_comp.findall(style)[0]
+        if unit == "in":
+            width = float(width) * 71.6
+    except IndexError as e:
+        print(style)
+        pdb.set_trace()
+        return 0, 0
     return width, height
 
 
 def _handle_drawing(drawing_node):
+    # 根据图片嵌入方式不同
+    # 嵌入式 <w:drawing>直接是<wp:inline
+    # 浮于文字上方 <w:drawing>直接是wp:anchor
     # 可能是文本框
     blip_fills = drawing_node.getElementsByTagName("pic:blipFill")
     if len(blip_fills) <= 0:
         return None
     blip_fill = blip_fills[0]
     pic_el = blip_fill.parentNode
-    pic_extent_el = get_deep_one_node(pic_el, "pic:spPr.a:xfrm.a:ext")
+    pic_extent_el = drawing_node.getElementsByTagName("wp:extent")[0]
     cx = int(pic_extent_el.getAttribute("cx"))
     cy = int(pic_extent_el.getAttribute("cy"))
     lip = _get_one_node(blip_fill, "a:blip")
@@ -191,10 +203,9 @@ def handle_rels(rels_path):
     return relationships
 
 
-def get_question(question_items, *args):
+def get_question(question_items):
     if len(question_items) == 0:
         return None
-    s_c = args
     desc = ""
     q_no = question_items[0]
     i = 1
@@ -204,39 +215,9 @@ def get_question(question_items, *args):
             break
         desc += qs_item
         i += 1
-    options = []
-
-    def replace(match_r):
-        mgs = match_r.groups()
-        return "\n"
-    # print(u"(A|B|C|D)(%s)" % "|".join(map(lambda x: re.escape(x), s_c)))
-    r_compile = re.compile(u"(^|\s)(A|B|C|D)(%s)" % "|".join(map(lambda x: re.escape(x), s_c)))
-    #  有些选项 A B C D后面没有点
-    rb_compile = re.compile(u"(^|\s)(A|B|C|D)(%s|)" % "|".join(map(lambda x: re.escape(x), s_c)))
-
-    for item in question_items[i:]:
-        item = replace_special_space(item)
-        r_item = r_compile.sub(replace, item)
-        options.extend(r_item.split("\n"))
-    real_options = map(lambda x: x.strip(), options)
-    real_options = filter(lambda x: len(x) > 0, real_options)
-    if len(real_options) < 4:
-        #  有些选项 A B C D后面没有点
-        options_s = "\n".join(question_items[i:])
-        r_options_s = rb_compile.sub(replace, options_s)
-        real_options = r_options_s.split("\n")
-        real_options = map(lambda x: x.strip(), real_options)
-        real_options = filter(lambda x: len(x) > 0, real_options)
-    if len(real_options) != 4:
-        for r_o in real_options:
-            print(r_o)
-        print(q_no)
-        for item in question_items:
-            print(item)
-        raise RuntimeError("")
-        return None
-    # for r_o in real_options:
-    #     print(r_o)
+    parse_o = ParseOptions()
+    parse_o.parse(question_items[i:])
+    real_options = parse_o.to_list()
     r_options = map(lambda x: dict(desc=x, score=0), real_options)
     return dict(no=q_no, desc=desc, options=r_options)
 
@@ -254,16 +235,19 @@ def get_qa_question(question_items):
 def handle_docx_main_xml(xml_path, *args):
     dom = minidom.parse(xml_path)
     root = dom.documentElement
-    body = root.firstChild
+    body = _get_one_node(root, "w:body")
     questions_s = []
     current_q_type = None
     current_question = []
+    current_question_no = 0
     s_c = args
     m_compile = re.compile(ur"(\d+)(%s)" % "|".join(map(lambda x: re.escape(x), s_c)))
 
     def _get_question():
+        if not current_question:
+            return
         if current_question[0] == 1:
-            q_item = get_question(current_question[1:], ".", u"、", u"．")
+            q_item = get_question(current_question[1:])
         else:
             q_item = get_qa_question(current_question[1:])
         if q_item is not None:
@@ -274,7 +258,6 @@ def handle_docx_main_xml(xml_path, *args):
         if node.nodeName != "w:p":
             continue
         p_content = handle_paragraph(node).strip()
-
         if len(p_content) <= 0:
             continue
         # 判断是否是题目类型
@@ -283,14 +266,28 @@ def handle_docx_main_xml(xml_path, *args):
             current_q_type = _q_tpe
             continue
         # 判断是否是题目
+        is_question_item = False
         m_no = m_compile.match(p_content)
-        if m_no is not None:
-            _get_question()
-            q_no = int(m_no.groups()[0])
-            current_question = [current_q_type, q_no]
-            current_question.append(p_content[len("".join(m_no.groups())):])
+        if m_no is None:
+            if current_question:
+                # 有可能有些题目，题号后面没有逗号顿号, 我们以当前题号+1 尝试判定
+                if p_content.startswith("%s" % (current_question_no + 1)):
+                    is_question_item = True
+                    q_no = current_question_no + 1
+                    s_q_no = str(q_no)
+                    p_content = p_content[len(s_q_no):]
         else:
+            is_question_item = True
+            q_no = int(m_no.groups()[0])
+            p_content = p_content[len("".join(m_no.groups())):]
+        if is_question_item:
+            _get_question()
+            current_question = [current_q_type, q_no]
+            current_question_no = q_no
             current_question.append(p_content)
+        else:
+            if current_question:
+                current_question.append(p_content)
     if len(current_question) > 0:
         _get_question()
     return questions_s
@@ -445,8 +442,6 @@ def _clip_pic(pic_file, clip_data):
     end_y = int(height - (height * (clip_data[3] / 100.0)))
     start_x = int(width * (clip_data[0] / 100.0))
     end_x = int(width - (width * (clip_data[2] / 100.0)))
-    # import pdb
-    # pdb.set_trace()
     cropped = img[start_y:end_y, start_x:end_x]  # 裁剪坐标为[y0:y1, x0:x1]
     cv2.imwrite(clip_pic_path, cropped)
     return clip_pic_path
@@ -516,11 +511,13 @@ def handle_exam(file_path):
     with read_docx(file_path) as rd, read_answers_docx(answer_file) as rad:
         question_list, q_rl = rd
         answers_dict, aw_rl = rad
+        if len(question_list) <= 0:
+            raise RuntimeError("没发现题目")
         for q_item in question_list:
             q_no = q_item["no"]
             # 判定是否包含答案
             if q_no not in answers_dict:
-                pdb.set_trace()
+
                 print(exam_name)
                 raise RuntimeError("lack answer %s" % q_item["no"])
             if q_item["select_mode"] == 1:  # 选择题
@@ -544,7 +541,6 @@ def handle_exam(file_path):
 
 def find_from_dir(directory_name):
     files = os.listdir(directory_name)
-    all_member = []
     for file_item in files:
         if file_item.startswith("~$"):
             continue
@@ -571,10 +567,6 @@ def find_from_dir(directory_name):
         # if len(members) <= 0:
         #     print(u"请检查文件%s" % file_path)
         # all_member.extend(members)
-    # for mem in all_member:
-    #     print("\t".join(mem))
-    all_member.sort(key=lambda x: x[3])
-    return all_member
 
 
 def login(user_name, password):
@@ -599,15 +591,16 @@ def post_questions(exam_name, exam_no, start_no, questions_obj):
         q_item["question_source"] = exam_name
         q_item["question_subject"] = 0
         q_item["question_desc"] = q_item.pop("desc").strip()
-        # print(json.dumps(q_item))
-        if REAL_UPLOAD is True:
-            resp = req.post(url, json=q_item)
-            print(resp.text)
+        print(json.dumps(q_item))
+        # if REAL_UPLOAD is True:
+        #     resp = req.post(url, json=q_item)
+        #     print(resp.text)
         question_no += 1
 
 
-login("admin", "admin")
-find_from_dir(r'D:\Project\word\app\upload')
-# print(all_members)
-# d_path = ur'D:\Project\word\河南省专升本经济学测试题（二十）.docx'
-# read_docx(d_path)
+if __name__ == "__main__":
+    login("admin", "admin")
+    find_from_dir(r'D:\Project\word\app\upload')
+    # print(all_members)
+    # d_path = ur'D:\Project\word\河南省专升本经济学测试题（二十）.docx'
+    # read_docx(d_path)

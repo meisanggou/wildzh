@@ -50,9 +50,9 @@
                 </view>
             </view>
 
-            <view class='line'>
+            <!-- <view class='line'>
                 <view class='showAnswer' bindtap='showAnswer'>显示答案</view>
-            </view>
+            </view> -->
 
             <view wx:if="{{showAnswer}}">
                 <view class='item'>

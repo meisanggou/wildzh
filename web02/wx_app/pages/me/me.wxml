@@ -53,17 +53,6 @@
                         </view>
                     </view>
 
-
-                    <view class="weui-cell weui-cell_input">
-                        <view class="weui-cell__hd">
-                            <view class="weui-label">语言</view>
-                        </view>
-                        <view class="weui-cell__bd">
-                            <view class="weui-input">
-                                <open-data type="userLanguage" lang="zh_CN"></open-data>
-                            </view>
-                        </view>
-                    </view>
                     <view class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
                             <view class="weui-label">题库</view>
@@ -78,6 +67,16 @@
                                         <view class="weui-input">{{examName}}</view>
                                     </view>
                                 </picker>
+                            </view>
+                        </view>
+                    </view>
+                    
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">版本</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <view class="weui-input">{{version}}
                             </view>
                         </view>
                     </view>

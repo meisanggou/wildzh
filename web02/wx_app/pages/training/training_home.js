@@ -15,7 +15,7 @@ Page({
     onLoad: function(options) {
         var canUpdate = false;
         var currentUser = app.getOrSetCurrentUserData();
-        if (currentUser != null) {
+        if (currentUser != null && typeof currentUser == "object") {
             if ("role" in currentUser) {
                 if ((currentUser.role & 2) == 2) {
                     canUpdate = true;
