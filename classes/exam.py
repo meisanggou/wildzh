@@ -41,10 +41,10 @@ class ExamMember(object):
             e_dict[item['exam_no']] = item
         return e_dict
 
-    def insert_exam_member(self, user_no, exam_no):
-        return self._insert_exam_member(user_no, exam_no, 5)
+    def insert_exam_member(self, user_no, exam_no, authorizer):
+        return self._insert_exam_member(user_no, exam_no, 5, authorizer)
 
-    def _insert_exam_member(self, user_no, exam_no, exam_role):
+    def _insert_exam_member(self, user_no, exam_no, exam_role, authorizer):
         data = dict(user_no=user_no, exam_no=exam_no, exam_role=exam_role)
         data['insert_time'] = time.time()
         data['update_time'] = time.time()
@@ -52,7 +52,7 @@ class ExamMember(object):
         return l
 
     def insert_exam_owner(self, user_no, exam_no):
-        return self._insert_exam_member(user_no, exam_no, 1)
+        return self._insert_exam_member(user_no, exam_no, 1, 0)
 
 
 class Exam(ExamMember):
