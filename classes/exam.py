@@ -15,16 +15,50 @@ __author__ = 'meisa'
 1 拥有者： 所有权限
 2 超级管理员：可更新题库信息 授权新的管理员
 3 管理员：新增试题，更新试题
-4 普通成员： 可做题
+5 普通成员： 可做题
 
 
 
 """
 
 
-class Exam(object):
+class ExamMember(object):
+
+    def __init__(self):
+        self.t_em = "exam_member"
+
+    def user_exams(self, user_no):
+        where_value = dict(user_no=user_no)
+        cols = ['user_no', 'exam_no', 'exam_role']
+        items = self.db.execute_select(self.t_em, cols=cols,
+                                       where_value=where_value)
+        return items
+
+    def select_user_exams(self, user_no):
+        items = self.user_exams(user_no)
+        e_dict = dict()
+        for item in items:
+            e_dict[item['exam_no']] = item
+        return e_dict
+
+    def insert_exam_member(self, user_no, exam_no):
+        return self._insert_exam_member(user_no, exam_no, 5)
+
+    def _insert_exam_member(self, user_no, exam_no, exam_role):
+        data = dict(user_no=user_no, exam_no=exam_no, exam_role=exam_role)
+        data['insert_time'] = time.time()
+        data['update_time'] = time.time()
+        l = self.db.execute_insert(self.t_em, data)
+        return l
+
+    def insert_exam_owner(self, user_no, exam_no):
+        return self._insert_exam_member(user_no, exam_no, 1)
+
+
+class Exam(ExamMember):
 
     def __init__(self, db_conf_path):
+        super(Exam, self).__init__()
         self.db = DB(conf_path=db_conf_path)
         self.t_info = "exam_info"
         self.t_q = "exam_questions"
@@ -38,6 +72,8 @@ class Exam(object):
         kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, status=status,
                       exam_extend=exam_extend, adder=adder)
         l = self.db.execute_insert(self.t_info, kwargs=kwargs, ignore=True)
+        if l > 0:
+            self.insert_exam_owner(adder, exam_no)
         return l
 
     def _insert_question(self, exam_no, question_no, question_desc,

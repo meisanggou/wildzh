@@ -18,7 +18,7 @@ from win32com import client as wc
 import xml.dom.minidom as minidom
 import zipfile
 
-from parse_option import ParseOptions
+from parse_question import ParseQuestion, QuestionType
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -34,7 +34,7 @@ remote_host = "http://127.0.0.1:2400"
 remote_host = "https://wild.gene.ac"
 
 
-Q_TYPE_COMP = re.compile(u"((一|二|三|四|五)、|^)(单选|选择|名词解释|简答题|计算题|论述题)")
+Q_TYPE_COMP = re.compile(u"((一|二|三|四|五)、|^)(单选|选择|名词解释|简答|简答题|计算|计算题|论述|论述题)")
 S_ANSWER_COMP = re.compile(r"(\d+)-(\d+)([a-d]+)", re.I)
 G_SELECT_MODE = [u"无", u"选择", u"名词解释", u"简答题", u"计算题", u"论述题"]
 
@@ -50,6 +50,14 @@ def get_select_mode(content):
         return G_SELECT_MODE.index(s)
     if s in (u"单选", u"单选题"):
         return 1
+    if s in (u"名词解释", u"名词"):
+        return 2
+    if s in (u"简答", u"简答题"):
+        return 3
+    if s in (u"计算", u"计算题"):
+        return 4
+    if s in (u"论述", u"论述题"):
+        return 5
     raise RuntimeError("Bad select mode %s" % s)
 
 
@@ -203,41 +211,13 @@ def handle_rels(rels_path):
     return relationships
 
 
-def get_question(question_items):
-    if len(question_items) == 0:
-        return None
-    desc = ""
-    q_no = question_items[0]
-    i = 1
-    while i < len(question_items):
-        qs_item = question_items[i]
-        if re.match("A|B|C|D", qs_item, re.I) is not None:
-            break
-        desc += qs_item
-        i += 1
-    parse_o = ParseOptions()
-    parse_o.parse(question_items[i:])
-    real_options = parse_o.to_list()
-    r_options = map(lambda x: dict(desc=x, score=0), real_options)
-    return dict(no=q_no, desc=desc, options=r_options)
-
-
-def get_qa_question(question_items):
-    if len(question_items) == 0:
-        return None
-    q_no = question_items[0]
-    desc = "\n".join(question_items[1:])
-    options = [dict(desc=u"会", score=1),
-               dict(desc=u"不会", score=0)]
-    return dict(no=q_no, desc=desc, options=options)
-
-
-def handle_docx_main_xml(xml_path, *args):
+def handle_docx_main_xml(xml_path, *args, **kwargs):
+    select_mode = kwargs.pop("select_mode")
     dom = minidom.parse(xml_path)
     root = dom.documentElement
     body = _get_one_node(root, "w:body")
     questions_s = []
-    current_q_type = None
+    current_q_type = select_mode
     current_question = []
     current_question_no = 0
     s_c = args
@@ -246,13 +226,20 @@ def handle_docx_main_xml(xml_path, *args):
     def _get_question():
         if not current_question:
             return
+        pq = ParseQuestion()
+        # pdb.set_trace()
+        pq.parse(current_question[1:])
+        if not pq.initialized:
+            return
         if current_question[0] == 1:
-            q_item = get_question(current_question[1:])
+            if pq.q_type != QuestionType.Choice:
+                pdb.set_trace()
+                raise RuntimeError(u"问题类型解析错误 %s" % pq.no)
         else:
-            q_item = get_qa_question(current_question[1:])
-        if q_item is not None:
-            q_item["select_mode"] = current_question[0]
-            questions_s.append(q_item)
+            if pq.q_type != QuestionType.QA:
+                raise RuntimeError(u"问题类型解析错误")
+        pq.select_mode = current_question[0]
+        questions_s.append(pq)
 
     for node in body.childNodes:
         if node.nodeName != "w:p":
@@ -261,21 +248,21 @@ def handle_docx_main_xml(xml_path, *args):
         if len(p_content) <= 0:
             continue
         # 判断是否是题目类型
-        _q_tpe = get_select_mode(p_content)
-        if _q_tpe > 0:
-            current_q_type = _q_tpe
-            continue
+        if not select_mode:
+            _q_tpe = get_select_mode(p_content)
+            if _q_tpe > 0:
+                current_q_type = _q_tpe
+                continue
         # 判断是否是题目
         is_question_item = False
         m_no = m_compile.match(p_content)
         if m_no is None:
-            if current_question:
-                # 有可能有些题目，题号后面没有逗号顿号, 我们以当前题号+1 尝试判定
-                if p_content.startswith("%s" % (current_question_no + 1)):
-                    is_question_item = True
-                    q_no = current_question_no + 1
-                    s_q_no = str(q_no)
-                    p_content = p_content[len(s_q_no):]
+            # 有可能有些题目，题号后面没有逗号顿号, 我们以当前题号+1 尝试判定
+            if p_content.startswith("%s" % (current_question_no + 1)):
+                is_question_item = True
+                q_no = current_question_no + 1
+                s_q_no = str(q_no)
+                p_content = p_content[len(s_q_no):]
         else:
             is_question_item = True
             q_no = int(m_no.groups()[0])
@@ -293,9 +280,9 @@ def handle_docx_main_xml(xml_path, *args):
     return questions_s
 
 
-def read_docx_xml(root_dir):
+def read_docx_xml(root_dir, select_mode=None):
     xml_path = os.path.join(root_dir, 'word', 'document.xml')
-    questions_s = handle_docx_main_xml(xml_path, ".", u"、", u"．")
+    questions_s = handle_docx_main_xml(xml_path, ".", u"、", u"．", select_mode=select_mode)
     style_path = os.path.join(root_dir, 'word', '_rels', "document.xml.rels")
     relationships = handle_rels(style_path)
     for key in relationships.keys():
@@ -304,9 +291,9 @@ def read_docx_xml(root_dir):
 
 
 @contextmanager
-def read_docx(docx_path):
+def read_docx(docx_path, select_mode=None):
     with extract_docx(docx_path) as temp_dir:
-        questions_s, relationships = read_docx_xml(temp_dir)
+        questions_s, relationships = read_docx_xml(temp_dir, select_mode)
         yield [questions_s, relationships]
         pass
 
@@ -323,7 +310,9 @@ def get_answers(answer_items):
             for i in range(i_start, i_end + 1):
                 if i in aw_dict:
                     raise RuntimeError("repeated answers %s" % i)
-                aw_dict[i] = s_ac.index(answers[i - i_start].upper())
+                aw_dict[i] = answers[i - i_start].upper()
+                if aw_dict[i] not in s_ac:
+                    raise RuntimeError("Not Choice Answer %s" % aw_dict[i])
     return aw_dict
 
 
@@ -514,27 +503,55 @@ def handle_exam(file_path):
         if len(question_list) <= 0:
             raise RuntimeError("没发现题目")
         for q_item in question_list:
-            q_no = q_item["no"]
+            q_no = q_item.no
             # 判定是否包含答案
             if q_no not in answers_dict:
-
                 print(exam_name)
                 raise RuntimeError("lack answer %s" % q_item["no"])
-            if q_item["select_mode"] == 1:  # 选择题
-                q_item["options"][answers_dict[q_no]]["score"] = 1
-                q_item["answer"] = ""
-            else:
-                q_item["answer"] = answers_dict[q_no]
+            q_item.set_answer(answers_dict[q_no])
             # 开始上传 题目
             # 获取题目描述中的图片
-            q_item["desc"] = replace_media(q_item["desc"], q_rl, uploaded_q_rl)
+            q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl)
 
             # 获取选项中的图片
-            for option in q_item["options"]:
-                option["desc"] = replace_media(option["desc"], q_rl, uploaded_q_rl)
+            for option in q_item.options:
+                option.desc = replace_media(option.desc, q_rl, uploaded_q_rl)
             # 获取答案中的图片
-            q_item["answer"] = replace_media(q_item["answer"], aw_rl, uploaded_aw_rl)
-            q_item["inside_mark"] = "%s %s" % (exam_name, q_no)
+            q_item.answer = replace_media(q_item.answer, aw_rl, uploaded_aw_rl)
+            q_item.inside_mark = "%s %s" % (exam_name, q_no)
+        post_questions(exam_name, exam_no, next_no, question_list)
+    return True, "success"
+
+
+def handle_exam2(file_path):
+    exam_no = 1567506833  # 测试包含图片
+    exam_no = 1570447137  # 专升本经济学题库2
+    exam_no = 1573464937  # 英语托业
+    no_info = req_max_no(exam_no)
+    next_no = no_info["next_no"]
+
+    uploaded_aw_rl = dict()
+    uploaded_q_rl = dict()
+    exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
+    print("start handle %s" % exam_name)
+
+    with read_docx(file_path, select_mode=1) as rd:
+        question_list, q_rl = rd
+        if len(question_list) <= 0:
+            raise RuntimeError("没发现题目")
+        for q_item in question_list:
+            q_no = q_item.no
+            q_item.set_answer("A")
+            # 开始上传 题目
+            # 获取题目描述中的图片
+            q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl)
+
+            # 获取选项中的图片
+            for option in q_item.options:
+                option.desc = replace_media(option.desc, q_rl, uploaded_q_rl)
+            # 获取答案中的图片
+            # q_item.answer = replace_media(q_item.answer, aw_rl, uploaded_aw_rl)
+            q_item.inside_mark = "%s %s" % (exam_name, q_no)
         post_questions(exam_name, exam_no, next_no, question_list)
     return True, "success"
 
@@ -587,20 +604,21 @@ def post_questions(exam_name, exam_no, start_no, questions_obj):
     url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
     question_no = start_no
     for q_item in questions_obj:
-        q_item["question_no"] = question_no
-        q_item["question_source"] = exam_name
-        q_item["question_subject"] = 0
-        q_item["question_desc"] = q_item.pop("desc").strip()
-        print(json.dumps(q_item))
-        # if REAL_UPLOAD is True:
-        #     resp = req.post(url, json=q_item)
-        #     print(resp.text)
+        q_item_d = q_item.to_exam_dict()
+        q_item_d["question_no"] = question_no
+        q_item_d["question_source"] = exam_name
+        q_item_d["question_subject"] = 0
+        print(json.dumps(q_item_d))
+        if REAL_UPLOAD is True:
+            resp = req.post(url, json=q_item_d)
+            print(resp.text)
         question_no += 1
 
 
 if __name__ == "__main__":
     login("admin", "admin")
-    find_from_dir(r'D:\Project\word\app\upload')
+    # find_from_dir(r'D:\Project\word\app\upload')
+    handle_exam2(u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
     # d_path = ur'D:\Project\word\河南省专升本经济学测试题（二十）.docx'
     # read_docx(d_path)

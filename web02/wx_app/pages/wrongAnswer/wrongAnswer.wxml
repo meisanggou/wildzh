@@ -67,7 +67,7 @@
         </scroll-view>
     </view>
     <view class='bottom' wx:if="{{showRemove}}">
-        <view class='bottomRemove' bindtap='remove'>移除该题</view>
+        <view class='bottomShow' bindtap='remove'>移除该题</view>
         <view>|</view>
         <view class='bottomShow' bindtap='showAnswer'>显示答案</view>
     </view>

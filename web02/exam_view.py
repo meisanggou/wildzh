@@ -143,11 +143,16 @@ def get_exam_info():
     else:
         exam_type = None
     items = c_exam.select_exam(g.exam_no)
+    u_exams = c_exam.select_user_exams(g.user_no)
     for item in items:
         item["select_modes"] = G_SELECT_MODE
         item["subjects"] = G_SUBJECT
     if (g.user_role & 2) != 2:  # 内部用户全部返回
         for i in range(len(items) - 1, -1, -1):
+            exam_no = items[i]['exam_no']
+            if exam_no in u_exams:
+                items[i].update(u_exams[exam_no])
+                continue
             if (items[i]["status"] & 64 == 64) or (int(items[i]["adder"]) == g.user_no):
                 continue
             del items[i]

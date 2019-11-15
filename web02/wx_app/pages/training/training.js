@@ -49,6 +49,9 @@ Page({
             this.setData({
                 progressStorageKey: progressStorageKey
             });
+            wx.showLoading({
+                title: '试题加载中',
+            });
             args_url += "exam_no=" + that.data.examNo;
             wx.request2({
                 url: '/exam/questions/no/?' + args_url,
@@ -317,10 +320,13 @@ Page({
         if (parseInt(nowQuestion["options"][choseIndex]["score"]) > 0) {
             nowQuestion["options"][choseIndex]["class"] = "chose";
             // 自动进入下一题
-            var interval = setInterval(function() {
-                clearInterval(interval)
-                that.after1();
-            }, 1000)
+            if(this.data.showAnswer == false){
+                // 当前显示答案 不进入下一题
+                var interval = setInterval(function() {
+                    clearInterval(interval)
+                    that.after1();
+                }, 1000)
+            }
         } else {
             nowQuestion["options"][choseIndex]["class"] = "errorChose";
             // 显示答案

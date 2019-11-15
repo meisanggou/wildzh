@@ -240,7 +240,8 @@ Page({
             }
         })
         questionItems.splice(nowQuestionIndex, 1);
-        if (questionItems.length <= 0) {
+        questionLen = questionItems.length;
+        if (questionLen <= 0) {
             that.setData({
                 questionItems: []
             });
@@ -256,8 +257,9 @@ Page({
             })
             return true;
         }
+        
         if (nowQuestionIndex >= questionLen) {
-            nowQuestionIndex = nowQuestionIndex - 1;
+            nowQuestionIndex = questionLen - 1;
         }
         that.setData({
             nowQuestion: questionItems[nowQuestionIndex],

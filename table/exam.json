@@ -181,7 +181,7 @@
                 "col_type": "int(11)"
             },
             {
-                "col_comment": "题库角色值 1拥有者 2超级管理员（可授权） 3管理员",
+                "col_comment": "题库角色值 1拥有者 2超级管理员（可授权） 3管理员 5正常用户",
                 "col_name": "exam_role",
                 "col_type": "int(11)"
             },
@@ -203,7 +203,7 @@
                 "default_value": 0
             }
         ],
-        "table_comment": "记录错题",
+        "table_comment": "题库成员",
         "table_name": "exam_member"
     }
 ]

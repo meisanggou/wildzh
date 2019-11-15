@@ -11,11 +11,11 @@
         </view>
 
         <view class='middle'>
-            <view bindtap='before1' class='switch'>‹</view>
+            <!-- <view bindtap='before1' class='switch'>‹</view> -->
             <view bindtap='before10' class='switch'>‹‹</view>
-            <view>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
+            <view class='switchtext'>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
             <view bindtap='after10' class='switch'>››</view>
-            <view bindtap='after1' class='switch'>›</view>
+            <!-- <view bindtap='after1' class='switch'>›</view> -->
         </view>
 
         <view class='content'>
@@ -81,7 +81,7 @@
     </view>
     <view class='bottom'>
         <view bindtap='before1' class='switch'>‹</view>
-        <view class='afterQuestion' bindtap='showAnswer'>显示答案</view>
+        <view class='afterQuestion switchtext' bindtap='showAnswer'>显示答案</view>
         <view bindtap='after1' class='switch'>›</view>
     </view>
 </view>

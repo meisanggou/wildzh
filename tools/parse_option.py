@@ -13,17 +13,14 @@ def replace_special_space(s):
     return s
 
 
-test_cases = [
-    u"""A.既定资源的配置      B.资源总量的决定
-    C.如何实现充分就业    D.国民收入的决定
-""",
- u"""A.既定资源的配置      B资源总量的决定
-    C.如何实现充分就业    D.国民收入的决定
-""",
- u"""A.既定资源的配置      ;B.资源总量的决定
-    C.如何实现充分就业    D.国民收入的决定
-""",
-]
+class Option(object):
+
+    def __init__(self, desc, score=0):
+        self.desc = desc.strip()
+        self.score = score
+
+    def to_dict(self):
+        return dict(desc=self.desc, score=self.score)
 
 
 class ParseOptions(object):
@@ -32,10 +29,8 @@ class ParseOptions(object):
     e_follow_chars = [re.escape(fc) for fc in following_chars]
 
     def __init__(self):
-        self.A = ""
-        self.B = ""
-        self.C = ""
-        self.D = ""
+        for op in self.option_prefix:
+            setattr(self, "_%s" % op, None)
         self._o_compile = None
 
     @property
@@ -43,12 +38,12 @@ class ParseOptions(object):
         if self._o_compile:
             return self._o_compile
         jr_chars = "|".join(self.e_follow_chars)
-        self._o_compile = re.compile(u"(?:^|\\s)([ABCD])(?:%s)" % jr_chars)
+        self._o_compile = re.compile(ur"(?:^|\s)\(?\s*([ABCD])\s*\)?(?:%s)" % jr_chars)
         return self._o_compile
 
     def split_special_option(self, option_key, s):
-        s_compile = re.compile("\\s%s(?:%s)" % (option_key, "|".join(
-            self.e_follow_chars)))
+        # 选项可能是 (A)
+        s_compile = re.compile(r"\(\s*%s\s*\)" % (option_key,))
         s_r = s_compile.split(s)
         if (len(s_r)) == 2:
             return True, s_r
@@ -68,7 +63,7 @@ class ParseOptions(object):
         s_r4 = s_compile4.split(s)
         if len(s_r4) == 2:
             return True, s_r4
-        return False, "未拆分成功"
+        return False, u"未拆分成功"
 
     def verify_split_r(self, l):
         nl = [s for s in l if s.strip()]
@@ -82,15 +77,15 @@ class ParseOptions(object):
         # 拆分后长度应该是偶数
         len_nl = len(nl)
         if len_nl % 2 != 0:
-            return False, "拆分后不是偶数"
+            return False, u"拆分后不是偶数"
         # 拆分后应该不超过8
         if len(nl) > 8:
-            return False, "拆分后选项超过4个"
+            return False, u"拆分后选项超过4个"
 
         kp = dict()
         for i in range(0, len_nl, 2):
             if nl[i] not in self.option_prefix:
-                return False, "选项KEY不正确 理论上不应该出现的"
+                return False, u"选项KEY不正确 理论上不应该出现的"
             kp[nl[i]] = nl[i + 1]
         # 判断每个选项A B C D是否存在
         for o_index in range(len(self.option_prefix)):
@@ -101,18 +96,16 @@ class ParseOptions(object):
                 if p_index < 0:
                     s_result, pv_values = self.split_special_option(op, prefix)
                     if s_result is False:
-                        return False, "有不存在的选项：%s" % op
+                        return False, u"有不存在的选项：%s" % op
                 else:
                     p_p = self.option_prefix[p_index]
                     s_result, pv_values = self.split_special_option(op, kp[p_p])
                     if s_result is False:
-                        return False, "有不存在的选项：%s" % op
+                        return False, u"有不存在的选项：%s" % op
                     kp[p_p] = pv_values[0]
                 kp[op] = pv_values[1]
-        self.A = kp["A"].strip()
-        self.B = kp["B"].strip()
-        self.C = kp["C"].strip()
-        self.D = kp["D"].strip()
+        for key in kp.keys():
+            setattr(self, key, kp[key])
         return True, "success"
 
     def parse(self, data):
@@ -125,16 +118,54 @@ class ParseOptions(object):
         v_result, data = self.verify_split_r(r)
         if v_result is False:
             sys.stderr.write(s)
+            import pdb
+            pdb.set_trace()
             raise RuntimeError(data)
 
+    def _to_list(self):
+        return [getattr(self, op) for op in self.option_prefix]
+
+    def option_list(self):
+        return [v for v in self._to_list() if v]
+
     def to_list(self):
-        return [self.A, self.B, self.C, self.D]
+        l_options = [v.to_dict()
+                     for v in self.option_list()]
+        return l_options
+
+    def __iter__(self):
+        for op in self._to_list():
+            if op:
+                yield op
 
     @classmethod
     def test(cls, case_name, s):
         po = cls()
         print(case_name)
         po.parse(s)
+
+    def __getattribute__(self, item):
+        if len(item) != 1:
+            return object.__getattribute__(self, item)
+        if item in self.option_prefix:
+            return object.__getattribute__(self, "_%s" % item)
+        else:
+            return object.__getattribute__(self, item)
+
+    def __setattr__(self, key, value):
+        if key in self.option_prefix:
+            _key = "_%s" % key
+            _value = getattr(self, _key)
+            if isinstance(value, Option):
+                _value = value
+            else:
+                if _value:
+                    _value.desc = value
+                else:
+                    _value = Option(value)
+            object.__setattr__(self, _key, _value)
+        else:
+            object.__setattr__(self, key, value)
 
     @classmethod
     def test_case1(cls):
