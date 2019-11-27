@@ -1,9 +1,11 @@
 # !/usr/bin/env python
 # coding: utf-8
 
+import collections
 import re
 import sys
 
+from parse_option import ListOption
 from parse_option import ParseOptions
 
 
@@ -13,8 +15,9 @@ class QuestionType(object):
 
 
 class ParseQuestion(object):
-    option_compile = re.compile("\(?\s*[%s]\s*\)?" % "".join(ParseOptions.option_prefix),
-                                re.I)
+    _s_of = "".join(ParseOptions.option_prefix)
+    option_compile = re.compile("^\s*\(\s*[%s]\s*\)" % _s_of, re.I)  # 匹配 (A)
+    option_compile2 = re.compile("^\s*[%s]\s*" % _s_of, re.I)         # 匹配 A
 
     def __init__(self):
         self.no = None
@@ -30,33 +33,52 @@ class ParseQuestion(object):
     def initialized(self):
         return self._initialized
 
+    def find_options_location(self, question_items):
+        _complies = [self.option_compile, self.option_compile2]
+        _c_len = len(_complies)
+        location = -1
+        use_index = _c_len
+        i = 1
+        while i < len(question_items):
+            qs_item = question_items[i]
+            if use_index <= 0:
+                break
+            for j in range(use_index):
+                _c = _complies[j]
+                if _c.match(qs_item) is None:
+                    continue
+                location = i
+                use_index = j
+                break
+            i += 1
+        return location
+
     def parse(self, question_items):
         if self._initialized:
             raise RuntimeError("initialized")
         if len(question_items) == 0:
             return None
-        desc = ""
+
         q_no = question_items[0]
-        i = 1
-        while i < len(question_items):
-            qs_item = question_items[i]
-            if self.option_compile.match(qs_item) is not None:
-                break
-            desc += qs_item
-            i += 1
-        parse_o = ParseOptions()
-        if i >= len(question_items):
-            parse_o.A = u"会"
-            parse_o.B = u"不会"
+        i = self.find_options_location(question_items[:])
+        desc = "\n".join(question_items[1:i])
+
+        if i < 0:
+            options = ListOption(["A", "B"])
+            options.A = u"会"
+            options.B = u"不会"
             self.q_type = QuestionType.QA
         else:
-            parse_o.parse(question_items[i:])
+            p_data = ParseOptions().parse(question_items[i:])
+            if p_data['prefix']:
+                desc += "\n" + p_data['prefix']
+            options = p_data['options']
             self.q_type = QuestionType.Choice
-        real_options = parse_o.to_list()
+        real_options = options.to_list()
         r_options = map(lambda x: dict(desc=x, score=0), real_options)
         self.no = q_no
         self.desc = desc.strip()
-        self.options = parse_o
+        self.options = options
         self._initialized = True
         return dict(no=q_no, desc=desc, options=r_options)
 
@@ -68,6 +90,8 @@ class ParseQuestion(object):
     def desc(self, value):
         _value = value.strip()
         if not _value:
+            import pdb
+            pdb.set_trace()
             raise RuntimeError("Desc length must gt 0")
         self._desc = _value
 
@@ -101,12 +125,28 @@ class ParseQuestion(object):
 class QuestionSet(object):
 
     def __init__(self):
-        self._s = dict()
-        self._select_mode_s = dict()
+        self.exam_no = None
+        self.exam_name = None
+        self._s = collections.OrderedDict()
+        # self._select_mode_s = dict()
+
+    @property
+    def length(self):
+        return len(self._s.keys())
+
+    def __len__(self):
+        return self.length
 
     def add(self, question):
-        if isinstance(question, ParseQuestion):
+        if not isinstance(question, ParseQuestion):
             raise RuntimeError("Please add ParseQuestion item")
         if question.no in self._s:
             raise RuntimeError("")
         self._s[question.no] = question
+
+    def append(self, question):
+        return self.add(question)
+
+    def __iter__(self):
+        for item in self._s.values():
+            yield item

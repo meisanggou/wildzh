@@ -203,10 +203,16 @@ Page({
         var nextIndex = nowQuestionIndex + afterNum;
         if (nowQuestionIndex >= questionItems.length - 1) {
             // 判断是否当前是否是最后一题
-            wx.showToast({
+            wx.showModal({
                 title: "已是最后一题",
+                content: "是否从头开始练习？",
+                showCancel: true,
                 icon: "none",
-                duration: 2000
+                success: function (res){
+                    if (res.confirm) {
+                        that.reqQuestion(0, true)
+                    }
+                }
             });
             return true;
         }

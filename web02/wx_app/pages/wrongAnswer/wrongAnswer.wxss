@@ -123,7 +123,7 @@ page {
   width: 100%;
   font-size: 28rpx;
   position: fixed;
-  bottom: 10rpx;
+  bottom: 0rpx;
   background-color: #fff;
   height: 100rpx;
   border-top: 1px solid #c9c9d8;

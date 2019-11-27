@@ -72,13 +72,15 @@ Page({
         if (examNo == null) {
             return false;
         }
+        var questionLen = this.data.questionItems.length;
         var minWrongTime = 0;
-        if (this.data.questionItems.length <= 0) {
+        if (questionLen <= 0) {
             wx.showLoading({
                 title: '加载中...',
             })
         } else {
-            minWrongTime = this.data.questionItems[0].wrong_time;
+            
+            minWrongTime = this.data.questionItems[questionLen - 1].wrong_time;
         }
         wx.request2({
             url: '/exam/wrong/?exam_no=' + examNo + "&min_wrong_time=" + minWrongTime,
@@ -105,7 +107,7 @@ Page({
                 if (addQuestionItems.length > 0) {
                     // 按照错误时间排序 最新错题排到前面
                     addQuestionItems.sort(function(a, b) {
-                        return b.wrong_time - a.wrong_time;
+                        return a.wrong_time - b.wrong_time;
                     })
                     latestQuestionItems = addQuestionItems.concat(that.data.questionItems);
                     showIndex = 0;
@@ -412,12 +414,12 @@ Page({
         var touchMoveY = touchEndY - touchStartY;
         if (Math.abs(touchMoveY) < 0.618 * Math.abs(touchMoveX)) {
             // 向左滑动   
-            if (touchMoveX <= -30 && touchTime < 10) {
+            if (touchMoveX <= -93 && touchTime < 10) {
                 //执行切换页面的方法
                 that.after1();
             }
             // 向右滑动   
-            if (touchMoveX >= 30 && touchTime < 10) {
+            if (touchMoveX >= 93 && touchTime < 10) {
                 that.before1();
             }
         }

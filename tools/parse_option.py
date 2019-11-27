@@ -23,14 +23,64 @@ class Option(object):
         return dict(desc=self.desc, score=self.score)
 
 
+class ListOption(object):
+
+    def __init__(self, option_prefix=None):
+        if option_prefix:
+            self.option_prefix = option_prefix
+        else:
+            self.option_prefix = ["A", "B", "C", "D"]
+        for op in self.option_prefix:
+            setattr(self, "_%s" % op, None)
+
+    def _to_list(self):
+        return [getattr(self, op) for op in self.option_prefix]
+
+    def option_list(self):
+        return [v for v in self._to_list() if v]
+
+    def to_list(self):
+        l_options = [v.to_dict()
+                     for v in self.option_list()]
+        return l_options
+
+    def __iter__(self):
+        for op in self._to_list():
+            if op:
+                yield op
+
+    def __getattribute__(self, item):
+        if len(item) != 1:
+            return object.__getattribute__(self, item)
+        if item in self.option_prefix:
+            return object.__getattribute__(self, "_%s" % item)
+        else:
+            return object.__getattribute__(self, item)
+
+    def __setattr__(self, key, value):
+        if len(key) != 1:
+            return object.__setattr__(self, key, value)
+        if key in self.option_prefix:
+            _key = "_%s" % key
+            _value = getattr(self, _key)
+            if isinstance(value, Option):
+                _value = value
+            else:
+                if _value:
+                    _value.desc = value
+                else:
+                    _value = Option(value)
+            object.__setattr__(self, _key, _value)
+        else:
+            object.__setattr__(self, key, value)
+
+
 class ParseOptions(object):
     option_prefix = ["A", "B", "C", "D"]
     following_chars = [".", u"、", u"．"]
     e_follow_chars = [re.escape(fc) for fc in following_chars]
 
     def __init__(self):
-        for op in self.option_prefix:
-            setattr(self, "_%s" % op, None)
         self._o_compile = None
 
     @property
@@ -97,6 +147,7 @@ class ParseOptions(object):
                     s_result, pv_values = self.split_special_option(op, prefix)
                     if s_result is False:
                         return False, u"有不存在的选项：%s" % op
+                    prefix = pv_values[0]
                 else:
                     p_p = self.option_prefix[p_index]
                     s_result, pv_values = self.split_special_option(op, kp[p_p])
@@ -104,9 +155,10 @@ class ParseOptions(object):
                         return False, u"有不存在的选项：%s" % op
                     kp[p_p] = pv_values[0]
                 kp[op] = pv_values[1]
+        options = ListOption(self.option_prefix)
         for key in kp.keys():
-            setattr(self, key, kp[key])
-        return True, "success"
+            setattr(options, key, kp[key])
+        return True, {"prefix": prefix, "options": options}
 
     def parse(self, data):
         if isinstance(data, (list, tuple)):
@@ -118,54 +170,14 @@ class ParseOptions(object):
         v_result, data = self.verify_split_r(r)
         if v_result is False:
             sys.stderr.write(s)
-            import pdb
-            pdb.set_trace()
             raise RuntimeError(data)
-
-    def _to_list(self):
-        return [getattr(self, op) for op in self.option_prefix]
-
-    def option_list(self):
-        return [v for v in self._to_list() if v]
-
-    def to_list(self):
-        l_options = [v.to_dict()
-                     for v in self.option_list()]
-        return l_options
-
-    def __iter__(self):
-        for op in self._to_list():
-            if op:
-                yield op
+        return data
 
     @classmethod
     def test(cls, case_name, s):
         po = cls()
         print(case_name)
         po.parse(s)
-
-    def __getattribute__(self, item):
-        if len(item) != 1:
-            return object.__getattribute__(self, item)
-        if item in self.option_prefix:
-            return object.__getattribute__(self, "_%s" % item)
-        else:
-            return object.__getattribute__(self, item)
-
-    def __setattr__(self, key, value):
-        if key in self.option_prefix:
-            _key = "_%s" % key
-            _value = getattr(self, _key)
-            if isinstance(value, Option):
-                _value = value
-            else:
-                if _value:
-                    _value.desc = value
-                else:
-                    _value = Option(value)
-            object.__setattr__(self, _key, _value)
-        else:
-            object.__setattr__(self, key, value)
 
     @classmethod
     def test_case1(cls):
