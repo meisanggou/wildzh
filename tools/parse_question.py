@@ -60,15 +60,18 @@ class ParseQuestion(object):
             return None
 
         q_no = question_items[0]
+
         i = self.find_options_location(question_items[:])
-        desc = "\n".join(question_items[1:i])
 
         if i < 0:
+            desc = "\n".join(question_items[1:])
             options = ListOption(["A", "B"])
             options.A = u"会"
             options.B = u"不会"
             self.q_type = QuestionType.QA
+
         else:
+            desc = "\n".join(question_items[1:i])
             p_data = ParseOptions().parse(question_items[i:])
             if p_data['prefix']:
                 desc += "\n" + p_data['prefix']

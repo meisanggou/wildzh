@@ -134,7 +134,7 @@ def upload_media(r_id, rl, width, height, cache_rl, clip_data=None):
     return resp.json()["data"]["pic"]
 
 
-def handle_exam_no_answer(exam_no, file_path, select_mode):
+def handle_exam_no_answer(exam_no, file_path, select_mode=None):
     uploaded_q_rl = dict()
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     print("start handle %s" % exam_name)
@@ -171,7 +171,8 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None):
         return False, msg
     print("start handle %s" % exam_name)
 
-    with read_docx(file_path, select_mode) as rd, read_answers_docx(answer_file) as rad:
+    with read_docx(file_path, select_mode) as rd, \
+            read_answers_docx(answer_file, select_mode) as rad:
         question_set, q_rl = rd
         question_set.exam_no = exam_no
         answers_dict, aw_rl = rad
@@ -180,9 +181,11 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None):
         for q_item in question_set:
             q_no = q_item.no
             # 判定是否包含答案
+
             if q_no not in answers_dict:
                 print(exam_name)
-                raise RuntimeError("lack answer %s" % q_item["no"])
+
+                raise RuntimeError("lack answer %s" % q_item.no)
             q_item.set_answer(answers_dict[q_no])
             # 开始上传 题目
             # 获取题目描述中的图片
@@ -198,8 +201,14 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None):
     return True, "success"
 
 
-def upload_js_with_answer():
-    pass
+def upload_js_with_answer(exam_no, file_path):
+    login("admin", "admin")
+    return handle_exam_with_answer(exam_no, file_path, 4)
+
+
+def update_xz_no_answer(exam_no, file_path):
+    login("admin", "admin")
+    return handle_exam_no_answer(exam_no, file_path, 1)
 
 
 if __name__ == "__main__":
@@ -208,7 +217,7 @@ if __name__ == "__main__":
     exam_no = 1567506833  # 测试包含图片
     exam_no = 1570447137  # 专升本经济学题库2
     exam_no = 1573464937  # 英语托业
-    handle_exam_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx', 1)
+    update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
     # d_path = ur'D:\Project\word\河南省专升本经济学测试题（二十）.docx'
     # read_docx(d_path)

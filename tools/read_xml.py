@@ -330,11 +330,11 @@ def get_qa_answers(answer_items):
     return aw_dict
 
 
-def handle_answers_docx_main_xml(xml_path):
+def handle_answers_docx_main_xml(xml_path, select_mode=None):
     dom = minidom.parse(xml_path)
     root = dom.documentElement
     body = root.firstChild
-    current_q_type = -1
+    current_q_type = select_mode
     current_answers_area = []
     answers_dict = dict()
 
@@ -359,21 +359,22 @@ def handle_answers_docx_main_xml(xml_path):
         if len(p_content) <= 0:
             continue
         _q_type = get_select_mode(p_content)
-        if _q_type >= 0:
-            # match到关键字 且字符串长度不能
-            _get_answers()
-            current_q_type = _q_type
-            current_answers_area = []
-            continue
+        if not select_mode:
+            if _q_type >= 0:
+                # match到关键字 且字符串长度不能
+                _get_answers()
+                current_q_type = _q_type
+                current_answers_area = []
+                continue
         current_answers_area.append(p_content)
     if len(current_answers_area) > 0:
         _get_answers()
     return answers_dict
 
 
-def read_answers_docx_xml(root_dir):
+def read_answers_docx_xml(root_dir, select_mode=None):
     xml_path = os.path.join(root_dir, 'word', 'document.xml')
-    answers = handle_answers_docx_main_xml(xml_path)
+    answers = handle_answers_docx_main_xml(xml_path, select_mode)
     style_path = os.path.join(root_dir, 'word', '_rels', "document.xml.rels")
     relationships = handle_rels(style_path)
     for key in relationships.keys():
@@ -382,10 +383,10 @@ def read_answers_docx_xml(root_dir):
 
 
 @contextmanager
-def read_answers_docx(docx_path):
+def read_answers_docx(docx_path, select_mode):
     with extract_docx(docx_path) as temp_dir:
         print(temp_dir)
-        answers, relationships = read_answers_docx_xml(temp_dir)
+        answers, relationships = read_answers_docx_xml(temp_dir, select_mode)
         yield [answers, relationships]
         pass
 
