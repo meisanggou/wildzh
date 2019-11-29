@@ -209,20 +209,17 @@ def handle_docx_main_xml(xml_path, *args, **kwargs):
     def _get_question():
         if not current_question:
             return
-        pq = ParseQuestion()
-        # pdb.set_trace()
-        pq.parse(current_question[1:])
-        if not pq.initialized:
-            return
+        q_item = ParseQuestion.parse(current_question[1:])
+
         if current_question[0] == 1:
-            if pq.q_type != QuestionType.Choice:
+            if q_item.q_type != QuestionType.Choice:
                 pdb.set_trace()
-                raise RuntimeError(u"问题类型解析错误 %s" % pq.no)
+                raise RuntimeError(u"问题类型解析错误 %s" % q_item.no)
         else:
-            if pq.q_type != QuestionType.QA:
+            if q_item.q_type != QuestionType.QA:
                 raise RuntimeError(u"问题类型解析错误")
-        pq.select_mode = current_question[0]
-        question_set.append(pq)
+        q_item.select_mode = current_question[0]
+        question_set.append(q_item)
 
     for node in body.childNodes:
         if node.nodeName != "w:p":

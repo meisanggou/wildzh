@@ -146,7 +146,6 @@ def handle_exam_no_answer(exam_no, file_path, select_mode=None):
             raise RuntimeError("没发现题目")
         for q_item in question_set:
             q_no = q_item.no
-            q_item.set_answer("A")
             # 开始上传 题目
             # 获取题目描述中的图片
             q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl)
