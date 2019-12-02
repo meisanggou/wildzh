@@ -370,15 +370,16 @@ def search_question_page():
 def new_member():
     data = request.json
     exam_no = data['exam_no']
-    exist_items = c_exam.select_exam(exam_no)
-    if len(exist_items) <= 0:
-        return jsonify({"status": False, "data": 'forbidden'})
-    if int(exist_items[0]['adder']) != g.user_no:
-        e_items = c_exam.user_exams(g.user_no, exam_no)
-        if len(e_items) <= 0:
+    if (g.user_role & 2) != 2:
+        exist_items = c_exam.select_exam(exam_no)
+        if len(exist_items) <= 0:
             return jsonify({"status": False, "data": 'forbidden'})
-        if e_items[0]['exam_role'] > 2:
-            return jsonify({"status": False, "data": 'forbidden'})
+        if int(exist_items[0]['adder']) != g.user_no:
+            e_items = c_exam.user_exams(g.user_no, exam_no)
+            if len(e_items) <= 0:
+                return jsonify({"status": False, "data": 'forbidden'})
+            if e_items[0]['exam_role'] > 2:
+                return jsonify({"status": False, "data": 'forbidden'})
     member_no = data['member_no']
     c_exam.insert_exam_member(member_no, exam_no, g.user_no)
     return jsonify({"status": False, "data": 'success'})
