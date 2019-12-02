@@ -381,6 +381,9 @@ def new_member():
             if e_items[0]['exam_role'] > 2:
                 return jsonify({"status": False, "data": 'forbidden'})
     member_no = data['member_no']
+    items = c_exam.user_exams(member_no, exam_no)
+    if len(items) > 0:
+        return jsonify({"status": False, "data": '已存在'})
     c_exam.insert_exam_member(member_no, exam_no, g.user_no)
     return jsonify({"status": True, "data": 'success'})
 
