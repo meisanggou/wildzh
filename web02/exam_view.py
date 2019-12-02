@@ -155,6 +155,9 @@ support_upload2(exam_view, upload_folder, file_prefix_url, ("exam", "pic"), "upl
 @login_required
 @referer_exam_no
 def get_exam_info():
+    min_role = 10
+    if 'is_admin' in request.args:
+        min_role = 3
     items = c_exam.select_exam(g.exam_no)
     u_exams = c_exam.select_user_exams(g.user_no)
     for item in items:
@@ -164,17 +167,16 @@ def get_exam_info():
         exam_no = items[i]['exam_no']
         if int(items[i]["adder"]) == g.user_no:
             items[i]['exam_role'] = 1
-            continue
-        if exam_no in u_exams:
+        elif exam_no in u_exams:
             items[i].update(u_exams[exam_no])
-            continue
-        if (g.user_role & 2) == 2:
-            items[i]['exam_role'] = 0
-            continue  # 内部用户全部返回
-        if items[i]["status"] & 64 == 64:
+        elif (g.user_role & 2) == 2:
+            items[i]['exam_role'] = 0  # 内部用户全部返回
+        elif items[i]["status"] & 64 == 64:
             items[i]['exam_role'] = 10
-            continue
-        del items[i]
+        else:
+            items[i]['exam_role'] = 100
+        if items[i]['exam_role'] > min_role:
+            del items[i]
     return jsonify({"status": True, "data": items})
 
 
