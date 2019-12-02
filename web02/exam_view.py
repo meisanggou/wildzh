@@ -382,5 +382,5 @@ def new_member():
                 return jsonify({"status": False, "data": 'forbidden'})
     member_no = data['member_no']
     c_exam.insert_exam_member(member_no, exam_no, g.user_no)
-    return jsonify({"status": False, "data": 'success'})
+    return jsonify({"status": True, "data": 'success'})
 
