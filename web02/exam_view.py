@@ -162,17 +162,18 @@ def get_exam_info():
         item["subjects"] = G_SUBJECT
     for i in range(len(items) - 1, -1, -1):
         exam_no = items[i]['exam_no']
-        if exam_no in u_exams:
-            items[i].update(u_exams[exam_no])
-            continue
         if int(items[i]["adder"]) == g.user_no:
             items[i]['exam_role'] = 1
             continue
+        if exam_no in u_exams:
+            items[i].update(u_exams[exam_no])
+            continue
+        if (g.user_role & 2) == 2:
+            items[i]['exam_role'] = 0
+            continue  # 内部用户全部返回
         if items[i]["status"] & 64 == 64:
             items[i]['exam_role'] = 10
             continue
-        if (g.user_role & 2) == 2:
-            continue  # 内部用户全部返回
         del items[i]
     return jsonify({"status": True, "data": items})
 

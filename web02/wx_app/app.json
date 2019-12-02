@@ -3,6 +3,7 @@
         "pages/training/training_home",
         "pages/homePage/homePage",
         "pages/me/me",
+        "pages/me/exam_member",
         "pages/rank/rank",
         "pages/training/training",
         "pages/showDetail/showDetail",

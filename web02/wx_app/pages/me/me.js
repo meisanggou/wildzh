@@ -3,15 +3,17 @@ var that;
 Page({
     data: {
         userNo: "",
-        examIndex: -1,
         allExams: [],
         examName: "未选择",
-        version: "4.2.2"
+        examNo: 0,
+        showManExam: false,
+        version: "4.2.3"
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {
             this.setData({
-                examName: app.globalData.defaultExamName
+                examName: app.globalData.defaultExamName,
+                examNo: app.globalData.defaultExamNo
             })
         }
         var currentUser = app.getOrSetCurrentUserData();
@@ -22,9 +24,11 @@ Page({
                 })
             }
         }
-        this.getExams();
     },
+    onShow: function () {
+        this.getExams();
 
+    },
     getExams: function() {
         that = this;
         wx.request2({
@@ -32,23 +36,50 @@ Page({
             method: 'GET',
             success: res => {
                 var allExams = [];
-                for (var index in res.data.data) {
-                    if (res.data.data[index]["question_num"] > 0) {
-                        allExams.push(res.data.data[index]);
+                var resData = res.data.data;
+                var examNo = 0;
+                var examName = this.data.examName;
+                var showManExam = false;
+                for (var index in resData) {
+                    if (resData[index]["question_num"] > 0) {
+                        if (resData[index].exam_no == this.data.examNo){
+                            examName = resData[index].exam_name;
+                            examNo = resData[index].exam_no;
+                            console.info(resData[index]);
+                            if (resData[index].exam_role <= 3) {
+                                showManExam = true;
+                            }
+                        }
+                        
+                        allExams.push(resData[index]);
                     }
                 }
+                if(examNo == 0){
+                    examName = "未选择";
+                }
+
                 that.setData({
-                    allExams: allExams
+                    allExams: allExams,
+                    examName: examName,
+                    examNo: examNo,
+                    showManExam: showManExam
                 });
                 wx.hideLoading();
             }
         })
     },
     examChange: function(e) {
+        var examIndex = e.detail.value;
+        var currentExam = this.data.allExams[examIndex];
         this.setData({
-            examIndex: e.detail.value
+            examNo: currentExam.exam_no,
+            examName: currentExam.exam_name 
         })
-        var currentExam = this.data.allExams[this.data.examIndex];
         app.setDefaultExam(currentExam);
+    },
+    managerExam: function(){
+        wx.navigateTo({
+            url: "exam_member?examNo=" + this.data.examNo
+        })
     }
 })
