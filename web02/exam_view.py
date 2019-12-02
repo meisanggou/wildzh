@@ -374,7 +374,7 @@ def new_member():
     if len(exist_items) <= 0:
         return jsonify({"status": False, "data": 'forbidden'})
     if int(exist_items[0]['adder']) != g.user_no:
-        e_items = c_exam.user_exams(g.user_no, g.exam_no)
+        e_items = c_exam.user_exams(g.user_no, exam_no)
         if len(e_items) <= 0:
             return jsonify({"status": False, "data": 'forbidden'})
         if e_items[0]['exam_role'] > 2:

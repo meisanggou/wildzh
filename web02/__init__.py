@@ -43,7 +43,7 @@ def create_app():
                 os.system("rm -rf %s" % g.download_file)
             except Exception as e:
                 print(e)
-        res.headers["Server"] = "JingYun Server"
+        res.headers["Server"] = "Wild Server"
         return res
 
     one_web.add_url_rule("/static00" + '/<path:filename>', endpoint='static00', view_func=one_web.send_static_file2,
