@@ -18,7 +18,7 @@ __author__ = 'meisa'
 5 普通成员： 可做题
 
 
-
+10 公开题库 可做题
 """
 
 
@@ -27,8 +27,10 @@ class ExamMember(object):
     def __init__(self):
         self.t_em = "exam_member"
 
-    def user_exams(self, user_no):
+    def user_exams(self, user_no, exam_no=None):
         where_value = dict(user_no=user_no)
+        if exam_no:
+            where_value['exam_no'] = exam_no
         cols = ['user_no', 'exam_no', 'exam_role']
         items = self.db.execute_select(self.t_em, cols=cols,
                                        where_value=where_value)

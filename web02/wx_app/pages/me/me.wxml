@@ -69,6 +69,9 @@
                                 </picker>
                             </view>
                         </view>
+                        <view class="weui-cell__hd">
+                            <button class="weui-input">管理</button>
+                        </view>
                     </view>
                     
                     <view class="weui-cell weui-cell_input">

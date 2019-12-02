@@ -135,27 +135,25 @@ support_upload2(exam_view, upload_folder, file_prefix_url, ("exam", "pic"), "upl
 @login_required
 @referer_exam_no
 def get_exam_info():
-    find_type = re.findall("exam_type=(\\w+)", g.ref_url)
-    if len(find_type) > 0:
-        exam_type = find_type[0]
-    elif "exam_type" in request.args:
-        exam_type = request.args["exam_type"]
-    else:
-        exam_type = None
     items = c_exam.select_exam(g.exam_no)
     u_exams = c_exam.select_user_exams(g.user_no)
     for item in items:
         item["select_modes"] = G_SELECT_MODE
         item["subjects"] = G_SUBJECT
-    if (g.user_role & 2) != 2:  # 内部用户全部返回
-        for i in range(len(items) - 1, -1, -1):
-            exam_no = items[i]['exam_no']
-            if exam_no in u_exams:
-                items[i].update(u_exams[exam_no])
-                continue
-            if (items[i]["status"] & 64 == 64) or (int(items[i]["adder"]) == g.user_no):
-                continue
-            del items[i]
+    for i in range(len(items) - 1, -1, -1):
+        exam_no = items[i]['exam_no']
+        if exam_no in u_exams:
+            items[i].update(u_exams[exam_no])
+            continue
+        if int(items[i]["adder"]) == g.user_no:
+            items[i]['exam_role'] = 1
+            continue
+        if items[i]["status"] & 64 == 64:
+            items[i]['exam_role'] = 10
+            continue
+        if (g.user_role & 2) == 2:
+            continue  # 内部用户全部返回
+        del items[i]
     return jsonify({"status": True, "data": items})
 
 
@@ -272,6 +270,13 @@ def get_exam_questions():
 @exam_view.route("/questions/no/", methods=["GET"])
 @required_exam_no
 def get_exam_questions_nos():
+    exist_items = c_exam.select_exam(g.exam_no)
+    if len(exist_items) <= 0:
+        return jsonify({"status": True, "data": dict(exam_no=g.exam_no, questions=[])})
+    if int(exist_items[0]['adder']) != g.user_no:
+        e_items = c_exam.user_exams(g.user_no, g.exam_no)
+        if len(e_items) <= 0:
+            return jsonify({"status": True, "data": dict(exam_no=g.exam_no, questions=[])})
     if "select_mode" in request.args:
         select_mode = request.args["select_mode"]
         question_subject = request.args.get("question_subject", None)
@@ -338,3 +343,23 @@ def remove_my_wrong_action():
 @login_required
 def search_question_page():
     return rt.render("search.html", page_title=u"试题搜索")
+
+
+@exam_view.route('/member', methods=['POST'])
+@login_required
+def new_member():
+    data = request.json
+    exam_no = data['exam_no']
+    exist_items = c_exam.select_exam(exam_no)
+    if len(exist_items) <= 0:
+        return jsonify({"status": False, "data": 'forbidden'})
+    if int(exist_items[0]['adder']) != g.user_no:
+        e_items = c_exam.user_exams(g.user_no, g.exam_no)
+        if len(e_items) <= 0:
+            return jsonify({"status": False, "data": 'forbidden'})
+        if e_items[0]['exam_role'] > 2:
+            return jsonify({"status": False, "data": 'forbidden'})
+    member_no = data['member_no']
+    c_exam.insert_exam_member(member_no, exam_no, g.user_no)
+    return jsonify({"status": False, "data": 'success'})
+
