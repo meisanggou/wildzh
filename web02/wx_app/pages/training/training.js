@@ -62,6 +62,7 @@ Page({
                         questionItems: res.data.data["questions"]
                     })
                     if (res.data.data["questions"].length <= 0) {
+                        wx.hideLoading();
                         wx.showModal({
                             title: '无题目',
                             content: "无相关题目，确定返回",

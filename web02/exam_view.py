@@ -270,13 +270,15 @@ def get_exam_questions():
 @exam_view.route("/questions/no/", methods=["GET"])
 @required_exam_no
 def get_exam_questions_nos():
-    exist_items = c_exam.select_exam(g.exam_no)
-    if len(exist_items) <= 0:
-        return jsonify({"status": True, "data": dict(exam_no=g.exam_no, questions=[])})
-    if int(exist_items[0]['adder']) != g.user_no:
-        e_items = c_exam.user_exams(g.user_no, g.exam_no)
-        if len(e_items) <= 0:
-            return jsonify({"status": True, "data": dict(exam_no=g.exam_no, questions=[])})
+    if (g.user_role & 2) != 2:
+        null_data = dict(exam_no=g.exam_no, questions=[])
+        exist_items = c_exam.select_exam(g.exam_no)
+        if len(exist_items) <= 0:
+            return jsonify({"status": True, "data": null_data})
+        if int(exist_items[0]['adder']) != g.user_no:
+            e_items = c_exam.user_exams(g.user_no, g.exam_no)
+            if len(e_items) <= 0:
+                return jsonify({"status": True, "data": null_data})
     if "select_mode" in request.args:
         select_mode = request.args["select_mode"]
         question_subject = request.args.get("question_subject", None)
