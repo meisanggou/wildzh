@@ -85,9 +85,8 @@ def required_exam_no(f):
         if(g.user_role & 2) == 2:
             g.exam_role = 0
         else:
-            null_data = dict(exam_no=g.exam_no, questions=[])
             exist_items = c_exam.select_exam(g.exam_no)
-            if len(exist_items) > 0:
+            if len(exist_items) <= 0:
                 return jsonify({"status": False, "data": "Bad Request. Exam no exist"})
             if int(exist_items[0]['adder']) == g.user_no:
                 g.exam_role = 1

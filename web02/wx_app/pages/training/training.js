@@ -57,6 +57,20 @@ Page({
                 url: '/exam/questions/no/?' + args_url,
                 method: 'GET',
                 success: res => {
+                    if(res.data.status != true){
+                        wx.hideLoading();
+                        wx.showModal({
+                            title: '无法访问题库',
+                            content: "题库已删除，或无权访问。确定进入【我的】选择题库",
+                            showCancel: false,
+                            success(res) {
+                                wx.navigateBack({
+                                    delta: 1
+                                })
+                            }
+                        })
+                        return
+                    }
                     that.setData({
                         questionNum: res.data.data["questions"].length,
                         questionItems: res.data.data["questions"]
@@ -68,8 +82,8 @@ Page({
                             content: "无相关题目，确定返回",
                             showCancel: false,
                             success(res) {
-                                wx.navigateBack({
-                                    delta: 1
+                                wx.switchTab({
+                                    url: "/pages/me/me"
                                 })
                             }
                         })
