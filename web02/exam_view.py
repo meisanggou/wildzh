@@ -82,6 +82,20 @@ def required_exam_no(f):
     def decorated_function(*args, **kwargs):
         if g.exam_no is None:
             return jsonify({"status": False, "data": "Bad Request"})
+        if(g.user_role & 2) == 2:
+            g.exam_role = 0
+        else:
+            null_data = dict(exam_no=g.exam_no, questions=[])
+            exist_items = c_exam.select_exam(g.exam_no)
+            if len(exist_items) > 0:
+                return jsonify({"status": False, "data": "Bad Request. Exam no exist"})
+            if int(exist_items[0]['adder']) == g.user_no:
+                g.exam_role = 1
+            else:
+                e_items = c_exam.user_exams(g.user_no, g.exam_no)
+                if len(e_items) <= 0:
+                    return jsonify({"status": False, "data": "Bad Request"})
+                g.exam_role = e_items[0]['exam_role']
         return f(*args, **kwargs)
     return decorated_function
 
@@ -180,6 +194,8 @@ def delete_exam():
 @login_required
 @required_exam_no
 def entry_questions():
+    if g.exam_role > 3:
+        return jsonify({'status': False, 'data': 'forbidden'})
     data = g.request_data
     extra_data = dict()
     question_no = data["question_no"]
@@ -209,6 +225,8 @@ def entry_questions():
 @login_required
 @required_exam_no
 def update_question():
+    if g.exam_role > 3:
+        return jsonify({'status': False, 'data': 'forbidden'})
     data = g.request_data
     extra_data = dict()
     question_no = data["question_no"]
@@ -270,15 +288,6 @@ def get_exam_questions():
 @exam_view.route("/questions/no/", methods=["GET"])
 @required_exam_no
 def get_exam_questions_nos():
-    if (g.user_role & 2) != 2:
-        null_data = dict(exam_no=g.exam_no, questions=[])
-        exist_items = c_exam.select_exam(g.exam_no)
-        if len(exist_items) <= 0:
-            return jsonify({"status": True, "data": null_data})
-        if int(exist_items[0]['adder']) != g.user_no:
-            e_items = c_exam.user_exams(g.user_no, g.exam_no)
-            if len(e_items) <= 0:
-                return jsonify({"status": True, "data": null_data})
     if "select_mode" in request.args:
         select_mode = request.args["select_mode"]
         question_subject = request.args.get("question_subject", None)
