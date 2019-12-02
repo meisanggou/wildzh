@@ -100,7 +100,8 @@ def required_exam_no(f):
                     else:
                         return jsonify({"status": False, "data": "Bad "
                                                                  "Request"})
-                g.exam_role = e_items[0]['exam_role']
+                else:
+                    g.exam_role = e_items[0]['exam_role']
         return f(*args, **kwargs)
     return decorated_function
 

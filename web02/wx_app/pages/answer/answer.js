@@ -52,13 +52,14 @@ Page({
                 method: 'GET',
                 success: res => {
                     if (res.data.status == false) {
+                        wx.hideLoading();
                         wx.showModal({
-                            title: '试题加载失败',
-                            content: "加载试题失败，确定返回首页，重新选择试题",
+                            title: '无法访问题库',
+                            content: "题库已删除，或无权访问。确定进入【我的】更换题库",
                             showCancel: false,
                             success(res) {
-                                wx.navigateBack({
-                                    delta: 1
+                                wx.switchTab({
+                                    url: "/pages/me/me"
                                 })
                             }
                         })

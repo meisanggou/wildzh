@@ -64,8 +64,8 @@ Page({
                             content: "题库已删除，或无权访问。确定进入【我的】更换题库",
                             showCancel: false,
                             success(res) {
-                                wx.navigateBack({
-                                    delta: 1
+                                wx.switchTab({
+                                    url: "/pages/me/me"
                                 })
                             }
                         })
