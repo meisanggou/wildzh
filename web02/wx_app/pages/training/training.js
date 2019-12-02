@@ -61,7 +61,7 @@ Page({
                         wx.hideLoading();
                         wx.showModal({
                             title: '无法访问题库',
-                            content: "题库已删除，或无权访问。确定进入【我的】选择题库",
+                            content: "题库已删除，或无权访问。确定进入【我的】更换题库",
                             showCancel: false,
                             success(res) {
                                 wx.navigateBack({

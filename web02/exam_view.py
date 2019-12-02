@@ -87,13 +87,19 @@ def required_exam_no(f):
         else:
             exist_items = c_exam.select_exam(g.exam_no)
             if len(exist_items) <= 0:
-                return jsonify({"status": False, "data": "Bad Request. Exam no exist"})
-            if int(exist_items[0]['adder']) == g.user_no:
+                return jsonify({"status": False, "data": "Bad Request. "
+                                                         "Exam no exist"})
+            exam_item = exist_items[0]
+            if int(exam_item['adder']) == g.user_no:
                 g.exam_role = 1
             else:
                 e_items = c_exam.user_exams(g.user_no, g.exam_no)
                 if len(e_items) <= 0:
-                    return jsonify({"status": False, "data": "Bad Request"})
+                    if exam_item["status"] & 64 == 64:
+                        g.exam_role = 10
+                    else:
+                        return jsonify({"status": False, "data": "Bad "
+                                                                 "Request"})
                 g.exam_role = e_items[0]['exam_role']
         return f(*args, **kwargs)
     return decorated_function
