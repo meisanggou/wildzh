@@ -221,8 +221,6 @@ class Exam(ExamMember):
                                        where_cond_args=where_cond_args, limit=limit,
                                        order_by=["question_no"],
                                        order_desc=desc)
-        for item in items:
-            item["options"] = json.loads(item["options"])
         if desc is True:
             items.reverse()
         return items

@@ -210,13 +210,25 @@ def update_xz_no_answer(exam_no, file_path):
     return handle_exam_no_answer(exam_no, file_path, 1)
 
 
+def transfer_exam(s_exam, start_no, end_no, t_exam):
+    url = remote_host + '/exam/transfer'
+    data = {'source_exam_no': s_exam, 'start_no': start_no,
+            'end_no': end_no, 'target_exam_no': t_exam}
+    response = req.post(url, json=data)
+    res = response.json()
+    if res['status'] is True:
+        r_data = res['data']
+        for item in r_data:
+            print(item)
+
 if __name__ == "__main__":
     login("admin", "admin")
     # find_from_dir(r'D:\Project\word\app\upload')
     exam_no = 1567506833  # 测试包含图片
     exam_no = 1570447137  # 专升本经济学题库2
-    exam_no = 1573464937  # 英语托业
-    update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
+    # exam_no = 1573464937  # 英语托业
+    transfer_exam(exam_no, )
+    # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
     # d_path = ur'D:\Project\word\河南省专升本经济学测试题（二十）.docx'
     # read_docx(d_path)
