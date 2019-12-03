@@ -230,7 +230,10 @@ class Exam(ExamMember):
         items = self.db.execute_select(self.t_q, where_value=dict(exam_no=exam_no), cols=cols)
         if len(items) <= 0:
             return 0
-        return items[0]["max(question_no)"]
+        max_no = items[0]["max(question_no)"]
+        if max_no is None:
+            return 0
+        return max_no
 
     def select_question_no(self, exam_no, select_mode=None, question_subject=None):
         where_value = dict(exam_no=exam_no)
