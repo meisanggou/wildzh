@@ -73,6 +73,7 @@ def req_max_no(exam_no):
 def post_questions(question_set):
     exam_no = question_set.exam_no
     no_info = req_max_no(exam_no)
+    print(no_info)
     next_no = no_info["next_no"]
     url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
     question_no = next_no
@@ -164,6 +165,7 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None):
     uploaded_aw_rl = dict()
     uploaded_q_rl = dict()
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
+    print(file_path)
     answer_file = file_path.replace(".docx", u"答案.docx")
     if os.path.exists(answer_file) is False:
         msg = ("Ignore %s, not Answer" % file_path)
@@ -183,7 +185,6 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None):
 
             if q_no not in answers_dict:
                 print(exam_name)
-
                 raise RuntimeError("lack answer %s" % q_item.no)
             q_item.set_answer(answers_dict[q_no])
             # 开始上传 题目
@@ -223,14 +224,42 @@ def transfer_exam(s_exam, start_no, end_no, t_exam):
     else:
         print(data)
 
+
+def find_from_dir(exam_no, directory_name):
+    files = os.listdir(directory_name)
+    for file_item in files:
+        if file_item.startswith("~$"):
+            continue
+        file_path = os.path.join(directory_name, file_item).decode("gbk")
+        items = os.path.split(file_path)
+
+        if os.path.isfile(file_path) is False:
+            continue
+        elif file_path.endswith("答案.docx") is True:
+            continue
+        elif file_path.endswith(".doc") is True:
+            if os.path.exists(file_path + "x"):
+                continue
+            continue
+            # file_path = doc_to_docx(file_path)
+        elif file_path.endswith(".docx") is False:
+            print(u"跳过文件 %s" % file_path)
+            continue
+        r, msg = handle_exam_with_answer(exam_no, file_path)
+        print(msg)
+
+
 if __name__ == "__main__":
     login("admin", "admin")
     # find_from_dir(r'D:\Project\word\app\upload')
     exam_no = 1567506833  # 测试包含图片
     exam_no = 1570447137  # 专升本经济学题库2
     # exam_no = 1573464937  # 英语托业
-    transfer_exam(exam_no, 1, 73, 1575333741)
+    # transfer_exam(exam_no, 74, 146, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
     # d_path = ur'D:\Project\word\河南省专升本经济学测试题（二十）.docx'
     # read_docx(d_path)
+
+    d = r'D:/Project/word/app/upload'
+    find_from_dir(exam_no, d)

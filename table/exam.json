@@ -197,6 +197,12 @@
                 "default_value": 0
             },
             {
+                "col_comment": "失效时间",
+                "col_name": "end_time",
+                "col_type": "int(11)",
+                "allow_null": true
+            },
+            {
                 "col_comment": "更新时间",
                 "col_name": "update_time",
                 "col_type": "int(11)",
