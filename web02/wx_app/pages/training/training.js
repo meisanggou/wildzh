@@ -167,6 +167,7 @@ Page({
                             questionItems[i]["options"] = newItems[j]["options"];
                             // questionItems[i]["answer"] = newItems[j]["answer"];
                             questionItems[i]["answer_rich"] = newItems[j]["answer_rich"]
+                            questionItems[i]["question_source"] = newItems[j]["question_source"]
                             // for (var qd_index in questionItems[i]["question_desc_rich"]) {
                             //     var qd_item = questionItems[i]["question_desc_rich"][qd_index];
                             //     if (typeof qd_item == "string") {

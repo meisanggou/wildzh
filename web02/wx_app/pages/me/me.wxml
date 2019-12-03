@@ -64,8 +64,9 @@
                                 </picker>
                             </view>
                         </view>
-                        <view class="weui-cell__ft" wx:if="{{showManExam}}">
-                            <button bindtap="managerExam">管理</button>
+                        <view class="weui-cell__ft right-slip" wx:if="{{showManExam}}">
+                            <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="managerExam"></image>
+                            <!-- <button class="rightButton" bindtap="managerExam">管理</button> -->
                         </view>
                     </view>
                     

@@ -7,7 +7,7 @@ Page({
         examName: "未选择",
         examNo: 0,
         showManExam: false,
-        version: "4.2.3"
+        version: "4.3.2"
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {
@@ -70,10 +70,15 @@ Page({
     },
     examChange: function(e) {
         var examIndex = e.detail.value;
+        var showManExam = false;
         var currentExam = this.data.allExams[examIndex];
+        if (currentExam.exam_role <= 3) {
+            showManExam = true;
+        }
         this.setData({
             examNo: currentExam.exam_no,
-            examName: currentExam.exam_name 
+            examName: currentExam.exam_name,
+            showManExam: showManExam
         })
         app.setDefaultExam(currentExam);
     },

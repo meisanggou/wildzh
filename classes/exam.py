@@ -48,7 +48,8 @@ class ExamMember(object):
         return self._insert_exam_member(user_no, exam_no, 5, authorizer)
 
     def _insert_exam_member(self, user_no, exam_no, exam_role, authorizer):
-        data = dict(user_no=user_no, exam_no=exam_no, exam_role=exam_role)
+        data = dict(user_no=user_no, exam_no=exam_no, exam_role=exam_role,
+                    authorizer=authorizer)
         data['insert_time'] = time.time()
         data['update_time'] = time.time()
         l = self.db.execute_insert(self.t_em, data)
@@ -197,6 +198,13 @@ class Exam(ExamMember):
                 del item["exam_extend"]
         return items
 
+    def _select_questions(self, **kwargs):
+        cols = self.q_cols
+        items = self.db.execute_select(self.t_q, cols=cols, **kwargs)
+        for item in items:
+            item["options"] = json.loads(item["options"])
+        return items
+
     def select_questions(self, exam_no, start_no=None, num=None, desc=False):
         where_value = dict(exam_no=exam_no)
         where_cond = []
@@ -209,9 +217,9 @@ class Exam(ExamMember):
 
             where_cond_args.append(start_no)
         limit = num
-        cols = self.q_cols
-        items = self.db.execute_select(self.t_q, cols=cols, where_value=where_value, where_cond=where_cond,
-                                       where_cond_args=where_cond_args, limit=limit, order_by=["question_no"],
+        items = self._select_questions(where_value=where_value, where_cond=where_cond,
+                                       where_cond_args=where_cond_args, limit=limit,
+                                       order_by=["question_no"],
                                        order_desc=desc)
         for item in items:
             item["options"] = json.loads(item["options"])
@@ -290,6 +298,23 @@ class Exam(ExamMember):
         l = self.db.execute_delete(self.t_w, where_value=where_value)
         return l
 
+    def transfer_exam(self, source_exam_no, source_start_no, source_end_no,
+                      target_exam_no, **kwargs):
+        where_value = dict(exam_no=source_exam_no)
+        if 'select_mode' in kwargs:
+            where_value['select_mode'] = kwargs.pop('select_mode')
+        where_cond = ['question_no>=%s', 'question_no<=%s']
+        where_cond_args = [source_start_no, source_end_no]
+        items = self._select_questions(where_value=where_value,
+                                       where_cond=where_cond,
+                                       where_cond_args=where_cond_args)
+        next_no = self.select_max_question(target_exam_no) + 1
+        for item in items:
+            item['question_no'] = next_no
+            item['exam_no'] = target_exam_no
+            self.new_exam_questions(**item)
+            next_no += 1
+        return items
 
 if __name__ == "__main__":
     e = Exam("../mysql_app.conf")

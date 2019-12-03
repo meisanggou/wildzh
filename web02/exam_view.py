@@ -106,6 +106,40 @@ def required_exam_no(f):
     return decorated_function
 
 
+def required_manager_exam(key, **role_desc):
+    min_role = role_desc.pop('min_role', 0)
+    max_role = role_desc.pop('max_role', 3)
+
+    def _decorated_function(func):
+        @wraps(func)
+        def _func(*args, **kwargs):
+            data = request.json
+            if key not in data:
+                return jsonify({'status': False, 'data': 'need key %s' % key})
+            exam_no = data[key]
+            if (g.user_role & 2) == 2:
+                exam_role = 0
+            else:
+                exist_items = c_exam.select_exam(exam_no)
+                if len(exist_items) <= 0:
+                    return jsonify({"status": False, "data": 'exam %s not '
+                                                             'exist' % exam_no})
+                if int(exist_items[0]['adder']) == g.user_no:
+                    exam_role = 1
+                else:
+                    e_items = c_exam.user_exams(g.user_no, exam_no)
+                    if len(e_items) <= 0:
+                        exam_role = 10
+                    else:
+                        exam_role = e_items[0]['exam_role']
+            if exam_role < min_role or exam_role > max_role:
+                return jsonify({"status": False, "data": 'forbidden'})
+            setattr(g, key, exam_no)
+            return func(*args, **kwargs)
+        return _func
+    return _decorated_function
+
+
 @exam_view.route("/", methods=["GET"])
 @login_required
 def index():
@@ -387,3 +421,17 @@ def new_member():
     c_exam.insert_exam_member(member_no, exam_no, g.user_no)
     return jsonify({"status": True, "data": 'success'})
 
+
+@exam_view.route('/transfer', method=['POST'])
+@login_required
+@required_manager_exam('source_exam_no')
+@required_manager_exam('target_exam_no')
+def transfer_exam():
+    data = request.json
+    source_exam_no = data['source_exam_no']
+    start_no = data['start_no']
+    end_no = data['end_no']
+    target_exam_no = data['target_exam_no']
+    items = c_exam.transfer_exam(source_exam_no, start_no, end_no,
+                                 target_exam_no)
+    return jsonify({'status': True, 'data': items})

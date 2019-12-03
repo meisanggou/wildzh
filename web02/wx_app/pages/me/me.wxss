@@ -13,7 +13,8 @@
   border-radius: 80%;
 }
 
-.country, .province, .city {
-  padding-right: 10rpx;
+.right-slip {
+    width:70rpx;
+    height:70rpx;
+    margin: 0 auto;
 }
-

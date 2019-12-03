@@ -28,6 +28,7 @@
                         <text>{{item}}</text>
                     </block>
                 </block>
+                <!-- <text wx:if="{{nowQuestion.question_source}}">【{{nowQuestion.question_source}}】</text> -->
                 <block wx:if="{{isShowSubject}}">
                     【{{nowQuestion.question_subject}}】
                 </block>
