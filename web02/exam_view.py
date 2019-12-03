@@ -422,7 +422,7 @@ def new_member():
     return jsonify({"status": True, "data": 'success'})
 
 
-@exam_view.route('/transfer', method=['POST'])
+@exam_view.route('/transfer', methods=['POST'])
 @login_required
 @required_manager_exam('source_exam_no')
 @required_manager_exam('target_exam_no')
