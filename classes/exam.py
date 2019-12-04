@@ -24,17 +24,51 @@ __author__ = 'meisa'
 
 
 class ExamMember(object):
+    DAY_SECONDS = 3600 * 24
 
     def __init__(self):
         self.t_em = "exam_member"
 
-    def user_exams(self, user_no, exam_no=None):
+    def _delete_exam_member(self, user_no, exam_no):
+        where_value = {'user_no': user_no, 'exam_no': exam_no}
+        l = self.db.execute_delete(self.t_em, where_value=where_value)
+        return l
+
+    def _insert_exam_member(self, user_no, exam_no, exam_role, authorizer,
+                            end_time=None):
+        data = dict(user_no=user_no, exam_no=exam_no, exam_role=exam_role,
+                    authorizer=authorizer, end_time=end_time)
+        data['insert_time'] = time.time()
+        data['update_time'] = time.time()
+        l = self.db.execute_insert(self.t_em, data)
+        return l
+
+    def _update_exam_member(self, user_no, exam_no, authorizer=None, end_time=None):
+        where_value = dict(user_no=user_no, exam_no=exam_no)
+        u_data = {}
+        if authorizer:
+            u_data['authorizer'] = authorizer
+        if end_time:
+            u_data['end_time'] = end_time
+        u_data['update_time'] = time.time()
+        l = self.db.execute_update(self.t_em, update_value=u_data,
+                                   where_value=where_value)
+        return l
+
+    def _select_exam_member(self, user_no, exam_no=None):
         where_value = dict(user_no=user_no)
         if exam_no:
             where_value['exam_no'] = exam_no
-        cols = ['user_no', 'exam_no', 'exam_role']
+        cols = ['user_no', 'exam_no', 'exam_role', 'end_time',
+                'insert_time', 'update_time']
         items = self.db.execute_select(self.t_em, cols=cols,
                                        where_value=where_value)
+        return items
+
+    def user_exams(self, user_no, exam_no=None):
+        items = self._select_exam_member(user_no, exam_no)
+        now_time = time.time()
+        items = filter(lambda x: x['end_time'] >= now_time, items)
         return items
 
     def select_user_exams(self, user_no):
@@ -44,16 +78,35 @@ class ExamMember(object):
             e_dict[item['exam_no']] = item
         return e_dict
 
-    def insert_exam_member(self, user_no, exam_no, authorizer):
-        return self._insert_exam_member(user_no, exam_no, 5, authorizer)
+    def insert_exam_member(self, user_no, exam_no, authorizer, **kwargs):
+        end_time = kwargs.pop('end_time', None)
+        if end_time is None:
+            days = kwargs.pop('days', 0)
+            if days > 0:
+                end_time = time.time() + days * self.DAY_SECONDS
+        return self._insert_exam_member(user_no, exam_no, 5, authorizer,
+                                        end_time)
 
-    def _insert_exam_member(self, user_no, exam_no, exam_role, authorizer):
-        data = dict(user_no=user_no, exam_no=exam_no, exam_role=exam_role,
-                    authorizer=authorizer)
-        data['insert_time'] = time.time()
-        data['update_time'] = time.time()
-        l = self.db.execute_insert(self.t_em, data)
-        return l
+    def new_exam_member(self, user_no, exam_no, authorizer, **kwargs):
+        items = self._select_exam_member(user_no, exam_no)
+        now_time = time.time()
+        if len(items) > 0:
+            if items[0]['end_time'] < now_time:
+                return 0
+            return self.update_exam_member(user_no, exam_no, authorizer,
+                                           **kwargs)
+        return self._insert_exam_member(user_no, exam_no, authorizer, **kwargs)
+
+    def update_exam_member(self, user_no, exam_no, authorizer, **kwargs):
+        end_time = kwargs.pop('end_time', None)
+        if end_time is None:
+            days = kwargs.pop('days', 0)
+            if days > 0:
+                end_time = time.time() + days * self.DAY_SECONDS
+        return self._insert_exam_member(user_no, exam_no, 5, authorizer,
+                                        end_time)
+
+
 
     def insert_exam_owner(self, user_no, exam_no):
         return self._insert_exam_member(user_no, exam_no, 1, 0)

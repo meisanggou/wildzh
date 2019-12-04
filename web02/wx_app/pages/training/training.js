@@ -8,6 +8,8 @@ Page({
     data: {
         remote_host: app.globalData.remote_host,
         allExams: [],
+        skipNums: [1],
+        skipIndex: 0,
         optionChar: app.globalData.optionChar,
         examNo: null,
         examName: "",
@@ -57,7 +59,7 @@ Page({
                 url: '/exam/questions/no/?' + args_url,
                 method: 'GET',
                 success: res => {
-                    if(res.data.status != true){
+                    if (res.data.status != true) {
                         wx.hideLoading();
                         wx.showModal({
                             title: '无法访问题库',
@@ -186,10 +188,9 @@ Page({
                 if (updateShow) {
                     that.setData({
                         questionItems: questionItems,
-                        nowQuestion: questionItems[startIndex],
-                        nowQuestionIndex: startIndex,
                         questionNum: questionItems.length
                     });
+                    that.changeNowQuestion(startIndex);
                 } else if (startIndex == that.data.nowQuestionIndex) {
                     // 如果当前请求的内容正好是当前显示的，需要重新更新一下答案显示。答案显示是拼出来的没和变量关联
                     if (that.data.showAnswer) {
@@ -224,7 +225,7 @@ Page({
                 content: "是否从头开始练习？",
                 showCancel: true,
                 icon: "none",
-                success: function (res){
+                success: function(res) {
                     if (res.confirm) {
                         that.reqQuestion(0, true)
                     }
@@ -300,13 +301,82 @@ Page({
     before10: function() {
         that.before(10)
     },
+    setSkipNums(num, end_num) {
+        var max_times = 5;
+        var skipIndex = 0;
+        var _num = num;
+        var interval = 10;
+        var r = [];
+        var times = 0;
+        var p_num = 0
+        while (num > 1) {
+            p_num = num - interval;
+            if (p_num > 1)
+                r.push(p_num)
+            else {
+                r.push(1)
+                break
+            }
+            times += 1
+            if (times >= max_times){
+                interval *= 10;
+                times = 0;
+            }
+            
+            num = p_num;
+        }
+        r.sort(function(a, b){return a-b;});
+        r.push(_num);
+        skipIndex = r.length - 1;
+        num = _num;
+        interval = 10;
+        times = 0;
+        while (num < end_num) {
+            p_num = num + interval
+            if (p_num >= end_num) {
+                r.push(end_num);
+                break
+            } else {
+                r.push(p_num);
+            }
+            times += 1;
+            if (times >= max_times){
+                interval *= 10;
+                times = 0;
+            }
+            num = p_num;
+        }
+        this.setData({
+            skipNums: r,
+            skipIndex: skipIndex
+        })
+        return r;
+        
+    },
+    skipAction: function(e){
+        var index = e.detail.value;
+        this.changeNowQuestion(this.data.skipNums[index] - 1);
+    },
     changeNowQuestion: function(index) {
+        var skipNums = [];
         var nowQuestion = this.data.questionItems[index];
+        if ("options" in nowQuestion) {
+            //已经获取内容
+        } else {
+            // 没有获取内容
+            wx.showLoading({
+                title: '加载中...',
+                mask: true
+            })
+            that.reqQuestion(index, true);
+            return;
+        }
         this.setData({
             nowQuestion: nowQuestion,
             nowQuestionIndex: index,
             showAnswer: false
         })
+        this.setSkipNums(index + 1, this.data.questionItems.length);
     },
     showAnswer: function(e) {
         var nowQuestion = that.data.nowQuestion;
@@ -342,7 +412,7 @@ Page({
         if (parseInt(nowQuestion["options"][choseIndex]["score"]) > 0) {
             nowQuestion["options"][choseIndex]["class"] = "chose";
             // 自动进入下一题
-            if(this.data.showAnswer == false){
+            if (this.data.showAnswer == false) {
                 // 当前显示答案 不进入下一题
                 var interval = setInterval(function() {
                     clearInterval(interval)
@@ -385,8 +455,8 @@ Page({
         nowQuestion.forceUpdate = true;
         this.updateQuestion(nowQuestion.question_no, index, null, nowQuestion.answer);
     },
-    previewImage: function (event){
-        var src = event.currentTarget.dataset.src;//获取data-src
+    previewImage: function(event) {
+        var src = event.currentTarget.dataset.src; //获取data-src
         //图片预览
         console.info(src)
         // wx.previewImage({
@@ -401,7 +471,7 @@ Page({
         //         console.info(e);
         //     }
         // })
-        
+
     },
     updateQuestion: function(questionNo, index, options = null, answer = null) {
         var uData = new Object();

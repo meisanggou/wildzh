@@ -156,6 +156,8 @@ function receive_questions(data){
     q_vm.action = "update";
     q_vm.option_a = current_question.options[0]["desc"];
     q_vm.option_b = current_question.options[1]["desc"];
+    q_vm.option_c = "";
+    q_vm.option_d = "";
     if(current_question.options.length >= 4){
         q_vm.option_c = current_question.options[2]["desc"];
         q_vm.option_d = current_question.options[3]["desc"];

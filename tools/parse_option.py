@@ -170,7 +170,7 @@ class ParseOptions(object):
         v_result, data = self.verify_split_r(r)
         if v_result is False:
             sys.stderr.write(s)
-            raise RuntimeError(data)
+            raise RuntimeError(data.encode("gbk"))
         return data
 
     @classmethod

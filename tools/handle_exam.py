@@ -70,26 +70,29 @@ def req_max_no(exam_no):
     return res["data"]
 
 
-def post_questions(question_set):
+def post_questions(question_set, dry_run=False, set_source=False):
     exam_no = question_set.exam_no
     no_info = req_max_no(exam_no)
-    print(no_info)
     next_no = no_info["next_no"]
     url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
     question_no = next_no
     for q_item in question_set:
         q_item_d = q_item.to_exam_dict()
         q_item_d["question_no"] = question_no
-        q_item_d["question_source"] = question_set.exam_name
+        if set_source:
+            q_item_d["question_source"] = question_set.exam_name
+        else:
+            q_item_d["question_source"] = ""
         q_item_d["question_subject"] = 0
-        print(json.dumps(q_item_d))
-        # if REAL_UPLOAD is True:
-        #     resp = req.post(url, json=q_item_d)
-        #     print(resp.text)
+        if dry_run:
+            print(json.dumps(q_item_d))
+        if not dry_run:
+            resp = req.post(url, json=q_item_d)
+            print(resp.text)
         question_no += 1
 
 
-def replace_media(text, q_rl, cache_rl):
+def replace_media(text, q_rl, cache_rl, dry_run):
     media_comp = re.compile(r"(\[\[([a-z0-9]+?):([\d.]+?):([\d.]+?)(|:[\d\.\-|]+?)\]\])", re.I)
     found_rs = media_comp.findall(text)
     for r_item in found_rs:
@@ -102,12 +105,12 @@ def replace_media(text, q_rl, cache_rl):
             # 需要裁剪
             left, top, right, bottom = r_item[4][1:].split("|")
             clip_data = [left, top, right, bottom]
-        r_url = upload_media(m_id, q_rl, width, height, cache_rl, clip_data)
+        r_url = upload_media(m_id, q_rl, width, height, cache_rl, clip_data, dry_run)
         text = text.replace(r_t, "[[%s:%s:%s]]" % (r_url, width, height))
     return text
 
 
-def upload_media(r_id, rl, width, height, cache_rl, clip_data=None):
+def upload_media(r_id, rl, width, height, cache_rl, clip_data=None, dry_run=False):
     if r_id in cache_rl:
         return cache_rl[r_id]
 
@@ -127,7 +130,7 @@ def upload_media(r_id, rl, width, height, cache_rl, clip_data=None):
             else:
                 clip_data[i] = float(clip_data[i]) / 1000.0
         png_file = _clip_pic(png_file, clip_data)
-    if REAL_UPLOAD is False:
+    if dry_run:
         return "/dummy/%s" % r_id
     url = remote_host + "/exam/upload/"
     files = dict(pic=open(png_file, "rb"))
@@ -161,7 +164,8 @@ def handle_exam_no_answer(exam_no, file_path, select_mode=None):
     return True, "success"
 
 
-def handle_exam_with_answer(exam_no, file_path, select_mode=None):
+def handle_exam_with_answer(exam_no, file_path, select_mode=None,
+                            dry_run=False, set_source=False):
     uploaded_aw_rl = dict()
     uploaded_q_rl = dict()
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
@@ -189,15 +193,15 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None):
             q_item.set_answer(answers_dict[q_no])
             # 开始上传 题目
             # 获取题目描述中的图片
-            q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl)
+            q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl, dry_run)
 
             # 获取选项中的图片
             for option in q_item.options:
-                option.desc = replace_media(option.desc, q_rl, uploaded_q_rl)
+                option.desc = replace_media(option.desc, q_rl, uploaded_q_rl, dry_run)
             # 获取答案中的图片
-            q_item.answer = replace_media(q_item.answer, aw_rl, uploaded_aw_rl)
+            q_item.answer = replace_media(q_item.answer, aw_rl, uploaded_aw_rl, dry_run)
             q_item.inside_mark = "%s %s" % (exam_name, q_no)
-        post_questions(question_set)
+        post_questions(question_set, dry_run, set_source)
     return True, "success"
 
 
@@ -225,7 +229,7 @@ def transfer_exam(s_exam, start_no, end_no, t_exam):
         print(data)
 
 
-def find_from_dir(exam_no, directory_name):
+def find_from_dir(exam_no, directory_name, dry_run, set_source):
     files = os.listdir(directory_name)
     for file_item in files:
         if file_item.startswith("~$"):
@@ -245,7 +249,9 @@ def find_from_dir(exam_no, directory_name):
         elif file_path.endswith(".docx") is False:
             print(u"跳过文件 %s" % file_path)
             continue
-        r, msg = handle_exam_with_answer(exam_no, file_path)
+        r, msg = handle_exam_with_answer(exam_no, file_path,
+                                         dry_run=dry_run,
+                                         set_source=set_source)
         print(msg)
 
 
@@ -253,7 +259,7 @@ if __name__ == "__main__":
     login("admin", "admin")
     # find_from_dir(r'D:\Project\word\app\upload')
     exam_no = 1567506833  # 测试包含图片
-    exam_no = 1570447137  # 专升本经济学题库2
+    # exam_no = 1570447137  # 专升本经济学题库2
     # exam_no = 1573464937  # 英语托业
     # transfer_exam(exam_no, 74, 146, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
@@ -262,4 +268,4 @@ if __name__ == "__main__":
     # read_docx(d_path)
 
     d = r'D:/Project/word/app/upload'
-    find_from_dir(exam_no, d)
+    find_from_dir(exam_no, d, dry_run=True, set_source=False)

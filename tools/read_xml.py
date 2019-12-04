@@ -20,7 +20,7 @@ sys.setdefaultencoding('utf8')
 
 
 Q_TYPE_COMP = re.compile(u"((一|二|三|四|五)、|^)(单选|选择|名词解释|简答|简答题|计算|计算题|论述|论述题)")
-S_ANSWER_COMP = re.compile(r"(\d+)-(\d+)([a-d]+)", re.I)
+S_ANSWER_COMP = re.compile(ur"(\d+)(?:-|—)(\d+)([a-d]+)", re.I)
 G_SELECT_MODE = [u"无", u"选择", u"名词解释", u"简答题", u"计算题", u"论述题"]
 
 
@@ -214,7 +214,7 @@ def handle_docx_main_xml(xml_path, *args, **kwargs):
         if current_question[0] == 1:
             if q_item.q_type != QuestionType.Choice:
                 pdb.set_trace()
-                raise RuntimeError(u"问题类型解析错误 %s" % q_item.no)
+                raise RuntimeError(u"问题类型解析错误 %s".encode("gbk") % q_item.no)
         else:
             if q_item.q_type != QuestionType.QA:
                 raise RuntimeError(u"问题类型解析错误")

@@ -2,8 +2,14 @@
 
 <view class="container">
     <view class="page-body">
-        <view class="avatar">
-            <open-data class="avatar-img" type="userAvatarUrl" lang="zh_CN"></open-data>
+        <view wx:if="{{userAvatar}}">
+            <image class="avatar bottom30" mode="aspectFit" src="{{userAvatar}}"></image>
+        </view>
+        <view wx:else>
+            <!-- <button class="border0" bindgetuserinfo="getUserInfo" open-type="getUserInfo"> -->
+                <image class="avatar" mode="aspectFit" src="/images/unregister.png"></image>
+                <text class="center">未登录</text>
+            <!-- </button> -->
         </view>
         <form>
             <view class="page-section">
@@ -69,7 +75,7 @@
                             <!-- <button class="rightButton" bindtap="managerExam">管理</button> -->
                         </view>
                     </view>
-                    
+
                     <view class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
                             <view class="weui-label">版本</view>

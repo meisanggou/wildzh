@@ -8,6 +8,8 @@ Page({
     data: {
         remote_host: app.globalData.remote_host,
         allExams: [],
+        skipNums: [1],
+        skipIndex: 0,
         optionChar: app.globalData.optionChar,
         examNo: null,
         examName: "",
@@ -270,8 +272,75 @@ Page({
     before10: function () {
         that.before(10)
     },
+    setSkipNums(num, end_num) {
+        var max_times = 5;
+        var skipIndex = 0;
+        var _num = num;
+        var interval = 10;
+        var r = [];
+        var times = 0;
+        var p_num = 0
+        while (num > 1) {
+            p_num = num - interval;
+            if (p_num > 1)
+                r.push(p_num)
+            else {
+                r.push(1)
+                break
+            }
+            times += 1
+            if (times >= max_times) {
+                interval *= 10;
+                times = 0;
+            }
+
+            num = p_num;
+        }
+        r.sort(function (a, b) { return a - b; });
+        r.push(_num);
+        skipIndex = r.length - 1;
+        num = _num;
+        interval = 10;
+        times = 0;
+        while (num < end_num) {
+            p_num = num + interval
+            if (p_num >= end_num) {
+                r.push(end_num);
+                break
+            } else {
+                r.push(p_num);
+            }
+            times += 1;
+            if (times >= max_times) {
+                interval *= 10;
+                times = 0;
+            }
+            num = p_num;
+        }
+        this.setData({
+            skipNums: r,
+            skipIndex: skipIndex
+        })
+        return r;
+
+    },
+    skipAction: function (e) {
+        var index = e.detail.value;
+        this.changeNowQuestion(this.data.skipNums[index] - 1);
+    },
     changeNowQuestion: function (index) {
         var nowQuestion = this.data.questionItems[index];
+        if ("options" in nowQuestion) {
+            //已经获取内容
+        } else {
+            // 没有获取内容
+            wx.showLoading({
+                title: '加载中...',
+                mask: true
+            })
+            that.reqQuestion(index, true);
+            return;
+        }
         if (nowQuestion.question_subject == null) {
             nowQuestion.question_subject = 0;
         }
@@ -288,6 +357,7 @@ Page({
             nowQuestionIndex: index,
             answerIndex: answerIndex
         })
+        this.setSkipNums(index + 1, this.data.questionItems.length);
     },
     changeSubject: function (event) {
         var selected = event.detail.value;

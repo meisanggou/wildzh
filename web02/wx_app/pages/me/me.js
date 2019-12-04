@@ -2,12 +2,14 @@ var app = getApp();
 var that;
 Page({
     data: {
+        register: false,
         userNo: "",
+        userAvatar: "",
         allExams: [],
         examName: "未选择",
         examNo: 0,
         showManExam: false,
-        version: "4.3.2"
+        version: "4.3.3"
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {
@@ -17,11 +19,17 @@ Page({
             })
         }
         var currentUser = app.getOrSetCurrentUserData();
+        console.info(currentUser);
         if(currentUser != null){
             if("user_no" in currentUser){
                 this.setData({
                     userNo: currentUser.user_no
                 })
+            }
+            if(currentUser.avatar_url){
+                // this.setData({
+                //     userAvatar: currentUser.avatar_url
+                // })
             }
         }
     },

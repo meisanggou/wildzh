@@ -14,7 +14,9 @@
             <view class='middle'>
                 <view bindtap='before1' class='switch'>‹</view>
                 <view bindtap='before10' class='switch'>‹‹</view>
-                <view>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
+                <picker bindchange="skipAction" value="{{skipIndex}}" range="{{skipNums}}">
+                    <view class='switchtext'>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
+                </picker>
                 <view bindtap='after10' class='switch'>››</view>
                 <view bindtap='after1' class='switch'>›</view>
             </view>
