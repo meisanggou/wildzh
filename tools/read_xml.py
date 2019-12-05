@@ -19,7 +19,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 
-Q_TYPE_COMP = re.compile(u"((一|二|三|四|五)、|^)(单选|选择|名词解释|简答|简答题|计算|计算题|论述|论述题)")
+Q_TYPE_COMP = re.compile(u"((一|二|三|四|五)[、.]|^)(单选|选择|名词解释|简答|简答题|计算|计算题|论述|论述题)")
 S_ANSWER_COMP = re.compile(ur"(\d+)(?:-|—)(\d+)([a-d]+)", re.I)
 G_SELECT_MODE = [u"无", u"选择", u"名词解释", u"简答题", u"计算题", u"论述题"]
 
@@ -338,6 +338,8 @@ def handle_answers_docx_main_xml(xml_path, select_mode=None):
     def _get_answers():
         if current_q_type < 0:
             return
+        # if current_q_type == 4:
+        #     pdb.set_trace()
         if current_q_type == 1:
             # 获取选择题答案
             sub_aw = get_answers(current_answers_area)

@@ -259,7 +259,7 @@ if __name__ == "__main__":
     login("admin", "admin")
     # find_from_dir(r'D:\Project\word\app\upload')
     exam_no = 1567506833  # 测试包含图片
-    # exam_no = 1570447137  # 专升本经济学题库2
+    exam_no = 1570447137  # 专升本经济学题库2
     # exam_no = 1573464937  # 英语托业
     # transfer_exam(exam_no, 74, 146, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')

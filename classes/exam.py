@@ -68,7 +68,8 @@ class ExamMember(object):
     def user_exams(self, user_no, exam_no=None):
         items = self._select_exam_member(user_no, exam_no)
         now_time = time.time()
-        items = filter(lambda x: x['end_time'] >= now_time, items)
+        items = [item for item in items
+                 if item['end_time'] is None or item['end_time'] >= now_time]
         return items
 
     def select_user_exams(self, user_no):
