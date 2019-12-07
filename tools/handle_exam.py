@@ -249,17 +249,42 @@ def find_from_dir(exam_no, directory_name, dry_run, set_source):
         elif file_path.endswith(".docx") is False:
             print(u"跳过文件 %s" % file_path)
             continue
-        r, msg = handle_exam_with_answer(exam_no, file_path,
-                                         dry_run=dry_run,
-                                         set_source=set_source)
-        print(msg)
+        try:
+            r, msg = handle_exam_with_answer(exam_no, file_path,
+                                             dry_run=dry_run,
+                                             set_source=set_source)
+            print(msg)
+        except Exception as e:
+            print(e)
+
+
+def download_questions(exam_no, select_mode):
+    url = '%s/exam/questions/' % remote_host
+    response = req.get(url, params={'exam_no': exam_no,
+                                    'select_mode': select_mode})
+    # print(response.text)
+    resp = response.json()
+
+    data = resp['data']
+    no = 1
+    with open("dq.txt", "w") as wd:
+        for item in data:
+            if item['select_mode'] != select_mode:
+                continue
+            wd.write('%s、' % no)
+            wd.write(item['question_desc'])
+            wd.write('\n')
+            wd.write(item['answer'].strip())
+            wd.write('\n\n')
+            no += 1
 
 
 if __name__ == "__main__":
     login("admin", "admin")
     # find_from_dir(r'D:\Project\word\app\upload')
     exam_no = 1567506833  # 测试包含图片
-    exam_no = 1570447137  # 专升本经济学题库2
+    exam_no = 1569283516  # 专升本经济学题库
+    # exam_no = 1570447137  # 专升本经济学题库2
     # exam_no = 1573464937  # 英语托业
     # transfer_exam(exam_no, 74, 146, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
@@ -268,4 +293,5 @@ if __name__ == "__main__":
     # read_docx(d_path)
 
     d = r'D:/Project/word/app/upload'
-    find_from_dir(exam_no, d, dry_run=True, set_source=False)
+    # find_from_dir(exam_no, d, dry_run=True, set_source=False)
+    # download_questions(1569283516, 2)

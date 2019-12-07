@@ -6,10 +6,11 @@
             <image class="avatar bottom30" mode="aspectFit" src="{{userAvatar}}"></image>
         </view>
         <view wx:else>
-            <!-- <button class="border0" bindgetuserinfo="getUserInfo" open-type="getUserInfo"> -->
+            
                 <image class="avatar" mode="aspectFit" src="/images/unregister.png"></image>
                 <text class="center">未登录</text>
-            <!-- </button> -->
+            <button  bindgetuserinfo="getUserInfo" open-type="getUserInfo">授权登录
+            </button>
         </view>
         <form>
             <view class="page-section">
@@ -71,8 +72,8 @@
                             </view>
                         </view>
                         <view class="weui-cell__ft right-slip" wx:if="{{showManExam}}">
+                            <!-- <view class="navigator-arrow"></view> -->
                             <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="managerExam"></image>
-                            <!-- <button class="rightButton" bindtap="managerExam">管理</button> -->
                         </view>
                     </view>
 

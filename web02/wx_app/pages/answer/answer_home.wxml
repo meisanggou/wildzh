@@ -40,7 +40,8 @@
                 <view class="weui-cell weui-cell_switch">
                     <view class="weui-cell__bd">分题型测试</view>
                     <view class="weui-cell__ft">
-                        <switch checked bindchange="switchModeChange" />
+                        <switch wx:if="{{isAccordingToType}}" checked bindchange="switchModeChange" />
+                        <switch wx:else bindchange="switchModeChange" />
                     </view>
                 </view>
             </view>

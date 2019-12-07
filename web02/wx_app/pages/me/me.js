@@ -37,6 +37,33 @@ Page({
         this.getExams();
 
     },
+    getUserInfo: function (e) {
+        var that = this
+        var userInfo = e.detail.userInfo
+        var data = {
+            "avatar_url": userInfo.avatarUrl,
+            "nick_name": userInfo.nickName
+        }
+        wx.showLoading({
+            title: '登录中...',
+            mask: true
+        })
+        wx.request2({
+            url: '/user/info/',
+            method: 'PUT',
+            data: data,
+            success: res => {
+                var userItem = res.data.data
+                console.info(userInfo)
+                wx.setStorageSync(app.globalData.userInfoStorageKey, userItem)
+                that.setData({
+                    userAvatar: userItem.avatar_url,
+                })
+                wx.hideLoading();
+            }
+        })
+
+    },
     getExams: function() {
         that = this;
         wx.request2({
