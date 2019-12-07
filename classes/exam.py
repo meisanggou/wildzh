@@ -104,10 +104,7 @@ class ExamMember(object):
             days = kwargs.pop('days', 0)
             if days > 0:
                 end_time = time.time() + days * self.DAY_SECONDS
-        return self._insert_exam_member(user_no, exam_no, 5, authorizer,
-                                        end_time)
-
-
+        return self._update_exam_member(user_no, exam_no, authorizer, end_time)
 
     def insert_exam_owner(self, user_no, exam_no):
         return self._insert_exam_member(user_no, exam_no, 1, 0)

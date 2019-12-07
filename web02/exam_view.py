@@ -404,6 +404,8 @@ def search_question_page():
 def new_member():
     data = request.json
     exam_no = data['exam_no']
+    allow_update = data.get('allow_update', False)
+    end_time = data.get('end_time', None)
     if (g.user_role & 2) != 2:
         exist_items = c_exam.select_exam(exam_no)
         if len(exist_items) <= 0:
@@ -417,8 +419,12 @@ def new_member():
     member_no = data['member_no']
     items = c_exam.user_exams(member_no, exam_no)
     if len(items) > 0:
-        return jsonify({"status": False, "data": '已存在'})
-    c_exam.insert_exam_member(member_no, exam_no, g.user_no)
+        if not allow_update:
+            return jsonify({"status": False, "data": '已存在'})
+        else:
+            c_exam.update_exam_member(member_no, exam_no, g.user_no, end_time=end_time)
+    else:
+        c_exam.new_exam_member(member_no, exam_no, g.user_no, end_time=end_time)
     return jsonify({"status": True, "data": 'success'})
 
 
