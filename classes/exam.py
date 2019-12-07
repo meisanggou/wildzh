@@ -92,7 +92,7 @@ class ExamMember(object):
         items = self._select_exam_member(user_no, exam_no)
         now_time = time.time()
         if len(items) > 0:
-            if items[0]['end_time'] < now_time:
+            if items[0]['end_time'] > now_time:
                 return 0
             return self.update_exam_member(user_no, exam_no, authorizer,
                                            **kwargs)
