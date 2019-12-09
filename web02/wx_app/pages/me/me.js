@@ -5,11 +5,12 @@ Page({
         register: false,
         userNo: "",
         userAvatar: "",
+        nickName: "",
         allExams: [],
         examName: "未选择",
         examNo: 0,
         showManExam: false,
-        version: "4.3.3"
+        version: "4.4.2"
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {
@@ -27,9 +28,10 @@ Page({
                 })
             }
             if(currentUser.avatar_url){
-                // this.setData({
-                //     userAvatar: currentUser.avatar_url
-                // })
+                this.setData({
+                    userAvatar: currentUser.avatar_url,
+                    nickName: currentUser.nick_name
+                })
             }
         }
     },
@@ -58,6 +60,7 @@ Page({
                 wx.setStorageSync(app.globalData.userInfoStorageKey, userItem)
                 that.setData({
                     userAvatar: userItem.avatar_url,
+                    nickName: userItem.nick_name
                 })
                 wx.hideLoading();
             }

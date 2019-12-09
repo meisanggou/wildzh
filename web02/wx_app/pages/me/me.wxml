@@ -20,9 +20,7 @@
                             <view class="weui-label">昵称</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <view class="weui-input">
-                                <open-data type="userNickName" lang="zh_CN"></open-data>
-                            </view>
+                            <view class="weui-input">{{nickName}}</view>
                         </view>
                     </view>
 

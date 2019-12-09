@@ -83,7 +83,7 @@ def post_questions(question_set, dry_run=False, set_source=False):
             q_item_d["question_source"] = question_set.exam_name
         else:
             q_item_d["question_source"] = ""
-        q_item_d["question_subject"] = 0
+        q_item_d["question_subject"] = 2
         if dry_run:
             print(json.dumps(q_item_d))
         if not dry_run:
@@ -138,7 +138,8 @@ def upload_media(r_id, rl, width, height, cache_rl, clip_data=None, dry_run=Fals
     return resp.json()["data"]["pic"]
 
 
-def handle_exam_no_answer(exam_no, file_path, select_mode=None):
+def handle_exam_no_answer(exam_no, file_path, select_mode=None,
+                          dry_run=False, set_source=False):
     uploaded_q_rl = dict()
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     print("start handle %s" % exam_name)
@@ -152,15 +153,18 @@ def handle_exam_no_answer(exam_no, file_path, select_mode=None):
             q_no = q_item.no
             # 开始上传 题目
             # 获取题目描述中的图片
-            q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl)
+            q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl,
+                                        dry_run=dry_run)
 
             # 获取选项中的图片
             for option in q_item.options:
-                option.desc = replace_media(option.desc, q_rl, uploaded_q_rl)
+                option.desc = replace_media(option.desc, q_rl, uploaded_q_rl,
+                                            dry_run=dry_run)
             # 获取答案中的图片
-            # q_item.answer = replace_media(q_item.answer, aw_rl, uploaded_aw_rl)
+            q_item.answer = replace_media(q_item.answer, q_rl, uploaded_q_rl,
+                                          dry_run=dry_run)
             q_item.inside_mark = "%s %s" % (exam_name, q_no)
-        post_questions(question_set)
+        post_questions(question_set, dry_run=dry_run, set_source=set_source)
     return True, "success"
 
 
@@ -180,6 +184,7 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None,
             read_answers_docx(answer_file, select_mode) as rad:
         question_set, q_rl = rd
         question_set.exam_no = exam_no
+        question_set.exam_name = exam_name
         answers_dict, aw_rl = rad
         if question_set.length <= 0:
             raise RuntimeError("没发现题目")
@@ -210,9 +215,10 @@ def upload_js_with_answer(exam_no, file_path):
     return handle_exam_with_answer(exam_no, file_path, 4)
 
 
-def update_xz_no_answer(exam_no, file_path):
+def update_xz_no_answer(exam_no, file_path, dry_run=True, set_source=False):
     login("admin", "admin")
-    return handle_exam_no_answer(exam_no, file_path, 1)
+    return handle_exam_no_answer(exam_no, file_path, 1, dry_run=dry_run,
+                                 set_source=set_source)
 
 
 def transfer_exam(s_exam, start_no, end_no, t_exam):
@@ -256,6 +262,7 @@ def find_from_dir(exam_no, directory_name, dry_run, set_source):
             print(msg)
         except Exception as e:
             print(e)
+            raise e
 
 
 def download_questions(exam_no, select_mode):
@@ -283,15 +290,16 @@ if __name__ == "__main__":
     login("admin", "admin")
     # find_from_dir(r'D:\Project\word\app\upload')
     exam_no = 1567506833  # 测试包含图片
-    exam_no = 1569283516  # 专升本经济学题库
-    # exam_no = 1570447137  # 专升本经济学题库2
+    # exam_no = 1569283516  # 专升本经济学题库
+    exam_no = 1570447137  # 专升本经济学题库2
     # exam_no = 1573464937  # 英语托业
     # transfer_exam(exam_no, 74, 146, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
-    # d_path = ur'D:\Project\word\河南省专升本经济学测试题（二十）.docx'
+    d_path = ur'D:\Project\word\app\宏观经济学选择题.docx'
     # read_docx(d_path)
 
     d = r'D:/Project/word/app/upload'
-    # find_from_dir(exam_no, d, dry_run=True, set_source=False)
+    # find_from_dir(exam_no, d, dry_run=True, set_source=True)
     # download_questions(1569283516, 2)
+    update_xz_no_answer(exam_no, d_path, dry_run=False, set_source=False)

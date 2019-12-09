@@ -81,7 +81,8 @@ def required_exam_no(f):
     @referer_exam_no
     def decorated_function(*args, **kwargs):
         if g.exam_no is None:
-            return jsonify({"status": False, "data": "Bad Request"})
+            return jsonify({"status": False, "data": "Bad Request. exam_no"
+                                                     " not in request"})
         if(g.user_role & 2) == 2:
             g.exam_role = 0
         else:
@@ -99,7 +100,7 @@ def required_exam_no(f):
                         g.exam_role = 10
                     else:
                         return jsonify({"status": False, "data": "Bad "
-                                                                 "Request"})
+                                                                 "Request. Forbidden"})
                 else:
                     g.exam_role = e_items[0]['exam_role']
         return f(*args, **kwargs)

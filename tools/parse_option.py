@@ -119,7 +119,7 @@ class ParseOptions(object):
         nl = [s for s in l if s.strip()]
 
         # 有可能A选项就不是标准格式
-        if nl[0] != "A":
+        if nl[0] not in self.option_prefix:
             prefix = nl[0]
             nl = nl[1:]
         else:
