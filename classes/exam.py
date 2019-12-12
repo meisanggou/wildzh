@@ -96,7 +96,8 @@ class ExamMember(object):
                 return 0
             return self.update_exam_member(user_no, exam_no, authorizer,
                                            **kwargs)
-        return self._insert_exam_member(user_no, exam_no, authorizer, **kwargs)
+        return self._insert_exam_member(user_no, exam_no, 5, authorizer,
+                                        **kwargs)
 
     def update_exam_member(self, user_no, exam_no, authorizer, **kwargs):
         end_time = kwargs.pop('end_time', None)

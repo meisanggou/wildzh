@@ -83,7 +83,8 @@ def post_questions(question_set, dry_run=False, set_source=False):
             q_item_d["question_source"] = question_set.exam_name
         else:
             q_item_d["question_source"] = ""
-        q_item_d["question_subject"] = 2
+        # q_item_d["question_subject"] = 2
+        q_item_d["question_subject"] = 3  # 政治经济学
         if dry_run:
             print(json.dumps(q_item_d))
         if not dry_run:
@@ -210,14 +211,23 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None,
     return True, "success"
 
 
-def upload_js_with_answer(exam_no, file_path):
+def upload_js_with_answer(exam_no, file_path, dry_run=True, set_source=False):
     login("admin", "admin")
-    return handle_exam_with_answer(exam_no, file_path, 4)
+    return handle_exam_with_answer(exam_no, file_path, 4, dry_run=dry_run,
+                                   set_source=set_source)
 
 
 def update_xz_no_answer(exam_no, file_path, dry_run=True, set_source=False):
+    # 选择题
     login("admin", "admin")
     return handle_exam_no_answer(exam_no, file_path, 1, dry_run=dry_run,
+                                 set_source=set_source)
+
+
+def update_jd_no_answer(exam_no, file_path, dry_run=True, set_source=False):
+    # 简答题
+    login("admin", "admin")
+    return handle_exam_no_answer(exam_no, file_path, 3, dry_run=dry_run,
                                  set_source=set_source)
 
 
@@ -296,10 +306,11 @@ if __name__ == "__main__":
     # transfer_exam(exam_no, 74, 146, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
-    d_path = ur'D:\Project\word\app\宏观经济学选择题.docx'
+    d_path = ur'D:\Project\word\app\计算v2\计算题.docx'
     # read_docx(d_path)
 
     d = r'D:/Project/word/app/upload'
     # find_from_dir(exam_no, d, dry_run=True, set_source=True)
     # download_questions(1569283516, 2)
-    update_xz_no_answer(exam_no, d_path, dry_run=False, set_source=False)
+    # update_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
+    upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)

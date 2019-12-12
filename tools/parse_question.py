@@ -72,6 +72,7 @@ class ParseQuestion(object):
     option_compile = re.compile("^\s*\(\s*[%s]\s*\)" % _s_of, re.I)  # 匹配 (A)
     option_compile2 = re.compile("^\s*[%s]\s*" % _s_of, re.I)         # 匹配 A
     answer_compile = re.compile('\(\s*([%s])\s*\)' % _s_of, re.I)
+    qa_answer_compile = re.compile(u'(\s*(?:答|答案)(?::|：))', re.I)
 
     @classmethod
     def find_options_location(cls, question_items):
@@ -95,8 +96,29 @@ class ParseQuestion(object):
         return location
 
     @classmethod
+    def find_one_line_answer(cls, desc):
+        items = cls.qa_answer_compile.split(desc)
+        if len(items) != 3:
+            return desc, ""
+        return items[0], items[2]
+
+    @classmethod
     def find_qa_answer(cls, desc):
-        return desc, ""
+        n_desc = []
+        lines = desc.split("\n")
+        if len(lines) == 1:
+            return cls.find_one_line_answer(desc)
+        index = 0
+        answer = ""
+        for line in lines:
+            m = cls.qa_answer_compile.match(line)
+            if m:
+                answer = line[len(m.groups()[0]):]
+                break
+            index += 1
+        n_desc = "\n".join(lines[:index])
+        answer += "\n".join(lines[index:])
+        return n_desc, answer
 
     @classmethod
     def find_choice_answer(cls, desc):
@@ -131,7 +153,8 @@ class ParseQuestion(object):
             q.options = options
             q.q_type = QuestionType.QA
             n_desc, answers = cls.find_qa_answer(desc)
-
+            if len(answers) > 0:
+                q.set_answer(answers)
         else:
             desc = "\n".join(question_items[1:i])
             p_data = ParseOptions().parse(question_items[i:])
