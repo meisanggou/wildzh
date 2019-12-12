@@ -231,7 +231,7 @@ def update_jd_no_answer(exam_no, file_path, dry_run=True, set_source=False):
                                  set_source=set_source)
 
 
-def transfer_exam(s_exam, start_no, end_no, t_exam):
+def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode):
     url = remote_host + '/exam/transfer'
     data = {'source_exam_no': s_exam, 'start_no': start_no,
             'end_no': end_no, 'target_exam_no': t_exam}
@@ -303,7 +303,7 @@ if __name__ == "__main__":
     # exam_no = 1569283516  # 专升本经济学题库
     exam_no = 1570447137  # 专升本经济学题库2
     # exam_no = 1573464937  # 英语托业
-    # transfer_exam(exam_no, 74, 146, 1575333741)
+    transfer_exam(exam_no, 74, 146, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
     d_path = ur'D:\Project\word\app\计算v2\计算题.docx'
@@ -313,4 +313,4 @@ if __name__ == "__main__":
     # find_from_dir(exam_no, d, dry_run=True, set_source=True)
     # download_questions(1569283516, 2)
     # update_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
-    upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
+    # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)

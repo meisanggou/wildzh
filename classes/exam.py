@@ -355,7 +355,9 @@ class Exam(ExamMember):
                       target_exam_no, **kwargs):
         where_value = dict(exam_no=source_exam_no)
         if 'select_mode' in kwargs:
-            where_value['select_mode'] = kwargs.pop('select_mode')
+            select_mode = kwargs.pop('select_mode')
+            if isinstance(select_mode, int):
+                where_value['select_mode'] = select_mode
         where_cond = ['question_no>=%s', 'question_no<=%s']
         where_cond_args = [source_start_no, source_end_no]
         items = self._select_questions(where_value=where_value,

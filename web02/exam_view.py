@@ -461,6 +461,7 @@ def transfer_exam():
     start_no = data['start_no']
     end_no = data['end_no']
     target_exam_no = data['target_exam_no']
+    select_mode = data.get('select_mode', None)
     items = c_exam.transfer_exam(source_exam_no, start_no, end_no,
-                                 target_exam_no)
+                                 target_exam_no, select_mode=select_mode)
     return jsonify({'status': True, 'data': items})
