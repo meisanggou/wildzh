@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import collections
+import json
 import re
 import sys
 
@@ -66,6 +67,9 @@ class Question(object):
         _q_item['answer'] = self.answer
         return _q_item
 
+    def __str__(self):
+        return json.dumps(self.to_dict())
+
 
 class ParseQuestion(object):
     _s_of = "".join(ParseOptions.option_prefix)
@@ -101,6 +105,15 @@ class ParseQuestion(object):
         if len(items) != 3:
             return desc, ""
         return items[0], items[2]
+
+    @classmethod
+    def find_answer_by_separator(cls, desc, separators):
+        p = "|".join([re.escape(s) for s in separators])
+        re_p = re.compile("(%s)" % p)
+        desc_l = re_p.split(desc, 1)
+        if len(desc_l) != 3:
+            return desc, ""
+        return desc_l[0], desc_l[2]
 
     @classmethod
     def find_qa_answer(cls, desc):
@@ -139,12 +152,13 @@ class ParseQuestion(object):
         pass
 
     @classmethod
-    def parse(cls, question_items):
+    def parse(cls, question_items, select_mode=None, has_answer=None):
         if len(question_items) == 0:
             return None
         q_no = question_items[0]
         i = cls.find_options_location(question_items[:])
         q = Question()
+        q.no = q_no
         if i < 0:
             desc = "\n".join(question_items[1:])
             options = ListOption(["A", "B"])
@@ -152,9 +166,18 @@ class ParseQuestion(object):
             options.B = u"不会"
             q.options = options
             q.q_type = QuestionType.QA
-            n_desc, answers = cls.find_qa_answer(desc)
-            if len(answers) > 0:
+            if has_answer and select_mode == 2:
+                # 名词解释
+                n_desc, answers = cls.find_answer_by_separator(desc,
+                                                               [':', u'：'])
+                if len(answers) == 0:
+                    raise RuntimeError('Not Found Answer. desc is %s. '
+                                       'question is %s' % (desc, q))
                 q.set_answer(answers)
+            else:
+                n_desc, answers = cls.find_qa_answer(desc)
+                if len(answers) > 0:
+                    q.set_answer(answers)
         else:
             desc = "\n".join(question_items[1:i])
             p_data = ParseOptions().parse(question_items[i:])
@@ -166,7 +189,6 @@ class ParseQuestion(object):
             if len(answers) > 0:
                 q.set_answer(answers[0])
 
-        q.no = q_no
         q.desc = n_desc
         return q
 

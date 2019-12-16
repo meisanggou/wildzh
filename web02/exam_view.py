@@ -330,6 +330,7 @@ def get_exam_questions():
 
 
 @exam_view.route("/questions/no/", methods=["GET"])
+@login_required
 @required_exam_no
 def get_exam_questions_nos():
     if "select_mode" in request.args:

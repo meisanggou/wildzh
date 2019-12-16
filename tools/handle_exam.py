@@ -83,8 +83,9 @@ def post_questions(question_set, dry_run=False, set_source=False):
             q_item_d["question_source"] = question_set.exam_name
         else:
             q_item_d["question_source"] = ""
-        # q_item_d["question_subject"] = 2
-        q_item_d["question_subject"] = 3  # 政治经济学
+        q_item_d["question_subject"] = 1  # 微观经济学
+        # q_item_d["question_subject"] = 2  # 宏观经济学
+        # q_item_d["question_subject"] = 3  # 政治经济学
         if dry_run:
             print(json.dumps(q_item_d))
         if not dry_run:
@@ -140,12 +141,13 @@ def upload_media(r_id, rl, width, height, cache_rl, clip_data=None, dry_run=Fals
 
 
 def handle_exam_no_answer(exam_no, file_path, select_mode=None,
-                          dry_run=False, set_source=False):
+                          dry_run=False, set_source=False, has_answer=None):
     uploaded_q_rl = dict()
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     print("start handle %s" % exam_name)
 
-    with read_docx(file_path, select_mode=select_mode) as rd:
+    with read_docx(file_path, select_mode=select_mode,
+                   has_answer=has_answer) as rd:
         question_set, q_rl = rd
         question_set.exam_no = exam_no
         if question_set.length <= 0:
@@ -162,6 +164,8 @@ def handle_exam_no_answer(exam_no, file_path, select_mode=None,
                 option.desc = replace_media(option.desc, q_rl, uploaded_q_rl,
                                             dry_run=dry_run)
             # 获取答案中的图片
+            if q_item.answer is None:
+                print(q_item)
             q_item.answer = replace_media(q_item.answer, q_rl, uploaded_q_rl,
                                           dry_run=dry_run)
             q_item.inside_mark = "%s %s" % (exam_name, q_no)
@@ -178,6 +182,7 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None,
     answer_file = file_path.replace(".docx", u"答案.docx")
     if os.path.exists(answer_file) is False:
         msg = ("Ignore %s, not Answer" % file_path)
+        print(msg)
         return False, msg
     print("start handle %s" % exam_name)
 
@@ -231,10 +236,12 @@ def update_jd_no_answer(exam_no, file_path, dry_run=True, set_source=False):
                                  set_source=set_source)
 
 
-def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode):
+def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode=None):
     url = remote_host + '/exam/transfer'
     data = {'source_exam_no': s_exam, 'start_no': start_no,
             'end_no': end_no, 'target_exam_no': t_exam}
+    if select_mode:
+        data['select_mode'] = select_mode
     response = req.post(url, json=data)
     res = response.json()
     if res['status'] is True:
@@ -303,14 +310,17 @@ if __name__ == "__main__":
     # exam_no = 1569283516  # 专升本经济学题库
     exam_no = 1570447137  # 专升本经济学题库2
     # exam_no = 1573464937  # 英语托业
-    transfer_exam(exam_no, 74, 146, 1575333741)
+    # 538 + 319
+    # transfer_exam(1569283516, 0, 3955, 1570447137)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
-    d_path = ur'D:\Project\word\app\计算v2\计算题.docx'
+    d_path = ur'D:\Project\word\app\小本 第二部分微观经济学名词解释+简答题.docx'
     # read_docx(d_path)
 
-    d = r'D:/Project/word/app/upload'
+    # d = r'D:/Project/word/app/upload'
     # find_from_dir(exam_no, d, dry_run=True, set_source=True)
     # download_questions(1569283516, 2)
     # update_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
     # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
+    handle_exam_no_answer(exam_no, d_path, dry_run=False, set_source=False,
+                          has_answer=True)

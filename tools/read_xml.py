@@ -196,6 +196,7 @@ def handle_rels(rels_path):
 
 def handle_docx_main_xml(xml_path, *args, **kwargs):
     select_mode = kwargs.pop("select_mode")
+    has_answer = kwargs.pop('has_answer')
     dom = minidom.parse(xml_path)
     root = dom.documentElement
     body = _get_one_node(root, "w:body")
@@ -209,7 +210,9 @@ def handle_docx_main_xml(xml_path, *args, **kwargs):
     def _get_question():
         if not current_question:
             return
-        q_item = ParseQuestion.parse(current_question[1:])
+        q_item = ParseQuestion.parse(current_question[1:],
+                                     select_mode=current_question[0],
+                                     has_answer=has_answer)
 
         if current_question[0] == 1:
             if q_item.q_type != QuestionType.Choice:
@@ -260,9 +263,11 @@ def handle_docx_main_xml(xml_path, *args, **kwargs):
     return question_set
 
 
-def read_docx_xml(root_dir, select_mode=None):
+def read_docx_xml(root_dir, select_mode=None, has_answer=None):
     xml_path = os.path.join(root_dir, 'word', 'document.xml')
-    questions_s = handle_docx_main_xml(xml_path, ".", u"、", u"．", select_mode=select_mode)
+    questions_s = handle_docx_main_xml(xml_path, ".", u"、", u"．", ':',
+                                       select_mode=select_mode,
+                                       has_answer=has_answer)
     style_path = os.path.join(root_dir, 'word', '_rels', "document.xml.rels")
     relationships = handle_rels(style_path)
     for key in relationships.keys():
@@ -271,9 +276,10 @@ def read_docx_xml(root_dir, select_mode=None):
 
 
 @contextmanager
-def read_docx(docx_path, select_mode=None):
+def read_docx(docx_path, select_mode=None, has_answer=None):
     with extract_docx(docx_path) as temp_dir:
-        questions_s, relationships = read_docx_xml(temp_dir, select_mode)
+        questions_s, relationships = read_docx_xml(temp_dir, select_mode,
+                                                   has_answer=has_answer)
         yield [questions_s, relationships]
         pass
 
