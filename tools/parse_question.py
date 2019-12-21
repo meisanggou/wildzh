@@ -53,7 +53,8 @@ class Question(object):
 
     def to_dict(self):
         real_options = self.options.to_list()
-        return dict(no=self.no, desc=self.desc, options=real_options)
+        return dict(no=self.no, desc=self.desc, options=real_options,
+                    select_mode=self.select_mode)
 
     def to_exam_dict(self):
         if self.answer is None:
@@ -75,7 +76,7 @@ class ParseQuestion(object):
     _s_of = "".join(ParseOptions.option_prefix)
     option_compile = re.compile("^\s*\(\s*[%s]\s*\)" % _s_of, re.I)  # 匹配 (A)
     option_compile2 = re.compile("^\s*[%s]\s*" % _s_of, re.I)         # 匹配 A
-    answer_compile = re.compile('\(\s*([%s])\s*\)' % _s_of, re.I)
+    answer_compile = re.compile(u'(?:\(|（)\s*([%s])\s*(?:）|\))' % _s_of, re.I)    # 匹配
     qa_answer_compile = re.compile(u'(\s*(?:答|答案)(?::|：))', re.I)
 
     @classmethod
@@ -130,7 +131,7 @@ class ParseQuestion(object):
                 break
             index += 1
         n_desc = "\n".join(lines[:index])
-        answer += "\n".join(lines[index:])
+        answer += "\n".join(lines[index + 1:])
         return n_desc, answer
 
     @classmethod
@@ -156,7 +157,10 @@ class ParseQuestion(object):
         if len(question_items) == 0:
             return None
         q_no = question_items[0]
-        i = cls.find_options_location(question_items[:])
+        if select_mode in (None, 1):
+            i = cls.find_options_location(question_items[:])
+        else:
+            i = -1
         q = Question()
         q.no = q_no
         if i < 0:
@@ -214,7 +218,7 @@ class QuestionSet(object):
         if question.select_mode not in self._s:
             self._s[question.select_mode] = collections.OrderedDict()
         if question.no in self._s[question.select_mode]:
-            raise RuntimeError("")
+            raise RuntimeError(question)
         self._s[question.select_mode][question.no] = question
 
     def append(self, question):

@@ -338,7 +338,21 @@ def get_exam_questions_nos():
         question_subject = request.args.get("question_subject", None)
         items = c_exam.select_question_no(g.exam_no, select_mode=select_mode,
                                           question_subject=question_subject)
-        nos = map(lambda x: x["question_no"], items)
+
+        if 'compress' in request.args:
+            nos_l = []
+            _start = 0
+            _offset = 0
+            for item in items:
+                if item['question_no'] == _start + _offset:
+                    _offset += 1
+                else:
+                    nos_l.append([_start, _offset])
+                    _start = item['question_no']
+                    _offset = 1
+            if _start != 0:
+                nos_l.append([_start, _offset])
+            return jsonify({"status": True, "data": dict(exam_no=g.exam_no, nos=nos_l)})
         return jsonify({"status": True, "data": dict(exam_no=g.exam_no, questions=items)})
     max_no = c_exam.select_max_question(g.exam_no)
     next_no = (max_no + 1) if isinstance(max_no, (int, long)) else 1

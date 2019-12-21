@@ -132,6 +132,10 @@ Page({
         var nos = "";
         var _start = -1;
         var _end = -1;
+        // startIndex 可能超出最大题目长度
+        if(startIndex >= questionItems.length){
+            startIndex = questionItems.length - 1;
+        }
         if (stepNum < 0) {
             _start = startIndex + stepNum;
             _end = startIndex + 1
@@ -377,6 +381,7 @@ Page({
             showAnswer: false
         })
         this.setSkipNums(index + 1, this.data.questionItems.length);
+        this.saveTrainingProcess();
     },
     showAnswer: function(e) {
         var nowQuestion = that.data.nowQuestion;
@@ -458,19 +463,17 @@ Page({
     previewImage: function(event) {
         var src = event.currentTarget.dataset.src; //获取data-src
         //图片预览
-        console.info(src)
-        // wx.previewImage({
-        //     // current: src, // 当前显示图片的http链接
-        //     urls: [src], // 需要预览的图片http链接列表
-        //     fail: function(e){
-        //         console.info("preview fail");
-        //         console.info(e);
-        //     },
-        //     complete: function(e){
-        //         console.info("preview complete");
-        //         console.info(e);
-        //     }
-        // })
+        console.info(src);
+        wx.previewImage({
+            current: src, // 当前显示图片的http链接
+            urls: [src], // 需要预览的图片http链接列表
+            fail: function(e){
+                console.info("preview fail");
+            },
+            complete: function(e){
+                console.info("preview complete");
+            }
+        })
 
     },
     updateQuestion: function(questionNo, index, options = null, answer = null) {
@@ -509,8 +512,7 @@ Page({
             }
         })
     },
-    onUnload: function() {
-        console.info("un load")
+    saveTrainingProcess(){
         if (that.data.examNo == null || that.data.nowQuestion == null) {
             return false;
         }
@@ -519,6 +521,10 @@ Page({
         }
         app.getOrSetExamCacheData(this.data.progressStorageKey, this.data.nowQuestionIndex);
 
+    },
+    onUnload: function() {
+        console.info("un load")
+        this.saveTrainingProcess();
     },
     // 触摸开始事件
     touchStart: function(e) {
@@ -537,13 +543,13 @@ Page({
         var touchMoveY = touchEndY - touchStartY;
 
         var absMoveX = Math.abs(touchMoveX);
-        var absMoveY = Math.abs(touchEndY);
-        console.info(touchMoveX)
-        console.info(touchMoveY)
+        var absMoveY = Math.abs(touchMoveY);
         var wChange = true;
-        if (absMoveY > 0.2 * absMoveX || absMoveY > 12){
+        if (absMoveY > 0.3 * absMoveX || absMoveY > 30){
             wChange = false;
+            
         }
+
         if (wChange) {
             // 向左滑动   
             if (touchMoveX <= -93 && touchTime < 10) {
@@ -551,7 +557,7 @@ Page({
                 that.after1();
             }
             // 向右滑动   
-            if (touchMoveX >= 93 && touchTime < 10) {
+            else if (touchMoveX >= 93 && touchTime < 10) {
                 that.before1();
             }
         }

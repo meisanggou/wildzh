@@ -83,6 +83,7 @@ def post_questions(question_set, dry_run=False, set_source=False):
             q_item_d["question_source"] = question_set.exam_name
         else:
             q_item_d["question_source"] = ""
+        q_item_d["question_subject"] = 0  # 无
         q_item_d["question_subject"] = 1  # 微观经济学
         # q_item_d["question_subject"] = 2  # 宏观经济学
         # q_item_d["question_subject"] = 3  # 政治经济学
@@ -95,7 +96,7 @@ def post_questions(question_set, dry_run=False, set_source=False):
 
 
 def replace_media(text, q_rl, cache_rl, dry_run):
-    media_comp = re.compile(r"(\[\[([a-z0-9]+?):([\d.]+?):([\d.]+?)(|:[\d\.\-|]+?)\]\])", re.I)
+    media_comp = re.compile(r"(\[\[([a-z0-9]+?)\$([\d.]+?)\$([\d.]+?)(|\$[\d\.\-|]+?)\]\])", re.I)
     found_rs = media_comp.findall(text)
     for r_item in found_rs:
         r_t = r_item[0]
@@ -236,6 +237,14 @@ def update_jd_no_answer(exam_no, file_path, dry_run=True, set_source=False):
                                  set_source=set_source)
 
 
+def update_mc_no_answer(exam_no, file_path, dry_run=True, set_source=False,
+                        has_answer=True):
+    # 简答题
+    login("admin", "admin")
+    return handle_exam_no_answer(exam_no, file_path, 2, dry_run=dry_run,
+                                 set_source=set_source, has_answer=has_answer)
+
+
 def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode=None):
     url = remote_host + '/exam/transfer'
     data = {'source_exam_no': s_exam, 'start_no': start_no,
@@ -252,7 +261,7 @@ def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode=None):
         print(data)
 
 
-def find_from_dir(exam_no, directory_name, dry_run, set_source):
+def find_from_dir(exam_no, directory_name, dry_run, set_source, answer_file=False):
     files = os.listdir(directory_name)
     for file_item in files:
         if file_item.startswith("~$"):
@@ -272,14 +281,16 @@ def find_from_dir(exam_no, directory_name, dry_run, set_source):
         elif file_path.endswith(".docx") is False:
             print(u"跳过文件 %s" % file_path)
             continue
-        try:
+        if answer_file:
             r, msg = handle_exam_with_answer(exam_no, file_path,
                                              dry_run=dry_run,
                                              set_source=set_source)
-            print(msg)
-        except Exception as e:
-            print(e)
-            raise e
+        else:
+            r, msg = handle_exam_no_answer(exam_no, file_path,
+                                           dry_run=dry_run,
+                                           set_source=set_source,
+                                           has_answer=True)
+        print(msg)
 
 
 def download_questions(exam_no, select_mode):
@@ -314,13 +325,15 @@ if __name__ == "__main__":
     # transfer_exam(1569283516, 0, 3955, 1570447137)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
-    d_path = ur'D:\Project\word\app\小本 第二部分微观经济学名词解释+简答题.docx'
+    d_path = ur'D:\Project\word\app\河南专升本经济学简答题小汇.docx'
     # read_docx(d_path)
 
-    # d = r'D:/Project/word/app/upload'
-    # find_from_dir(exam_no, d, dry_run=True, set_source=True)
+    d = r'D:/Project/word/app/upload'
+    find_from_dir(exam_no, d, dry_run=True, set_source=False,
+                  answer_file=False)
     # download_questions(1569283516, 2)
     # update_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
     # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
-    handle_exam_no_answer(exam_no, d_path, dry_run=False, set_source=False,
-                          has_answer=True)
+    # handle_exam_no_answer(exam_no, d_path, dry_run=True, set_source=False,
+    #                       has_answer=True)
+    # update_mc_no_answer(exam_no, d_path, dry_run=True, set_source=False, has_answer=True)

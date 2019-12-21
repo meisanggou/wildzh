@@ -111,6 +111,14 @@ App({
         wx.setStorageSync(g_key, value);
         return value
     },
+    getOrSetCacheData2: function (key, value = null) {
+        var g_key = "wildzh_cache_" + key;
+        if (value == null) {
+            return wx.getStorageSync(g_key);
+        }
+        wx.setStorage({key: g_key, data: value});
+        return value
+    },
     getOrSetCurrentUserData: function(value = null) {
         return this.getOrSetCacheData(this.globalData.userInfoStorageKey, value);
     },
@@ -119,7 +127,7 @@ App({
             return null;
         }
         var g_key = this.globalData.defaultExamNo + "_" + key;
-        return this.getOrSetCacheData(g_key, value);
+        return this.getOrSetCacheData2(g_key, value);
     },
     getScreenInfo: function(needReturn = true) {
         if (this.globalData.screenData != null) {

@@ -451,16 +451,23 @@ Page({
         var touchEndX = e.changedTouches[0].pageX;
         var touchEndY = e.changedTouches[0].pageY;
         var touchMoveX = touchEndX - touchStartX;
-
         var touchMoveY = touchEndY - touchStartY;
-        if (Math.abs(touchMoveY) < 0.618 * Math.abs(touchMoveX)) {
+
+        var absMoveX = Math.abs(touchMoveX);
+        var absMoveY = Math.abs(touchMoveY);
+        var wChange = true;
+        if (absMoveY > 0.3 * absMoveX || absMoveY > 30) {
+            wChange = false;
+
+        }
+        if (wChange) {
             // 向左滑动   
             if (touchMoveX <= -93 && touchTime < 10) {
                 //执行切换页面的方法
                 that.after1();
             }
             // 向右滑动   
-            if (touchMoveX >= 93 && touchTime < 10) {
+            else if (touchMoveX >= 93 && touchTime < 10) {
                 that.before1();
             }
         }

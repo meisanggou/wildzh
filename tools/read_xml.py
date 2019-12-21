@@ -19,7 +19,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 
-Q_TYPE_COMP = re.compile(u"((一|二|三|四|五)[、.]|^)(单选|选择|名词解释|简答|简答题|计算|计算题|论述|论述题)")
+Q_TYPE_COMP = re.compile(u"((一|二|三|四|五|六)[、.]|^)(单选|单项|选择|名词解释|简答|简答题|计算|计算题|论述|论述题)")
 S_ANSWER_COMP = re.compile(ur"(\d+)(?:-|—)(\d+)([a-d]+)", re.I)
 G_SELECT_MODE = [u"无", u"选择", u"名词解释", u"简答题", u"计算题", u"论述题"]
 
@@ -31,7 +31,7 @@ def get_select_mode(content):
     s = fr[0][2]
     if s in G_SELECT_MODE:
         return G_SELECT_MODE.index(s)
-    if s in (u"单选", u"单选题"):
+    if s in (u"单选", u"单选题", u"单项"):
         return 1
     if s in (u"名词解释", u"名词"):
         return 2
@@ -131,7 +131,7 @@ def _handle_drawing(drawing_node):
     cy = int(pic_extent_el.getAttribute("cy"))
     lip = _get_one_node(blip_fill, "a:blip")
     r_id = lip.getAttribute("r:embed")
-    values = "%s:%s:%s" % (r_id, cx / 10000, cy / 10000)
+    values = "%s$%s$%s" % (r_id, cx / 10000, cy / 10000)
     src_rects = _get_node(blip_fill, "a:srcRect")  # 可能不存在裁剪
     if len(src_rects) == 1:
         src_rect = src_rects[0]
@@ -139,8 +139,8 @@ def _handle_drawing(drawing_node):
         top = src_rect.getAttribute("t")
         right = src_rect.getAttribute("r")
         bottom = src_rect.getAttribute("b")
-        values += ":%s|%s|%s|%s" % (left, top, right, bottom)
-    print(values)
+        values += "$%s|%s|%s|%s" % (left, top, right, bottom)
+
     return "[[%s]]" % values
 
 
@@ -160,7 +160,7 @@ def handle_paragraph(p_node):
             v_shape_style = v_shape.getAttribute("style")
             width, height = analysis_style(v_shape_style)
             r_id = _get_node(v_shape, "v:imagedata")[0].getAttribute("r:id")
-            p_contents.append("[[%s:%s:%s]]" % (r_id, width, height))
+            p_contents.append("[[%s$%s$%s]]" % (r_id, width, height))
         # 获得段内换行
         br_children = _get_node(child, "w:br")
         if len(br_children) == 1:
