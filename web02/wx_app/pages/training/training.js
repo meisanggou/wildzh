@@ -55,6 +55,7 @@ Page({
                 title: '试题加载中',
             });
             args_url += "exam_no=" + that.data.examNo;
+            args_url += "&compress=true"
             wx.request2({
                 url: '/exam/questions/no/?' + args_url,
                 method: 'GET',
@@ -73,11 +74,12 @@ Page({
                         })
                         return
                     }
+                    var _questions = that.extractQuestionNos(res.data.data['nos']);
                     that.setData({
-                        questionNum: res.data.data["questions"].length,
-                        questionItems: res.data.data["questions"]
+                        questionNum: _questions.length,
+                        questionItems: _questions
                     })
-                    if (res.data.data["questions"].length <= 0) {
+                    if (_questions.length <= 0) {
                         wx.hideLoading();
                         wx.showModal({
                             title: '无题目',
@@ -112,6 +114,19 @@ Page({
             })
         }
 
+    },
+    extractQuestionNos: function(nos_l){
+        var items = [];
+        var examNo = this.data.examNo;
+        var ll = nos_l.length;
+        for(var i=0;i<ll;i++){
+            var ll_item = nos_l[i];
+            for(var j=0;j<ll_item[1];j++){
+                var q_item = {'question_no': ll_item[0] + j}
+                items.push(q_item);
+            }
+        }
+        return items
     },
     reqQuestion: function(startIndex, updateShow = false, stepNum = 13) {
         that = this;
@@ -381,7 +396,7 @@ Page({
             showAnswer: false
         })
         this.setSkipNums(index + 1, this.data.questionItems.length);
-        this.saveTrainingProcess();
+        // this.saveTrainingProcess();
     },
     showAnswer: function(e) {
         var nowQuestion = that.data.nowQuestion;

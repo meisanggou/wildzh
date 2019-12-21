@@ -3,6 +3,8 @@
 import os
 import re
 import string
+import time
+
 from functools import wraps
 from flask import request, jsonify, g
 from flask_login import login_required
@@ -287,6 +289,7 @@ def update_question():
 @login_required
 @required_exam_no
 def get_exam_questions():
+    start_time = time.time()
     nos = request.args.get("nos", None)
     num = request.args.get("num", None)
     start_no = int(request.args.get("start_no", -1))
@@ -321,12 +324,15 @@ def get_exam_questions():
             max_width = int(request.headers["X-Device-Screen-Width"]) * 0.95
         for item in items:
             question_desc_rich = separate_image(item["question_desc"])
+            del item['question_desc']
             item["question_desc_rich"] = question_desc_rich
             for option in item["options"]:
                 option["desc_rich"] = separate_image(option["desc"])
+                del option["desc"]
             item["answer_rich"] = separate_image(item["answer"], max_width)
-
-    return jsonify({"status": True, "data": items})
+            del item['answer']
+    use_time = time.time() - start_time
+    return jsonify({"status": True, "data": items, 'use_time': use_time})
 
 
 @exam_view.route("/questions/no/", methods=["GET"])
