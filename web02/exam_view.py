@@ -317,7 +317,7 @@ def get_exam_questions():
             options = item["options"]
             new_options = map(lambda x: x["desc"], options)
             item["options"] = new_options
-
+    query_time = time.time() - start_time
     if no_rich is False:
         max_width = None
         if "X-Device-Screen-Width" in request.headers:
@@ -332,7 +332,7 @@ def get_exam_questions():
             item["answer_rich"] = separate_image(item["answer"], max_width)
             del item['answer']
     use_time = time.time() - start_time
-    return jsonify({"status": True, "data": items, 'use_time': use_time})
+    return jsonify({"status": True, "data": items, 'use_time': use_time, 'query_time': query_time})
 
 
 @exam_view.route("/questions/no/", methods=["GET"])
