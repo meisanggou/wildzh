@@ -325,6 +325,23 @@ class Exam(ExamMember):
             d_items.append(d_item)
         return d_items
 
+    def select_multi_question2(self, exam_no, q_nos):
+        if len(q_nos) <= 0:
+            return []
+        cols = self.q_cols
+        sql_f = "SELECT %s FROM %s WHERE exam_no=%s AND question_no in (%s);" \
+                % (",".join(cols), self.t_q, exam_no, ','.join(q_nos))
+        self.db.execute(sql_f)
+        items = self.db.fetchall()
+        d_items = []
+        for item in items:
+            d_item = dict()
+            for i in range(len(cols)):
+                d_item[cols[i]] = item[i]
+            d_item["options"] = json.loads(d_item["options"])
+            d_items.append(d_item)
+        return d_items
+
     def select_wrong(self, user_no, exam_no, min_wrong_time=0):
         where_value = dict(user_no=user_no, exam_no=exam_no)
         where_cond = ["wrong_time>%s"]

@@ -298,7 +298,7 @@ def get_exam_questions():
     no_rich = request.args.get("no_rich", False)
     if nos is not None:
         q_nos = filter(lambda x: len(x) > 0, re.split("\D", nos))
-        items = c_exam.select_multi_question(g.exam_no, q_nos)
+        items = c_exam.select_multi_question2(g.exam_no, q_nos)
     elif num is None:
         # 获取全部试题
         items = c_exam.select_questions(g.exam_no)
