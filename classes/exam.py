@@ -287,14 +287,23 @@ class Exam(ExamMember):
             return 0
         return max_no
 
-    def select_question_no(self, exam_no, select_mode=None, question_subject=None):
+    def select_question_no(self, exam_no, select_mode=None, start_no=None,
+                           question_subject=None):
         where_value = dict(exam_no=exam_no)
         if select_mode is not None:
             where_value['select_mode'] = select_mode
         if question_subject is not None:
             where_value['question_subject'] = question_subject
+        where_cond_args = []
+        where_cond = []
+        if start_no is not None:
+            where_cond.append('question_no>=%s')
+            where_cond_args.append(start_no)
         cols = self.q_cols[:2]
-        items = self.db.execute_select(self.t_q, cols=cols, where_value=where_value)
+        items = self.db.execute_select(self.t_q, cols=cols,
+                                       where_value=where_value,
+                                       where_cond=where_cond,
+                                       where_cond_args=where_cond_args)
         return items
 
     def select_random_questions(self, exam_no, num, select_mode=None, question_subject=None):

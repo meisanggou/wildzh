@@ -178,6 +178,7 @@ Page({
                 if (res.data.status == false) {
                     return;
                 }
+                console.info("After Get Data");
                 var newItems = res.data.data;
                 for (var i = _end - 1; i >= _start; i--) {
                     for (var j = 0; j < newItems.length; j++) {
@@ -186,15 +187,8 @@ Page({
                             questionItems[i]["question_desc_rich"] = newItems[j]["question_desc_rich"]
                             questionItems[i]["question_desc_url"] = newItems[j]["question_desc_url"];
                             questionItems[i]["options"] = newItems[j]["options"];
-                            // questionItems[i]["answer"] = newItems[j]["answer"];
                             questionItems[i]["answer_rich"] = newItems[j]["answer_rich"]
                             questionItems[i]["question_source"] = newItems[j]["question_source"]
-                            // for (var qd_index in questionItems[i]["question_desc_rich"]) {
-                            //     var qd_item = questionItems[i]["question_desc_rich"][qd_index];
-                            //     if (typeof qd_item == "string") {
-                            //         questionItems[i]["question_desc_rich"][qd_index] = qd_item.replace(/\\n/g, '\n')
-                            //     }
-                            // }
                             questionItems[i].forceUpdate = false;
                             break;
                         }
@@ -204,12 +198,15 @@ Page({
                 if (questionItems.length <= 0) {
                     // 没有错题 有问题
                 }
+                console.info("After Handle Data");
                 if (updateShow) {
                     that.setData({
                         questionItems: questionItems,
                         questionNum: questionItems.length
                     });
+                    console.info("Before Change now question");
                     that.changeNowQuestion(startIndex);
+                    console.info("After Change now question");
                 } else if (startIndex == that.data.nowQuestionIndex) {
                     // 如果当前请求的内容正好是当前显示的，需要重新更新一下答案显示。答案显示是拼出来的没和变量关联
                     if (that.data.showAnswer) {
@@ -396,7 +393,7 @@ Page({
             showAnswer: false
         })
         this.setSkipNums(index + 1, this.data.questionItems.length);
-        // this.saveTrainingProcess();
+        this.saveTrainingProcess();
     },
     showAnswer: function(e) {
         var nowQuestion = that.data.nowQuestion;
