@@ -21,86 +21,102 @@ Page({
         showAnswer: false,
         isShowSubject: false,
         isReq: false,
-        progressStorageKey: ""
+        progressStorageKey: "",
+        nosStorageKey: ""
     },
+    getQuestionNos: function(options) {
+        that = this;
+        var args_url = "";
+        var progressStorageKey = "training";
+        if ("select_mode" in options) {
+            args_url += "select_mode=" + options["select_mode"] + "&";
+            progressStorageKey += "_" + options["select_mode"];
+        } else {
+            progressStorageKey += "_" + 0;
+        }
+        if ("question_subject" in options) {
+            args_url += "question_subject=" + options["question_subject"] + "&";
+            progressStorageKey += "_" + options["question_subject"];
+            that.setData({
+                isShowSubject: false
+            })
+        } else {
+            progressStorageKey += "_" + 0;
+        }
+        var nosStorageKey = progressStorageKey + "_nos"
+        this.setData({
+            progressStorageKey: progressStorageKey,
+            nosStorageKey: nosStorageKey
+        });
+        var cacheNos = app.getOrSetExamCacheData(nosStorageKey);
+        var cache_questions = that.extractQuestionNos(cacheNos);
 
+        if (cacheNos == null || cacheNos == "") {
+            wx.showLoading({
+                title: '试题加载中',
+            });
+        }
+        args_url += "exam_no=" + that.data.examNo;
+        args_url += "&compress=true"
+        wx.request2({
+            url: '/exam/questions/no/?' + args_url,
+            method: 'GET',
+            success: res => {
+                if (res.data.status != true) {
+                    wx.hideLoading();
+                    wx.showModal({
+                        title: '无法访问题库',
+                        content: "题库已删除，或无权访问。确定进入【我的】更换题库",
+                        showCancel: false,
+                        success(res) {
+                            wx.switchTab({
+                                url: "/pages/me/me"
+                            })
+                        }
+                    })
+                    return
+                }
+                var _questions = that.extractQuestionNos(res.data.data['nos']);
+                for(var q_index=0;q_index<_questions.length;q_index++){
+                    cache_questions.push(_questions[q_index]);
+                }
+                app.getOrSetExamCacheData(nosStorageKey, cache_questions);
+                that.setData({
+                    questionNum: _questions.length,
+                    questionItems: _questions
+                })
+                if (_questions.length <= 0) {
+                    wx.hideLoading();
+                    wx.showModal({
+                        title: '无题目',
+                        content: "无相关题目，确定返回",
+                        showCancel: false,
+                        success(res) {
+                            wx.switchTab({
+                                url: "/pages/me/me"
+                            })
+                        }
+                    })
+                } else {
+                    // 请求questionItems
+                    var progressIndex = app.getOrSetExamCacheData(that.data.progressStorageKey);
+                    if (progressIndex == null || typeof progressIndex != 'number' || progressIndex <= 0) {
+                        progressIndex = 0;
+                    }
+                    that.reqQuestion(progressIndex, true);
+                }
+            }
+        })
+    },
     onLoad: function(options) {
         this.setData({
             examNo: app.globalData.defaultExamNo,
             examName: app.globalData.defaultExamName
         });
         that = this;
-        var args_url = "";
-        var progressStorageKey = "training";
+
         if (that.data.examNo != null) {
-            if ("select_mode" in options) {
-                args_url += "select_mode=" + options["select_mode"] + "&";
-                progressStorageKey += "_" + options["select_mode"];
-            } else {
-                progressStorageKey += "_" + 0;
-            }
-            if ("question_subject" in options) {
-                args_url += "question_subject=" + options["question_subject"] + "&";
-                progressStorageKey += "_" + options["question_subject"];
-                that.setData({
-                    isShowSubject: false
-                })
-            } else {
-                progressStorageKey += "_" + 0;
-            }
-            this.setData({
-                progressStorageKey: progressStorageKey
-            });
-            wx.showLoading({
-                title: '试题加载中',
-            });
-            args_url += "exam_no=" + that.data.examNo;
-            args_url += "&compress=true"
-            wx.request2({
-                url: '/exam/questions/no/?' + args_url,
-                method: 'GET',
-                success: res => {
-                    if (res.data.status != true) {
-                        wx.hideLoading();
-                        wx.showModal({
-                            title: '无法访问题库',
-                            content: "题库已删除，或无权访问。确定进入【我的】更换题库",
-                            showCancel: false,
-                            success(res) {
-                                wx.switchTab({
-                                    url: "/pages/me/me"
-                                })
-                            }
-                        })
-                        return
-                    }
-                    var _questions = that.extractQuestionNos(res.data.data['nos']);
-                    that.setData({
-                        questionNum: _questions.length,
-                        questionItems: _questions
-                    })
-                    if (_questions.length <= 0) {
-                        wx.hideLoading();
-                        wx.showModal({
-                            title: '无题目',
-                            content: "无相关题目，确定返回",
-                            showCancel: false,
-                            success(res) {
-                                wx.switchTab({
-                                    url: "/pages/me/me"
-                                })
-                            }
-                        })
-                    } else {
-                        // 请求questionItems
-                        var progressIndex = app.getOrSetExamCacheData(that.data.progressStorageKey);
-                        if (progressIndex == null || typeof progressIndex != 'number' || progressIndex <= 0) {
-                            progressIndex = 0;
-                        }
-                        that.reqQuestion(progressIndex, true);
-                    }
-                }
-            })
+            that.getQuestionNos(options);
         } else {
             wx.showModal({
                 title: '未选择题库',
@@ -115,14 +131,19 @@ Page({
         }
 
     },
-    extractQuestionNos: function(nos_l){
+    extractQuestionNos: function(nos_l) {
+        if(typeof nos_l == "string" || nos_l == null ){
+            return [];
+        }
         var items = [];
         var examNo = this.data.examNo;
         var ll = nos_l.length;
-        for(var i=0;i<ll;i++){
+        for (var i = 0; i < ll; i++) {
             var ll_item = nos_l[i];
-            for(var j=0;j<ll_item[1];j++){
-                var q_item = {'question_no': ll_item[0] + j}
+            for (var j = 0; j < ll_item[1]; j++) {
+                var q_item = {
+                    'question_no': ll_item[0] + j
+                }
                 items.push(q_item);
             }
         }
@@ -148,7 +169,7 @@ Page({
         var _start = -1;
         var _end = -1;
         // startIndex 可能超出最大题目长度
-        if(startIndex >= questionItems.length){
+        if (startIndex >= questionItems.length) {
             startIndex = questionItems.length - 1;
         }
         if (stepNum < 0) {
@@ -334,14 +355,16 @@ Page({
                 break
             }
             times += 1
-            if (times >= max_times){
+            if (times >= max_times) {
                 interval *= 10;
                 times = 0;
             }
-            
+
             num = p_num;
         }
-        r.sort(function(a, b){return a-b;});
+        r.sort(function(a, b) {
+            return a - b;
+        });
         r.push(_num);
         skipIndex = r.length - 1;
         num = _num;
@@ -356,7 +379,7 @@ Page({
                 r.push(p_num);
             }
             times += 1;
-            if (times >= max_times){
+            if (times >= max_times) {
                 interval *= 10;
                 times = 0;
             }
@@ -367,9 +390,9 @@ Page({
             skipIndex: skipIndex
         })
         return r;
-        
+
     },
-    skipAction: function(e){
+    skipAction: function(e) {
         var index = e.detail.value;
         this.changeNowQuestion(this.data.skipNums[index] - 1);
     },
@@ -479,10 +502,10 @@ Page({
         wx.previewImage({
             current: src, // 当前显示图片的http链接
             urls: [src], // 需要预览的图片http链接列表
-            fail: function(e){
+            fail: function(e) {
                 console.info("preview fail");
             },
-            complete: function(e){
+            complete: function(e) {
                 console.info("preview complete");
             }
         })
@@ -524,7 +547,7 @@ Page({
             }
         })
     },
-    saveTrainingProcess(){
+    saveTrainingProcess() {
         if (that.data.examNo == null || that.data.nowQuestion == null) {
             return false;
         }
@@ -557,9 +580,9 @@ Page({
         var absMoveX = Math.abs(touchMoveX);
         var absMoveY = Math.abs(touchMoveY);
         var wChange = true;
-        if (absMoveY > 0.3 * absMoveX || absMoveY > 30){
+        if (absMoveY > 0.3 * absMoveX || absMoveY > 30) {
             wChange = false;
-            
+
         }
 
         if (wChange) {
