@@ -4,6 +4,7 @@ var touchTime = 0;
 var touchStartX = 0; //触摸时的原点
 var touchStartY = 0;
 var touchInterval = null;
+var questionItems = [];
 Page({
     data: {
         remote_host: app.globalData.remote_host,
@@ -12,7 +13,6 @@ Page({
         examName: "",
         questionNum: 0,
         nowQuestionIndex: 0,
-        questionItems: [],
         questionAnswer: "",
         nowQuestion: null,
         showAnswer: false,
@@ -40,12 +40,12 @@ Page({
             this.setData({
                 questionNum: 0,
                 nowQuestionIndex: 0,
-                questionItems: [],
                 questionAnswer: "",
                 nowQuestion: null,
                 showAnswer: false,
                 showRemove: false,
             })
+            questionItems = [];
         }
         that.setData({
             examNo: examNo,
@@ -72,15 +72,14 @@ Page({
         if (examNo == null) {
             return false;
         }
-        var questionLen = this.data.questionItems.length;
+        var questionLen = questionItems.length;
         var minWrongTime = 0;
         if (questionLen <= 0) {
             wx.showLoading({
                 title: '加载中...',
             })
         } else {
-            
-            minWrongTime = this.data.questionItems[questionLen - 1].wrong_time;
+            minWrongTime = questionItems[questionLen - 1].wrong_time;
         }
         wx.request2({
             url: '/exam/wrong/?exam_no=' + examNo + "&min_wrong_time=" + minWrongTime,
@@ -103,20 +102,19 @@ Page({
                 var addQuestionItems = res.data.data;
                 // 如果有新的错题，显示第一个，没有保持原来的显示
                 var showIndex = that.data.nowQuestionIndex;
-                var latestQuestionItems = that.data.questionItems;
+                var latestQuestionItems = questionItems;
                 if (addQuestionItems.length > 0) {
                     // 按照错误时间排序 最新错题排到前面
                     addQuestionItems.sort(function(a, b) {
                         return a.wrong_time - b.wrong_time;
                     })
-                    latestQuestionItems = addQuestionItems.concat(that.data.questionItems);
+                    latestQuestionItems = addQuestionItems.concat(questionItems);
                     showIndex = 0;
                 }
                 // 判定最新的试题是否在
-                that.setData({
-                    questionItems: latestQuestionItems
-                })
-                if (that.data.questionItems.length <= 0) {
+                questionItems = latestQuestionItems;
+                
+                if (questionItems.length <= 0) {
                     wx.hideLoading();
                     wx.showModal({
                         title: '无错题',
@@ -165,7 +163,6 @@ Page({
                 isReq: true
             })
         }
-        var questionItems = that.data.questionItems;
         var nos = "";
         var endIndex = startIndex + 13;
         if (endIndex > questionItems.length) {
@@ -205,7 +202,6 @@ Page({
                 }
                 if (showIndex != null) {
                     that.setData({
-                        questionItems: questionItems,
                         nowQuestion: questionItems[showIndex],
                         nowQuestionIndex: showIndex,
                         questionNum: questionItems.length
@@ -229,7 +225,6 @@ Page({
     remove: function() {
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
-        var questionItems = that.data.questionItems;
         var questionLen = questionItems.length;
         wx.request2({
             url: '/exam/wrong/?exam_no=' + that.data.examNo,
@@ -244,9 +239,7 @@ Page({
         questionItems.splice(nowQuestionIndex, 1);
         questionLen = questionItems.length;
         if (questionLen <= 0) {
-            that.setData({
-                questionItems: []
-            });
+            questionItems = [];
             wx.showModal({
                 title: '无错题',
                 content: "已经没有错题",
@@ -265,7 +258,6 @@ Page({
         }
         that.setData({
             nowQuestion: questionItems[nowQuestionIndex],
-            questionItems: questionItems,
             nowQuestionIndex: nowQuestionIndex,
             questionNum: questionItems.length,
             showAnswer: false,
@@ -276,7 +268,6 @@ Page({
     after: function(afterNum) {
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
-        var questionItems = that.data.questionItems;
         var questionLen = questionItems.length;
         var nextIndex = nowQuestionIndex + afterNum;
         if (nowQuestionIndex >= questionItems.length - 1) {
@@ -326,7 +317,6 @@ Page({
     before: function(preNum) {
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
-        var questionItems = that.data.questionItems;
         var preIndex = nowQuestionIndex - preNum;
         if (nowQuestionIndex <= 0) {
             // 判断是否当前是否是第一题
@@ -359,7 +349,6 @@ Page({
     },
     choseItem: function(e) {
         var choseIndex = parseInt(e.currentTarget.dataset.choseitem);
-        var questionItems = that.data.questionItems;
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
         var showRemove = false;

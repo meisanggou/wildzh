@@ -230,7 +230,8 @@ $(function() {
                     c_qno = 1;
                 }
                 var data = {"exam_no": this.current_exam.exam_no, "start_no": c_qno - 1, "num": 1, "desc": "true"};
-                my_async_request2(questions_url, "GET", data, receive_questions);
+                var _url = questions_url + "?no_rich=true";
+                my_async_request2(_url, "GET", data, receive_questions);
             },
             change_question: function(){
                 var question_no = this.current_question_no;
@@ -262,7 +263,8 @@ $(function() {
                     return true;
                 }
                 var data = {"exam_no": this.current_exam.exam_no, "start_no": c_qno + 1, "num": 1};
-                my_async_request2(questions_url, "GET", data, receive_questions);
+                var _url = questions_url + "?no_rich=true";
+                my_async_request2(_url, "GET", data, receive_questions);
             },
             update_question: function(){
                 add_question();

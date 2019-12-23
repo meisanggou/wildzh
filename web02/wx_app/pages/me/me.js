@@ -10,7 +10,7 @@ Page({
         examName: "未选择",
         examNo: 0,
         showManExam: false,
-        version: "4.5.3"
+        version: "4.6.0"
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {

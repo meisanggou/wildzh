@@ -1,5 +1,6 @@
 var app = getApp();
 var that;
+var questionItems;
 var touchTime = 0;
 var touchStartX = 0; //触摸时的原点
 var touchStartY = 0;
@@ -15,7 +16,6 @@ Page({
         examName: "",
         questionNum: 0,
         nowQuestionIndex: 0,
-        questionItems: [],
         questionAnswer: new Array(),
         nowQuestion: null,
         showAnswer: false,
@@ -49,9 +49,9 @@ Page({
             nosStorageKey: nosStorageKey
         });
         var cacheNos = app.getOrSetExamCacheData(nosStorageKey);
-        var cache_questions = that.extractQuestionNos(cacheNos);
+        // var cache_questions = that.extractQuestionNos(cacheNos);
 
-        if (cacheNos == null || cacheNos == "") {
+        if (cacheNos == null || cacheNos == "" || true) {
             wx.showLoading({
                 title: '试题加载中',
             });
@@ -77,13 +77,13 @@ Page({
                     return
                 }
                 var _questions = that.extractQuestionNos(res.data.data['nos']);
-                for(var q_index=0;q_index<_questions.length;q_index++){
-                    cache_questions.push(_questions[q_index]);
-                }
-                app.getOrSetExamCacheData(nosStorageKey, cache_questions);
+                // for(var q_index=0;q_index<_questions.length;q_index++){
+                //     cache_questions.push(_questions[q_index]);
+                // }
+                // app.getOrSetExamCacheData(nosStorageKey, cache_questions);
+                questionItems = _questions
                 that.setData({
-                    questionNum: _questions.length,
-                    questionItems: _questions
+                    questionNum: _questions.length
                 })
                 if (_questions.length <= 0) {
                     wx.hideLoading();
@@ -164,7 +164,7 @@ Page({
                 isReq: true
             })
         }
-        var questionItems = that.data.questionItems;
+
         var nos = "";
         var _start = -1;
         var _end = -1;
@@ -199,7 +199,6 @@ Page({
                 if (res.data.status == false) {
                     return;
                 }
-                console.info("After Get Data");
                 var newItems = res.data.data;
                 for (var i = _end - 1; i >= _start; i--) {
                     for (var j = 0; j < newItems.length; j++) {
@@ -219,15 +218,11 @@ Page({
                 if (questionItems.length <= 0) {
                     // 没有错题 有问题
                 }
-                console.info("After Handle Data");
                 if (updateShow) {
                     that.setData({
-                        questionItems: questionItems,
                         questionNum: questionItems.length
                     });
-                    console.info("Before Change now question");
                     that.changeNowQuestion(startIndex);
-                    console.info("After Change now question");
                 } else if (startIndex == that.data.nowQuestionIndex) {
                     // 如果当前请求的内容正好是当前显示的，需要重新更新一下答案显示。答案显示是拼出来的没和变量关联
                     if (that.data.showAnswer) {
@@ -252,7 +247,6 @@ Page({
     after: function(afterNum) {
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
-        var questionItems = that.data.questionItems;
         var questionLen = questionItems.length;
         var nextIndex = nowQuestionIndex + afterNum;
         if (nowQuestionIndex >= questionItems.length - 1) {
@@ -303,7 +297,6 @@ Page({
     before: function(preNum) {
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
-        var questionItems = that.data.questionItems;
         var preIndex = nowQuestionIndex - preNum;
         if (nowQuestionIndex <= 0) {
             // 判断是否当前是否是第一题
@@ -398,7 +391,7 @@ Page({
     },
     changeNowQuestion: function(index) {
         var skipNums = [];
-        var nowQuestion = this.data.questionItems[index];
+        var nowQuestion = questionItems[index];
         if ("options" in nowQuestion) {
             //已经获取内容
         } else {
@@ -415,7 +408,7 @@ Page({
             nowQuestionIndex: index,
             showAnswer: false
         })
-        this.setSkipNums(index + 1, this.data.questionItems.length);
+        this.setSkipNums(index + 1, questionItems.length);
         this.saveTrainingProcess();
     },
     showAnswer: function(e) {
@@ -442,7 +435,6 @@ Page({
     },
     choseItem: function(e) {
         var choseIndex = parseInt(e.currentTarget.dataset.choseitem);
-        var questionItems = that.data.questionItems;
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
         for (var index in questionItems[nowQuestionIndex]["options"]) {
