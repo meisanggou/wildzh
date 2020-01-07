@@ -85,7 +85,7 @@ def post_questions(question_set, dry_run=False, set_source=False):
             q_item_d["question_source"] = ""
         q_item_d["question_subject"] = 0  # 无
         q_item_d["question_subject"] = 1  # 微观经济学
-        # q_item_d["question_subject"] = 2  # 宏观经济学
+        q_item_d["question_subject"] = 2  # 宏观经济学
         # q_item_d["question_subject"] = 3  # 政治经济学
         if dry_run:
             print(json.dumps(q_item_d))
@@ -330,7 +330,7 @@ if __name__ == "__main__":
 
     d = r'D:/Project/word/app/upload'
     find_from_dir(exam_no, d, dry_run=True, set_source=False,
-                  answer_file=False)
+                  answer_file=True)
     # download_questions(1569283516, 2)
     # update_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
     # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
