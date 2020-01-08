@@ -324,6 +324,10 @@ def get_qa_answers(answer_items, parse_answer):
                 # 不允许出现同一个答案区域，出现题号下降。防止答案里出现小题题号，出现误判
                 current_answer += "\n" + item
                 continue
+            if next_no >= current_no + 10:
+                # 不允许出现同一个答案区域，出现题号上升过快
+                current_answer += "\n" + item
+                continue
             if current_no != -1:
                 if current_no in aw_dict:
                     raise RuntimeError("repeated answers %s" % current_no)
@@ -352,7 +356,7 @@ def handle_answers_docx_main_xml(xml_path, select_mode=None):
     def _get_answers():
         if current_q_type < 0:
             return
-        # if current_q_type == 4:
+        # if current_q_type == 5:
         #     pdb.set_trace()
         p_answer = ParseAnswer(current_q_type)
         if current_q_type == 1:
