@@ -42,6 +42,8 @@ class Question(object):
     def set_answer(self, answer):
         if self.answer is not None:
             raise RuntimeError("Has already set answer")
+        if isinstance(answer, Answer):
+            answer = answer.answer
         if self.q_type == QuestionType.Choice:
             if not hasattr(self.options, answer):
                 raise RuntimeError("Not Found answer option: %s" % answer)
@@ -223,6 +225,76 @@ class QuestionSet(object):
 
     def append(self, question):
         return self.add(question)
+
+    def __iter__(self):
+        for items in self._s.values():
+            for item in items.values():
+                yield item
+
+
+class ParseAnswer(object):
+
+    def __init__(self, select_mode):
+        self.select_mode = select_mode
+
+    def parse(self, answer):
+        a = Answer(self.select_mode)
+        a.answer = answer
+        return a
+
+
+class Answer(object):
+
+    def __init__(self, select_mode=None):
+        self.select_mode = select_mode
+        self.no = None
+        self._answer = None
+
+    @property
+    def answer(self):
+        return self._answer
+
+    @answer.setter
+    def answer(self, v):
+        if self.select_mode == 1:
+            v = v.upper()
+            if v not in ["A", "B", "C", "D"]:
+                raise RuntimeError("Not Choice Answer %s" % v)
+        self._answer = v
+
+
+class AnswerSet(object):
+
+    def __init__(self):
+        self._s = collections.OrderedDict()
+
+    @property
+    def length(self):
+        return len(self._s.keys())
+
+    def __len__(self):
+        return self.length
+
+    def add(self, answer):
+        if not isinstance(answer, Answer):
+            raise RuntimeError("Please add Answer item")
+        if answer.select_mode not in self._s:
+            self._s[answer.select_mode] = collections.OrderedDict()
+        if answer.no in self._s[answer.select_mode]:
+            print(answer)
+            raise RuntimeError("repeated answers %s" % answer.no)
+        self._s[answer.select_mode][answer.no] = answer
+
+    def append(self, answer):
+        return self.add(answer)
+
+    def find_answer(self, question):
+        _sm = question.select_mode
+        if _sm not in self._s:
+            return None
+        if question.no not in self._s[_sm]:
+            return None
+        return self._s[_sm][question.no]
 
     def __iter__(self):
         for items in self._s.values():

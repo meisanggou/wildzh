@@ -14,6 +14,7 @@ import xml.dom.minidom as minidom
 import zipfile
 
 from parse_question import ParseQuestion, QuestionType, QuestionSet
+from parse_question import Answer, AnswerSet, ParseAnswer
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -21,6 +22,7 @@ sys.setdefaultencoding('utf8')
 
 Q_TYPE_COMP = re.compile(u"((一|二|三|四|五|六)[、.]|^)(单选|单项|选择|名词解释|简答|简答题|计算|计算题|论述|论述题)")
 S_ANSWER_COMP = re.compile(ur"(\d+)(?:-|—)(\d+)([a-d]+)", re.I)
+S_ANSWER_COMP2 = re.compile(ur"(?:\s|^)(\d+)([a-d](?:\s|$))", re.I)
 G_SELECT_MODE = [u"无", u"选择", u"名词解释", u"简答题", u"计算题", u"论述题"]
 
 
@@ -284,9 +286,8 @@ def read_docx(docx_path, select_mode=None, has_answer=None):
         pass
 
 
-def get_answers(answer_items):
-    aw_dict = dict()
-    s_ac = ["A", "B", "C", "D"]
+def get_answers(answer_items, parse_answer):
+    aw_dict = []
     for a_item in answer_items:
         sp_items = S_ANSWER_COMP.findall(a_item)
         for start, end, answers in sp_items:
@@ -296,14 +297,19 @@ def get_answers(answer_items):
             for i in range(i_start, i_end + 1):
                 if i in aw_dict:
                     raise RuntimeError("repeated answers %s" % i)
-                aw_dict[i] = answers[i - i_start].upper()
-                if aw_dict[i] not in s_ac:
-                    raise RuntimeError("Not Choice Answer %s" % aw_dict[i])
+                a = parse_answer.parse(answers[i - i_start])
+                a.no = i
+                aw_dict.append(a)
+        sp_items2 = S_ANSWER_COMP2.findall(a_item)
+        for no, answer in sp_items2:
+            a = parse_answer.parse(answer)
+            a.no = int(no)
+            aw_dict.append(a)
     return aw_dict
 
 
-def get_qa_answers(answer_items):
-    aw_dict = dict()
+def get_qa_answers(answer_items, parse_answer):
+    aw_dict = []
     qa_aw_comp = re.compile(ur"^(\d+)(.|、|．)([\s\S]*)")
     current_no = -1
     current_answer = ""
@@ -321,15 +327,17 @@ def get_qa_answers(answer_items):
             if current_no != -1:
                 if current_no in aw_dict:
                     raise RuntimeError("repeated answers %s" % current_no)
-                aw_dict[current_no] = current_answer
+                a = parse_answer.parse(current_answer)
+                a.no = current_no
+                aw_dict.append(a)
             current_no = next_no
             current_answer = found_item[2]
         else:
             current_answer += "\n" + item
     if current_no != -1:
-        if current_no in aw_dict:
-            raise RuntimeError("repeated answers %s" % current_no)
-        aw_dict[current_no] = current_answer
+        a = parse_answer.parse(current_answer)
+        a.no = current_no
+        aw_dict.append(a)
     return aw_dict
 
 
@@ -339,22 +347,22 @@ def handle_answers_docx_main_xml(xml_path, select_mode=None):
     body = root.firstChild
     current_q_type = select_mode
     current_answers_area = []
-    answers_dict = dict()
+    answers_dict = AnswerSet()
 
     def _get_answers():
         if current_q_type < 0:
             return
         # if current_q_type == 4:
         #     pdb.set_trace()
+        p_answer = ParseAnswer(current_q_type)
         if current_q_type == 1:
             # 获取选择题答案
-            sub_aw = get_answers(current_answers_area)
+            sub_aw = get_answers(current_answers_area, p_answer)
+
         else:
-            sub_aw = get_qa_answers(current_answers_area)
-        for i in sub_aw.keys():
-            if i in answers_dict:
-                raise RuntimeError("repeated answers %s" % i)
-        answers_dict.update(sub_aw)
+            sub_aw = get_qa_answers(current_answers_area, p_answer)
+        for item in sub_aw:
+            answers_dict.add(item)
 
     for node in body.childNodes:
         if node.nodeName != "w:p":
