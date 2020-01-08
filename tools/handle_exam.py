@@ -201,6 +201,8 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None,
             answer_obj = answers_dict.find_answer(q_item)
             if not answer_obj:
                 print(exam_name)
+                import pdb
+                pdb.set_trace()
                 raise RuntimeError("lack answer %s" % q_item.no)
             q_item.set_answer(answer_obj)
             # 开始上传 题目

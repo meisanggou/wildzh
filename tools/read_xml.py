@@ -324,7 +324,7 @@ def get_qa_answers(answer_items, parse_answer):
                 # 不允许出现同一个答案区域，出现题号下降。防止答案里出现小题题号，出现误判
                 current_answer += "\n" + item
                 continue
-            if next_no >= current_no + 10:
+            if next_no >= current_no + 10 and current_no > 0:
                 # 不允许出现同一个答案区域，出现题号上升过快
                 current_answer += "\n" + item
                 continue
