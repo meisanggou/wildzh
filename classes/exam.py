@@ -111,7 +111,64 @@ class ExamMember(object):
         return self._insert_exam_member(user_no, exam_no, 1, 0)
 
 
-class Exam(ExamMember):
+class ExamUsage(object):
+    BASIC_PT = 1578240000  # 2020-01-06 00:00:00 Monday
+    ONE_PERIOD = 7 * 24 * 60 * 60
+
+    def __init__(self):
+        self.t_usage = "exam_usage_records"
+        self.cols_usage = ['period_no', 'exam_no', 'user_no', 'num',
+                           'update_time']
+
+    @classmethod
+    def calc_period_no(cls, t=None):
+        if not t:
+            t = time.time()
+        period_no = (t - cls.BASIC_PT) / cls.ONE_PERIOD
+        return int(period_no)
+
+    def get_usage_records(self, exam_no, user_no=None, period_no=None):
+        if period_no is None:
+            period_no = self.calc_period_no()
+        where_value = dict(period_no=period_no, exam_no=exam_no)
+        if user_no:
+            where_value['user_no'] = user_no
+        items = self.db.execute_select(self.t_usage, cols=self.cols_usage,
+                                       where_value=where_value)
+        return items
+
+    def get_usage_records_by_time(self, query_time, exam_no, user_no=None):
+        period_no = self.calc_period_no(query_time)
+        return self.get_usage_records(exam_no, user_no, period_no)
+
+    def get_one_usage_records(self, user_no, exam_no):
+        period_no = self.calc_period_no()
+        items = self.get_usage_records(exam_no, user_no, period_no)
+        if len(items) != 1:
+            return {'num': 0, 'update_time': None, 'period_no': period_no,
+                    'exam_no': exam_no, 'user_no': user_no}
+        return items[0]
+
+    def update_usage_records(self, exam_no, user_no, num=1):
+        if num <= 0:
+            return None
+        period_no = self.calc_period_no()
+        o_num = self.get_one_usage_records(user_no, exam_no)['num']
+        num += o_num
+        update_value = {'num': num, 'update_time': time.time()}
+        where_value = dict(period_no=period_no, exam_no=exam_no,
+                           user_no=user_no)
+        if o_num == 0:
+            update_value.update(where_value)
+            self.db.execute_insert(self.t_usage, update_value)
+        else:
+            self.db.execute_update(self.t_usage, update_value=update_value,
+                                   where_value=where_value)
+            update_value.update(where_value)
+        return update_value
+
+
+class Exam(ExamMember, ExamUsage):
 
     def __init__(self, db_conf_path):
         super(Exam, self).__init__()
@@ -397,6 +454,8 @@ class Exam(ExamMember):
             next_no += 1
         return items
 
+
 if __name__ == "__main__":
+    print(ExamUsage.calc_period_no(1578844800))
     e = Exam("../mysql_app.conf")
     e.select_max_question("1543289889")
