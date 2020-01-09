@@ -84,9 +84,9 @@ def post_questions(question_set, dry_run=False, set_source=False):
         else:
             q_item_d["question_source"] = ""
         q_item_d["question_subject"] = 0  # 无
-        q_item_d["question_subject"] = 1  # 微观经济学
-        q_item_d["question_subject"] = 2  # 宏观经济学
-        q_item_d["question_subject"] = 3  # 政治经济学
+        # q_item_d["question_subject"] = 1  # 微观经济学
+        # q_item_d["question_subject"] = 2  # 宏观经济学
+        # q_item_d["question_subject"] = 3  # 政治经济学
         if dry_run:
             print(json.dumps(q_item_d))
         if not dry_run:

@@ -226,7 +226,7 @@
                 "col_name": "exam_no",
                 "col_type": "int(11)"
             },
-           {
+            {
                 "pri_key": true,
                 "col_comment": "用户编号",
                 "col_name": "user_no",
@@ -234,16 +234,16 @@
             },
             {
                 "col_comment": "练习题目数量",
-                "col_name": "",
+                "col_name": "num",
                 "col_type": "int(11)"
             },
             {
-                "col_comment": "录入者",
+                "col_comment": "更新时间",
                 "col_name": "update_time",
                 "col_type": "int(11)"
             }
         ],
-        "table_comment": "",
+        "table_comment": "一个周期内做题数目",
         "table_name": "exam_usage_records"
     }
 ]
