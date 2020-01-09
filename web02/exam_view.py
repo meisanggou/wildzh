@@ -488,3 +488,21 @@ def transfer_exam():
     items = c_exam.transfer_exam(source_exam_no, start_no, end_no,
                                  target_exam_no, select_mode=select_mode)
     return jsonify({'status': True, 'data': items})
+
+
+@exam_view.route('/usage', method=['GET'])
+@login_required
+@required_exam_no
+def get_usage():
+    item = c_exam.get_one_usage_records(g.user_no, g.exam_no)
+    return jsonify(item)
+
+
+@exam_view.route('/usage', method=['POST'])
+@login_required
+@required_exam_no
+def update_usage():
+    data = request.json
+    num = data['num']
+    item = c_exam.update_usage_records(g.exam_no, g.user_no, num)
+    return jsonify(item)
