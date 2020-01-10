@@ -490,7 +490,7 @@ def transfer_exam():
     return jsonify({'status': True, 'data': items})
 
 
-@exam_view.route('/usage', method=['GET'])
+@exam_view.route('/usage', methods=['GET'])
 @login_required
 @required_exam_no
 def get_usage():
@@ -498,7 +498,7 @@ def get_usage():
     return jsonify(item)
 
 
-@exam_view.route('/usage', method=['POST'])
+@exam_view.route('/usage', methods=['POST'])
 @login_required
 @required_exam_no
 def update_usage():

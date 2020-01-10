@@ -10,7 +10,8 @@ Page({
         examName: "未选择",
         examNo: 0,
         showManExam: false,
-        version: "4.6.0"
+        brushNum: 10,
+        version: "4.6.1"
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {
@@ -37,6 +38,7 @@ Page({
     },
     onShow: function () {
         this.getExams();
+        this.getBrushNum();
 
     },
     getUserInfo: function (e) {
@@ -106,6 +108,26 @@ Page({
             }
         })
     },
+    getBrushNum: function () {
+        var examNo = this.data.examNo;
+        if(examNo == 0){
+            that.setData({
+                brushNum: -1
+            });
+        }
+        that = this;
+        wx.request2({
+            url: '/exam/usage',
+            method: 'GET',
+            success: res => {
+                var resData = res.data.data;
+                var brushNum = resData['num'];
+                that.setData({
+                    brushNum: brushNum
+                });
+            }
+        })
+    },
     examChange: function(e) {
         var examIndex = e.detail.value;
         var showManExam = false;
@@ -119,6 +141,7 @@ Page({
             showManExam: showManExam
         })
         app.setDefaultExam(currentExam);
+        this.getBrushNum();
     },
     managerExam: function(){
         wx.navigateTo({

@@ -75,6 +75,16 @@
                         </view>
                     </view>
 
+                    <view wx:if="{{brushNum >= 0}}" class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">本周做题</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <view class="weui-input">{{brushNum}}
+                            </view>
+                        </view>
+                    </view>
+
                     <view class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
                             <view class="weui-label">版本</view>
