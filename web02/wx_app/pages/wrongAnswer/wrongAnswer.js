@@ -5,6 +5,8 @@ var touchStartX = 0; //触摸时的原点
 var touchStartY = 0;
 var touchInterval = null;
 var questionItems = [];
+var brushNum = 0;
+var brushList = new Array();
 Page({
     data: {
         remote_host: app.globalData.remote_host,
@@ -22,6 +24,7 @@ Page({
 
     onLoad: function(options) {},
     onShow: function() {
+        brushList = [];
         var initR = this.initExam();
         console.info(initR);
         if (initR != false) {
@@ -338,7 +341,6 @@ Page({
             showRemove: false
         })
 
-
     },
     before1: function() {
         that.before(1);
@@ -350,6 +352,7 @@ Page({
     choseItem: function(e) {
         var choseIndex = parseInt(e.currentTarget.dataset.choseitem);
         var nowQuestion = that.data.nowQuestion;
+        this.addBrushNum(nowQuestion.question_no);
         var nowQuestionIndex = that.data.nowQuestionIndex;
         var showRemove = false;
         for (var index in questionItems[nowQuestionIndex]["options"]) {
@@ -370,6 +373,7 @@ Page({
     },
     showAnswer: function(e) {
         var nowQuestion = that.data.nowQuestion;
+        this.addBrushNum(nowQuestion.question_no);
         var questionAnswer = new Array();
         for (var index in nowQuestion.options) {
             if (parseInt(nowQuestion.options[index]["score"]) > 0) {
@@ -384,6 +388,33 @@ Page({
         that.setData({
             showAnswer: true,
             questionAnswer: questionAnswer
+        })
+    },
+    addBrushNum: function (q_no) {
+        if (brushList.indexOf(q_no) >= 0) {
+            return false;
+        }
+        brushNum += 1;
+        brushList.push(q_no);
+        this.saveBrushNum();
+    },
+    saveBrushNum: function () {
+        if (brushNum <= 0) {
+            return false;
+        }
+        var _num = brushNum;
+        brushNum = 0;
+        var examNo = this.data.examNo;
+        var data = { 'exam_no': examNo, 'num': _num }
+        wx.request2({
+            url: '/exam/usage?exam_no=' + examNo,
+            method: 'POST',
+            data: data,
+            success: res => {
+            },
+            fail: function () {
+                brushNum += _num;
+            }
         })
     },
     // 触摸开始事件

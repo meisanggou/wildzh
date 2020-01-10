@@ -5,6 +5,9 @@ var touchTime = 0;
 var touchStartX = 0; //触摸时的原点
 var touchStartY = 0;
 var touchInterval = null;
+var brushNum = 0;
+var brushList = new Array();
+
 Page({
     data: {
         remote_host: app.globalData.remote_host,
@@ -109,6 +112,7 @@ Page({
         })
     },
     onLoad: function(options) {
+        brushList = [];
         this.setData({
             examNo: app.globalData.defaultExamNo,
             examName: app.globalData.defaultExamName
@@ -416,6 +420,7 @@ Page({
         if (nowQuestion == null) {
             return false;
         }
+        this.addBrushNum(nowQuestion.question_no);
         var questionAnswer = new Array();
 
         for (var index in nowQuestion.options) {
@@ -437,6 +442,7 @@ Page({
         var choseIndex = parseInt(e.currentTarget.dataset.choseitem);
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
+        this.addBrushNum(nowQuestion.question_no);
         for (var index in questionItems[nowQuestionIndex]["options"]) {
             nowQuestion["options"][index]["class"] = "noChose";
 
@@ -539,6 +545,33 @@ Page({
             }
         })
     },
+    addBrushNum: function(q_no){
+        if (brushList.indexOf(q_no) >= 0){
+            return false;
+        }
+        brushNum += 1;
+        brushList.push(q_no);
+        this.saveBrushNum();
+    },
+    saveBrushNum: function(){
+        if(brushNum <= 0){
+            return false;
+        }
+        var _num = brushNum;
+        brushNum = 0;
+        var examNo = this.data.examNo;
+        var data = {'exam_no': examNo, 'num': _num}
+        wx.request2({
+            url: '/exam/usage?exam_no=' + examNo,
+            method: 'POST',
+            data: data,
+            success: res => {
+            },
+            fail: function(){
+                brushNum += _num;
+            }
+        })
+    },
     saveTrainingProcess() {
         if (that.data.examNo == null || that.data.nowQuestion == null) {
             return false;
@@ -551,6 +584,7 @@ Page({
     },
     onUnload: function() {
         console.info("un load")
+        this.saveBrushNum();
         this.saveTrainingProcess();
     },
     // 触摸开始事件
