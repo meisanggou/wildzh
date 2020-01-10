@@ -10,7 +10,7 @@ Page({
         examName: "未选择",
         examNo: 0,
         showManExam: false,
-        brushNum: 10,
+        brushNum: -1,
         version: "4.6.1"
     },
     onLoad: function(options) {

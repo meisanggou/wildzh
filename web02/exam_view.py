@@ -495,7 +495,7 @@ def transfer_exam():
 @required_exam_no
 def get_usage():
     item = c_exam.get_one_usage_records(g.user_no, g.exam_no)
-    return jsonify(item)
+    return jsonify({'status': True, 'data': item})
 
 
 @exam_view.route('/usage', methods=['POST'])
@@ -505,4 +505,4 @@ def update_usage():
     data = request.json
     num = data['num']
     item = c_exam.update_usage_records(g.exam_no, g.user_no, num)
-    return jsonify(item)
+    return jsonify({'status': True, 'data': item})
