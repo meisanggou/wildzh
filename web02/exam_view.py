@@ -495,6 +495,8 @@ def transfer_exam():
 @required_exam_no
 def get_usage():
     item = c_exam.get_one_usage_records(g.user_no, g.exam_no)
+    if(g.user_role & 2) != 2:
+        item['num'] = -1
     return jsonify({'status': True, 'data': item})
 
 

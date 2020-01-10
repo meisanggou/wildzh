@@ -11,7 +11,7 @@ Page({
         examNo: 0,
         showManExam: false,
         brushNum: -1,
-        version: "4.6.1"
+        version: "4.6.2"
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {
