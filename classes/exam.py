@@ -171,7 +171,8 @@ class ExamUsage(object):
 class Exam(ExamMember, ExamUsage):
 
     def __init__(self, db_conf_path):
-        super(Exam, self).__init__()
+        ExamMember.__init__(self)
+        ExamUsage.__init__(self)
         self.db = DB(conf_path=db_conf_path)
         self.t_info = "exam_info"
         self.t_q = "exam_questions"

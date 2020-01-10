@@ -117,7 +117,7 @@ Page({
         }
         that = this;
         wx.request2({
-            url: '/exam/usage',
+            url: '/exam/usage?exam_no=' + examNo,
             method: 'GET',
             success: res => {
                 var resData = res.data.data;
