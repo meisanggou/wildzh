@@ -214,6 +214,8 @@ def get_exam_info():
             items[i]['exam_role'] = 10
         else:
             items[i]['exam_role'] = 100
+        if 'end_time' not in items[i]:
+            items[i]['end_time'] = 0
         if items[i]['exam_role'] > min_role:
             del items[i]
     return jsonify({"status": True, "data": items})
