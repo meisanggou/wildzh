@@ -204,10 +204,12 @@ def get_exam_info():
         exam_no = items[i]['exam_no']
         if int(items[i]["adder"]) == g.user_no:
             items[i]['exam_role'] = 1
+            items[i]['end_time'] = None
         elif exam_no in u_exams:
             items[i].update(u_exams[exam_no])
         elif (g.user_role & 2) == 2:
             items[i]['exam_role'] = 0  # 内部用户全部返回
+            items[i]['end_time'] = None
         elif items[i]["status"] & 64 == 64:
             items[i]['exam_role'] = 10
         else:

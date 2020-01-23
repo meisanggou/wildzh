@@ -203,7 +203,8 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None,
                 print(exam_name)
                 import pdb
                 pdb.set_trace()
-                raise RuntimeError("lack answer %s" % q_item.no)
+                raise RuntimeError("lack answer %s %s" % (q_item.select_mode,
+                                                          q_item.no))
             q_item.set_answer(answer_obj)
             # 开始上传 题目
             # 获取题目描述中的图片
