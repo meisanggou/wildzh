@@ -4,15 +4,26 @@
 
 function timestamp_2_datetime(ts) {
     var dt = new Date(parseInt(ts) * 1000);
-    var dt_str = dt.toLocaleDateString().replace(/\/\d{1,2}/g, function (word) { if (word.length >= 3) { return "-" + word.substr(1) } else { return "-0" + word.substr(1) } }) + " ";
-    dt_str += dt.toTimeString().substr(0, 8);
-    return dt_str;
+    var y = dt.getFullYear();
+    var M = dt.getMonth() + 1;
+    var d = dt.getDate();
+    var h = dt.getHours(); 
+    var m = dt.getMinutes();
+    var s = dt.getSeconds();
+    var n_str = y + "-" + M + "-" + d + " " + h + ":" + m + ":" + s
+    return n_str;
 }
 
 function timestamp_2_date(ts) {
     var dt = new Date(parseInt(ts) * 1000);
-    var dt_str = dt.toLocaleDateString().replace(/\/\d{1,2}/g, function (word) { if (word.length >= 3) { return "-" + word.substr(1) } else { return "-0" + word.substr(1) } }) + " ";
-    return dt_str;
+    var y = dt.getFullYear();
+    var M = dt.getMonth() + 1;
+    var d = dt.getDate();
+    var h = dt.getHours();
+    var m = dt.getMinutes();
+    var s = dt.getSeconds();
+    var n_str = y + "-" + M + "-" + d;
+    return n_str;
 }
 
 function get_timestamp() {
@@ -84,5 +95,6 @@ module.exports = {
     today_timestamp: today_timestamp,
     get_timestamp2: get_timestamp2,
     timestamp_2_datetime: timestamp_2_datetime,
-    datetime_2_timestamp: datetime_2_timestamp
+    datetime_2_timestamp: datetime_2_timestamp,
+    timestamp_2_date: timestamp_2_date
 };

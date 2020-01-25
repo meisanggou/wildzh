@@ -1,4 +1,5 @@
 var app = getApp();
+var dt = require("../common/datetime_tools.js");
 var that;
 Page({
     data: {
@@ -10,8 +11,9 @@ Page({
         examName: "未选择",
         examNo: 0,
         showManExam: false,
+        examEndTime: null,
         brushNum: -1,
-        version: "4.6.2"
+        version: "4.6.5"
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {
@@ -21,7 +23,6 @@ Page({
             })
         }
         var currentUser = app.getOrSetCurrentUserData();
-        console.info(currentUser);
         if(currentUser != null){
             if("user_no" in currentUser){
                 this.setData({
@@ -38,8 +39,6 @@ Page({
     },
     onShow: function () {
         this.getExams();
-        this.getBrushNum();
-
     },
     getUserInfo: function (e) {
         var that = this
@@ -58,7 +57,6 @@ Page({
             data: data,
             success: res => {
                 var userItem = res.data.data
-                console.info(userInfo)
                 wx.setStorageSync(app.globalData.userInfoStorageKey, userItem)
                 that.setData({
                     userAvatar: userItem.avatar_url,
@@ -85,7 +83,6 @@ Page({
                         if (resData[index].exam_no == this.data.examNo){
                             examName = resData[index].exam_name;
                             examNo = resData[index].exam_no;
-                            console.info(resData[index]);
                             if (resData[index].exam_role <= 3) {
                                 showManExam = true;
                             }
@@ -97,19 +94,44 @@ Page({
                 if(examNo == 0){
                     examName = "未选择";
                 }
-
+                
                 that.setData({
                     allExams: allExams,
                     examName: examName,
                     examNo: examNo,
                     showManExam: showManExam
                 });
+                that.getBrushNum();
                 wx.hideLoading();
             }
         })
     },
     getBrushNum: function () {
         var examNo = this.data.examNo;
+        var examEndTime = null;
+        var allExams = this.data.allExams;
+        for(var i=0;i<allExams.length;i++){
+            if(allExams[i].exam_no == examNo){
+                if('end_time' in allExams[i]){
+                    var end_time = allExams[i]['end_time'];
+                    if (end_time == null){
+                        examEndTime = '无期限'
+                    }
+                    else if(end_time <= 0){
+                        // 不显示 有效期
+                        break;
+                    }
+                    else{
+                        examEndTime = dt.timestamp_2_date(end_time);
+                    }
+                }
+                break;
+            }
+        }
+        this.setData({
+            examEndTime: examEndTime
+            }
+        )
         if(examNo == 0){
             that.setData({
                 brushNum: -1
@@ -135,6 +157,7 @@ Page({
         if (currentExam.exam_role <= 3) {
             showManExam = true;
         }
+        
         this.setData({
             examNo: currentExam.exam_no,
             examName: currentExam.exam_name,

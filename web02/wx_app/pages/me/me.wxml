@@ -74,7 +74,15 @@
                             <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="managerExam"></image>
                         </view>
                     </view>
-
+                    <view wx:if="{{examEndTime}}" class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">题库有效期</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <view class="weui-input">{{examEndTime}}
+                            </view>
+                        </view>
+                    </view>
                     <view wx:if="{{brushNum >= 0}}" class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
                             <view class="weui-label">本周做题</view>
