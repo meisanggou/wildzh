@@ -133,8 +133,8 @@ def upload_media(r_id, rl, width, height, cache_rl, clip_data=None, dry_run=Fals
             else:
                 clip_data[i] = float(clip_data[i]) / 1000.0
         png_file = _clip_pic(png_file, clip_data)
-    if dry_run:
-        return "/dummy/%s" % r_id
+    # if dry_run:
+    #     return "/dummy/%s" % r_id
     url = remote_host + "/exam/upload/"
     files = dict(pic=open(png_file, "rb"))
     resp = req.post(url, files=files)
@@ -226,25 +226,33 @@ def upload_js_with_answer(exam_no, file_path, dry_run=True, set_source=False):
                                    set_source=set_source)
 
 
-def update_xz_no_answer(exam_no, file_path, dry_run=True, set_source=False):
+def upload_xz_no_answer(exam_no, file_path, dry_run=True, set_source=False):
     # 选择题
     login("admin", "admin")
     return handle_exam_no_answer(exam_no, file_path, 1, dry_run=dry_run,
                                  set_source=set_source)
 
 
-def update_jd_no_answer(exam_no, file_path, dry_run=True, set_source=False):
+def upload_jd_no_answer(exam_no, file_path, dry_run=True, set_source=False):
     # 简答题
     login("admin", "admin")
     return handle_exam_no_answer(exam_no, file_path, 3, dry_run=dry_run,
                                  set_source=set_source)
 
 
-def update_mc_no_answer(exam_no, file_path, dry_run=True, set_source=False,
+def upload_mc_no_answer(exam_no, file_path, dry_run=True, set_source=False,
                         has_answer=True):
     # 简答题
     login("admin", "admin")
     return handle_exam_no_answer(exam_no, file_path, 2, dry_run=dry_run,
+                                 set_source=set_source, has_answer=has_answer)
+
+
+def upload_js_no_answer(exam_no, file_path, dry_run=True, set_source=False,
+                        has_answer=True):
+    # 计算题
+    login("admin", "admin")
+    return handle_exam_no_answer(exam_no, file_path, 4, dry_run=dry_run,
                                  set_source=set_source, has_answer=has_answer)
 
 
@@ -328,14 +336,15 @@ if __name__ == "__main__":
     # transfer_exam(1569283516, 0, 3955, 1570447137)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
-    d_path = ur'D:\Project\word\app\河南专升本经济学简答题小汇.docx'
+    d_path = ur'D:\Project\word\app\更新计算题.docx'
     # read_docx(d_path)
 
     d = r'D:/Project/word/app/upload'
-    find_from_dir(exam_no, d, dry_run=True, set_source=False,
-                  answer_file=True)
+    # find_from_dir(exam_no, d, dry_run=True, set_source=False,
+    #               answer_file=True)
     # download_questions(1569283516, 2)
-    # update_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
+    # upload_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
+    upload_js_no_answer(exam_no, d_path, dry_run=True, set_source=False)
     # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
     # handle_exam_no_answer(exam_no, d_path, dry_run=True, set_source=False,
     #                       has_answer=True)

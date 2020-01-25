@@ -246,7 +246,8 @@ $(function() {
                     return false;
                 }
                 var data = {"exam_no": this.current_exam.exam_no, "start_no": question_no, "num": 1};
-                my_async_request2(questions_url, "GET", data, receive_questions);
+                var _url = questions_url + "?no_rich=true";
+                my_async_request2(_url, "GET", data, receive_questions);
             },
             action_next: function(){
                 var c_qno = this.current_question_no;
