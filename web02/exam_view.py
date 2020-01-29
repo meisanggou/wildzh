@@ -327,7 +327,8 @@ def get_exam_questions():
         if "X-Device-Screen-Width" in request.headers:
             max_width = int(request.headers["X-Device-Screen-Width"]) * 0.95
         for item in items:
-            question_desc_rich = separate_image(item["question_desc"])
+            question_desc_rich = separate_image(item["question_desc"],
+                                                max_width)
             del item['question_desc']
             item["question_desc_rich"] = question_desc_rich
             for option in item["options"]:

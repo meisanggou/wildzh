@@ -70,6 +70,20 @@ class Question(object):
         _q_item['answer'] = self.answer
         return _q_item
 
+    def to_update_dict(self, *keys):
+        if self.answer is None:
+            raise RuntimeError("Net set answer %s" % self.no)
+        _q_item = dict()
+        for key in keys:
+            _key = key
+            if key == 'question_desc':
+                _key = 'desc'
+            if not hasattr(self, _key):
+                raise RuntimeError('No Key %s in %s' % (_key, self))
+            _q_item[key] = getattr(self, _key)
+        _q_item["question_no"] = self.no
+        return _q_item
+
     def __str__(self):
         return json.dumps(self.to_dict())
 
@@ -201,9 +215,15 @@ class ParseQuestion(object):
 
 class QuestionSet(object):
 
-    def __init__(self):
-        self.exam_no = None
+    def __init__(self, exam_no=None, dry_run=True, **kwargs):
+        self.has_answer = kwargs.pop('has_answer', True)
+        self.default_select_mode = kwargs.pop('default_sm', None)
+        self.set_source = kwargs.pop('set_source', False)
+        self.set_mode = kwargs.pop('set_mode', False)
+        self.real_upload = kwargs.pop('real_upload', not dry_run)
+        self.exam_no = exam_no
         self.exam_name = None
+        self.dry_run = dry_run
         self._s = collections.OrderedDict()
         # self._select_mode_s = dict()
 

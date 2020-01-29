@@ -197,13 +197,13 @@ def handle_rels(rels_path):
 
 
 def handle_docx_main_xml(xml_path, *args, **kwargs):
-    select_mode = kwargs.pop("select_mode")
-    has_answer = kwargs.pop('has_answer')
+    questions_set = kwargs.pop('questions_set')
+    select_mode = questions_set.default_select_mode
+    has_answer = questions_set.has_answer
     dom = minidom.parse(xml_path)
     root = dom.documentElement
     body = _get_one_node(root, "w:body")
-    question_set = QuestionSet()
-    current_q_type = select_mode
+    current_q_type = questions_set.default_select_mode
     current_question = []
     current_question_no = 0
     s_c = args
@@ -224,7 +224,7 @@ def handle_docx_main_xml(xml_path, *args, **kwargs):
             if q_item.q_type != QuestionType.QA:
                 raise RuntimeError(u"问题类型解析错误")
         q_item.select_mode = current_question[0]
-        question_set.append(q_item)
+        questions_set.append(q_item)
 
     for node in body.childNodes:
         if node.nodeName != "w:p":
@@ -262,14 +262,13 @@ def handle_docx_main_xml(xml_path, *args, **kwargs):
                 current_question.append(p_content)
     if len(current_question) > 0:
         _get_question()
-    return question_set
+    return questions_set
 
 
-def read_docx_xml(root_dir, select_mode=None, has_answer=None):
+def read_docx_xml(root_dir, questions_set):
     xml_path = os.path.join(root_dir, 'word', 'document.xml')
     questions_s = handle_docx_main_xml(xml_path, ".", u"、", u"．", ':',
-                                       select_mode=select_mode,
-                                       has_answer=has_answer)
+                                       questions_set=questions_set)
     style_path = os.path.join(root_dir, 'word', '_rels', "document.xml.rels")
     relationships = handle_rels(style_path)
     for key in relationships.keys():
@@ -278,10 +277,9 @@ def read_docx_xml(root_dir, select_mode=None, has_answer=None):
 
 
 @contextmanager
-def read_docx(docx_path, select_mode=None, has_answer=None):
+def read_docx(docx_path, questions_set):
     with extract_docx(docx_path) as temp_dir:
-        questions_s, relationships = read_docx_xml(temp_dir, select_mode,
-                                                   has_answer=has_answer)
+        questions_s, relationships = read_docx_xml(temp_dir, questions_set)
         yield [questions_s, relationships]
         pass
 

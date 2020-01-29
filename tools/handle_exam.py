@@ -9,6 +9,7 @@ import requests
 import subprocess
 import uuid
 
+from parse_question import QuestionSet
 
 from read_xml import read_docx, read_answers_docx
 
@@ -70,32 +71,49 @@ def req_max_no(exam_no):
     return res["data"]
 
 
-def post_questions(question_set, dry_run=False, set_source=False):
-    exam_no = question_set.exam_no
+def post_questions(questions_set):
+    exam_no = questions_set.exam_no
     no_info = req_max_no(exam_no)
     next_no = no_info["next_no"]
     url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
     question_no = next_no
-    for q_item in question_set:
+    for q_item in questions_set:
         q_item_d = q_item.to_exam_dict()
         q_item_d["question_no"] = question_no
-        if set_source:
-            q_item_d["question_source"] = question_set.exam_name
+        if questions_set.set_source:
+            q_item_d["question_source"] = questions_set.exam_name
         else:
             q_item_d["question_source"] = ""
         q_item_d["question_subject"] = 0  # 无
         # q_item_d["question_subject"] = 1  # 微观经济学
         # q_item_d["question_subject"] = 2  # 宏观经济学
         q_item_d["question_subject"] = 3  # 政治经济学
-        if dry_run:
+        if questions_set.dry_run:
             print(json.dumps(q_item_d))
-        if not dry_run:
+        if not questions_set.dry_run:
             resp = req.post(url, json=q_item_d)
             print(resp.text)
         question_no += 1
 
 
-def replace_media(text, q_rl, cache_rl, dry_run):
+def set_questions(questions_set):
+    set_keys = ['answer', 'question_desc']
+    exam_no = questions_set.exam_no
+    url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
+    for q_item in questions_set:
+        q_item_d = q_item.to_update_dict(*set_keys)
+        # if set_source:
+        #     q_item_d["question_source"] = question_set.exam_name
+        # else:
+        #     q_item_d["question_source"] = ""
+        if questions_set.dry_run:
+            print(json.dumps(q_item_d))
+        if not questions_set.dry_run:
+            resp = req.put(url, json=q_item_d)
+            print(resp.text)
+
+
+def replace_media(text, q_rl, cache_rl, real_upload):
     media_comp = re.compile(r"(\[\[([a-z0-9]+?)\$([\d.]+?)\$([\d.]+?)(|\$[\d\.\-|]+?)\]\])", re.I)
     found_rs = media_comp.findall(text)
     for r_item in found_rs:
@@ -108,12 +126,12 @@ def replace_media(text, q_rl, cache_rl, dry_run):
             # 需要裁剪
             left, top, right, bottom = r_item[4][1:].split("|")
             clip_data = [left, top, right, bottom]
-        r_url = upload_media(m_id, q_rl, width, height, cache_rl, clip_data, dry_run)
+        r_url = upload_media(m_id, q_rl, width, height, cache_rl, clip_data, real_upload)
         text = text.replace(r_t, "[[%s:%s:%s]]" % (r_url, width, height))
     return text
 
 
-def upload_media(r_id, rl, width, height, cache_rl, clip_data=None, dry_run=False):
+def upload_media(r_id, rl, width, height, cache_rl, clip_data=None, real_upload=False):
     if r_id in cache_rl:
         return cache_rl[r_id]
 
@@ -133,44 +151,44 @@ def upload_media(r_id, rl, width, height, cache_rl, clip_data=None, dry_run=Fals
             else:
                 clip_data[i] = float(clip_data[i]) / 1000.0
         png_file = _clip_pic(png_file, clip_data)
-    # if dry_run:
-    #     return "/dummy/%s" % r_id
+    if not real_upload:
+        return "/dummy/%s" % r_id
     url = remote_host + "/exam/upload/"
     files = dict(pic=open(png_file, "rb"))
     resp = req.post(url, files=files)
     return resp.json()["data"]["pic"]
 
 
-def handle_exam_no_answer(exam_no, file_path, select_mode=None,
-                          dry_run=False, set_source=False, has_answer=None):
+def handle_exam_no_answer(exam_no, file_path, questions_set):
     uploaded_q_rl = dict()
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     print("start handle %s" % exam_name)
 
-    with read_docx(file_path, select_mode=select_mode,
-                   has_answer=has_answer) as rd:
-        question_set, q_rl = rd
-        question_set.exam_no = exam_no
-        if question_set.length <= 0:
+    with read_docx(file_path, questions_set=questions_set) as rd:
+        _temp, q_rl = rd
+        if questions_set.length <= 0:
             raise RuntimeError("没发现题目")
-        for q_item in question_set:
+        for q_item in questions_set:
             q_no = q_item.no
             # 开始上传 题目
             # 获取题目描述中的图片
             q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl,
-                                        dry_run=dry_run)
+                                        real_upload=questions_set.real_upload)
 
             # 获取选项中的图片
             for option in q_item.options:
                 option.desc = replace_media(option.desc, q_rl, uploaded_q_rl,
-                                            dry_run=dry_run)
+                                            real_upload=questions_set.real_upload)
             # 获取答案中的图片
             if q_item.answer is None:
                 print(q_item)
             q_item.answer = replace_media(q_item.answer, q_rl, uploaded_q_rl,
-                                          dry_run=dry_run)
+                                          real_upload=questions_set.real_upload)
             q_item.inside_mark = "%s %s" % (exam_name, q_no)
-        post_questions(question_set, dry_run=dry_run, set_source=set_source)
+        if questions_set.set_mode:
+            set_questions(questions_set)
+        else:
+            post_questions(questions_set)
     return True, "success"
 
 
@@ -248,12 +266,11 @@ def upload_mc_no_answer(exam_no, file_path, dry_run=True, set_source=False,
                                  set_source=set_source, has_answer=has_answer)
 
 
-def upload_js_no_answer(exam_no, file_path, dry_run=True, set_source=False,
-                        has_answer=True):
+def upload_js_no_answer(exam_no, file_path, questions_set):
     # 计算题
     login("admin", "admin")
-    return handle_exam_no_answer(exam_no, file_path, 4, dry_run=dry_run,
-                                 set_source=set_source, has_answer=has_answer)
+    questions_set.default_select_mode = 4
+    return handle_exam_no_answer(exam_no, file_path, questions_set)
 
 
 def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode=None):
@@ -336,15 +353,17 @@ if __name__ == "__main__":
     # transfer_exam(1569283516, 0, 3955, 1570447137)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
-    d_path = ur'D:\Project\word\app\更新计算题.docx'
-    # read_docx(d_path)
 
+    d_path = ur'D:\Project\word\app\更新题3.docx'
+    # read_docx(d_path)
+    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=True)
+    q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'
     # find_from_dir(exam_no, d, dry_run=True, set_source=False,
     #               answer_file=True)
     # download_questions(1569283516, 2)
     # upload_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
-    upload_js_no_answer(exam_no, d_path, dry_run=True, set_source=False)
+    upload_js_no_answer(exam_no, d_path, q_set)
     # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
     # handle_exam_no_answer(exam_no, d_path, dry_run=True, set_source=False,
     #                       has_answer=True)
