@@ -10,6 +10,35 @@ from parse_option import ListOption
 from parse_option import ParseOptions
 
 
+class AnswerLocation(object):
+    _instances = {}
+
+    def __new__(cls, *args, **kwargs):
+        value = args[0].lower()
+        if value not in cls._instances:
+            cls._instances[value] = object.__new__(cls)
+        return cls._instances[value]
+
+    def __init__(self, value):
+        self.value = value
+
+    @classmethod
+    def embedded(cls):
+        return cls('Embedded')
+
+    @classmethod
+    def file(cls):
+        return cls('File')
+
+    @classmethod
+    def is_embedded(cls, value):
+        return value is cls.embedded()
+
+    @classmethod
+    def is_file(cls, value):
+        return value is cls.file()
+
+
 class QuestionType(object):
     Choice = "Choice"
     QA = "Questions and answers"
@@ -169,7 +198,7 @@ class ParseQuestion(object):
         pass
 
     @classmethod
-    def parse(cls, question_items, select_mode=None, has_answer=None):
+    def parse(cls, question_items, select_mode=None, embedded_answer=None):
         if len(question_items) == 0:
             return None
         q_no = question_items[0]
@@ -186,7 +215,7 @@ class ParseQuestion(object):
             options.B = u"不会"
             q.options = options
             q.q_type = QuestionType.QA
-            if has_answer and select_mode == 2:
+            if embedded_answer and select_mode == 2:
                 # 名词解释
                 n_desc, answers = cls.find_answer_by_separator(desc,
                                                                [':', u'：'])
@@ -216,11 +245,12 @@ class ParseQuestion(object):
 class QuestionSet(object):
 
     def __init__(self, exam_no=None, dry_run=True, **kwargs):
-        self.has_answer = kwargs.pop('has_answer', True)
+        # self.has_answer = kwargs.pop('has_answer', True)
         self.default_select_mode = kwargs.pop('default_sm', None)
         self.set_source = kwargs.pop('set_source', False)
         self.set_mode = kwargs.pop('set_mode', False)
         self.real_upload = kwargs.pop('real_upload', not dry_run)
+        self.answer_location = kwargs.pop('answer_location', '')
         self.exam_no = exam_no
         self.exam_name = None
         self.dry_run = dry_run
@@ -322,3 +352,11 @@ class AnswerSet(object):
         for items in self._s.values():
             for item in items.values():
                 yield item
+
+
+if __name__ == '__main__':
+    e = AnswerLocation('Embedded')
+    e2 = AnswerLocation('Embedded')
+    e3 = AnswerLocation.embedded()
+    print(e is e2)
+    print(e2 is e3)

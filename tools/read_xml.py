@@ -14,7 +14,7 @@ import xml.dom.minidom as minidom
 import zipfile
 
 from parse_question import ParseQuestion, QuestionType, QuestionSet
-from parse_question import Answer, AnswerSet, ParseAnswer
+from parse_question import Answer, AnswerSet, ParseAnswer, AnswerLocation
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -199,7 +199,7 @@ def handle_rels(rels_path):
 def handle_docx_main_xml(xml_path, *args, **kwargs):
     questions_set = kwargs.pop('questions_set')
     select_mode = questions_set.default_select_mode
-    has_answer = questions_set.has_answer
+    embedded_answer = AnswerLocation.is_embedded(questions_set.answer_location)
     dom = minidom.parse(xml_path)
     root = dom.documentElement
     body = _get_one_node(root, "w:body")
@@ -214,7 +214,7 @@ def handle_docx_main_xml(xml_path, *args, **kwargs):
             return
         q_item = ParseQuestion.parse(current_question[1:],
                                      select_mode=current_question[0],
-                                     has_answer=has_answer)
+                                     embedded_answer=embedded_answer)
 
         if current_question[0] == 1:
             if q_item.q_type != QuestionType.Choice:

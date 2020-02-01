@@ -9,7 +9,7 @@ import requests
 import subprocess
 import uuid
 
-from parse_question import QuestionSet
+from parse_question import QuestionSet, AnswerLocation
 
 from read_xml import read_docx, read_answers_docx
 
@@ -159,7 +159,7 @@ def upload_media(r_id, rl, width, height, cache_rl, clip_data=None, real_upload=
     return resp.json()["data"]["pic"]
 
 
-def handle_exam_no_answer(exam_no, file_path, questions_set):
+def handle_exam_no_answer(file_path, questions_set):
     uploaded_q_rl = dict()
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     print("start handle %s" % exam_name)
@@ -354,17 +354,17 @@ if __name__ == "__main__":
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
-    d_path = ur'D:\Project\word\app\更新题3.docx'
+    d_path = ur'D:\Project\word\app\更新题4.docx'
     # read_docx(d_path)
-    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=True)
+    s_kwargs = dict(exam_no=exam_no, dry_run=False, set_mode=True,
+                    answer_location=AnswerLocation.embedded())
     q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'
     # find_from_dir(exam_no, d, dry_run=True, set_source=False,
     #               answer_file=True)
     # download_questions(1569283516, 2)
     # upload_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
-    upload_js_no_answer(exam_no, d_path, q_set)
+    # upload_js_no_answer(exam_no, d_path, q_set)
     # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
-    # handle_exam_no_answer(exam_no, d_path, dry_run=True, set_source=False,
-    #                       has_answer=True)
+    handle_exam_no_answer(d_path, q_set)
     # update_mc_no_answer(exam_no, d_path, dry_run=True, set_source=False, has_answer=True)
