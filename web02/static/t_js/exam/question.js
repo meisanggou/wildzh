@@ -179,7 +179,7 @@ $(function() {
         exam_no = parseInt(exam_no);
     }
     var questions_url = $("#questions_url").val();
-    var url_upload= $("#url_upload").val();
+    var upload_url= $("#upload_url").val();
     q_vm = new Vue({
         el: "#myTabContent",
         data:{
@@ -216,7 +216,7 @@ $(function() {
                     return 1;
                 }
                 var data = {"pic": u_files[0]};
-                upload_request(url_upload, "POST", data, function(data){
+                upload_request(upload_url, "POST", data, function(data){
                     q_vm.question_desc_url = data["pic"];
                 });
             },

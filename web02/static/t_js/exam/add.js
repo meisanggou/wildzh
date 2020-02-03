@@ -14,7 +14,6 @@ $(function () {
         methods: {
             add: function () {
                 var r_data = new Object();
-                r_data["exam_type"] = "tiku";
                 var keys = ["exam_name", "exam_desc"];
                 for (var i = 0; i < keys.length; i++) {
                     var item = this[keys[i]];
@@ -51,5 +50,8 @@ $(function () {
             }
         }
     });
-
+    var exam_no = UrlArgsValue(location.href, 'exam_no');
+    if(exam_no != null){
+        console.info(exam_no);
+    }
 });

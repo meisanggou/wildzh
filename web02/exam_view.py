@@ -17,7 +17,16 @@ __author__ = 'meisa'
 
 url_prefix = "/exam"
 
-rt = RenderTemplate("exam", menu_active="exam")
+add_url = url_prefix + "/"
+upload_url = url_prefix + "/upload/"
+info_url = url_prefix + "/info/"
+online_url = url_prefix + "/online/"
+questions_url = url_prefix + "/questions/"
+page_exam = url_prefix + "/?action=exam"
+defined_routes = dict(add_url=add_url, upload_url=upload_url,
+                      info_url=info_url, online_url=online_url,
+                      questions_url=questions_url, page_exam=page_exam)
+rt = RenderTemplate("exam", menu_active="exam", defined_routes=defined_routes)
 menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam", "sub_menu": [
     {"title": u"试题库管理", "url": url_prefix + "/"},
     {"title": u"添加试题库", "url": url_prefix + "/?action=exam"},
@@ -146,32 +155,23 @@ def required_manager_exam(key, **role_desc):
 @exam_view.route("/", methods=["GET"])
 @login_required
 def index():
-    add_url = url_prefix + "/"
-    url_upload = url_prefix + "/upload/"
-    info_url = url_prefix + "/info/"
-    online_url = url_prefix + "/online/"
-    questions_url = url_prefix + "/questions/"
     page_exam = url_prefix + "/?action=exam"
     page_list = url_prefix + "/"
     if "action" in request.args and request.args["action"] == "exam":
         if "exam_no" in request.args:
-            return rt.render("entry_info.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
-                             upload_url=url_upload)
-        return rt.render("entry_info.html", add_url=add_url, upload_url=url_upload, page_title=u"新建题库")
+            return rt.render("entry_info.html", page_list=page_list, page_exam=page_exam,
+                             page_title=u'更新题库')
+        return rt.render("entry_info.html", page_title=u"新建题库")
     if "exam_no" in request.args:
-        return rt.render("entry_questions.html", page_list=page_list, page_exam=page_exam, info_url=info_url,
-                         questions_url=questions_url, page_title=u"试题管理", url_upload=url_upload)
-    return rt.render("overview.html", info_url=info_url, online_url=online_url, page_title=u"试题库")
+        return rt.render("entry_questions.html", page_list=page_list,
+                         page_exam=page_exam, page_title=u"试题管理")
+    return rt.render("overview.html", page_title=u"试题库")
 
 
 @exam_view.route("/question/", methods=["GET"])
 @login_required
 def question_page():
-    info_url = url_prefix + "/info/"
-    questions_url = url_prefix + "/questions/"
-    url_upload = url_prefix + "/upload/"
-    return rt.render("entry_questions.html", info_url=info_url, questions_url=questions_url, page_title=u"试题管理",
-                     url_upload=url_upload)
+    return rt.render("entry_questions.html", page_title=u"试题管理")
 
 
 @exam_view.route("/", methods=["POST"])
@@ -235,8 +235,7 @@ def update_exam():
 @login_required
 def delete_exam():
     exam_no = g.request_data["exam_no"]
-    exam_type = g.request_data["exam_type"]
-    l = c_exam.delete_exam(exam_type, exam_no)
+    l = c_exam.delete_exam(exam_no)
     return jsonify({"status": True, "data": "删除成功"})
 
 
@@ -389,7 +388,6 @@ def online_exam():
 @login_required
 def offline_exam():
     exam_no = g.request_data["exam_no"]
-    exam_type = g.request_data["exam_type"]
     c_exam.offline_exam(exam_no)
     return jsonify({"status": True, "data": "success"})
 

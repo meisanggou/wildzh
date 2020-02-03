@@ -247,6 +247,11 @@
         <!--End Page Title-->
         {% block center_content %}
         {% endblock %}
+        {% if defined_routes %}
+            {% for key, value in defined_routes.items() %}
+                <input id="{{ key }}" value="{{ value }}" class="display_none">
+            {% endfor %}
+        {% endif %}
     </div>
 
     <!--Start  Footer -->

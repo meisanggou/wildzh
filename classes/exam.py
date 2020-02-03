@@ -426,7 +426,7 @@ class Exam(ExamMember, ExamUsage):
         l = self._update_status(exam_no, sub_status=64)
         return l
 
-    def delete_exam(self, exam_type, exam_no):
+    def delete_exam(self, exam_no):
         l = self._update_info(exam_no, status=0)
         return l
 

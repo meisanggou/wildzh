@@ -92,9 +92,6 @@
             <button class="btn btn-success btn-down" v-if="action == 'new'" @click="new_question">新建</button>
             <button class="btn btn-success btn-down" v-else @click="update_question">更新</button>
             <a class="status_move" v-if="current_question_no<=current_exam.question_num" @click="action_next">下一题</a>
-            <input id="info_url" value="{{ info_url }}" class="display_none">
-            <input id="questions_url" value="{{ questions_url }}" class="display_none">
-            <input id="url_upload" value="{{ url_upload }}" class="display_none">
         </div>
     </div>
 {% endblock %}
