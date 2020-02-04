@@ -226,8 +226,18 @@ def get_exam_info():
 def update_exam():
     data = g.request_data
     exam_no = data["exam_no"]
+    extend_keys = ['openness_level', 'open_mode', 'open_no_start',
+                   'open_no_end', 'pic_url']
+    items = c_exam.select_exam(exam_no)
+    if len(items) != 1:
+        return jsonify({"status": False, "data": "Exam not exist"})
+    extend_values = items[0]['exam_extend'] if \
+        isinstance(items[0]['exam_extend'], dict) else dict()
+    for ek in extend_keys:
+        if ek in data:
+            extend_values[ek] = data[ek]
     l = c_exam.update_exam(exam_no, data["exam_name"], data["exam_desc"],
-                           pic_url=data["pic_url"])
+                           **extend_values)
     return jsonify({"status": True, "data": data})
 
 

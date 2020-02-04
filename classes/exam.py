@@ -305,7 +305,7 @@ class Exam(ExamMember, ExamUsage):
             item["exam_type"] = "tiku"
             if item["exam_extend"] is not None:
                 item.update(json.loads(item["exam_extend"]))
-                del item["exam_extend"]
+                # del item["exam_extend"]
         return items
 
     def _select_questions(self, **kwargs):

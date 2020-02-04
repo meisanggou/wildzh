@@ -9,6 +9,10 @@ $(function () {
             exam_no: null,
             exam_name: "",
             exam_desc: "",
+            openness_level: "private",
+            open_mode: 'subject',
+            open_no_start: '',
+            open_no_end: '',
             error_tips: {"exam_name": "请输入测试名称", "exam_desc": "请输入测试介绍"}
         },
         methods: {
@@ -47,11 +51,37 @@ $(function () {
                         }
                     );
                 });
+            },
+            update: function(){
+                var r_data = new Object();
+                var keys = ["exam_no", "exam_name", "exam_desc", 'openness_level', 'open_mode', 'open_no_start',  'open_no_end'];
+                for (var i = 0; i < keys.length; i++) {
+                    r_data[keys[i]] = this[keys[i]];
+                }
+                var info_url = $("#info_url").val();
+                my_async_request2(info_url, "PUT", r_data, function (data){
+                    popup_show("更新成功");
+                });
             }
         }
     });
     var exam_no = UrlArgsValue(location.href, 'exam_no');
     if(exam_no != null){
-        console.info(exam_no);
+        var info_url = $("#info_url").val();
+        my_async_request2(info_url, 'GET', null, function(data){
+            if(data.length == 1){
+                var exam_item = data[0];
+                vm.exam_no = exam_item.exam_no;
+                vm.exam_name = exam_item.exam_name;
+                vm.exam_desc = exam_item.exam_desc;
+                var keys = ['openness_level', 'open_mode', 'open_no_start',  'open_no_end'];
+                for (var i = 0; i < keys.length; i++) {
+                    if(keys[i] in exam_item) {
+                        vm[keys[i]] = exam_item[keys[i]];
+                    }
+                }
+            }
+        })
+
     }
 });
