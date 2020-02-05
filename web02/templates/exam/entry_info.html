@@ -44,7 +44,7 @@
                         <input type="radio" name="open_mode" value="by_no" v-model='open_mode'>按题号公开
                     </label>
                 </li>
-                <li v-if="open_mode=='by_no'">
+                <li v-if="open_mode=='by_no'&&openness_level=='semi-public'">
                     <label>公开题号：</label>
                     <input type="text" class="box-side width100" v-model.number='open_no_start'>
                     <label>-</label>

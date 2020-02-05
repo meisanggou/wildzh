@@ -195,30 +195,33 @@ def get_exam_info():
     min_role = 10
     if 'is_admin' in request.args:
         min_role = 3
-    items = c_exam.select_exam(g.exam_no)
+    items = c_exam.select_exam2(g.exam_no)
+    r_items = []
     u_exams = c_exam.select_user_exams(g.user_no)
-    for item in items:
+    for i in range(len(items) - 1, -1, -1):
+        item = items[i]
+        r_item = item.to_dict()
+        exam_no = item.exam_no
+        if int(item.adder) == g.user_no:
+            r_item['exam_role'] = 1
+            r_item['end_time'] = None
+        elif exam_no in u_exams:
+            r_item.update(u_exams[exam_no])
+        elif (g.user_role & 2) == 2:
+            r_item['exam_role'] = 0  # 内部用户全部返回
+            r_item['end_time'] = None
+        elif item.status & 64 == 64:
+            r_item['exam_role'] = 10
+        else:
+            r_item['exam_role'] = 100
+        if 'end_time' not in r_item:
+            r_item['end_time'] = 0
+        if r_item['exam_role'] <= min_role:
+            r_items.append(r_item)
+    for item in r_items:
         item["select_modes"] = G_SELECT_MODE
         item["subjects"] = G_SUBJECT
-    for i in range(len(items) - 1, -1, -1):
-        exam_no = items[i]['exam_no']
-        if int(items[i]["adder"]) == g.user_no:
-            items[i]['exam_role'] = 1
-            items[i]['end_time'] = None
-        elif exam_no in u_exams:
-            items[i].update(u_exams[exam_no])
-        elif (g.user_role & 2) == 2:
-            items[i]['exam_role'] = 0  # 内部用户全部返回
-            items[i]['end_time'] = None
-        elif items[i]["status"] & 64 == 64:
-            items[i]['exam_role'] = 10
-        else:
-            items[i]['exam_role'] = 100
-        if 'end_time' not in items[i]:
-            items[i]['end_time'] = 0
-        if items[i]['exam_role'] > min_role:
-            del items[i]
-    return jsonify({"status": True, "data": items})
+    return jsonify({"status": True, "data": r_items})
 
 
 @exam_view.route("/info/", methods=["PUT"])

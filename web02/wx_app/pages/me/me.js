@@ -136,12 +136,16 @@ Page({
             that.setData({
                 brushNum: -1
             });
+            return false;
         }
         that = this;
         wx.request2({
             url: '/exam/usage?exam_no=' + examNo,
             method: 'GET',
             success: res => {
+                if(res.data.status == false){
+                    return false;
+                }
                 var resData = res.data.data;
                 var brushNum = resData['num'];
                 that.setData({

@@ -23,6 +23,53 @@ __author__ = 'meisa'
 """
 
 
+class ExamObject(object):
+    extend_keys = ['openness_level', 'open_mode', 'open_no_start',
+                   'open_no_end', 'pic_url']
+
+    def __init__(self, **kwargs):
+        self._d = dict()
+        self.exam_no = None
+        self.exam_name = None
+        self.exam_desc = None
+        self.adder = None
+        self.status = None
+        self.exam_num = None
+        self.question_num = None
+        self.openness_level = None
+        self.open_mode = None
+        self.open_no_start = None
+        self.open_no_end = None
+        self.pic_url = None
+        self.update(**kwargs)
+
+    def update(self, **kwargs):
+        exam_extend = kwargs.pop('exam_extend', dict())
+        for k, v in kwargs.items():
+            if hasattr(self, k):
+                setattr(self, k, v)
+                self._d[k] = v
+        if isinstance(exam_extend, dict):
+            for k, v in exam_extend.items():
+                if k in self.extend_keys:
+                    setattr(self, k, v)
+                    self._d[k] = v
+
+    # def __setattr__(self, key, value):
+    #     if not key.startswith('_'):
+    #         self._d[key] = value
+    #     return object.__setattr__(self, key, value)
+
+    def to_dict(self):
+        return self._d
+
+
+class ExamOpennessLevel(object):
+    PRIVATE = 'private'
+    SEMI_PUBLIC = 'semi-public'
+    PUBLIC = 'public'
+
+
 class ExamMember(object):
     DAY_SECONDS = 3600 * 24
 
@@ -168,7 +215,7 @@ class ExamUsage(object):
         return update_value
 
 
-class Exam(ExamMember, ExamUsage):
+class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
 
     def __init__(self, db_conf_path):
         ExamMember.__init__(self)
@@ -304,9 +351,14 @@ class Exam(ExamMember, ExamUsage):
         for item in items:
             item["exam_type"] = "tiku"
             if item["exam_extend"] is not None:
-                item.update(json.loads(item["exam_extend"]))
+                item['exam_extend'] = json.loads(item["exam_extend"])
+                item.update(item['exam_extend'])
                 # del item["exam_extend"]
         return items
+
+    def select_exam2(self, exam_no):
+        items = self.select_exam(exam_no)
+        return [ExamObject(**item) for item in items]
 
     def _select_questions(self, **kwargs):
         cols = self.q_cols
