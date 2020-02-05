@@ -354,9 +354,9 @@ if __name__ == "__main__":
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
-    d_path = ur'D:\Project\word\app\更新题4.docx'
+    d_path = ur'D:\Project\word\app\更新题5.docx'
     # read_docx(d_path)
-    s_kwargs = dict(exam_no=exam_no, dry_run=False, set_mode=True,
+    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=True,
                     answer_location=AnswerLocation.embedded())
     q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'

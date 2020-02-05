@@ -118,14 +118,18 @@ def required_exam_no(f):
     return decorated_function
 
 
-def required_manager_exam(key, **role_desc):
+def required_manager_exam(key='exam_no', **role_desc):
     min_role = role_desc.pop('min_role', 0)
     max_role = role_desc.pop('max_role', 3)
+    param_location = role_desc.pop('param_location', 'body')
 
     def _decorated_function(func):
         @wraps(func)
         def _func(*args, **kwargs):
-            data = request.json
+            if param_location == 'args':
+                data= request.args
+            else:
+                data = request.json
             if key not in data:
                 return jsonify({'status': False, 'data': 'need key %s' % key})
             exam_no = data[key]
@@ -506,10 +510,19 @@ def transfer_exam():
     return jsonify({'status': True, 'data': items})
 
 
-@exam_view.route('/usage', methods=['GET'])
+@exam_view.route('/usage/state', methods=['GET'])
+@login_required
+@required_manager_exam(param_location='args')
+def get_usage_state():
+    period_no = request.args['period_no']
+    items = c_exam.get_usage_records(g.exam_no, period_no=period_no)
+    return jsonify({'status': True, 'data': items})
+
+
+@exam_view.route('/usage/', methods=['GET'])
 @login_required
 @required_exam_no
-def get_usage():
+def query_usage():
     item = c_exam.get_one_usage_records(g.user_no, g.exam_no)
     if(g.user_role & 2) != 2 and item['num'] < 100:
         item['num'] = -1
