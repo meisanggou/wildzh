@@ -69,9 +69,9 @@
                                 </picker>
                             </view>
                         </view>
-                        <view class="weui-cell__ft right-slip" wx:if="{{showManExam}}">
+                        <view class="weui-cell__ft right-slip">
                             <!-- <view class="navigator-arrow"></view> -->
-                            <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="managerExam"></image>
+                            <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="lookExam"></image>
                         </view>
                     </view>
                     <view wx:if="{{examEndTime}}" class="weui-cell weui-cell_input">

@@ -170,9 +170,11 @@ Page({
         app.setDefaultExam(currentExam);
         this.getBrushNum();
     },
-    managerExam: function(){
+    lookExam: function(){
+
         wx.navigateTo({
-            url: "exam_member?examNo=" + this.data.examNo
+            // url: "exam_member?examNo=" + this.data.examNo
+            url: "exam_info?examNo=" + this.data.examNo
         })
     }
 })

@@ -388,7 +388,7 @@ if __name__ == "__main__":
     exam_no = 1570447137  # 专升本经济学题库 会员版
     # exam_no = 1573464937  # 英语托业
     # 538 + 319
-    transfer_exam(1570447137, 1, 146, 1575333741, target_start_no=5)
+    transfer_exam(1575333741, 1, 5, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 

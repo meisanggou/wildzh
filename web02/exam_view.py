@@ -223,6 +223,9 @@ def get_exam_info():
     for item in r_items:
         item["select_modes"] = G_SELECT_MODE
         item["subjects"] = G_SUBJECT
+    if 'rich' in request.args:
+        for item in r_items:
+            item['rich_exam_desc'] = separate_image(item['exam_desc'])
     return jsonify({"status": True, "data": r_items})
 
 
@@ -322,7 +325,8 @@ def get_exam_questions():
         items = c_exam.select_questions(g.exam_no)
     elif start_no == -1:
         # 获得随机试题num个
-        items = c_exam.select_random_questions(g.exam_no, int(num), select_mode, question_subject)
+        items = c_exam.select_random_questions(g.exam_no, int(num),
+                                               select_mode, question_subject)
     else:
         # 获得从start_no 获取试题num个
         desc = False
