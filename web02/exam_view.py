@@ -523,6 +523,7 @@ def transfer_exam():
     t_kwargs = dict()
     if 'target_start_no' in data:
         t_kwargs['target_start_no'] = data['target_start_no']
+    if 'target_end_no' in data:
         t_kwargs['target_end_no'] = data['target_end_no']
     if 'select_mode' in data:
         t_kwargs['select_mode'] = data['select_mode']

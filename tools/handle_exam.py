@@ -275,12 +275,15 @@ def upload_js_no_answer(exam_no, file_path, questions_set):
     return handle_exam_no_answer(exam_no, file_path, questions_set)
 
 
-def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode=None):
+def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode=None,
+                  target_start_no=None):
     url = remote_host + '/exam/transfer'
     data = {'source_exam_no': s_exam, 'start_no': start_no,
             'end_no': end_no, 'target_exam_no': t_exam}
     if select_mode:
         data['select_mode'] = select_mode
+    if target_start_no is not None:
+        data['target_start_no'] = target_start_no
     response = req.post(url, json=data)
     res = response.json()
     if res['status'] is True:
@@ -288,7 +291,7 @@ def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode=None):
         for item in r_data:
             print(item)
     else:
-        print(data)
+        print(res)
 
 
 def find_from_dir(exam_no, directory_name, dry_run, set_source, answer_file=False):
@@ -385,7 +388,7 @@ if __name__ == "__main__":
     exam_no = 1570447137  # 专升本经济学题库 会员版
     # exam_no = 1573464937  # 英语托业
     # 538 + 319
-    transfer_exam(1570447137, 0, 3955, 1575333741)
+    transfer_exam(1570447137, 1, 146, 1575333741, target_start_no=5)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
