@@ -97,23 +97,23 @@ def required_exam_no(f):
         if(g.user_role & 2) == 2:
             g.exam_role = 0
         else:
-            exist_items = c_exam.select_exam(g.exam_no)
+            exist_items = c_exam.select_exam2(g.exam_no)
             if len(exist_items) <= 0:
                 return jsonify({"status": False, "data": "Bad Request. "
                                                          "Exam no exist"})
             exam_item = exist_items[0]
-            if int(exam_item['adder']) == g.user_no:
+            if int(exam_item.adder) == g.user_no:
                 g.exam_role = 1
             else:
                 e_items = c_exam.user_exams(g.user_no, g.exam_no)
                 if len(e_items) <= 0:
-                    if exam_item["status"] & 64 == 64:
-                        g.exam_role = 10
-                    else:
+                    g.exam_role = exam_item.exam_role
+                    if g.exam_role == 100:
                         return jsonify({"status": False, "data": "Bad "
                                                                  "Request. Forbidden"})
                 else:
                     g.exam_role = e_items[0]['exam_role']
+                g.current_exam = exam_item
         return f(*args, **kwargs)
     return decorated_function
 
@@ -127,7 +127,7 @@ def required_manager_exam(key='exam_no', **role_desc):
         @wraps(func)
         def _func(*args, **kwargs):
             if param_location == 'args':
-                data= request.args
+                data = request.args
             else:
                 data = request.json
             if key not in data:
@@ -196,7 +196,7 @@ support_upload2(exam_view, upload_folder, file_prefix_url, ("exam", "pic"), "upl
 @login_required
 @referer_exam_no
 def get_exam_info():
-    min_role = 10
+    min_role = 25
     if 'is_admin' in request.args:
         min_role = 3
     items = c_exam.select_exam2(g.exam_no)
@@ -214,10 +214,8 @@ def get_exam_info():
         elif (g.user_role & 2) == 2:
             r_item['exam_role'] = 0  # 内部用户全部返回
             r_item['end_time'] = None
-        elif item.status & 64 == 64:
-            r_item['exam_role'] = 10
         else:
-            r_item['exam_role'] = 100
+            r_item['exam_role'] = item.exam_role
         if 'end_time' not in r_item:
             r_item['end_time'] = 0
         if r_item['exam_role'] <= min_role:
@@ -338,6 +336,24 @@ def get_exam_questions():
             new_options = map(lambda x: x["desc"], options)
             item["options"] = new_options
     query_time = time.time() - start_time
+    # 按照用户对 题库的权限 再处理 题目
+    exam_item = g.current_exam
+    if g.exam_role > 10:
+        for item in items:
+            if not exam_item.verify_no(item['question_no']):
+                item['question_desc'] = ''
+                item['options'] = []
+                item['answer'] = ''
+            else:
+                if not exam_item.can_look_analysis():
+                    item['answer'] = ''
+                if not exam_item.can_look_answer():
+                    options = item['options']
+                    item['options'] = map(lambda x: x["desc"], options)
+                if not exam_item.can_look_subject():
+                    item['question_desc'] = ''
+                    item['options'] = []
+        print('handle questions')
     if no_rich is False:
         max_width = None
         if "X-Device-Screen-Width" in request.headers:
@@ -504,10 +520,15 @@ def transfer_exam():
     start_no = data['start_no']
     end_no = data['end_no']
     target_exam_no = data['target_exam_no']
-    select_mode = data.get('select_mode', None)
-    items = c_exam.transfer_exam(source_exam_no, start_no, end_no,
-                                 target_exam_no, select_mode=select_mode)
-    return jsonify({'status': True, 'data': items})
+    t_kwargs = dict()
+    if 'target_start_no' in data:
+        t_kwargs['target_start_no'] = data['target_start_no']
+        t_kwargs['target_end_no'] = data['target_end_no']
+    if 'select_mode' in data:
+        t_kwargs['select_mode'] = data['select_mode']
+    r, items = c_exam.transfer_exam(source_exam_no, start_no, end_no,
+                                    target_exam_no, **t_kwargs)
+    return jsonify({'status': r, 'data': items})
 
 
 @exam_view.route('/usage/state', methods=['GET'])
@@ -519,7 +540,7 @@ def get_usage_state():
     return jsonify({'status': True, 'data': items})
 
 
-@exam_view.route('/usage/', methods=['GET'])
+@exam_view.route('/usage', methods=['GET'])
 @login_required
 @required_exam_no
 def query_usage():

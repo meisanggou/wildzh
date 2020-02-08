@@ -35,16 +35,16 @@
                 <li v-if="openness_level=='semi-public'">
                     <label>公开模式：</label>
                     <label class="radio-inline">
-                        <input type="radio" name="open_mode" value="subject" v-model='open_mode'>仅题目
+                        <input type="radio" name="open_mode" value="1" v-model.number='open_mode'>仅题目
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="open_mode" value="subject_answer" v-model='open_mode'>仅题目答案
+                        <input type="radio" name="open_mode" value="3" v-model.number='open_mode'>仅题目答案
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="open_mode" value="by_no" v-model='open_mode'>按题号公开
+                        <input type="radio" name="open_mode" value="7" v-model.number='open_mode'>所有
                     </label>
                 </li>
-                <li v-if="open_mode=='by_no'&&openness_level=='semi-public'">
+                <li v-if="openness_level=='semi-public'">
                     <label>公开题号：</label>
                     <input type="text" class="box-side width100" v-model.number='open_no_start'>
                     <label>-</label>

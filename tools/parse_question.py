@@ -110,6 +110,8 @@ class Question(object):
             if not hasattr(self, _key):
                 raise RuntimeError('No Key %s in %s' % (_key, self))
             _q_item[key] = getattr(self, _key)
+            if key == 'options':
+                _q_item[key] = _q_item[key].to_list()
         _q_item["question_no"] = self.no
         return _q_item
 
@@ -251,6 +253,7 @@ class QuestionSet(object):
         self.set_mode = kwargs.pop('set_mode', False)
         self.real_upload = kwargs.pop('real_upload', not dry_run)
         self.answer_location = kwargs.pop('answer_location', '')
+        self.set_keys = kwargs.pop('set_keys', ['answer', 'question_desc'])
         self.exam_no = exam_no
         self.exam_name = None
         self.dry_run = dry_run

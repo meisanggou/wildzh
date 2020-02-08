@@ -10,7 +10,7 @@ $(function () {
             exam_name: "",
             exam_desc: "",
             openness_level: "private",
-            open_mode: 'subject',
+            open_mode: 1,
             open_no_start: '',
             open_no_end: '',
             error_tips: {"exam_name": "请输入测试名称", "exam_desc": "请输入测试介绍"}

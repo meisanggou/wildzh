@@ -19,7 +19,16 @@ __author__ = 'meisa'
 5 普通成员： 可做题
 
 
-10 公开题库 可做题
+10 公开题库
+
+20 半公开题库 可查看部分题目，答案，详情
+22 半公开题库 可查看部分题目，答案。不可查看详情
+25 半公开题库 可查看部分题目，不可查看答案与详情
+
+
+
+
+100 无任何权限
 """
 
 
@@ -36,25 +45,132 @@ class ExamObject(object):
         self.status = None
         self.exam_num = None
         self.question_num = None
-        self.openness_level = None
-        self.open_mode = None
-        self.open_no_start = None
-        self.open_no_end = None
+        self._openness_level = ExamOpennessLevel.PRIVATE
+        self._open_mode = ExamOpenMode.SUBJECT
+        self._open_no_start = -1
+        self._open_no_end = float('INF')
         self.pic_url = None
+        self._exam_role = 100
         self.update(**kwargs)
 
     def update(self, **kwargs):
         exam_extend = kwargs.pop('exam_extend', dict())
         for k, v in kwargs.items():
             if hasattr(self, k):
-                setattr(self, k, v)
-                self._d[k] = v
+                self._internal_set(k, v)
         if isinstance(exam_extend, dict):
             for k, v in exam_extend.items():
                 if k in self.extend_keys:
-                    setattr(self, k, v)
-                    self._d[k] = v
+                    self._internal_set(k, v)
 
+    @property
+    def openness_level(self):
+        if not hasattr(self, '_openness_level'):
+            self._openness_level = ExamOpennessLevel.PRIVATE
+        return self._openness_level
+
+    @openness_level.setter
+    def openness_level(self, v):
+        v = v.lower()
+        if v == ExamOpennessLevel.PUBLIC:
+            self._exam_role = 10
+            self._open_mode = ExamOpenMode.ALL
+
+        elif v == ExamOpennessLevel.SEMI_PUBLIC:
+            self._exam_role = 25
+        else:
+            v = ExamOpennessLevel.PRIVATE
+            self._exam_role = 100
+            self._open_mode = ExamOpenMode.NONE
+        self._openness_level = v
+        self._d['openness_level'] = v
+        self.open_mode = self._open_mode
+
+    @property
+    def open_mode(self):
+        if not hasattr(self, '_open_mode'):
+            self._open_mode = ExamOpenMode.SUBJECT
+        return self._open_mode
+
+    @open_mode.setter
+    def open_mode(self, v):
+        if isinstance(v, (unicode, str)):
+            v = ExamOpenMode.SUBJECT
+        if self._openness_level == ExamOpennessLevel.SEMI_PUBLIC:
+            if v == ExamOpenMode.ALL:
+                self._exam_role = 20
+            elif v == ExamOpenMode.SUBJECT_ANSWER:
+                self._exam_role = 22
+            else:
+                v = ExamOpenMode.SUBJECT
+                self._exam_role = 25
+        self._open_mode = v
+        self._d['open_mode'] = v
+
+    @property
+    def open_no_start(self):
+        return self._open_no_start
+
+    @open_no_start.setter
+    def open_no_start(self, v):
+        if isinstance(v, (unicode, str)):
+            v = v.strip()
+        if v == '' or v is None:
+            v = -1
+            cv = ''
+        else:
+            v = int(v)
+            cv = v
+        self._open_no_start = v
+        self._d['open_no_start'] = cv
+
+    @property
+    def open_no_end(self):
+        return self._open_no_end
+
+    @open_no_end.setter
+    def open_no_end(self, v):
+        if isinstance(v, (unicode, str)):
+            v = v.strip()
+        if v == '' or v is None:
+            v = float('INF')
+            cv = ''
+        else:
+            v = int(v)
+            cv = v
+        self._open_no_end = v
+        self._d['open_no_end'] = cv
+
+    @property
+    def exam_role(self):
+        if not hasattr(self, '_exam_role'):
+            self._exam_role = 100
+        return self._exam_role
+
+    def verify_no(self, no):
+        if self.open_mode == ExamOpennessLevel.PRIVATE:
+            return False
+        if self.open_mode == ExamOpennessLevel.PUBLIC:
+            return True
+        if self.open_no_start < no < self.open_no_end:
+            return True
+        return False
+
+    def _can_access(self, t_v):
+        return (self._open_mode & t_v) == t_v
+
+    def can_look_analysis(self):
+        return self._can_access(ExamOpenMode.ANALYSIS)
+
+    def can_look_answer(self):
+        return self._can_access(ExamOpenMode.ANSWER)
+
+    def can_look_subject(self):
+        return self._can_access(ExamOpenMode.SUBJECT)
+
+    def _internal_set(self, k, v):
+        self._d[k] = v
+        setattr(self, k, v)
     # def __setattr__(self, key, value):
     #     if not key.startswith('_'):
     #         self._d[key] = value
@@ -68,6 +184,15 @@ class ExamOpennessLevel(object):
     PRIVATE = 'private'
     SEMI_PUBLIC = 'semi-public'
     PUBLIC = 'public'
+
+
+class ExamOpenMode(object):
+    NONE = 0
+    SUBJECT = 1
+    ANSWER = 2
+    ANALYSIS = 4
+    SUBJECT_ANSWER = 3
+    ALL = 7
 
 
 class ExamMember(object):
@@ -349,7 +474,7 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                 "exam_extend", "exam_num", "question_num"]
         items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value, where_cond=where_cond)
         for item in items:
-            item["exam_type"] = "tiku"
+            # item["exam_type"] = "tiku"
             if item["exam_extend"] is not None:
                 item['exam_extend'] = json.loads(item["exam_extend"])
                 item.update(item['exam_extend'])
@@ -499,16 +624,39 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
         items = self._select_questions(where_value=where_value,
                                        where_cond=where_cond,
                                        where_cond_args=where_cond_args)
-        next_no = self.select_max_question(target_exam_no) + 1
-        for item in items:
-            item['question_no'] = next_no
-            item['exam_no'] = target_exam_no
-            self.new_exam_questions(**item)
-            next_no += 1
-        return items
+        if 'target_start_no' in kwargs:
+            t_start_no = kwargs['target_start_no']
+            if 'target_end_no' not in kwargs:
+                t_end_no = t_start_no + len(items) - 1
+            else:
+                t_end_no = kwargs['target_end_no']
+                if t_end_no - t_start_no != len(items) - 1:
+                    return False, 'Not match questions length'
+            for index in range(len(items)):
+                item = items[index]
+                item['question_no'] = t_start_no + index
+                item['exam_no'] = target_exam_no
+                self.update_exam_questions(**item)
+        else:
+            next_no = self.select_max_question(target_exam_no) + 1
+            for item in items:
+                item['question_no'] = next_no
+                item['exam_no'] = target_exam_no
+                self.new_exam_questions(**item)
+                next_no += 1
+        return True, items
 
 
 if __name__ == "__main__":
-    print(ExamUsage.calc_period_no(1578844800))
-    e = Exam("../mysql_app.conf")
-    e.select_max_question("1543289889")
+    # print(ExamUsage.calc_period_no(1578844800))
+    # e = Exam("../mysql_app.conf")
+    # e.select_max_question("1543289889")
+    eo = ExamObject(openness_level='private')
+    print(eo.to_dict())
+    print(eo.exam_role)
+    eo.update(open_mode='all')
+    print(eo.to_dict())
+    print(eo.exam_role)
+    eo.update(openness_level='semi-public')
+    print(eo.to_dict())
+    print(eo.exam_role)

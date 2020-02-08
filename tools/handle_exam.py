@@ -97,7 +97,8 @@ def post_questions(questions_set):
 
 
 def set_questions(questions_set):
-    set_keys = ['answer', 'question_desc']
+    d_set_keys = ['answer', 'question_desc']
+    set_keys = getattr(questions_set, 'set_keys', d_set_keys)
     exam_no = questions_set.exam_no
     url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
     for q_item in questions_set:
@@ -107,6 +108,7 @@ def set_questions(questions_set):
         # else:
         #     q_item_d["question_source"] = ""
         if questions_set.dry_run:
+            print(q_item_d)
             print(json.dumps(q_item_d))
         if not questions_set.dry_run:
             resp = req.put(url, json=q_item_d)
@@ -342,6 +344,39 @@ def download_questions(exam_no, select_mode):
             no += 1
 
 
+def download_usage(exam_no, period_nos):
+    t_nos = []
+    with open('no.txt', 'r') as r:
+        lines = r.read().split('\n')
+        for line in lines:
+            nums = re.findall('\d+', line)
+            if len(nums) <= 0:
+                continue
+            if len(nums) > 1:
+                raise RuntimeError(line)
+            t_nos.append({'no': int(nums[0]), 'nums': []})
+    for no in period_nos:
+        url = '%s/exam/usage/state' % remote_host
+        response = req.get(url, params={'exam_no': exam_no,
+                                        'period_no': no})
+        resp = response.json()
+        data = resp['data']
+        for t_item in t_nos:
+            _num = 0
+            for d_item in data:
+                if d_item['user_no'] == t_item['no']:
+                    _num = d_item['num']
+                    break
+            t_item['nums'].append(_num)
+    with open('usage.xls', 'w') as wu:
+        for t_item in t_nos:
+            _lines = [t_item['no']]
+            _lines.extend(t_item['nums'])
+            r_lines = [str(i) for i in _lines]
+            wu.write('\t'.join(r_lines))
+            wu.write('\n')
+
+
 if __name__ == "__main__":
     login("admin", "admin")
     # find_from_dir(r'D:\Project\word\app\upload')
@@ -354,15 +389,18 @@ if __name__ == "__main__":
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
-    d_path = ur'D:\Project\word\app\更新题5.docx'
+    d_path = ur'D:\Project\word\app\更新题6.docx'
     # read_docx(d_path)
+    keys = ['answer', 'question_desc', 'options']
     s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=True,
-                    answer_location=AnswerLocation.embedded())
+                    answer_location=AnswerLocation.embedded(),
+                    set_keys=keys)
     q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'
     # find_from_dir(exam_no, d, dry_run=True, set_source=False,
     #               answer_file=True)
     # download_questions(1569283516, 2)
+    # download_usage(exam_no, [1, 2, 3, 4])
     # upload_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
     # upload_js_no_answer(exam_no, d_path, q_set)
     # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
