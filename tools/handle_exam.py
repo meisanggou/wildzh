@@ -382,10 +382,10 @@ if __name__ == "__main__":
     # find_from_dir(r'D:\Project\word\app\upload')
     exam_no = 1567506833  # 测试包含图片
     # exam_no = 1569283516  # 专升本经济学题库
-    exam_no = 1570447137  # 专升本经济学题库2
+    exam_no = 1570447137  # 专升本经济学题库 会员版
     # exam_no = 1573464937  # 英语托业
     # 538 + 319
-    # transfer_exam(1569283516, 0, 3955, 1570447137)
+    transfer_exam(1570447137, 0, 3955, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
@@ -404,5 +404,5 @@ if __name__ == "__main__":
     # upload_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
     # upload_js_no_answer(exam_no, d_path, q_set)
     # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
-    handle_exam_no_answer(d_path, q_set)
-    # update_mc_no_answer(exam_no, d_path, dry_run=True, set_source=False, has_answer=True)
+    # handle_exam_no_answer(d_path, q_set)
+

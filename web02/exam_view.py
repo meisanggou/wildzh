@@ -94,14 +94,14 @@ def required_exam_no(f):
         if g.exam_no is None:
             return jsonify({"status": False, "data": "Bad Request. exam_no"
                                                      " not in request"})
+        exist_items = c_exam.select_exam2(g.exam_no)
+        if len(exist_items) <= 0:
+            return jsonify({"status": False, "data": "Bad Request. "
+                                                     "Exam no exist"})
+        exam_item = exist_items[0]
         if(g.user_role & 2) == 2:
             g.exam_role = 0
         else:
-            exist_items = c_exam.select_exam2(g.exam_no)
-            if len(exist_items) <= 0:
-                return jsonify({"status": False, "data": "Bad Request. "
-                                                         "Exam no exist"})
-            exam_item = exist_items[0]
             if int(exam_item.adder) == g.user_no:
                 g.exam_role = 1
             else:
@@ -113,7 +113,7 @@ def required_exam_no(f):
                                                                  "Request. Forbidden"})
                 else:
                     g.exam_role = e_items[0]['exam_role']
-                g.current_exam = exam_item
+        g.current_exam = exam_item
         return f(*args, **kwargs)
     return decorated_function
 
