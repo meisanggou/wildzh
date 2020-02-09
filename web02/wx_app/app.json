@@ -3,7 +3,7 @@
         "pages/training/training_home",
         "pages/homePage/homePage",
         "pages/me/me",
-        "pages/me/exam_member",
+        "pages/exam/exam_member",
         "pages/rank/rank",
         "pages/training/training",
         "pages/showDetail/showDetail",
@@ -15,7 +15,8 @@
         "pages/query/query",
         "pages/answer/answer_home",
         "pages/questions/question",
-        "pages/me/exam_info"
+        "pages/exam/exam_info",
+        "pages/exam/exam_usage"
     ],
     "window": {
         "backgroundTextStyle": "light",

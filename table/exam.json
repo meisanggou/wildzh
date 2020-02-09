@@ -15,7 +15,7 @@
             {
                 "col_comment": "测试介绍",
                 "col_name": "exam_desc",
-                "col_type": "varchar(500)"
+                "col_type": "varchar(2000)"
             },
             {
                 "col_comment": "结果评定类型",

@@ -13,7 +13,7 @@ Page({
         showManExam: false,
         examEndTime: null,
         brushNum: -1,
-        version: "4.6.5"
+        version: "4.6.6"
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {
@@ -161,20 +161,17 @@ Page({
         if (currentExam.exam_role <= 3) {
             showManExam = true;
         }
-        
         this.setData({
             examNo: currentExam.exam_no,
             examName: currentExam.exam_name,
             showManExam: showManExam
-        })
+        });
         app.setDefaultExam(currentExam);
         this.getBrushNum();
     },
     lookExam: function(){
-
         wx.navigateTo({
-            // url: "exam_member?examNo=" + this.data.examNo
-            url: "exam_info?examNo=" + this.data.examNo
+            url: "../exam/exam_info?examNo=" + this.data.examNo
         })
     }
 })

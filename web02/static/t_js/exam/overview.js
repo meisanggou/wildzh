@@ -71,7 +71,7 @@ $(function () {
             to_action: function(index, action){
                 var e_item = this.all_exams[index];
                 var basic_url = AddUrlArg(location.pathname, "exam_no", e_item.exam_no);
-                basic_url = AddUrlArg(basic_url, "exam_type", e_item.exam_type);
+                //basic_url = AddUrlArg(basic_url, "exam_type", e_item.exam_type);
                 var action_url = AddUrlArg(basic_url, "action", action);
                 location.href = action_url;
             },

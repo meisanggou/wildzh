@@ -649,7 +649,8 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
 
 if __name__ == "__main__":
     # print(ExamUsage.calc_period_no(1578844800))
-    # e = Exam("../mysql_app.conf")
+    e = Exam("../mysql_app.conf")
+    e._insert_exam_member(3, 1551600675, 2, 1)
     # e.select_max_question("1543289889")
     eo = ExamObject(openness_level='private')
     print(eo.to_dict())
