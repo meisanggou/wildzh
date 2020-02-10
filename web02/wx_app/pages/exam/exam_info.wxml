@@ -1,0 +1,35 @@
+<!--pages/me/exam_info.wxml-->
+<view class="container">
+    <view class="page-body">
+        <view wx:if="{{examPic}}">
+            <image class="avatar bottom30" mode="aspectFit" src="{{examPic}}"></image>
+        </view>
+        <view class="page-section">
+            <view class="weui-cells weui-cells_after-title">
+                <view class="weui-cell weui-cell_input">
+                    <view class="weui-cell__hd">
+                        <view class="weui-label">题库名称</view>
+                    </view>
+                    <view class="weui-cell__bd">
+                        <view class="weui-input">{{examName}}</view>
+                    </view>
+                </view>
+
+            </view>
+            <view>
+                <block wx:for="{{ examDescRich }}">
+                    <block wx:if="{{item.url}}">
+                        <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+                    </block>
+                    <block wx:else>
+                        <text>{{item}}</text>
+                    </block>
+                </block>
+            </view>
+        </view>
+        <view wx:if="{{isAdmin}}" class='bottom'>
+            <view class='' bindtap='toGrantPage'>授权管理</view>
+             <view class='' bindtap='toUsagePage'>做题情况</view>
+        </view>
+    </view>
+</view>

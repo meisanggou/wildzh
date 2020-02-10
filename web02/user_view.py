@@ -180,3 +180,11 @@ def my_qr_code_png():
         return make_response("Not Found", 404)
     d, f = c_user.my_qc_code(user_no)
     return send_from_directory(d, f)
+
+
+@user_view.route('/nicknames', methods=['POST'])
+@login_required
+def get_multi_nickname():
+    data = request.json
+    items = c_user.get_multi_nick_name(user_list=data['user_list'])
+    return jsonify({'status': True, 'data': items})

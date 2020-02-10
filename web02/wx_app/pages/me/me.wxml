@@ -6,10 +6,9 @@
             <image class="avatar bottom30" mode="aspectFit" src="{{userAvatar}}"></image>
         </view>
         <view wx:else>
-            
-                <image class="avatar" mode="aspectFit" src="/images/unregister.png"></image>
-                <text class="center">未登录</text>
-            <button  bindgetuserinfo="getUserInfo" open-type="getUserInfo">授权登录
+            <image class="avatar" mode="aspectFit" src="/images/unregister.png"></image>
+            <text class="center">未登录</text>
+            <button bindgetuserinfo="getUserInfo" open-type="getUserInfo">授权登录
             </button>
         </view>
         <form>
@@ -21,6 +20,10 @@
                         </view>
                         <view class="weui-cell__bd">
                             <view class="weui-input">{{nickName}}</view>
+                        </view>
+                        <view class="weui-cell__ft right-slip">
+                            <!-- <view class="navigator-arrow"></view> -->
+                            <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="updateNickNameClick"></image>
                         </view>
                     </view>
 
@@ -106,6 +109,8 @@
                 </view>
             </view>
         </form>
-
+        <modal hidden="{{hiddenUnickName}}" title="请输入新的昵称" confirm-text="提交" cancel-text="取消" bindcancel="cancelUnickName" bindconfirm="confirmUnickName" >
+            <input type='text' placeholder="新的昵称" value="{{nickName}}" bindblur='nickNameChange' bindinput='nickNameChange' maxlength='10' auto-focus/>
+        </modal>
     </view>
 </view>

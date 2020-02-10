@@ -1,12 +1,15 @@
 var app = getApp();
 var dt = require("../common/datetime_tools.js");
 var that;
+var newNickName = '';
+
 Page({
     data: {
         register: false,
         userNo: "",
         userAvatar: "",
         nickName: "",
+        hiddenUnickName: true,
         allExams: [],
         examName: "未选择",
         examNo: 0,
@@ -51,6 +54,11 @@ Page({
             title: '登录中...',
             mask: true
         })
+        this.updateUserInfoAction(data);
+
+    },
+    updateUserInfoAction: function (data){
+        var that = this;
         wx.request2({
             url: '/user/info/',
             method: 'PUT',
@@ -66,6 +74,35 @@ Page({
             }
         })
 
+    },
+    updateNickNameClick: function(){
+        this.setData({
+            hiddenUnickName: false
+        })
+    },
+    nickNameChange: function(e){
+        var nNickName = e.detail.value;
+        newNickName = nNickName;
+    },
+    cancelUnickName: function(){
+        this.setData({
+            hiddenUnickName: true
+        })
+    },
+    confirmUnickName: function() {
+        console.info('start update nick name');
+        this.setData({
+            hiddenUnickName: true,
+            nickName: newNickName
+        })
+        var data = {
+            "nick_name": newNickName
+        }
+        wx.showLoading({
+            title: '更新中...',
+            mask: true
+        })
+        this.updateUserInfoAction(data);
     },
     getExams: function() {
         that = this;
