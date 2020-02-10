@@ -44,6 +44,9 @@ Page({
                 if(resData.length <= 0){
                     return false;
                 }
+                resData.sort(function (a, b) {
+                    return b.num - a.num;
+                })
                 that.setData({
                     usageItems: resData
                 })
