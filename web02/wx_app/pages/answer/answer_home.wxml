@@ -65,6 +65,6 @@
 
         </view>
     </view>
-    <button type="default" plain="true" bindtap='startTraining'>开始测试</button>
-
+    <button type="default" plain="true" bindtap='startTraining' disabled="{{errorMsg}}">开始测试</button>
+    <view wx:if='{{errorMsg}}' class="error-tip">{{errorMsg}}</view>
 </view>

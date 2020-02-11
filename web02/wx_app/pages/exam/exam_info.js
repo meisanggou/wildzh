@@ -8,6 +8,8 @@ Page({
     data: {
         remote_host: app.globalData.remote_host,
         isAdmin: false,
+        acl: '',
+        acl_warn: '',
         examNo: null,
         examPic: null,
         examName: '',
@@ -67,14 +69,33 @@ Page({
                 }
                 var examItem = resData[0];
                 var isAdmin = false;
-                if(examItem['exam_role'] <= 3){
+                var acl = '';
+                var acl_warn = '';
+                var e_role = examItem['exam_role'];
+                if(e_role <= 3){
                     isAdmin = true;
+                }
+                else{
+                    if(e_role == 20){
+                        acl = '部分题目';
+                        acl_warn = '(非公开题目无法查看)';
+                    }
+                    else if(e_role == 22){
+                        acl = '部分题目的题目与答案';
+                        acl_warn = '(不包含解析)';
+                    }
+                    else if(e_role == 25){
+                        acl = '部分题目的题目';
+                        acl_warn = '(不包含答案与解析)';
+                    }
                 }
                 that.setData({
                     examNo: examItem['exam_no'],
                     examName: examItem['exam_name'],
                     examDescRich: examItem['rich_exam_desc'],
-                    isAdmin: isAdmin
+                    isAdmin: isAdmin,
+                    acl: acl,
+                    acl_warn: acl_warn
                 });
                 wx.hideLoading();
             }

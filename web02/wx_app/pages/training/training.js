@@ -200,7 +200,7 @@ Page({
             method: 'GET',
             success: res => {
                 wx.hideLoading();
-                if (res.data.status == false) {
+                if (res.data.status != true) {
                     return;
                 }
                 var newItems = res.data.data;

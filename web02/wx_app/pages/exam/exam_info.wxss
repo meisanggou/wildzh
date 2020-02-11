@@ -15,3 +15,12 @@
   justify-content: space-around;
   z-index: 10;
 }
+
+.title {
+    font-size: 14pt;
+    text-align: center;
+}
+.warn{
+    
+    color: red
+}

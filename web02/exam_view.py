@@ -337,7 +337,7 @@ def get_exam_questions():
     if g.user_no is None:
         for item in items:
             options = item["options"]
-            new_options = map(lambda x: x["desc"], options)
+            new_options = map(lambda x: {'desc': x["desc"]}, options)
             item["options"] = new_options
     query_time = time.time() - start_time
     # 按照用户对 题库的权限 再处理 题目
@@ -345,19 +345,19 @@ def get_exam_questions():
     if g.exam_role > 10:
         for item in items:
             if not exam_item.verify_no(item['question_no']):
-                item['question_desc'] = ''
+                item['question_desc'] = '请升级为会员！'
                 item['options'] = []
-                item['answer'] = ''
+                item['answer'] = '请升级为会员！'
             else:
                 if not exam_item.can_look_analysis():
-                    item['answer'] = ''
+                    item['answer'] = '请升级为会员！'
                 if not exam_item.can_look_answer():
                     options = item['options']
-                    item['options'] = map(lambda x: x["desc"], options)
+                    item['options'] = map(lambda x: {'desc': x["desc"]}, options)
                 if not exam_item.can_look_subject():
-                    item['question_desc'] = ''
+                    item['question_desc'] = '请升级为会员！'
                     item['options'] = []
-        print('handle questions')
+
     if no_rich is False:
         max_width = None
         if "X-Device-Screen-Width" in request.headers:

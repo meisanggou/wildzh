@@ -152,7 +152,7 @@ class ExamObject(object):
             return False
         if self.open_mode == ExamOpennessLevel.PUBLIC:
             return True
-        if self.open_no_start < no < self.open_no_end:
+        if self.open_no_start <= no <= self.open_no_end:
             return True
         return False
 

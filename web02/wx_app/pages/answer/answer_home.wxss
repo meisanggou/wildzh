@@ -16,3 +16,8 @@ button{
 .mini-btn{
   margin-right: 10rpx;
 }
+
+.error-tip {
+    color: red;
+    text-align: center;
+}

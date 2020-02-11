@@ -72,7 +72,7 @@
                                 </picker>
                             </view>
                         </view>
-                        <view class="weui-cell__ft right-slip">
+                        <view wx:if='{{examNo}}' class="weui-cell__ft right-slip">
                             <!-- <view class="navigator-arrow"></view> -->
                             <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="lookExam"></image>
                         </view>

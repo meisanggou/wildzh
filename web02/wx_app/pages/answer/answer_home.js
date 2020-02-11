@@ -11,7 +11,8 @@ Page({
         modeIndex: 0,
         isAccordingToType: true,
         to: "training",
-        cacheSelectedKey: "selectedAnswerOptions"
+        cacheSelectedKey: "selectedAnswerOptions",
+        errorMsg: "题库信息加载中..."
     },
     onLoad: function(options) {
         if ("to" in options) {
@@ -23,6 +24,45 @@ Page({
         if(selectedOptions != null){
             this.setData(selectedOptions);
         }
+        
+    },
+    onShow: function () {
+        var examNo = app.globalData.defaultExamNo;
+        if (examNo) {
+            this.getExam(examNo);
+        }
+        else {
+            this.setData({
+                errorMsg: '请先选择一个题库'
+            })
+        }
+    },
+    getExam: function (examNo) {
+        var that = this;
+        wx.request2({
+            url: '/exam/info/?exam_no=' + examNo,
+            method: 'GET',
+            success: res => {
+                var allExams = [];
+                var resData = res.data.data;
+                var errorMsg = '';
+                if (res.data.status == false || resData.length <= 0) {
+                    errorMsg = '未查询到题库详情，切换题库'
+                    that.setData({
+                        errorMsg: errorMsg
+                    })
+                    return false;
+                }
+                var examItem = resData[0];
+                if (examItem['exam_role'] > 10) {
+                    errorMsg = '无权限进行操作，请先升级成会员！';
+                }
+                that.setData({
+                    errorMsg: errorMsg
+                });
+                wx.hideLoading();
+            }
+        })
     },
     bindPickerChange(e) {
         this.setData({
