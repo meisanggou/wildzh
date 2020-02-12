@@ -13,10 +13,9 @@ Page({
         allExams: [],
         examName: "未选择",
         examNo: 0,
-        showManExam: false,
         examEndTime: null,
         brushNum: -1,
-        version: "5.1.0"
+        version: "5.1.1"
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {
@@ -114,15 +113,11 @@ Page({
                 var resData = res.data.data;
                 var examNo = 0;
                 var examName = this.data.examName;
-                var showManExam = false;
                 for (var index in resData) {
                     if (resData[index]["question_num"] > 0) {
                         if (resData[index].exam_no == this.data.examNo){
                             examName = resData[index].exam_name;
                             examNo = resData[index].exam_no;
-                            if (resData[index].exam_role <= 3) {
-                                showManExam = true;
-                            }
                         }
                         
                         allExams.push(resData[index]);
@@ -135,8 +130,7 @@ Page({
                 that.setData({
                     allExams: allExams,
                     examName: examName,
-                    examNo: examNo,
-                    showManExam: showManExam
+                    examNo: examNo
                 });
                 that.getBrushNum();
                 wx.hideLoading();
@@ -193,15 +187,11 @@ Page({
     },
     examChange: function(e) {
         var examIndex = e.detail.value;
-        var showManExam = false;
         var currentExam = this.data.allExams[examIndex];
-        if (currentExam.exam_role <= 3) {
-            showManExam = true;
-        }
+        console.info(currentExam);
         this.setData({
             examNo: currentExam.exam_no,
-            examName: currentExam.exam_name,
-            showManExam: showManExam
+            examName: currentExam.exam_name
         });
         app.setDefaultExam(currentExam);
         this.getBrushNum();

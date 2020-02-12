@@ -388,13 +388,14 @@ if __name__ == "__main__":
     exam_no = 1570447137  # 专升本经济学题库 会员版
     # exam_no = 1573464937  # 英语托业
     # 538 + 319
-    transfer_exam(1575333741, 1, 5, 1575333741)
+    # transfer_exam(1575333741, 1, 5, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
-    d_path = ur'D:\Project\word\app\更新题6.docx'
+    d_path = ur'D:\Project\word\app\更新题7.docx'
     # read_docx(d_path)
-    keys = ['answer', 'question_desc', 'options']
+    keys = ['answer', 'question_desc']
+    # keys.append(['options'])
     s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=True,
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
@@ -407,5 +408,5 @@ if __name__ == "__main__":
     # upload_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
     # upload_js_no_answer(exam_no, d_path, q_set)
     # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
-    # handle_exam_no_answer(d_path, q_set)
+    handle_exam_no_answer(d_path, q_set)
 

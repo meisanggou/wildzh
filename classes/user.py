@@ -134,6 +134,8 @@ class User(object):
             if isinstance(nick_name, unicode):
                 nick_name = nick_name.encode("utf-8")
             nick_name = base64.b64encode(nick_name)
+        else:
+            nick_name = ''
         kwargs = dict(user_name=user_name, password=password, tel=tel, nick_name=nick_name, email=email, wx_id=wx_id,
                       creator=creator, add_time=add_time, role=role)
         if password is not None:

@@ -109,6 +109,7 @@
                 </view>
             </view>
         </form>
+        <view class="bottom-tip" bindtap="lookExam">未拥有当前题库所有操作权限</view>
         <modal hidden="{{hiddenUnickName}}" title="请输入新的昵称" confirm-text="提交" cancel-text="取消" bindcancel="cancelUnickName" bindconfirm="confirmUnickName" >
             <input type='text' placeholder="新的昵称" value="{{nickName}}" bindblur='nickNameChange' bindinput='nickNameChange' maxlength='10' auto-focus/>
         </modal>
