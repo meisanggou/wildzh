@@ -34,7 +34,7 @@ Page({
     getUsage: function (examNo){
         var that = this;
         wx.request2({
-            url: '/exam/usage/state?exam_no=' + examNo,
+            url: '/exam/usage/state?offset_num=1&exam_no=' + examNo,
             method: 'GET',
             success: res => {
                 if (res.data.status == false) {
@@ -73,10 +73,10 @@ Page({
                 var usageItems = that.data.usageItems;
                 var l1 = resData.length;
                 var l2 = usageItems.length;
-                for(var i=0;i<l1;i++){
-                    var nItem = resData[i];
-                    for(var j=0;j<l2;j++){
-                        var uItem = usageItems[j];
+                for(var i=0;i<l2;i++){
+                    var uItem = usageItems[i];
+                    for(var j=0;j<l1;j++){
+                        var nItem = resData[j];
                         if(nItem.user_no == uItem.user_no){
                             uItem['nick_name'] = nItem['nick_name'];
                             break;

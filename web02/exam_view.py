@@ -541,7 +541,9 @@ def transfer_exam():
 @required_manager_exam(param_location='args')
 def get_usage_state():
     period_no = request.args.get('period_no', None)
-    items = c_exam.get_usage_records(g.exam_no, period_no=period_no)
+    offset_num = int(request.args.get('offset_num', 1))
+    items = c_exam.get_usage_records(g.exam_no, period_no=period_no,
+                                     offset_num=offset_num)
     return jsonify({'status': True, 'data': items})
 
 

@@ -14,6 +14,7 @@ Page({
         examName: "未选择",
         examNo: 0,
         examEndTime: null,
+        examTip: "未拥有当前题库所有操作权限",
         brushNum: -1,
         version: "5.1.1"
     },
@@ -112,12 +113,14 @@ Page({
                 var allExams = [];
                 var resData = res.data.data;
                 var examNo = 0;
+                var examIndex = 0;
                 var examName = this.data.examName;
                 for (var index in resData) {
                     if (resData[index]["question_num"] > 0) {
                         if (resData[index].exam_no == this.data.examNo){
                             examName = resData[index].exam_name;
                             examNo = resData[index].exam_no;
+                            examIndex = index;
                         }
                         
                         allExams.push(resData[index]);
@@ -130,7 +133,8 @@ Page({
                 that.setData({
                     allExams: allExams,
                     examName: examName,
-                    examNo: examNo
+                    examNo: examNo,
+                    examIndex: examIndex
                 });
                 that.getBrushNum();
                 wx.hideLoading();
@@ -141,8 +145,12 @@ Page({
         var examNo = this.data.examNo;
         var examEndTime = null;
         var allExams = this.data.allExams;
+        var examTip = '';
         for(var i=0;i<allExams.length;i++){
             if(allExams[i].exam_no == examNo){
+                if (allExams[i].exam_role > 10) {
+                    examTip = '未拥有当前题库所有操作权限';
+                }
                 if('end_time' in allExams[i]){
                     var end_time = allExams[i]['end_time'];
                     if (end_time == null){
@@ -156,11 +164,13 @@ Page({
                         examEndTime = dt.timestamp_2_date(end_time);
                     }
                 }
+                
                 break;
             }
         }
         this.setData({
-            examEndTime: examEndTime
+            examEndTime: examEndTime,
+            examTip: examTip
             }
         )
         if(examNo == 0){
@@ -188,10 +198,10 @@ Page({
     examChange: function(e) {
         var examIndex = e.detail.value;
         var currentExam = this.data.allExams[examIndex];
-        console.info(currentExam);
         this.setData({
             examNo: currentExam.exam_no,
-            examName: currentExam.exam_name
+            examName: currentExam.exam_name,
+            examIndex: examIndex
         });
         app.setDefaultExam(currentExam);
         this.getBrushNum();

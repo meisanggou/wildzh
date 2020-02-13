@@ -1,7 +1,6 @@
 {
     "pages": [
         "pages/training/training_home",
-        "pages/homePage/homePage",
         "pages/me/me",
         "pages/exam/exam_member",
         "pages/rank/rank",

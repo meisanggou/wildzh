@@ -392,7 +392,7 @@ if __name__ == "__main__":
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
-    d_path = ur'D:\Project\word\app\更新题7.docx'
+    d_path = ur'D:\Project\word\app\更新题8.docx'
     # read_docx(d_path)
     keys = ['answer', 'question_desc']
     # keys.append(['options'])

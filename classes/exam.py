@@ -299,14 +299,26 @@ class ExamUsage(object):
         period_no = (t - cls.BASIC_PT) / cls.ONE_PERIOD
         return int(period_no)
 
-    def get_usage_records(self, exam_no, user_no=None, period_no=None):
+    def get_usage_records(self, exam_no, user_no=None, period_no=None,
+                          offset_num=1):
         if period_no is None:
             period_no = self.calc_period_no()
-        where_value = dict(period_no=period_no, exam_no=exam_no)
+        where_value = dict(exam_no=exam_no)
+        where_cond = []
+        where_cond_args = []
+        if offset_num > 1:
+            where_cond.append('period_no<=%s')
+            where_cond_args.append(period_no)
+            where_cond.append('period_no>=%s')
+            where_cond_args.append(period_no - offset_num + 1)
+        else:
+            where_value['period_no'] = period_no
         if user_no:
             where_value['user_no'] = user_no
         items = self.db.execute_select(self.t_usage, cols=self.cols_usage,
-                                       where_value=where_value)
+                                       where_value=where_value,
+                                       where_cond=where_cond,
+                                       where_cond_args=where_cond_args)
         return items
 
     def get_usage_records_by_time(self, query_time, exam_no, user_no=None):
