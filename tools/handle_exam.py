@@ -329,7 +329,9 @@ def find_from_dir(exam_no, directory_name, dry_run, set_source, answer_file=Fals
 def download_questions(exam_no, select_mode):
     url = '%s/exam/questions/' % remote_host
     response = req.get(url, params={'exam_no': exam_no,
-                                    'select_mode': select_mode})
+                                    'select_mode': select_mode,
+                                    'start_no': 0,
+                                    'no_rich': True})
     # print(response.text)
     resp = response.json()
 
@@ -403,10 +405,10 @@ if __name__ == "__main__":
     d = r'D:/Project/word/app/upload'
     # find_from_dir(exam_no, d, dry_run=True, set_source=False,
     #               answer_file=True)
-    # download_questions(1569283516, 2)
+    download_questions(1569283516, 2)
     # download_usage(exam_no, [1, 2, 3, 4])
     # upload_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
     # upload_js_no_answer(exam_no, d_path, q_set)
     # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
-    handle_exam_no_answer(d_path, q_set)
+    # handle_exam_no_answer(d_path, q_set)
 

@@ -195,10 +195,26 @@ class ExamOpenMode(object):
     ALL = 7
 
 
-class ExamMember(object):
+class ExamMemberFlow(object):
     DAY_SECONDS = 3600 * 24
 
     def __init__(self):
+        self.t_emf = "exam_member_flow"
+
+    def _insert_exam_member_flow(self, user_no, exam_no, update_time,
+                                 exam_role, authorizer, end_time):
+        data = dict(user_no=user_no, exam_no=exam_no, exam_role=exam_role,
+                    authorizer=authorizer, end_time=end_time,
+                    update_time=update_time)
+        l = self.db.execute_insert(self.t_emf, data)
+        return l
+
+
+class ExamMember(ExamMemberFlow):
+    DAY_SECONDS = 3600 * 24
+
+    def __init__(self):
+        ExamMemberFlow.__init__(self)
         self.t_em = "exam_member"
 
     def _delete_exam_member(self, user_no, exam_no):
@@ -213,18 +229,25 @@ class ExamMember(object):
         data['insert_time'] = time.time()
         data['update_time'] = time.time()
         l = self.db.execute_insert(self.t_em, data)
+        del data['insert_time']
+        self._insert_exam_member_flow(**data)
         return l
 
-    def _update_exam_member(self, user_no, exam_no, authorizer=None, end_time=None):
+    def _update_exam_member(self, user_no, exam_no, authorizer, end_time=None):
         where_value = dict(user_no=user_no, exam_no=exam_no)
-        u_data = {}
-        if authorizer:
-            u_data['authorizer'] = authorizer
+        u_data = {'authorizer': authorizer}
         if end_time:
             u_data['end_time'] = end_time
         u_data['update_time'] = time.time()
+        e_items = self._select_exam_member(user_no, exam_no)
+        if len(e_items) <= 0:
+            return 0
         l = self.db.execute_update(self.t_em, update_value=u_data,
                                    where_value=where_value)
+        item = e_items[0]
+        item.update(u_data)
+        del item['insert_time']
+        self._insert_exam_member_flow(**item)
         return l
 
     def _select_exam_member(self, user_no, exam_no=None):
