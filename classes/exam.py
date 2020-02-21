@@ -209,6 +209,14 @@ class ExamMemberFlow(object):
         l = self.db.execute_insert(self.t_emf, data)
         return l
 
+    def select_member_flows(self, user_no, exam_no):
+        where_value = dict(user_no=user_no, exam_no=exam_no)
+        cols = ['user_no', 'exam_no', 'exam_role', 'end_time',
+                'update_time', 'authorizer']
+        items = self.db.execute_select(self.t_emf, cols=cols,
+                                       where_value=where_value)
+        return items
+
 
 class ExamMember(ExamMemberFlow):
     DAY_SECONDS = 3600 * 24

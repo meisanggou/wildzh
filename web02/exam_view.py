@@ -497,20 +497,16 @@ def new_member():
 @required_exam_no
 def get_member():
     exam_no = g.exam_no
-    if (g.user_role & 2) != 2:
-        exist_items = c_exam.select_exam(exam_no)
-        if len(exist_items) <= 0:
-            return jsonify({"status": False, "data": 'forbidden'})
-        if int(exist_items[0]['adder']) != g.user_no:
-            e_items = c_exam.user_exams(g.user_no, exam_no)
-            if len(e_items) <= 0:
-                return jsonify({"status": False, "data": 'forbidden'})
-            if e_items[0]['exam_role'] > 2:
-                return jsonify({"status": False, "data": 'forbidden'})
+    if g.exam_role > 2:
+        return jsonify({"status": False, "data": 'forbidden'})
     member_no = request.args['member_no']
     items = c_exam.user_exams(member_no, exam_no)
     if len(items) <= 0:
         return jsonify({"status": True, "data": None})
+    if 'flows' in request.args:
+        flows = c_exam.select_member_flows(member_no, exam_no)
+        data = {'current': items[0], 'flows': flows}
+        return jsonify({"status": True, "data": data})
     return jsonify({"status": True, "data": items[0]})
 
 

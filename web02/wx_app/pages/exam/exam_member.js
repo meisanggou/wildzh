@@ -9,6 +9,7 @@ Page({
         select_modes: ['普通用户'],
         memberNo: "",
         currentMember: {},
+        flows: ["2020-02-12 授权至 2020-03-21", "2020-02-13 授权至 2020-06-21"],
         endTime: '2016-09-01 11:20:00',
         byDays: true,
         selectDayIndex: 2,
@@ -129,7 +130,8 @@ Page({
         }
         var data = {
             'member_no': memberNo,
-            'exam_no': examNo
+            'exam_no': examNo,
+            'flows': 'true'
         };
         var that = this;
         wx.request2({
@@ -147,14 +149,16 @@ Page({
                         }
                     })
                 } else {
-                    var currentMember = res.data.data;
-                    if (currentMember == null) {
+                    var m_data = res.data.data;
+                    var currentMember = {};
+                    if (m_data == null) {
                         currentMember = {
                             'memberRole': '无权限',
                             'memberEndTime': '无',
                             'exam_role': -1
                         };
                     } else {
+                        currentMember = m_data.current;
                         if (currentMember.exam_role == 5) {
                             currentMember.memberRole = '普通用户';
                         } else {
@@ -164,6 +168,9 @@ Page({
                             currentMember.memberEndTime = "永久";
                         } else {
                             currentMember.memberEndTime = dt.timestamp_2_datetime(currentMember.end_time);
+                            if (dt.get_timestamp2() > currentMember.end_time){
+                                currentMember.memberEndTime = currentMember.memberEndTime + "(已过期)";
+                            }
                         }
                     }
                     that.setData({

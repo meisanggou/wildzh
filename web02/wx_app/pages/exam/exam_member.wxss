@@ -20,3 +20,7 @@ button{
 .center{
     text-align: center
 }
+
+.warn{
+    color: red
+}
