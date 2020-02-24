@@ -502,13 +502,15 @@ def get_member():
     member_no = request.args['member_no']
     items = c_exam.user_exams(member_no, exam_no)
     if len(items) <= 0:
-        return jsonify({"status": True, "data": None})
+        item = None
+    else:
+        item = items[0]
     if 'flows' in request.args:
         flows = c_exam.select_member_flows(member_no, exam_no)
         flows.sort(key=lambda x: x['update_time'], reverse=True)
         data = {'current': items[0], 'flows': flows}
-        return jsonify({"status": True, "data": data})
-    return jsonify({"status": True, "data": items[0]})
+        return jsonify({"status": True, "data": item})
+    return jsonify({"status": True, "data": item})
 
 
 @exam_view.route('/transfer', methods=['POST'])
