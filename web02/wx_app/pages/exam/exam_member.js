@@ -9,7 +9,7 @@ Page({
         select_modes: ['普通用户'],
         memberNo: "",
         currentMember: {},
-        flows: ["2020-02-12 授权至 2020-03-21", "2020-02-13 授权至 2020-06-21"],
+        flows: [],
         endTime: '2016-09-01 11:20:00',
         byDays: true,
         selectDayIndex: 2,
@@ -97,7 +97,7 @@ Page({
             byDays: e.detail.value
         })
         if (e.detail.value == true) {
-            setEndTime();
+            this.setEndTime();
         }
     },
     bindDaysChange(e) {
@@ -116,6 +116,19 @@ Page({
         this.setData({
             endTime: v_s
         })
+    },
+    stringGrantTime(insertTime){
+        var nowT = dt.get_timestamp2();
+        var intervalT = nowT - insertTime;
+        var hSeconds = 3600 * 24;
+        var prefix = "";
+        if(intervalT < hSeconds){
+            prefix = "一天内";
+        }
+        else if(intervalT < hSeconds * 30){
+            prefix = "一月内";
+        }
+        return prefix;
     },
     queryAction: function() {
         var memberNo = this.data.memberNo;
@@ -149,16 +162,28 @@ Page({
                         }
                     })
                 } else {
-                    var m_data = res.data.data;
+                    var mData = res.data.data;
                     var currentMember = {};
-                    if (m_data == null) {
+                    var rFlows = mData.flows;
+                    var fLen = 2;
+                    if(rFlows.length < 2){
+                        fLen = rFlows.length;
+                    }
+                    var flows = [];
+                    for(var i=0;i<fLen;i++){
+                        var fItem = rFlows[i];
+                        var s = that.stringGrantTime(fItem.update_time);
+                        var oFlow = { 'prefix': s, 'grantTime': dt.timestamp_2_date(fItem.update_time), 'endTime': dt.timestamp_2_date(fItem.end_time), 'updateTime': fItem.update_time}
+                        flows.push(oFlow);
+                    }
+                    if (mData == null) {
                         currentMember = {
                             'memberRole': '无权限',
                             'memberEndTime': '无',
                             'exam_role': -1
                         };
                     } else {
-                        currentMember = m_data.current;
+                        currentMember = mData.current;
                         if (currentMember.exam_role == 5) {
                             currentMember.memberRole = '普通用户';
                         } else {
@@ -175,7 +200,8 @@ Page({
                     }
                     that.setData({
                         isQuery: false,
-                        currentMember: currentMember
+                        currentMember: currentMember,
+                        flows: flows
                     })
                     that.setEndTime();
                 }

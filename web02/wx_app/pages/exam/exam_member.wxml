@@ -51,7 +51,7 @@
             <block wx:if="{{!isQuery}}">
                 <view class="weui-cells__title">当前权限：{{currentMember.memberRole}}</view>
                 <view class="weui-cells__title">截止日期：<text class="warn">{{currentMember.memberEndTime}}</text></view>
-                <view class="center" wx:for="{{flows}}">{{item}}</view>
+                <view class="center" wx:for="{{flows}}" wx:key="updateTime">{{item.grantTime}}<text class="warn" wx:if="{{item.prefix}}">({{item.prefix}})</text> 授权至 {{item.endTime}}</view>
                 <view class="weui-cells__title center">更新或增加授权</view>
                 <view class="weui-cells weui-cells_after-title">
                     <view class="weui-cell weui-cell_switch">

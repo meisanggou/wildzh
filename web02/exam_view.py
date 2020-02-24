@@ -505,6 +505,7 @@ def get_member():
         return jsonify({"status": True, "data": None})
     if 'flows' in request.args:
         flows = c_exam.select_member_flows(member_no, exam_no)
+        flows.sort(key=lambda x: x['update_time'], reverse=True)
         data = {'current': items[0], 'flows': flows}
         return jsonify({"status": True, "data": data})
     return jsonify({"status": True, "data": items[0]})
