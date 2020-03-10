@@ -34,7 +34,7 @@ __author__ = 'meisa'
 
 class ExamObject(object):
     extend_keys = ['openness_level', 'open_mode', 'open_no_start',
-                   'open_no_end', 'pic_url']
+                   'open_no_end', 'pic_url', 'subjects']
 
     def __init__(self, **kwargs):
         self._d = dict()
@@ -49,6 +49,7 @@ class ExamObject(object):
         self._open_mode = ExamOpenMode.SUBJECT
         self._open_no_start = -1
         self._open_no_end = float('INF')
+        self._subjects = []
         self.pic_url = None
         self._exam_role = 100
         self.update(**kwargs)
@@ -167,6 +168,43 @@ class ExamObject(object):
 
     def can_look_subject(self):
         return self._can_access(ExamOpenMode.SUBJECT)
+
+    @property
+    def subjects(self):
+        return self._subjects
+
+    @subjects.setter
+    def subjects(self, values):
+        if not isinstance(values, list):
+            return
+        _clear_values = []
+        for item in values:
+            clear_item = dict()
+            if not isinstance(item, dict):
+                return
+            if 'name' not in item:
+                return
+            clear_item['name'] = item['name']
+            if 'select_modes' not in item:
+                clear_item['select_modes'] = ['无']
+            else:
+                if isinstance(item['select_modes'], list):
+                    return
+                clear_item['select_modes'] = item['select_modes']
+            if 'select_modes' not in item:
+                clear_item['select_modes'] = ['无']
+            else:
+                if isinstance(item['select_modes'], list):
+                    return
+                clear_item['select_modes'] = item['select_modes']
+            if 'chapters' not in item:
+                clear_item['chapters'] = ['无']
+            else:
+                if isinstance(item['chapters'], list):
+                    return
+                clear_item['chapters'] = item['chapters']
+            _clear_values.append(clear_item)
+        self._subjects = _clear_values
 
     def _internal_set(self, k, v):
         self._d[k] = v

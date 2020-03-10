@@ -35,12 +35,6 @@
                 "default_value": 1
             },
             {
-                "col_comment": "题目顺序",
-                "col_name": "exam_order",
-                "col_type": "text",
-                "allow_null": true
-            },
-            {
                 "col_comment": "题目数",
                 "col_name": "question_num",
                 "col_type": "int(11)",

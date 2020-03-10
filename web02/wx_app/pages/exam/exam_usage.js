@@ -1,3 +1,4 @@
+var nickNameCache = {};
 // pages/me/exam_usage.js
 Page({
 
@@ -5,6 +6,8 @@ Page({
      * 页面的初始数据
      */
     data: {
+        periods: ['一周情况', '两周情况', '三周情况', '四周情况'],
+        periodIndex: 0,
         usageItems: []
     },
 
@@ -15,7 +18,10 @@ Page({
         var examNo = null;
         if ("examNo" in options) {
             examNo = options['examNo'];
-            this.getUsage(examNo);
+            this.getUsage(examNo, 1);
+            this.setData({
+                examNo: examNo
+            })
         }
         else {
             wx.showModal({
@@ -31,35 +37,70 @@ Page({
             return false;
         }
     },
-    getUsage: function (examNo){
+    bindPeriodChange: function (e) {
+        var periodIndex = parseInt(e.detail.value);
+        this.setData({
+            periodIndex: periodIndex
+        })
+        this.getUsage(this.data.examNo, periodIndex + 1);
+    },
+    getUsage: function (examNo, offsetNum) {
+        wx.showLoading({
+            title: '加载中...',
+            mask: true
+        })
         var that = this;
         wx.request2({
-            url: '/exam/usage/state?offset_num=1&exam_no=' + examNo,
+            url: '/exam/usage/state?offset_num=' + offsetNum + '&exam_no=' + examNo,
             method: 'GET',
             success: res => {
+                wx.hideLoading();
                 if (res.data.status == false) {
                     return false;
                 }
                 var resData = res.data.data;
-                if(resData.length <= 0){
+                if (resData.length <= 0) {
                     return false;
                 }
-                resData.sort(function (a, b) {
+                var noMapIndex = {};
+                var usageItems = [];
+                for(var i=0;i<resData.length;i++){
+                    var rItem = resData[i];
+                    if(rItem.user_no in noMapIndex){
+                        var index = noMapIndex[rItem.user_no];
+                        usageItems[index].num = usageItems[index].num + rItem.num;
+                    }
+                    else{
+                        usageItems.push(rItem);
+                        noMapIndex[rItem.user_no] = usageItems.length - 1;
+                    }
+                }
+                usageItems.sort(function (a, b) {
                     return b.num - a.num;
                 })
-                that.setData({
-                    usageItems: resData
-                })
-                var user_list = [];
-                for(var i=0;i<resData.length;i++){
-                    user_list.push(resData[i].user_no);
-                }
-                that.getNickNames(user_list);
+                that.getNickNames(usageItems);
+                
             }
         })
     },
-    getNickNames: function (user_list) {
-        var data = { 'user_list': user_list}
+    getNickNames: function (usageItems) {
+        var user_list = [];
+        for (var i = 0; i < usageItems.length; i++) {
+            if (usageItems[i].user_no in nickNameCache) {
+                usageItems[i].nick_name = nickNameCache[usageItems[i].user_no];
+            }
+            else {
+                user_list.push(usageItems[i].user_no);
+            }
+        }
+
+        if (user_list.length <= 0) {
+            this.setData({
+                usageItems: usageItems
+            })
+            return true;
+        }
+        var data = { 'user_list': user_list }
         var that = this;
         wx.request2({
             url: '/user/nicknames',
@@ -70,17 +111,20 @@ Page({
                     return false;
                 }
                 var resData = res.data.data;
-                var usageItems = that.data.usageItems;
                 var l1 = resData.length;
+                for(var j=0;j<l1;j++){
+                    var nItem = resData[j];
+                    nickNameCache[nItem.user_no] = nItem['nick_name'];
+                }
+
                 var l2 = usageItems.length;
-                for(var i=0;i<l2;i++){
+                for (var i = 0; i < l2; i++) {
                     var uItem = usageItems[i];
-                    for(var j=0;j<l1;j++){
-                        var nItem = resData[j];
-                        if(nItem.user_no == uItem.user_no){
-                            uItem['nick_name'] = nItem['nick_name'];
-                            break;
-                        }
+                    if('nick_name' in uItem){
+                        continue;
+                    }
+                    if(uItem.user_no in nickNameCache){
+                        uItem['nick_name'] = nickNameCache[uItem.user_no];
                     }
                 }
                 that.setData({

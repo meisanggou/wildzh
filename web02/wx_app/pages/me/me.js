@@ -2,6 +2,7 @@ var app = getApp();
 var dt = require("../common/datetime_tools.js");
 var that;
 var newNickName = '';
+var lastUpdateUserKey = 'updateUserTime'
 
 Page({
     data: {
@@ -16,7 +17,7 @@ Page({
         examEndTime: null,
         examTip: "未拥有当前题库所有操作权限",
         brushNum: -1,
-        version: "5.1.1"
+        version: app.globalData.version
     },
     onLoad: function(options) {
         if (app.globalData.defaultExamNo != null) {
@@ -26,13 +27,13 @@ Page({
             })
         }
         var currentUser = app.getOrSetCurrentUserData();
-        if(currentUser != null){
-            if("user_no" in currentUser){
+        if (currentUser != null) {
+            if ("user_no" in currentUser) {
                 this.setData({
                     userNo: currentUser.user_no
                 })
             }
-            if(currentUser.avatar_url){
+            if (currentUser.avatar_url) {
                 this.setData({
                     userAvatar: currentUser.avatar_url,
                     nickName: currentUser.nick_name
@@ -40,10 +41,10 @@ Page({
             }
         }
     },
-    onShow: function () {
+    onShow: function() {
         this.getExams();
     },
-    getUserInfo: function (e) {
+    getUserInfo: function(e) {
         var that = this
         var userInfo = e.detail.userInfo
         var data = {
@@ -57,7 +58,7 @@ Page({
         this.updateUserInfoAction(data);
 
     },
-    updateUserInfoAction: function (data){
+    updateUserInfoAction: function(data) {
         var that = this;
         wx.request2({
             url: '/user/info/',
@@ -71,20 +72,36 @@ Page({
                     nickName: userItem.nick_name
                 })
                 wx.hideLoading();
+                app.getOrSetCacheData2(lastUpdateUserKey, dt.get_timestamp2());
             }
         })
 
     },
-    updateNickNameClick: function(){
-        this.setData({
-            hiddenUnickName: false
-        })
+    updateNickNameClick: function() {
+        var currentTime = dt.get_timestamp2();
+        var lastTime = app.getOrSetCacheData2(lastUpdateUserKey);
+        console.info(lastTime)
+        var intervalTime = 3600 * 24 * 30;
+        var msg = '您的昵称是：' + this.data.nickName + ' 昵称可在30天内更新一次！';
+        if (lastTime != null && currentTime - lastTime < intervalTime) {
+            wx.showModal({
+                title: '昵称',
+                content: msg,
+                showCancel: false,
+                success(res) {
+                }
+            })
+        } else {
+            this.setData({
+                hiddenUnickName: false
+            })
+        }
     },
-    nickNameChange: function(e){
+    nickNameChange: function(e) {
         var nNickName = e.detail.value;
         newNickName = nNickName;
     },
-    cancelUnickName: function(){
+    cancelUnickName: function() {
         this.setData({
             hiddenUnickName: true
         })
@@ -117,19 +134,19 @@ Page({
                 var examName = this.data.examName;
                 for (var index in resData) {
                     if (resData[index]["question_num"] > 0) {
-                        if (resData[index].exam_no == this.data.examNo){
+                        if (resData[index].exam_no == this.data.examNo) {
                             examName = resData[index].exam_name;
                             examNo = resData[index].exam_no;
                             examIndex = index;
                         }
-                        
+
                         allExams.push(resData[index]);
                     }
                 }
-                if(examNo == 0){
+                if (examNo == 0) {
                     examName = "未选择";
                 }
-                
+
                 that.setData({
                     allExams: allExams,
                     examName: examName,
@@ -141,39 +158,36 @@ Page({
             }
         })
     },
-    getBrushNum: function () {
+    getBrushNum: function() {
         var examNo = this.data.examNo;
         var examEndTime = null;
         var allExams = this.data.allExams;
         var examTip = '';
-        for(var i=0;i<allExams.length;i++){
-            if(allExams[i].exam_no == examNo){
+        for (var i = 0; i < allExams.length; i++) {
+            if (allExams[i].exam_no == examNo) {
                 if (allExams[i].exam_role > 10) {
                     examTip = '未拥有当前题库所有操作权限';
                 }
-                if('end_time' in allExams[i]){
+                if ('end_time' in allExams[i]) {
                     var end_time = allExams[i]['end_time'];
-                    if (end_time == null){
+                    if (end_time == null) {
                         examEndTime = '无期限'
-                    }
-                    else if(end_time <= 0){
+                    } else if (end_time <= 0) {
                         // 不显示 有效期
                         break;
-                    }
-                    else{
+                    } else {
                         examEndTime = dt.timestamp_2_date(end_time);
                     }
                 }
-                
+
                 break;
             }
         }
         this.setData({
             examEndTime: examEndTime,
             examTip: examTip
-            }
-        )
-        if(examNo == 0){
+        })
+        if (examNo == 0) {
             that.setData({
                 brushNum: -1
             });
@@ -184,7 +198,7 @@ Page({
             url: '/exam/usage?exam_no=' + examNo,
             method: 'GET',
             success: res => {
-                if(res.data.status == false){
+                if (res.data.status == false) {
                     return false;
                 }
                 var resData = res.data.data;
@@ -206,7 +220,7 @@ Page({
         app.setDefaultExam(currentExam);
         this.getBrushNum();
     },
-    lookExam: function(){
+    lookExam: function() {
         wx.navigateTo({
             url: "../exam/exam_info?examNo=" + this.data.examNo
         })

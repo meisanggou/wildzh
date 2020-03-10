@@ -163,8 +163,8 @@ Page({
                     })
                 } else {
                     var mData = res.data.data;
-                    var currentMember = {};
                     var rFlows = mData.flows;
+                    var currentMember = mData.current;
                     var fLen = 2;
                     if(rFlows.length < 2){
                         fLen = rFlows.length;
@@ -176,14 +176,13 @@ Page({
                         var oFlow = { 'prefix': s, 'grantTime': dt.timestamp_2_date(fItem.update_time), 'endTime': dt.timestamp_2_date(fItem.end_time), 'updateTime': fItem.update_time}
                         flows.push(oFlow);
                     }
-                    if (mData == null) {
+                    if (currentMember == null) {
                         currentMember = {
                             'memberRole': '无权限',
-                            'memberEndTime': '无',
+                            'memberEndTime': '-',
                             'exam_role': -1
                         };
                     } else {
-                        currentMember = mData.current;
                         if (currentMember.exam_role == 5) {
                             currentMember.memberRole = '普通用户';
                         } else {

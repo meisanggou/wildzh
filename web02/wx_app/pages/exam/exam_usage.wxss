@@ -1,6 +1,7 @@
 /* pages/me/exam_usage.wxss */
 .table {
   border: 0px solid darkgray;
+  margin-bottom: 110rpx;
 }
 .tr {
   display: flex;
@@ -29,3 +30,26 @@
   height: 3rem;
   align-items: center;
 }
+
+.bottom {
+  width: 100%;
+  font-size: 28rpx;
+  position: fixed;
+  bottom: 0rpx;
+  background-color: #fff;
+  height: 100rpx;
+  border-top: 1px solid #c9c9d8;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 10;
+}
+/* .bottom-p {
+    float:right;
+}
+
+.down-slip {
+    width: 50rpx;
+    height: 50rpx;
+    float: left;
+} */

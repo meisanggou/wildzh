@@ -1,4 +1,5 @@
 var remote_host = "https://meisanggou.vicp.net"
+var version = "5.2.0";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 remote_host = "https://wild.gene.ac"
@@ -153,6 +154,7 @@ App({
         }
     },
     globalData: {
+        version: version,
         userInfo: null,
         nowQuestionList: [],
         nowAnswerResultList: [],

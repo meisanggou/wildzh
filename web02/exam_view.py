@@ -220,9 +220,9 @@ def get_exam_info():
             r_item['end_time'] = 0
         if r_item['exam_role'] <= min_role:
             r_items.append(r_item)
-    for item in r_items:
-        item["select_modes"] = G_SELECT_MODE
-        item["subjects"] = G_SUBJECT
+    # for item in r_items:
+    #     item["select_modes"] = G_SELECT_MODE
+    #     item["subjects"] = G_SUBJECT
     if 'rich' in request.args:
         for item in r_items:
             item['rich_exam_desc'] = separate_image(item['exam_desc'])
