@@ -64,14 +64,8 @@
 
                     <li>
                         <label>科目题型：</label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" value="option1"> 选项 1
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" value="option2"> 选项 2
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" value="option3"> 选项 3
+                        <label class="checkbox-inline" v-for="mod_item in sub_item.select_modes">
+                            <input type="checkbox" value="mod_item.enable">{{mod_item.name}}
                         </label>
                     </li>
                     <li>

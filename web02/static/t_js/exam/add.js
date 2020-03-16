@@ -3,7 +3,12 @@
  */
 
 $(function () {
+    var select_modes = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题"];
     var default_subject = {'name': '', 'select_modes': [], 'chapters': [], 'enable': true};
+    for(var i=0;i<select_modes.length;i++){
+        default_subject.select_modes.push({'name': select_modes[i], 'enable': true})
+    }
+    console.info(default_subject);
     var vm = new Vue({
         el: "#myTabContent",
         data: {
