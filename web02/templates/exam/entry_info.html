@@ -50,6 +50,35 @@
                     <label>-</label>
                     <input type="text" class="box-side width100" v-model.number='open_no_end'>
                 </li>
+                <li>
+                    <button class="btn btn-success" @click="add_subject">增加科目</button>
+                </li>
+
+                <div class="panel panel-default" v-for="(sub_item, index) in exam_subjects">
+                    <div class="panel-heading">
+                        <li>
+                            <label>科目名称：</label>
+                            <input type="text" class="box-side width100">
+                        </li>
+                    </div>
+
+                    <li>
+                        <label>科目题型：</label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" value="option1"> 选项 1
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" value="option2"> 选项 2
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" value="option3"> 选项 3
+                        </label>
+                    </li>
+                    <li>
+                        <label>科目章节：</label>
+                        <input type="text" class="box-side width100">
+                    </li>
+                </div>
             </ul>
         </div>
         <button v-if="exam_no" class="btn btn-success btn-down api-newBtn" @click="update">更新</button>

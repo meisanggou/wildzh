@@ -191,12 +191,6 @@ class ExamObject(object):
                 if isinstance(item['select_modes'], list):
                     return
                 clear_item['select_modes'] = item['select_modes']
-            if 'select_modes' not in item:
-                clear_item['select_modes'] = ['无']
-            else:
-                if isinstance(item['select_modes'], list):
-                    return
-                clear_item['select_modes'] = item['select_modes']
             if 'chapters' not in item:
                 clear_item['chapters'] = ['无']
             else:

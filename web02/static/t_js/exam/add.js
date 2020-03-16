@@ -3,6 +3,7 @@
  */
 
 $(function () {
+    var default_subject = {'name': '', 'select_modes': [], 'chapters': [], 'enable': true};
     var vm = new Vue({
         el: "#myTabContent",
         data: {
@@ -13,9 +14,13 @@ $(function () {
             open_mode: 1,
             open_no_start: '',
             open_no_end: '',
+            exam_subjects: [],
             error_tips: {"exam_name": "请输入测试名称", "exam_desc": "请输入测试介绍"}
         },
         methods: {
+            add_subject: function(){
+                this.exam_subjects.push(default_subject);
+            },
             add: function () {
                 var r_data = new Object();
                 var keys = ["exam_name", "exam_desc"];
