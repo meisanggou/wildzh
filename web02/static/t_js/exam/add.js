@@ -20,11 +20,16 @@ $(function () {
             open_no_start: '',
             open_no_end: '',
             exam_subjects: [],
+            new_chapter: '',
             error_tips: {"exam_name": "请输入测试名称", "exam_desc": "请输入测试介绍"}
         },
         methods: {
             add_subject: function(){
                 this.exam_subjects.push(default_subject);
+            },
+            add_chapter: function(index){
+                this.exam_subjects[index]['chapters'].push(this.new_chapter);
+                this.new_chapter = '';
             },
             add: function () {
                 var r_data = new Object();
@@ -67,6 +72,14 @@ $(function () {
                 var keys = ["exam_no", "exam_name", "exam_desc", 'openness_level', 'open_mode', 'open_no_start',  'open_no_end'];
                 for (var i = 0; i < keys.length; i++) {
                     r_data[keys[i]] = this[keys[i]];
+                }
+                var exam_subjects = [];
+                for(var j=0;j<this.exam_subjects.length;j++){
+                    var s_item = this.exam_subjects[j];
+                    if(s_item.name.length == 0){
+                        popup_show('每个科目都需要设置名称');
+                        return false;
+                    }
                 }
                 var info_url = $("#info_url").val();
                 my_async_request2(info_url, "PUT", r_data, function (data){

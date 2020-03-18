@@ -58,19 +58,20 @@
                     <div class="panel-heading">
                         <li>
                             <label>科目名称：</label>
-                            <input type="text" class="box-side width100">
+                            <input type="text" class="box-side width100" v-model.trim="sub_item.name">
                         </li>
                     </div>
 
                     <li>
                         <label>科目题型：</label>
                         <label class="checkbox-inline" v-for="mod_item in sub_item.select_modes">
-                            <input type="checkbox" value="mod_item.enable">{{mod_item.name}}
+                            <input type="checkbox" v-model="mod_item.enable">{{mod_item.name}}
                         </label>
                     </li>
                     <li>
                         <label>科目章节：</label>
-                        <input type="text" class="box-side width100">
+                        <input type="text" class="box-side width100" v-model.trim="new_chapter">
+                        <button class="btn btn-success btn-sm" @click="add_chapter(index)">增加章节</button>
                     </li>
                 </div>
             </ul>
