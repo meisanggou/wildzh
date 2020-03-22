@@ -394,7 +394,7 @@ if __name__ == "__main__":
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
-    d_path = ur'D:\Project\word\app\更新题8.docx'
+    d_path = ur'D:\Project\word\app\更新题9.docx'
     # read_docx(d_path)
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
@@ -405,10 +405,7 @@ if __name__ == "__main__":
     d = r'D:/Project/word/app/upload'
     # find_from_dir(exam_no, d, dry_run=True, set_source=False,
     #               answer_file=True)
-    download_questions(1569283516, 2)
+    # download_questions(1569283516, 2)
     # download_usage(exam_no, [1, 2, 3, 4])
-    # upload_jd_no_answer(exam_no, d_path, dry_run=True, set_source=False)
-    # upload_js_no_answer(exam_no, d_path, q_set)
-    # upload_js_with_answer(exam_no, d_path, dry_run=False, set_source=False)
-    # handle_exam_no_answer(d_path, q_set)
+    handle_exam_no_answer(d_path, q_set)
 
