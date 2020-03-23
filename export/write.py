@@ -47,6 +47,34 @@ class Counter(object):
         self._index += 1
 
 
+class QuestionCache(object):
+    _instance = None
+    _cache = set()
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance:
+            return cls._instance
+        o = object.__new__(cls)
+        cls._instance = o
+        return o
+
+    def __init__(self, auto_cache=True):
+        self.auto_cache = auto_cache
+
+    def add(self, exam_no, question_no):
+        self._cache.add((exam_no, question_no))
+
+    def exist(self, exam_no, question_no):
+        if (exam_no, question_no) in self._cache:
+            return True
+        if self.auto_cache:
+            self.add(exam_no, question_no)
+        return False
+
+    @property
+    def length(self):
+        return len(self._cache)
+
 
 text_run_template = u"""<w:r>
   <w:rPr>
@@ -116,6 +144,25 @@ def request_questions(exam_no, num, select_mode=None):
     return response.json()
 
 
+def request_diff_questions(exam_no, num, select_mode=None):
+    questions = []
+    rate = 1
+    _qc = QuestionCache()
+    while len(questions) < num:
+        offset = num - len(questions)
+        r_num = rate * offset
+        req_questions = request_questions(exam_no, r_num, select_mode)
+        for item in req_questions['data']:
+            exist = _qc.exist(item['exam_no'], item['question_no'])
+            if not exist:
+                questions.append(item)
+                if len(questions) >= num:
+                    break
+            else:
+                print(item)
+    return questions
+
+
 def download_file(path, save_dir, name):
     url = '%s%s' % (SERVER_EP, path)
     resp = session.get(url)
@@ -137,21 +184,21 @@ def receive_data(exam_no, media_dir):
         b_i = _indexs.index(b['question_subject'])
         return a_i - b_i
     # 获取 60道 选择题
-    single_selected = request_questions(exam_no, 60, 1)["data"]
+    single_selected = request_diff_questions(exam_no, 60, 1)
     single_selected.sort(cmp=_question_sort)
 
     answer_blocks = []
     # 获得 5题 名词解释
-    block1 = request_questions(exam_no, 5, 2)["data"]
+    block1 = request_diff_questions(exam_no, 5, 2)
     answer_blocks.append(dict(title=u"二、名词解释(每小题3分,共15分)", questions=block1))
     # 获得 4题 简答题
-    block2 = request_questions(exam_no, 4, 3)["data"]
+    block2 = request_diff_questions(exam_no, 4, 3)
     answer_blocks.append(dict(title=u"三、简答题(每小题5分,共20分)", questions=block2))
     # 获得 2题 计算题
-    block3 = request_questions(exam_no, 2, 4)["data"]
+    block3 = request_diff_questions(exam_no, 2, 4)
     answer_blocks.append(dict(title=u"四、计算题(70题10分,71题15分,共25分)", questions=block3))
     # 获得 2题 论述题
-    block4 = request_questions(exam_no, 2, 5)["data"]
+    block4 = request_diff_questions(exam_no, 2, 5)
     answer_blocks.append(dict(title=u"五、论述题(每小题15分,共30分)", questions=block4))
 
     #  数据处理
@@ -305,6 +352,14 @@ def write_xml(filename, demo_dir, **kwargs):
             wm.write(mr.encode('utf-8'))
 
     packet_zip(filename, demo_dir)
+    # clear file
+    os.remove(doc_file)
+    os.remove(rels_file)
+    media_dir = os.path.join(demo_dir, 'word/media')
+    exist_mf = os.listdir(media_dir)
+    for item in exist_mf:
+        _file = os.path.join(media_dir, item)
+        os.remove(_file)
     return filename
 
 
@@ -317,3 +372,4 @@ if __name__ == "__main__":
         write_xml(u'%s_答案.docx' % name, 'demo2', exam_name=name, show_answer=True,
                   **q_data)
         write_xml('%s.docx' % name, 'demo2', exam_name=name, **q_data)
+    print(QuestionCache().length)
