@@ -159,6 +159,10 @@ def receive_data(exam_no, media_dir):
     rid_c = Counter('rid')
     rid_p = 'rIdm'
     medias = []
+    exist_mf = os.listdir(media_dir)
+    for item in exist_mf:
+        _file = os.path.join(media_dir, item)
+        os.remove(_file)
 
     def _handle_rich_desc(rd_item):
         if isinstance(rd_item, dict):
@@ -269,16 +273,19 @@ def write_zip(target_dir, target_files=None):
     return relative_files
 
 
-def packet_zip(filename):
+def packet_zip(filename, demo_dir):
     zip_write = zipfile.ZipFile(filename, "w")
-    zip_files = write_zip("demo2", ["_rels", "docProps", "word", "[Content_Types].xml"])
+    zip_files = write_zip(demo_dir, ["_rels", "docProps", "word", "[Content_Types].xml"])
     for z_file in zip_files:
         zip_write.write(z_file[0], z_file[1])
     zip_write.close()
 
 
-def write_xml(filename, **kwargs):
+def write_xml(filename, demo_dir, **kwargs):
     medias = kwargs.pop('medias', [])
+    doc_file = os.path.join(demo_dir, 'word/document.xml')
+    rels_file = os.path.join(demo_dir, 'word/_rels/document.xml.rels')
+
     env = jinja2.Environment()
     env.filters["transfer"] = transfer
     env.filters["get_num"] = get_num
@@ -287,25 +294,26 @@ def write_xml(filename, **kwargs):
     template_str = open("document_demo2.xml").read().decode("utf-8")
     t = env.from_string(template_str)
     r = t.render(**kwargs)
-    with open("demo2/word/document.xml", "w") as w:
+
+    with open(doc_file, "w") as w:
         w.write(r.encode("utf-8"))
     if medias:
         m_ts = open('rels_demo.xml').read().decode('utf-8')
         mt = env.from_string(m_ts)
         mr = mt.render(medias=medias)
-        with open('demo2/word/_rels/document.xml.rels', 'w') as wm:
+        with open(rels_file, 'w') as wm:
             wm.write(mr.encode('utf-8'))
 
-    packet_zip(filename)
+    packet_zip(filename, demo_dir)
     return filename
 
 
 if __name__ == "__main__":
-    q_data = receive_data('1570447137', 'demo2/word/media')
     # q_data['single_selected'] = []
     # q_data['answer_blocks'] = []
-    for num in cn_num:
+    for num in cn_num[:1]:
+        q_data = receive_data('1570447137', 'demo2/word/media')
         name = ('自测题' + num).decode('utf-8')
-        write_xml(u'%s_答案.docx' % name, exam_name=name, show_answer=True,
+        write_xml(u'%s_答案.docx' % name, 'demo2', exam_name=name, show_answer=True,
                   **q_data)
-        write_xml('%s.docx' % name, exam_name=name, **q_data)
+        write_xml('%s.docx' % name, 'demo2', exam_name=name, **q_data)

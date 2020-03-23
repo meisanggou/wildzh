@@ -51,7 +51,7 @@
   
   <Relationship Id="rIdm21" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm21.png"/>
   
-  <Relationship Id="rIdm22" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm22.jpeg"/>
+  <Relationship Id="rIdm22" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm22.png"/>
   
   <Relationship Id="rIdm23" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm23.png"/>
   
@@ -75,7 +75,7 @@
   
   <Relationship Id="rIdm33" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm33.png"/>
   
-  <Relationship Id="rIdm34" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm34.png"/>
+  <Relationship Id="rIdm34" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm34.jpeg"/>
   
   <Relationship Id="rIdm35" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm35.png"/>
   
@@ -91,36 +91,6 @@
   
   <Relationship Id="rIdm41" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm41.png"/>
   
-  <Relationship Id="rIdm42" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm42.png"/>
-  
-  <Relationship Id="rIdm43" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm43.png"/>
-  
-  <Relationship Id="rIdm44" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm44.png"/>
-  
-  <Relationship Id="rIdm45" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm45.png"/>
-  
-  <Relationship Id="rIdm46" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm46.png"/>
-  
-  <Relationship Id="rIdm47" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm47.png"/>
-  
-  <Relationship Id="rIdm48" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm48.jpeg"/>
-  
-  <Relationship Id="rIdm49" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm49.png"/>
-  
-  <Relationship Id="rIdm50" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm50.png"/>
-  
-  <Relationship Id="rIdm51" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm51.png"/>
-  
-  <Relationship Id="rIdm52" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm52.png"/>
-  
-  <Relationship Id="rIdm53" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm53.png"/>
-  
-  <Relationship Id="rIdm54" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm54.png"/>
-  
-  <Relationship Id="rIdm55" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm55.png"/>
-  
-  <Relationship Id="rIdm56" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm56.png"/>
-  
-  <Relationship Id="rIdm57" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm57.png"/>
+  <Relationship Id="rIdm42" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rIdm42.jpeg"/>
   
 </Relationships>
