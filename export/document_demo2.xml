@@ -25,8 +25,9 @@
         <w:t>{{ exam_name }}</w:t>
       </w:r>
     </w:p>
-    <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9">
+    <w:p w:rsidR="00635EE5" w:rsidRDefault="00FD6377" w:rsidP="00FD6377">
       <w:pPr>
+        <w:pStyle w:val="2"/>
         <w:numPr>
           <w:ilvl w:val="0"/>
           <w:numId w:val="1"/>
@@ -352,7 +353,7 @@
       {% if show_answer %}
          <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9" w:rsidP="008C419A">
             <w:pPr>
-              <w:ind w:left="480" w:hangingChars="200" w:hanging="480"/>
+              <w:ind w:left="0" w:hangingChars="0" w:hanging="0"/>
               <w:rPr>
                 <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
                 <w:sz w:val="24"/>
@@ -369,7 +370,7 @@
           </w:p>
           <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9" w:rsidP="008C419A">
               <w:pPr>
-                <w:ind w:left="480" w:hangingChars="200" w:hanging="480"/>
+                <w:ind w:left="0" w:hangingChars="0" w:hanging="0"/>
                 <w:rPr>
                   <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
                   <w:sz w:val="24"/>
@@ -383,10 +384,13 @@
                 </w:rPr>
                 <w:t>解析：{{ item.answer }}</w:t>
               </w:r>
+              {% for ar_desc in item.answer_rich %}
+                {{ ar_desc | convert_run_xml }}
+              {% endfor %}
             </w:p>
             <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9" w:rsidP="008C419A">
               <w:pPr>
-                <w:ind w:left="480" w:hangingChars="200" w:hanging="480"/>
+                <w:ind w:left="0" w:hangingChars="0" w:hanging="0"/>
                 <w:rPr>
                   <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
                   <w:sz w:val="24"/>
@@ -404,7 +408,7 @@
       {% endif %}
     {% endfor %}
     {% for q_block in answer_blocks %}
-      <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9">
+      <w:p w:rsidR="00635EE5" w:rsidRDefault="00970FA4">
         <w:pPr>
           <w:numPr>
             <w:ilvl w:val="0"/>
@@ -431,7 +435,7 @@
       {% for q_item in q_block.questions %}
         <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9" w:rsidP="008C419A">
           <w:pPr>
-            <w:ind w:left="480" w:hangingChars="200" w:hanging="480"/>
+            <w:ind w:left="0" w:hangingChars="0" w:hanging="0"/>
             <w:rPr>
               <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
               <w:sz w:val="24"/>
@@ -445,14 +449,14 @@
             </w:rPr>
             <w:t>{{ q_item.this_question_no }}.</w:t>
           </w:r>
-          {% for desc_item in q_item.question_desc_rich %}
+          {% for desc_item in q_item.multi_question_desc[0] %}
             {{ desc_item | convert_run_xml }}
           {% endfor %}
         </w:p>
-        {% for m_items in q_item.multi_question_desc %}
+        {% for m_items in q_item.multi_question_desc[1:] %}
           <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9" w:rsidP="00034B0D">
               <w:pPr>
-                <w:ind w:firstLineChars="200" w:firstLine="480"/>
+                <w:ind w:firstLineChars="0" w:hangingChars="0" w:firstLine="0"/>
                 <w:rPr>
                   <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
                   <w:sz w:val="24"/>
@@ -464,17 +468,21 @@
             </w:p>
         {% endfor %}
         {% if show_answer %}
+            {% for ar_item in q_item.multi_answer_rich %}
             <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9" w:rsidP="008C419A">
               <w:pPr>
-                <w:ind w:left="480" w:hangingChars="200" w:hanging="480"/>
+                <w:ind w:left="0" w:hangingChars="0" w:hanging="0"/>
                 <w:rPr>
                   <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
                   <w:sz w:val="24"/>
                 </w:rPr>
               </w:pPr>
               <w:bookmarkStart w:id="0" w:name="_GoBack"/>
-              {{ q_item.answer | convert_run_xml }}
+              {% for ar_desc in ar_item %}
+                {{ ar_desc | convert_run_xml }}
+              {% endfor %}
             </w:p>
+            {% endfor %}
         {% endif %}
       {% endfor %}
     {% endfor %}

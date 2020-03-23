@@ -1,4 +1,4 @@
- # !/usr/bin/env python
+# !/usr/bin/env python
 # coding: utf-8
 
 import re
@@ -17,6 +17,34 @@ OPTION_MAPPING = ["A", "B", "C", "D"]
 cn_num = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一"]
 session = requests.session()
 session.headers["User-Agent"] = "jyrequests"
+
+
+class Counter(object):
+    _instances = {}
+
+    def __new__(cls, *args, **kwargs):
+        name = None
+        if 'name' in kwargs:
+            name = kwargs['name']
+        elif len(args) > 1:
+            name = args[0]
+        if name in cls._instances:
+            return cls._instances[name]
+        o = object.__new__(cls)
+        cls._instances[name] = o
+        return o
+
+    def __init__(self, name, index=0):
+        self.name = name
+        self._index = index
+
+    @property
+    def value(self):
+        return self._index
+
+    def plus(self):
+        self._index += 1
+
 
 
 text_run_template = u"""<w:r>
@@ -56,9 +84,6 @@ def convert_run_xml(s):
 
 
 def transfer(s):
-    if isinstance(s, dict):
-        print(s)
-        return json.dumps(s)
     _d = ["&", "&amp;", "<", "&lt;", ">", "&gt;", "'", "&apos;", '"', '&quot;']
     for i in range(0, len(_d), 2):
         s = s.replace(_d[i], _d[i + 1])
@@ -120,22 +145,26 @@ def receive_data(exam_no, media_dir):
 
     #  数据处理
     question_no = 1
-    rid_i = 100
-    rid_p = 'rId'
+    rid_c = Counter('rid')
+    rid_p = 'rIdm'
     medias = []
+
+    def _handle_rich_desc(rd_item):
+        if isinstance(rd_item, dict):
+            rid = "%s%s" % (rid_p, rid_c.value)
+            rd_item['rid'] = rid
+            rd_item['width'] = int(rd_item['width'] * 10000)
+            rd_item['height'] = int(rd_item['height'] * 10000)
+            rd_item['r_index'] = rid_c.value
+            r_name = '%s.%s' % (rid, rd_item['url'].rsplit('.', 1)[-1])
+            rd_item['name'] = r_name
+            download_file(rd_item['url'], media_dir, r_name)
+            rid_c.plus()
+            medias.append({'rid': rid, 'name': r_name})
     for s_item in single_selected:
-        for r_item in s_item['question_desc_rich']:
-            if isinstance(r_item, dict):
-                rid = "%s%s" % (rid_p, rid_i)
-                r_item['rid'] = rid
-                r_item['width'] = int(r_item['width'] * 10000)
-                r_item['height'] = int(r_item['height'] * 10000)
-                r_item['r_index'] = rid_i
-                r_name = '%s.%s' % (rid, r_item['url'].rsplit('.', 1)[-1])
-                r_item['name'] = r_name
-                download_file(r_item['url'], media_dir, r_name)
-                rid_i += 1
-                medias.append({'rid': rid, 'name': r_name})
+        for _r_item in s_item['question_desc_rich']:
+            _handle_rich_desc(_r_item)
+
         s_item["this_question_no"] = question_no
         question_no += 1
         max_score = -100
@@ -144,11 +173,15 @@ def receive_data(exam_no, media_dir):
         for index in range(len(s_item["options"])):
             item = s_item["options"][index]
             o_len = 0
+            _ll = []
             for dr_item in item['desc_rich']:
                 if isinstance(dr_item, dict):
-                    o_len = 29
+                    o_len += dr_item['width'] / 10
+                    _handle_rich_desc(dr_item)
+
                 else:
                     o_len += string_length(dr_item)
+            item['desc_rich'].extend(_ll)
             if o_len > max_option_len:
                 max_option_len = o_len
             if "score" not in item:
@@ -167,8 +200,30 @@ def receive_data(exam_no, media_dir):
     for q_block in answer_blocks:
         for q_item in q_block["questions"]:
             q_item["this_question_no"] = question_no
-            # q_item["multi_question_desc"] = filter(lambda x: len(x) > 0, q_item["question_desc"].split("\n"))
-            q_item["multi_question_desc"] = []
+            multi_question_desc = [[]]
+            for _r_item in q_item['question_desc_rich']:
+                _handle_rich_desc(_r_item)
+                if not isinstance(_r_item, dict):
+                    _items = _r_item.split('\n')
+                    multi_question_desc[-1].append(_items[0])
+                    for _sub_item in _items[1:]:
+                        multi_question_desc.append([_sub_item])
+                else:
+                    multi_question_desc[-1].append(_r_item)
+
+            multi_answer_rich = [[]]
+            for _r_item in q_item['answer_rich']:
+                _handle_rich_desc(_r_item)
+                if not isinstance(_r_item, dict):
+                    _items = _r_item.split('\n')
+                    multi_answer_rich[-1].append(_items[0])
+                    for _sub_item in _items[1:]:
+                        multi_answer_rich.append([_sub_item])
+                else:
+                    multi_answer_rich[-1].append(_r_item)
+            q_item['multi_answer_rich'] = multi_answer_rich
+            q_item["multi_question_desc"] = multi_question_desc
+
             question_no += 1
     r = {'single_selected': single_selected,
          'answer_blocks': answer_blocks,
@@ -237,4 +292,4 @@ if __name__ == "__main__":
     q_data = receive_data('1570447137', 'demo2/word/media')
     # q_data['single_selected'] = []
     # q_data['answer_blocks'] = []
-    write_xml('2.docx', exam_name=u'自测题', show_answer=False, **q_data)
+    write_xml('2.docx', exam_name=u'自测题', show_answer=True, **q_data)
