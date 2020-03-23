@@ -27,11 +27,6 @@
     </w:p>
     <w:p w:rsidR="00635EE5" w:rsidRDefault="00FD6377" w:rsidP="00FD6377">
       <w:pPr>
-        <w:pStyle w:val="2"/>
-        <w:numPr>
-          <w:ilvl w:val="0"/>
-          <w:numId w:val="1"/>
-        </w:numPr>
         <w:spacing w:beforeLines="50" w:before="156" w:afterLines="50" w:after="156"/>
         <w:rPr>
           <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
@@ -47,7 +42,7 @@
           <w:bCs/>
           <w:sz w:val="24"/>
         </w:rPr>
-        <w:t>单选</w:t>
+        <w:t>一、单选</w:t>
       </w:r>
       <w:r>
         <w:rPr>
@@ -410,10 +405,6 @@
     {% for q_block in answer_blocks %}
       <w:p w:rsidR="00635EE5" w:rsidRDefault="00970FA4">
         <w:pPr>
-          <w:numPr>
-            <w:ilvl w:val="0"/>
-            <w:numId w:val="1"/>
-          </w:numPr>
           <w:spacing w:beforeLines="50" w:before="156" w:afterLines="50" w:after="156"/>
           <w:rPr>
             <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>

@@ -14,7 +14,8 @@ __author__ = 'meisa'
 
 SERVER_EP = 'https://wild.gene.ac'
 OPTION_MAPPING = ["A", "B", "C", "D"]
-cn_num = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一"]
+cn_num = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一",
+          '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十']
 session = requests.session()
 session.headers["User-Agent"] = "jyrequests"
 
@@ -127,21 +128,31 @@ def download_file(path, save_dir, name):
 def receive_data(exam_no, media_dir):
     # 登陆
     login()
+
+    def _question_sort(a, b):
+        # 按照政治经济学，微观经济学，宏观经济学排序
+        # 3 1 2
+        _indexs = [3, 1, 2, 0]
+        a_i = _indexs.index(a['question_subject'])
+        b_i = _indexs.index(b['question_subject'])
+        return a_i - b_i
     # 获取 60道 选择题
     single_selected = request_questions(exam_no, 60, 1)["data"]
+    single_selected.sort(cmp=_question_sort)
+
     answer_blocks = []
     # 获得 5题 名词解释
     block1 = request_questions(exam_no, 5, 2)["data"]
-    answer_blocks.append(dict(title=u"名词解释(每小题3分,共15分)", questions=block1))
+    answer_blocks.append(dict(title=u"二、名词解释(每小题3分,共15分)", questions=block1))
     # 获得 4题 简答题
     block2 = request_questions(exam_no, 4, 3)["data"]
-    answer_blocks.append(dict(title=u"简答题(每小题5分,共20分)", questions=block2))
+    answer_blocks.append(dict(title=u"三、简答题(每小题5分,共20分)", questions=block2))
     # 获得 2题 计算题
     block3 = request_questions(exam_no, 2, 4)["data"]
-    answer_blocks.append(dict(title=u"计算题(70题10分,71题15分,共25分)", questions=block3))
+    answer_blocks.append(dict(title=u"四、计算题(70题10分,71题15分,共25分)", questions=block3))
     # 获得 2题 论述题
     block4 = request_questions(exam_no, 2, 5)["data"]
-    answer_blocks.append(dict(title=u"论述题(每小题15分,共30分)", questions=block4))
+    answer_blocks.append(dict(title=u"五、论述题(每小题15分,共30分)", questions=block4))
 
     #  数据处理
     question_no = 1
@@ -198,6 +209,7 @@ def receive_data(exam_no, media_dir):
         s_item["right_option"] = OPTION_MAPPING[right_index]
 
     for q_block in answer_blocks:
+        q_block["questions"].sort(cmp=_question_sort)
         for q_item in q_block["questions"]:
             q_item["this_question_no"] = question_no
             multi_question_desc = [[]]
@@ -292,4 +304,8 @@ if __name__ == "__main__":
     q_data = receive_data('1570447137', 'demo2/word/media')
     # q_data['single_selected'] = []
     # q_data['answer_blocks'] = []
-    write_xml('2.docx', exam_name=u'自测题', show_answer=True, **q_data)
+    for num in cn_num:
+        name = ('自测题' + num).decode('utf-8')
+        write_xml(u'%s_答案.docx' % name, exam_name=name, show_answer=True,
+                  **q_data)
+        write_xml('%s.docx' % name, exam_name=name, **q_data)
