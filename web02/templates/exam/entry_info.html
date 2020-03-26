@@ -70,6 +70,9 @@
                     </li>
                     <li>
                         <label>科目章节：</label>
+                        <label class="checkbox-inline" v-for="ch_item in sub_item.chapters">
+                            <input type="checkbox" v-model="ch_item.enable">{{ch_item.name}}
+                        </label>
                         <input type="text" class="box-side width100" v-model.trim="new_chapter">
                         <button class="btn btn-success btn-sm" @click="add_chapter(index)">增加章节</button>
                     </li>

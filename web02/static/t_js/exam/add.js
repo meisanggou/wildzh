@@ -28,7 +28,18 @@ $(function () {
                 this.exam_subjects.push(default_subject);
             },
             add_chapter: function(index){
-                this.exam_subjects[index]['chapters'].push(this.new_chapter);
+                if(this.new_chapter.length <= 0){
+                    popup_show('请设置章节名称');
+                    return false;
+                }
+                for(var i=0;i<this.exam_subjects[index]['chapters'].length;i++){
+                    if(this.exam_subjects[index]['chapters'][i].name == this.new_chapter){
+                        popup_show('章节名称不能重复');
+                        return false;
+                    }
+                }
+                var ch_item = {'name': this.new_chapter, 'enable': true};
+                this.exam_subjects[index]['chapters'].push(ch_item);
                 this.new_chapter = '';
             },
             add: function () {
@@ -75,12 +86,28 @@ $(function () {
                 }
                 var exam_subjects = [];
                 for(var j=0;j<this.exam_subjects.length;j++){
+                    var exam_sj_item = {};
                     var s_item = this.exam_subjects[j];
                     if(s_item.name.length == 0){
                         popup_show('每个科目都需要设置名称');
                         return false;
                     }
+                    exam_sj_item['enable'] = s_item.enable;
+                    exam_sj_item['name'] = s_item.name;
+                    exam_sj_item['select_modes'] = [];
+                    for(var k=0;k<s_item.select_modes.length;k++){
+                        exam_sj_item['select_modes'].push(s_item.select_modes[k]);
+                    }
+                    exam_sj_item['chapters'] = [];
+                    for(var m=0;m<s_item.chapters.length;m++){
+                        if(s_item.chapters[m].enable == false){
+                            continue
+                        }
+                        exam_sj_item['chapters'].push(s_item.chapters[m].name);
+                    }
+                    exam_subjects.push(exam_sj_item);
                 }
+                r_data['exam_subjects'] = exam_subjects;
                 var info_url = $("#info_url").val();
                 my_async_request2(info_url, "PUT", r_data, function (data){
                     popup_show("更新成功");
