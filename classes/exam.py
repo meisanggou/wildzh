@@ -177,28 +177,37 @@ class ExamObject(object):
     def subjects(self, values):
         if not isinstance(values, list):
             return
-        _clear_values = []
-        for item in values:
-            clear_item = dict()
-            if not isinstance(item, dict):
+        if len(values) < len(self._subjects):
+            return
+        index = 0
+        while index < len(values):
+            n_sj = values[index]
+            if 'name' not in n_sj:
                 return
-            if 'name' not in item:
+            if len(n_sj['name']) <= 0:
                 return
-            clear_item['name'] = item['name']
-            if 'select_modes' not in item:
-                clear_item['select_modes'] = ['无']
-            else:
-                if isinstance(item['select_modes'], list):
+            n_sms = n_sj['select_modes']
+            o_sms_l = 0
+            if index < len(self._subjects):
+                o_sms_l = len(self._subjects[index]['select_modes'])
+            if len(n_sms) < o_sms_l:
+                return
+            for sm in n_sms:
+                if 'name' not in sm or 'enable' not in sm:
                     return
-                clear_item['select_modes'] = item['select_modes']
-            if 'chapters' not in item:
-                clear_item['chapters'] = ['无']
-            else:
-                if isinstance(item['chapters'], list):
-                    return
-                clear_item['chapters'] = item['chapters']
-            _clear_values.append(clear_item)
-        self._subjects = _clear_values
+            chapters = []
+            for cp in n_sj['chapters']:
+                if isinstance(cp, (unicode, str)):
+                    cp_item = {'name': cp, 'enable': True}
+                elif cp['enable'] is False:
+                    continue
+                else:
+                    cp_item = cp
+                chapters.append(cp_item)
+            n_sj['chapters'] = chapters
+            index += 1
+        self._subjects = values
+        self._d['subjects'] = self._subjects
 
     def _internal_set(self, k, v):
         self._d[k] = v
@@ -210,6 +219,14 @@ class ExamObject(object):
 
     def to_dict(self):
         return self._d
+
+    def to_db_dict(self):
+        _d = {'exam_name': self.exam_name, 'exam_desc': self.exam_desc}
+        if self.exam_no:
+            _d['exam_no'] = self.exam_no
+        for key in self.extend_keys:
+            _d[key] = getattr(self, key)
+        return _d
 
 
 class ExamOpennessLevel(object):

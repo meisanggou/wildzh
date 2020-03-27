@@ -8,7 +8,6 @@ $(function () {
     for(var i=0;i<select_modes.length;i++){
         default_subject.select_modes.push({'name': select_modes[i], 'enable': true})
     }
-    console.info(default_subject);
     var vm = new Vue({
         el: "#myTabContent",
         data: {
@@ -19,27 +18,27 @@ $(function () {
             open_mode: 1,
             open_no_start: '',
             open_no_end: '',
-            exam_subjects: [],
+            subjects: [],
             new_chapter: '',
             error_tips: {"exam_name": "请输入测试名称", "exam_desc": "请输入测试介绍"}
         },
         methods: {
             add_subject: function(){
-                this.exam_subjects.push(default_subject);
+                this.subjects.push(default_subject);
             },
             add_chapter: function(index){
                 if(this.new_chapter.length <= 0){
                     popup_show('请设置章节名称');
                     return false;
                 }
-                for(var i=0;i<this.exam_subjects[index]['chapters'].length;i++){
-                    if(this.exam_subjects[index]['chapters'][i].name == this.new_chapter){
+                for(var i=0;i<this.subjects[index]['chapters'].length;i++){
+                    if(this.subjects[index]['chapters'][i].name == this.new_chapter){
                         popup_show('章节名称不能重复');
                         return false;
                     }
                 }
                 var ch_item = {'name': this.new_chapter, 'enable': true};
-                this.exam_subjects[index]['chapters'].push(ch_item);
+                this.subjects[index]['chapters'].push(ch_item);
                 this.new_chapter = '';
             },
             add: function () {
@@ -85,9 +84,9 @@ $(function () {
                     r_data[keys[i]] = this[keys[i]];
                 }
                 var exam_subjects = [];
-                for(var j=0;j<this.exam_subjects.length;j++){
+                for(var j=0;j<this.subjects.length;j++){
                     var exam_sj_item = {};
-                    var s_item = this.exam_subjects[j];
+                    var s_item = this.subjects[j];
                     if(s_item.name.length == 0){
                         popup_show('每个科目都需要设置名称');
                         return false;
@@ -103,11 +102,11 @@ $(function () {
                         if(s_item.chapters[m].enable == false){
                             continue
                         }
-                        exam_sj_item['chapters'].push(s_item.chapters[m].name);
+                        exam_sj_item['chapters'].push(s_item.chapters[m]);
                     }
                     exam_subjects.push(exam_sj_item);
                 }
-                r_data['exam_subjects'] = exam_subjects;
+                r_data['subjects'] = exam_subjects;
                 var info_url = $("#info_url").val();
                 my_async_request2(info_url, "PUT", r_data, function (data){
                     popup_show("更新成功");
@@ -124,7 +123,7 @@ $(function () {
                 vm.exam_no = exam_item.exam_no;
                 vm.exam_name = exam_item.exam_name;
                 vm.exam_desc = exam_item.exam_desc;
-                var keys = ['openness_level', 'open_mode', 'open_no_start',  'open_no_end'];
+                var keys = ['openness_level', 'open_mode', 'open_no_start',  'open_no_end', 'subjects'];
                 for (var i = 0; i < keys.length; i++) {
                     if(keys[i] in exam_item) {
                         vm[keys[i]] = exam_item[keys[i]];

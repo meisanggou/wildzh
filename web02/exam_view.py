@@ -236,16 +236,19 @@ def update_exam():
     exam_no = data["exam_no"]
     extend_keys = ['openness_level', 'open_mode', 'open_no_start',
                    'open_no_end', 'pic_url']
-    items = c_exam.select_exam(exam_no)
+    items = c_exam.select_exam2(exam_no)
     if len(items) != 1:
         return jsonify({"status": False, "data": "Exam not exist"})
-    extend_values = items[0]['exam_extend'] if \
-        isinstance(items[0]['exam_extend'], dict) else dict()
-    for ek in extend_keys:
-        if ek in data:
-            extend_values[ek] = data[ek]
-    l = c_exam.update_exam(exam_no, data["exam_name"], data["exam_desc"],
-                           **extend_values)
+    # extend_values = items[0]['exam_extend'] if \
+    #     isinstance(items[0]['exam_extend'], dict) else dict()
+    # for ek in extend_keys:
+    #     if ek in data:
+    #         extend_values[ek] = data[ek]
+    # if 'exam_subjects' in data:
+    #     extend_values['exam_subjects'] = data['exam_subjects']
+    for key in data.keys():
+        setattr(items[0], key, data[key])
+    l = c_exam.update_exam(**items[0].to_db_dict())
     return jsonify({"status": True, "data": data})
 
 
