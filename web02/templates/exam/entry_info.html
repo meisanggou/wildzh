@@ -50,10 +50,17 @@
                     <label>-</label>
                     <input type="text" class="box-side width100" v-model.number='open_no_end'>
                 </li>
+
+                <li>
+                    <label>科目题型：</label>
+                    <label class="checkbox-inline" v-for="mod_item in select_modes">
+                        <input type="checkbox" v-model="mod_item.enable">{{mod_item.name}}
+                    </label>
+                </li>
+
                 <li>
                     <button class="btn btn-success" @click="add_subject">增加科目</button>
                 </li>
-
                 <div class="panel panel-default" v-for="(sub_item, index) in subjects">
                     <div class="panel-heading">
                         <li>
@@ -64,9 +71,14 @@
 
                     <li>
                         <label>科目题型：</label>
+                        <label class="checkbox-inline" >
+                            <input type="checkbox" v-model="sub_item.custom_sm">自定义
+                        </label>
+                        <template v-if="sub_item.custom_sm">
                         <label class="checkbox-inline" v-for="mod_item in sub_item.select_modes">
                             <input type="checkbox" v-model="mod_item.enable">{{mod_item.name}}
                         </label>
+                        </template>
                     </li>
                     <li>
                         <label>科目章节：</label>

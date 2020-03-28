@@ -3,10 +3,12 @@
  */
 
 $(function () {
-    var select_modes = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题"];
-    var default_subject = {'name': '', 'select_modes': [], 'chapters': [], 'enable': true};
-    for (var i = 0; i < select_modes.length; i++) {
-        default_subject.select_modes.push({'name': select_modes[i], 'enable': true})
+    var mode_names = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题"];
+    var select_modes = [];
+    var default_subject = {'name': '', 'select_modes': [], 'chapters': [], 'enable': true, 'custom_sm': false};
+    for (var i = 0; i < mode_names.length; i++) {
+        default_subject.select_modes.push({'name': mode_names[i], 'enable': true});
+        select_modes.push({'name': mode_names[i], 'enable': true});
     }
     var vm = new Vue({
         el: "#myTabContent",
@@ -18,6 +20,7 @@ $(function () {
             open_mode: 1,
             open_no_start: '',
             open_no_end: '',
+            select_modes: select_modes,
             subjects: [],
             new_chapter: '',
             error_tips: {"exam_name": "请输入测试名称", "exam_desc": "请输入测试介绍"}

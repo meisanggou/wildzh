@@ -34,7 +34,7 @@
                         <li>
                             <label>题目类型：</label>
                             <select class="box-side width150" type="text"  v-model="select_mode">
-                                <option v-for="(item,index) in select_modes" :value="index">{{item}}</option>
+                                <option v-for="(item,index) in select_modes" :value="index" v-if="item.enable">{{item.name}}</option>
                             </select>
                         </li>
                         <li>
