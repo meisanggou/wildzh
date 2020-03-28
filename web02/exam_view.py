@@ -10,7 +10,7 @@ from flask import request, jsonify, g
 from flask_login import login_required
 from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url
-from classes.exam import Exam
+from classes.exam import Exam, ExamObject
 from web02 import create_blue
 
 __author__ = 'meisa'
@@ -182,7 +182,11 @@ def question_page():
 @login_required
 def new_exam():
     data = g.request_data
-    r, exam_no = c_exam.new_exam(data["exam_name"], data["exam_desc"], g.user_no)
+    eo = ExamObject()
+    for key in data.keys():
+        setattr(eo, key, data[key])
+    eo.adder = g.user_no
+    r, exam_no = c_exam.new_exam(**eo.to_db_dict())
     if r is False:
         return jsonify({"status": False, "data": "请重试"})
     data["exam_no"] = exam_no
@@ -234,18 +238,9 @@ def get_exam_info():
 def update_exam():
     data = g.request_data
     exam_no = data["exam_no"]
-    extend_keys = ['openness_level', 'open_mode', 'open_no_start',
-                   'open_no_end', 'pic_url']
     items = c_exam.select_exam2(exam_no)
     if len(items) != 1:
         return jsonify({"status": False, "data": "Exam not exist"})
-    # extend_values = items[0]['exam_extend'] if \
-    #     isinstance(items[0]['exam_extend'], dict) else dict()
-    # for ek in extend_keys:
-    #     if ek in data:
-    #         extend_values[ek] = data[ek]
-    # if 'exam_subjects' in data:
-    #     extend_values['exam_subjects'] = data['exam_subjects']
     for key in data.keys():
         setattr(items[0], key, data[key])
     l = c_exam.update_exam(**items[0].to_db_dict())

@@ -48,7 +48,7 @@ class ExamObject(object):
         self._openness_level = ExamOpennessLevel.PRIVATE
         self._open_mode = ExamOpenMode.SUBJECT
         self._open_no_start = -1
-        self._open_no_end = float('INF')
+        self._open_no_end = None
         self._subjects = []
         self.pic_url = None
         self._exam_role = 100
@@ -134,7 +134,7 @@ class ExamObject(object):
         if isinstance(v, (unicode, str)):
             v = v.strip()
         if v == '' or v is None:
-            v = float('INF')
+            v = None
             cv = ''
         else:
             v = int(v)
@@ -153,7 +153,9 @@ class ExamObject(object):
             return False
         if self.open_mode == ExamOpennessLevel.PUBLIC:
             return True
-        if self.open_no_start <= no <= self.open_no_end:
+        if self.open_no_end is None:
+            _end = float('INF')
+        if self.open_no_start <= no <= _end:
             return True
         return False
 
@@ -224,6 +226,8 @@ class ExamObject(object):
         _d = {'exam_name': self.exam_name, 'exam_desc': self.exam_desc}
         if self.exam_no:
             _d['exam_no'] = self.exam_no
+        else:
+            _d['adder'] = self.adder
         for key in self.extend_keys:
             _d[key] = getattr(self, key)
         return _d
