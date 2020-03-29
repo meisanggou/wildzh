@@ -10,6 +10,7 @@ $(function () {
         default_subject.select_modes.push({'name': mode_names[i], 'enable': true});
         select_modes.push({'name': mode_names[i], 'enable': true});
     }
+    var default_subject_s = JSON.stringify(default_subject);
     var vm = new Vue({
         el: "#myTabContent",
         data: {
@@ -27,7 +28,7 @@ $(function () {
         },
         methods: {
             add_subject: function () {
-                this.subjects.push(default_subject);
+                this.subjects.push(JSON.parse(default_subject_s));
             },
             add_chapter: function (index) {
                 if (this.new_chapter.length <= 0) {

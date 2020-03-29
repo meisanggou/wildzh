@@ -243,6 +243,7 @@ def update_exam():
         return jsonify({"status": False, "data": "Exam not exist"})
     for key in data.keys():
         setattr(items[0], key, data[key])
+
     l = c_exam.update_exam(**items[0].to_db_dict())
     return jsonify({"status": True, "data": data})
 

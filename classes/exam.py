@@ -204,15 +204,15 @@ class ExamObject(object):
                 return
             if len(n_sj['name']) <= 0:
                 return
-            n_sms = n_sj['select_modes']
+            # n_sms = n_sj['select_modes']
             o_sms_l = 0
-            if index < len(self._subjects):
-                o_sms_l = len(self._subjects[index]['select_modes'])
-            if len(n_sms) < o_sms_l:
-                return
-            for sm in n_sms:
-                if 'name' not in sm or 'enable' not in sm:
-                    return
+            # if index < len(self._subjects):
+                # o_sms_l = len(self._subjects[index]['select_modes'])
+            # if len(n_sms) < o_sms_l:
+            #     return
+            # for sm in n_sms:
+            #     if 'name' not in sm or 'enable' not in sm:
+            #         return
             chapters = []
             for cp in n_sj['chapters']:
                 if isinstance(cp, (unicode, str)):
@@ -595,6 +595,7 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
 
     def select_exam2(self, exam_no):
         items = self.select_exam(exam_no)
+        print(json.dumps(items))
         return [ExamObject(**item) for item in items]
 
     def _select_questions(self, **kwargs):

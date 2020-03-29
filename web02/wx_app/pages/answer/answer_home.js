@@ -3,9 +3,9 @@ var app = getApp();
 Page({
 
     data: {
-        training_modes: ['分科练习', '综合练习'],
-        subjects_array: ['微观经济学', '宏观经济学', '政治经济学'],
-        select_modes: ['选择题', '名词解释', '简答题', '计算题', '论述题'],
+        training_modes: ['综合练习'],
+        subjects_array: [],
+        select_modes: [],
         index: 1,
         subjectIndex: 0,
         modeIndex: 0,
@@ -57,8 +57,39 @@ Page({
                 if (examItem['exam_role'] > 10) {
                     errorMsg = '无权限进行操作，请先升级成会员！';
                 }
+                var select_modes = [];
+                var subjects = []
+                var training_modes = this.data.training_modes;
+                if('select_modes' in examItem){
+                    var _select_modes = examItem['select_modes'];
+                    for (var i = 0; i < _select_modes.length;i++){
+                        var _item = _select_modes[i];
+                        if (_item.enable == true){
+                            _item['value'] = i;
+                            select_modes.push(_item);
+                        }
+                    }
+                }
+                if('subjects' in examItem){
+                    var _subjects = examItem['subjects'];
+                    for (var i = 0; i < _subjects.length; i++) {
+                        var _item = _subjects[i];
+                        if (_item.enable == true) {
+                            _item['value'] = i;
+                            subjects.push(_item);
+                        }
+                    }
+                    console.info(subjects);
+                    console.info(training_modes.indexOf('分科练习'))
+                    if (subjects.length > 1 && training_modes.indexOf('分科练习') < 0){
+                        training_modes.push('分科练习');
+                    }
+                }
                 that.setData({
-                    errorMsg: errorMsg
+                    errorMsg: errorMsg,
+                    select_modes: select_modes,
+                    subjects_array: subjects,
+                    training_modes: training_modes
                 });
                 wx.hideLoading();
             }
@@ -94,7 +125,9 @@ Page({
         }
         url += "?from=answer_home"
         if (this.data.isAccordingToType) {
-            url += "&select_mode=" + (this.data.modeIndex + 1);
+            var modeIndex = parseInt(this.data.modeIndex)
+            var select_mode = this.data.select_modes[modeIndex].value;
+            url += "&select_mode=" + select_mode;
         }
         if (this.data.index == 0) {
             url += "&question_subject=" + (this.data.subjectIndex + 1);
