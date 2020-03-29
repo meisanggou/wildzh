@@ -595,7 +595,6 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
 
     def select_exam2(self, exam_no):
         items = self.select_exam(exam_no)
-        print(json.dumps(items))
         return [ExamObject(**item) for item in items]
 
     def _select_questions(self, **kwargs):
