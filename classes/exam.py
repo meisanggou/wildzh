@@ -34,7 +34,7 @@ __author__ = 'meisa'
 
 class ExamObject(object):
     extend_keys = ['openness_level', 'open_mode', 'open_no_start',
-                   'open_no_end', 'pic_url', 'subjects']
+                   'open_no_end', 'pic_url', 'subjects', 'select_modes']
 
     def __init__(self, **kwargs):
         self._d = dict()
@@ -49,6 +49,7 @@ class ExamObject(object):
         self._open_mode = ExamOpenMode.SUBJECT
         self._open_no_start = -1
         self._open_no_end = None
+        self._select_modes = []
         self._subjects = []
         self.pic_url = None
         self._exam_role = 100
@@ -170,6 +171,21 @@ class ExamObject(object):
 
     def can_look_subject(self):
         return self._can_access(ExamOpenMode.SUBJECT)
+
+    @property
+    def select_modes(self):
+        return self._select_modes
+
+    @select_modes.setter
+    def select_modes(self, values):
+        if not isinstance(values, list):
+            return
+        if len(values) < len(self._select_modes):
+            return
+        for item in values:
+            if 'name' not in item or 'enable' not in item:
+                return
+        self._select_modes = values
 
     @property
     def subjects(self):

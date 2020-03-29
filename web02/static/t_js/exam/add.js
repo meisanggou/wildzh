@@ -53,6 +53,7 @@ $(function () {
                 if (is_update == true) {
                     keys.push('exam_no')
                 }
+                r_data['select_modes'] = this.select_modes;
                 for (var i = 0; i < keys.length; i++) {
                     r_data[keys[i]] = this[keys[i]];
                     if (keys[i] in this.error_tips) {
@@ -78,9 +79,9 @@ $(function () {
                     exam_sj_item['enable'] = s_item.enable;
                     exam_sj_item['name'] = s_item.name;
                     exam_sj_item['select_modes'] = [];
-                    for (var k = 0; k < s_item.select_modes.length; k++) {
-                        exam_sj_item['select_modes'].push(s_item.select_modes[k]);
-                    }
+                    //for (var k = 0; k < s_item.select_modes.length; k++) {
+                    //    exam_sj_item['select_modes'].push(s_item.select_modes[k]);
+                    //}
                     exam_sj_item['chapters'] = [];
                     for (var m = 0; m < s_item.chapters.length; m++) {
                         if (s_item.chapters[m].enable == false) {
@@ -141,7 +142,7 @@ $(function () {
                 vm.exam_no = exam_item.exam_no;
                 vm.exam_name = exam_item.exam_name;
                 vm.exam_desc = exam_item.exam_desc;
-                var keys = ['openness_level', 'open_mode', 'open_no_start', 'open_no_end', 'subjects'];
+                var keys = ['openness_level', 'open_mode', 'open_no_start', 'open_no_end', 'subjects', 'select_modes'];
                 for (var i = 0; i < keys.length; i++) {
                     if (keys[i] in exam_item) {
                         vm[keys[i]] = exam_item[keys[i]];

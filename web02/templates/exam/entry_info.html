@@ -69,17 +69,17 @@
                         </li>
                     </div>
 
-                    <li>
-                        <label>科目题型：</label>
-                        <label class="checkbox-inline" >
-                            <input type="checkbox" v-model="sub_item.custom_sm">自定义
-                        </label>
-                        <template v-if="sub_item.custom_sm">
-                        <label class="checkbox-inline" v-for="mod_item in sub_item.select_modes">
-                            <input type="checkbox" v-model="mod_item.enable">{{mod_item.name}}
-                        </label>
-                        </template>
-                    </li>
+                    <!--<li>-->
+                        <!--<label>科目题型：</label>-->
+                        <!--<label class="checkbox-inline" >-->
+                            <!--<input type="checkbox" v-model="sub_item.custom_sm">自定义-->
+                        <!--</label>-->
+                        <!--<template v-if="sub_item.custom_sm">-->
+                        <!--<label class="checkbox-inline" v-for="mod_item in sub_item.select_modes">-->
+                            <!--<input type="checkbox" v-model="mod_item.enable">{{mod_item.name}}-->
+                        <!--</label>-->
+                        <!--</template>-->
+                    <!--</li>-->
                     <li>
                         <label>科目章节：</label>
                         <label class="checkbox-inline" v-for="ch_item in sub_item.chapters">
