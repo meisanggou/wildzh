@@ -90,8 +90,6 @@ Page({
                             subjects.push(_item);
                         }
                     }
-                    console.info(subjects);
-                    console.info(training_modes.indexOf('分科练习'))
                     if (subjects.length > 1 && training_modes.indexOf('分科练习') < 0) {
                         training_modes.push('分科练习');
                     }
@@ -131,8 +129,9 @@ Page({
             url += "training"
         }
         url += "?select_mode=" + (this.data.modeIndex + 1);
-        if (this.data.index == 0) {
-            url += "&question_subject=" + (this.data.subjectIndex + 1);
+        if (this.data.index == 1) {
+            var current_sj = this.data.subjects_array[this.data.subjectIndex];
+            url += "&question_subject=" + current_sj.value;
         }
         wx.navigateTo({
             url: url

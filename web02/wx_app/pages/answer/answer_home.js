@@ -130,7 +130,8 @@ Page({
             url += "&select_mode=" + select_mode;
         }
         if (this.data.index == 1) {
-            url += "&question_subject=" + (this.data.subjectIndex + 1);
+            var current_sj = this.data.subjects_array[this.data.subjectIndex];
+            url += "&question_subject=" + current_sj.value;
         }
         wx.navigateTo({
             url: url
