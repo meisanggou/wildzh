@@ -6,10 +6,10 @@ Page({
         training_modes: ['综合练习'],
         subjects_array: [],
         select_modes: [],
-        index: 1,
+        index: 0,
         subjectIndex: 0,
         modeIndex: 0,
-        isAccordingToType: true,
+        isAccordingToType: false,
         to: "training",
         cacheSelectedKey: "selectedAnswerOptions",
         errorMsg: "题库信息加载中..."
@@ -129,7 +129,7 @@ Page({
             var select_mode = this.data.select_modes[modeIndex].value;
             url += "&select_mode=" + select_mode;
         }
-        if (this.data.index == 0) {
+        if (this.data.index == 1) {
             url += "&question_subject=" + (this.data.subjectIndex + 1);
         }
         wx.navigateTo({
