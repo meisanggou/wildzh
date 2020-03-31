@@ -380,7 +380,7 @@ def get_exam_questions():
 @required_exam_no
 def get_exam_questions_nos():
     if "select_mode" in request.args:
-        select_mode = request.args["select_mode"]
+        select_mode = int(request.args["select_mode"])
         question_subject = request.args.get("question_subject", None)
         start_no = request.args.get('start_no', None)
         items = c_exam.select_question_no(g.exam_no, select_mode=select_mode,

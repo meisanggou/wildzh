@@ -6,6 +6,7 @@ Page({
         subjects_array: [],
         select_modes: [],
         index: 0,
+        isAccordingToType: false,
         subjectIndex: 0,
         modeIndex: 0,
         to: "training",
@@ -27,7 +28,7 @@ Page({
             canUpdate: canUpdate
         })
 
-        if("to" in options){
+        if ("to" in options) {
             this.setData({
                 to: options["to"]
             })
@@ -37,18 +38,17 @@ Page({
             this.setData(selectedOptions);
         }
     },
-    onShow: function () {
+    onShow: function() {
         var examNo = app.globalData.defaultExamNo;
         if (examNo) {
             this.getExam(examNo);
-        }
-        else {
+        } else {
             this.setData({
                 errorMsg: '请先选择一个题库'
             })
         }
     },
-    getExam: function (examNo) {
+    getExam: function(examNo) {
         var that = this;
         wx.request2({
             url: '/exam/info/?exam_no=' + examNo,
@@ -71,6 +71,8 @@ Page({
                 var select_modes = [];
                 var subjects = []
                 var training_modes = this.data.training_modes;
+                var index = this.data.index;
+                var isAccordingToType = this.data.isAccordingToType;
                 if ('select_modes' in examItem) {
                     var _select_modes = examItem['select_modes'];
                     for (var i = 0; i < _select_modes.length; i++) {
@@ -81,6 +83,9 @@ Page({
                         }
                     }
                 }
+                if (select_modes.length <= 0) {
+                    isAccordingToType = false;
+                }
                 if ('subjects' in examItem) {
                     var _subjects = examItem['subjects'];
                     for (var i = 0; i < _subjects.length; i++) {
@@ -90,17 +95,31 @@ Page({
                             subjects.push(_item);
                         }
                     }
-                    if (subjects.length > 1 && training_modes.indexOf('分科练习') < 0) {
-                        training_modes.push('分科练习');
+                }
+                if (subjects.length > 1 && training_modes.indexOf('分科练习') < 0) {
+                    console.info(subjects.length)
+                    training_modes.push('分科练习');
+                } else {
+                    var f_i = training_modes.indexOf('分科练习')
+                    if (f_i >= 0) {
+                        training_modes.splice(f_i, 1);
                     }
+                    index = 0;
                 }
                 that.setData({
                     errorMsg: errorMsg,
                     select_modes: select_modes,
                     subjects_array: subjects,
-                    training_modes: training_modes
+                    training_modes: training_modes,
+                    index: index,
+                    isAccordingToType: isAccordingToType
                 });
                 wx.hideLoading();
+            },
+            fail: res => {
+                that.setData({
+                    errorMsg: '未能成功加载题库信息，检查网络或重试！'
+                });
             }
         })
     },
@@ -122,13 +141,16 @@ Page({
     startTraining() {
         app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
         var url = "";
-        if(this.data.to == "answer"){
+        if (this.data.to == "answer") {
             url += "../answer/answer"
-        }
-        else{
+        } else {
             url += "training"
         }
-        url += "?select_mode=" + (this.data.modeIndex + 1);
+        var sm_index = -1;
+        if (this.data.modeIndex < this.data.select_modes.length){
+            sm_index = this.data.select_modes[this.data.modeIndex].value;
+        }
+        url += "?select_mode=" + sm_index;
         if (this.data.index == 1) {
             var current_sj = this.data.subjects_array[this.data.subjectIndex];
             url += "&question_subject=" + current_sj.value;
@@ -137,11 +159,14 @@ Page({
             url: url
         })
     },
-    startUpdateQuestion: function(){
+    startUpdateQuestion: function() {
         app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
         var modeIndex = parseInt(this.data.modeIndex)
-        var select_mode = this.data.select_modes[modeIndex].value;
-        var url = "../questions/question?select_mode=" + select_mode;
+        var sm_index = -1;
+        if (this.data.modeIndex < this.data.select_modes.length) {
+            sm_index = this.data.select_modes[this.data.modeIndex].value;
+        }
+        var url = "../questions/question?select_mode=" + sm_index;
         if (this.data.index == 1) {
             url += "&question_subject=" + (this.data.subjectIndex + 1);
         }
