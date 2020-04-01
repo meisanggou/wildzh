@@ -18,10 +18,11 @@ Page({
         nowQuestionIndex: 0,
         questionAnswer: new Array(),
         nowQuestion: null,
+        subject_name: "",
         isReq: false,
         progressStorageKey: "",
         answerIndex: null,
-        subjectsArray: ['无', '微观经济学', '宏观经济学', '政治经济学'],
+        subjects_array: [],
     },
 
     onLoad: function (options) {
@@ -40,6 +41,7 @@ Page({
         var args_url = "";
         var progressStorageKey = "training";
         if (that.data.examNo != null) {
+            this.getExam(that.data.examNo);
             if ("select_mode" in options) {
                 args_url += "select_mode=" + options["select_mode"] + "&";
                 progressStorageKey += "_" + options["select_mode"];
@@ -99,6 +101,75 @@ Page({
             })
         }
 
+    },
+    getExam: function (examNo) {
+        var that = this;
+        wx.request2({
+            url: '/exam/info/?exam_no=' + examNo,
+            method: 'GET',
+            success: res => {
+                var allExams = [];
+                var resData = res.data.data;
+                var errorMsg = '';
+                if (res.data.status == false || resData.length <= 0) {
+                    errorMsg = '未查询到题库详情，切换题库'
+                    wx.showModal({
+                        title: '错误',
+                        content: errorMsg,
+                        showCancel: false,
+                        success(res) {
+                            wx.navigateBack({
+                                delta: 1
+                            })
+                        }
+                    })
+                    return false;
+                }
+                var examItem = resData[0];
+                if (examItem['exam_role'] > 3) {
+                    errorMsg = '无权限进行操作！';
+                    wx.showModal({
+                        title: '无权限',
+                        content: errorMsg,
+                        showCancel: false,
+                        success(res) {
+                            wx.navigateBack({
+                                delta: 1
+                            })
+                        }
+                    })
+                    return false;
+                }
+                var subjects = []
+                if ('subjects' in examItem) {
+                    var _subjects = examItem['subjects'];
+                    for (var i = 0; i < _subjects.length; i++) {
+                        var _item = _subjects[i];
+                        if (_item.enable == true) {
+                            _item['value'] = i;
+                            subjects.push(_item);
+                        }
+                    }
+                }
+                that.setData({
+                    subjects_array: subjects,
+                });
+                wx.hideLoading();
+            },
+            fail: res => {
+                errorMsg: '未能成功加载题库信息，检查网络或重试！'
+                wx.showModal({
+                    title: '错误',
+                    content: errorMsg,
+                    showCancel: false,
+                    success(res) {
+                        wx.navigateBack({
+                            delta: 1
+                        })
+                    }
+                })
+            }
+        })
     },
     extractQuestionNos: function (nos_l) {
         if (typeof nos_l == "string" || nos_l == null) {
@@ -367,21 +438,33 @@ Page({
                 break;
             }
         }
-
+        var subject_name = '-';
+        for(var i=0;i<this.data.subjects_array.length;i++){
+            if(this.data.subjects_array[i].value == nowQuestion.question_subject){
+                subject_name = this.data.subjects_array[i].name;
+                break
+            }
+        }
         this.setData({
             nowQuestion: nowQuestion,
             nowQuestionIndex: index,
-            answerIndex: answerIndex
+            answerIndex: answerIndex,
+            subject_name: subject_name
         })
         this.setSkipNums(index + 1, questionItems.length);
     },
     changeSubject: function (event) {
         var selected = event.detail.value;
         var nowQuestion = this.data.nowQuestion;
-        nowQuestion.question_subject = selected;
-        this.setData({
-            nowQuestion: nowQuestion
-        })
+        var subjects = this.data.subjects_array;
+        if(selected < subjects.length){
+            var subject_name = subjects[selected].name;
+            nowQuestion.question_subject = subjects[selected].value;
+            this.setData({
+                nowQuestion: nowQuestion,
+                subject_name: subject_name
+            })
+        }
     },
     updateAnswerOption: function (event) {
         var selected = event.detail.value;

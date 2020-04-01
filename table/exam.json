@@ -109,6 +109,12 @@
                 "allow_null": true
             },
             {
+                "col_comment": "题目所属章节",
+                "col_name": "question_chapter",
+                "col_type": "varchar(20)",
+                "allow_null": true
+            },
+            {
                 "col_comment": "答案信息",
                 "col_name": "answer",
                 "col_type": "text",

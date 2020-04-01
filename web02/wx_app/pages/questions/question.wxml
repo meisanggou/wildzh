@@ -42,7 +42,7 @@
                 <view class="weui-cell weui-cell_input">
                     <view class="weui-label">科目：</view>
                     <view class="weui-input">
-                        <picker bindchange='changeSubject' range="{{subjectsArray}}">{{ subjectsArray[nowQuestion.question_subject] }}</picker>
+                        <picker bindchange='changeSubject' range-key="name" range="{{subjects_array}}">{{ subject_name }}</picker>
                     </view>
                 </view>
 

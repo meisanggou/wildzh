@@ -15,6 +15,10 @@ Page({
         canUpdate: false
     },
     onLoad: function(options) {
+        var selectedOptions = app.getOrSetCacheData(this.data.cacheSelectedKey);
+        if (selectedOptions != null) {
+            this.setData(selectedOptions);
+        }
         var canUpdate = false;
         var currentUser = app.getOrSetCurrentUserData();
         if (currentUser != null && typeof currentUser == "object") {
@@ -27,16 +31,12 @@ Page({
         this.setData({
             canUpdate: canUpdate
         })
-
         if ("to" in options) {
             this.setData({
                 to: options["to"]
             })
         }
-        var selectedOptions = app.getOrSetCacheData(this.data.cacheSelectedKey);
-        if (selectedOptions != null) {
-            this.setData(selectedOptions);
-        }
+
     },
     onShow: function() {
         var examNo = app.globalData.defaultExamNo;
@@ -96,9 +96,10 @@ Page({
                         }
                     }
                 }
-                if (subjects.length > 1 && training_modes.indexOf('分科练习') < 0) {
-                    console.info(subjects.length)
-                    training_modes.push('分科练习');
+                if (subjects.length > 1) {
+                    if (training_modes.indexOf('分科练习') < 0) {
+                        training_modes.push('分科练习');
+                    }
                 } else {
                     var f_i = training_modes.indexOf('分科练习')
                     if (f_i >= 0) {
@@ -147,7 +148,7 @@ Page({
             url += "training"
         }
         var sm_index = -1;
-        if (this.data.modeIndex < this.data.select_modes.length){
+        if (this.data.modeIndex < this.data.select_modes.length) {
             sm_index = this.data.select_modes[this.data.modeIndex].value;
         }
         url += "?select_mode=" + sm_index;
@@ -168,7 +169,8 @@ Page({
         }
         var url = "../questions/question?select_mode=" + sm_index;
         if (this.data.index == 1) {
-            url += "&question_subject=" + (this.data.subjectIndex + 1);
+            var current_sj = this.data.subjects_array[this.data.subjectIndex];
+            url += "&question_subject=" + current_sj.value;
         }
         wx.navigateTo({
             url: url
