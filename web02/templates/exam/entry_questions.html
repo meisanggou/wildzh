@@ -50,7 +50,7 @@
                         <li>
                             <label>所属科目：</label>
                             <select class="box-side width150" type="text" v-model="question_subject">
-                                <option v-for="(item,index) in subjects" :value="index">{{item}}</option>
+                                <option v-for="(item,index) in subjects" :value="index">{{item.name}}</option>
                             </select>
                         </li>
                         <li>

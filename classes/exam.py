@@ -464,7 +464,7 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
         self.q_cols = ["exam_no", "question_no", "question_desc",
                        "question_desc_url", "select_mode", "options",
                        "answer", "question_subject", "question_source",
-                       "inside_mark", "answer_pic_url"]
+                       "inside_mark", "answer_pic_url", 'question_chapter']
 
     def _insert_info(self, exam_no, exam_name, exam_desc, adder, status=1, exam_extend=None):
         kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, status=status,
