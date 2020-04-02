@@ -19,6 +19,8 @@ Page({
         questionAnswer: new Array(),
         nowQuestion: null,
         subject_name: "",
+        chapters: [],
+        chapter_name: '',
         isReq: false,
         progressStorageKey: "",
         answerIndex: null,
@@ -438,31 +440,59 @@ Page({
                 break;
             }
         }
-        var subject_name = '-';
+        var subject_index = -1;
         for(var i=0;i<this.data.subjects_array.length;i++){
             if(this.data.subjects_array[i].value == nowQuestion.question_subject){
-                subject_name = this.data.subjects_array[i].name;
+                subject_index = i;
                 break
             }
         }
         this.setData({
             nowQuestion: nowQuestion,
             nowQuestionIndex: index,
-            answerIndex: answerIndex,
-            subject_name: subject_name
+            answerIndex: answerIndex
         })
+        this.changeNowSubject(subject_index);
         this.setSkipNums(index + 1, questionItems.length);
     },
-    changeSubject: function (event) {
-        var selected = event.detail.value;
+    changeNowSubject: function(index){
+        if(index == null){
+            index = -1;
+        }
+        var selected = index;
         var nowQuestion = this.data.nowQuestion;
         var subjects = this.data.subjects_array;
-        if(selected < subjects.length){
+        var subject_name = '-';
+        var chapters = [];
+        var chapter_name = '-';
+        if (selected>=0 && selected < subjects.length) {
             var subject_name = subjects[selected].name;
             nowQuestion.question_subject = subjects[selected].value;
+            if ('chapters' in subjects[selected]) {
+                chapters = subjects[selected]['chapters'];
+            }
+        }
+        this.setData({
+            nowQuestion: nowQuestion,
+            subject_name: subject_name,
+            chapters: chapters,
+            chapter_name: chapter_name
+        })
+    },
+    pickerSubjectChange: function (event) {
+        var selected = event.detail.value;
+        this.changeNowSubject(selected);
+    },
+    changeChapter: function (event) {
+        var selected = event.detail.value;
+        var nowQuestion = this.data.nowQuestion;
+        var chapters = this.data.chapters;
+        if (selected < chapters.length) {
+            var chapter_name = chapters[selected].name;
+            nowQuestion.question_chapter = chapter_name;
             this.setData({
                 nowQuestion: nowQuestion,
-                subject_name: subject_name
+                chapter_name: chapter_name
             })
         }
     },
@@ -504,8 +534,9 @@ Page({
             uData.options[i].desc = pData["option_" + i]
         }
         uData.question_subject = nowQuestion.question_subject;
+        uData.question_chapter = nowQuestion.question_chapter
         nowQuestion.forceUpdate = true;
-
+        console.info(uData);
         var index = this.data.nowQuestionIndex;
         wx.request2({
             url: '/exam/questions/?exam_no=' + this.data.examNo,

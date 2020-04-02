@@ -297,7 +297,8 @@ def update_question():
     extra_data = dict()
     question_no = data["question_no"]
     keys = ("question_desc", "select_mode", "question_subject",
-            "question_source", "options", "answer", "question_desc_url")
+            "question_source", "options", "answer", "question_desc_url",
+            'question_chapter')
     for key in keys:
         if key in data:
             extra_data[key] = data[key]
