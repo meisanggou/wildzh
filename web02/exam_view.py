@@ -383,10 +383,12 @@ def get_exam_questions_nos():
     if "select_mode" in request.args:
         select_mode = int(request.args["select_mode"])
         question_subject = request.args.get("question_subject", None)
+        question_chapter = request.args.get('question_chapter', None)
         start_no = request.args.get('start_no', None)
         items = c_exam.select_question_no(g.exam_no, select_mode=select_mode,
                                           question_subject=question_subject,
-                                          start_no=start_no)
+                                          start_no=start_no,
+                                          question_chapter=question_chapter)
 
         if 'compress' in request.args:
             nos_l = []
