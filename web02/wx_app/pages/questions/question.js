@@ -5,6 +5,7 @@ var touchStartX = 0; //触摸时的原点
 var touchStartY = 0;
 var touchInterval = null;
 var questionItems;
+var com = require("../common/common.js");
 Page({
     data: {
         remote_host: app.globalData.remote_host,
@@ -246,6 +247,7 @@ Page({
                             questionItems[i]["options"] = newItems[j]["options"];
                             questionItems[i]["answer"] = newItems[j]["answer"];
                             questionItems[i]["question_subject"] = newItems[j]["question_subject"];
+                            questionItems[i]["question_chapter"] = newItems[j]["question_chapter"];
                             questionItems[i]["inside_mark"] = newItems[j]["inside_mark"];
                             questionItems[i].forceUpdate = false;
                             break;
@@ -265,6 +267,7 @@ Page({
                 else if (startIndex == that.data.nowQuestionIndex) {
                     // 如果当前请求的内容正好是当前显示的，需要重新更新一下答案显示。答案显示是拼出来的没和变量关联
                 }
+                
                 that.setData({
                     isReq: false
                 })
@@ -467,11 +470,28 @@ Page({
         var chapter_name = '-';
         if (selected>=0 && selected < subjects.length) {
             var subject_name = subjects[selected].name;
-            nowQuestion.question_subject = subjects[selected].value;
+            var current_sj = subjects[selected].value;
             if ('chapters' in subjects[selected]) {
                 chapters = subjects[selected]['chapters'];
             }
+            if (nowQuestion.question_subject == current_sj) {
+                if (com.find_index(chapters, nowQuestion.question_chapter, 'name') >= 0){
+                    chapter_name = nowQuestion.question_chapter;
+                }
+                else{
+                    nowQuestion.question_chapter = null;
+                }
+            }
+            else{
+                nowQuestion.question_subject = current_sj;
+                nowQuestion.question_chapter = null;
+            }
         }
+        else{
+            nowQuestion.question_chapter = null;
+            nowQuestion.question_subject = null;
+        }
+        console.info(chapter_name);
         this.setData({
             nowQuestion: nowQuestion,
             subject_name: subject_name,

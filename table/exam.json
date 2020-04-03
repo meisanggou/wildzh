@@ -111,7 +111,7 @@
             {
                 "col_comment": "题目所属章节",
                 "col_name": "question_chapter",
-                "col_type": "varchar(20)",
+                "col_type": "varchar(35)",
                 "allow_null": true
             },
             {
