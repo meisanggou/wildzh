@@ -1,13 +1,14 @@
 var app = getApp();
+
 Page({
 
     data: {
         training_modes: ['综合练习'],
-        subjects_array: [],
+        subjects_array: [[], []],
         select_modes: [],
         index: 0,
         isAccordingToType: false,
-        subjectIndex: 0,
+        subjectIndexs: [0, 0],
         modeIndex: 0,
         to: "training",
         errorMsg: "题库信息加载中...",
@@ -69,7 +70,6 @@ Page({
                     errorMsg = '无权限进行操作，请先升级成会员！';
                 }
                 var select_modes = [];
-                var subjects = []
                 var training_modes = this.data.training_modes;
                 var index = this.data.index;
                 var isAccordingToType = this.data.isAccordingToType;
@@ -86,6 +86,7 @@ Page({
                 if (select_modes.length <= 0) {
                     isAccordingToType = false;
                 }
+                var subjects = [];
                 if ('subjects' in examItem) {
                     var _subjects = examItem['subjects'];
                     for (var i = 0; i < _subjects.length; i++) {
@@ -96,6 +97,7 @@ Page({
                         }
                     }
                 }
+                
                 if (subjects.length > 1) {
                     if (training_modes.indexOf('分科练习') < 0) {
                         training_modes.push('分科练习');
@@ -107,10 +109,11 @@ Page({
                     }
                     index = 0;
                 }
+                
                 that.setData({
                     errorMsg: errorMsg,
                     select_modes: select_modes,
-                    subjects_array: subjects,
+                    "subjects_array[0]": subjects,
                     training_modes: training_modes,
                     index: index,
                     isAccordingToType: isAccordingToType
@@ -131,8 +134,29 @@ Page({
     },
     subjectChange(e) {
         this.setData({
-            subjectIndex: parseInt(e.detail.value)
+            subjectIndexs: parseInt(e.detail.value)
         })
+    },
+    bindSubjectColumnChange: function(e){
+        var column = e.detail.column;
+        var value = e.detail.value;
+        var subjects = this.data.subjects_array[0];
+        var sub_items = []
+        if(column == 0){
+            var subject_item = subjects[value];
+            if('chapters' in subject_item){
+                var chapters = subject_item['chapters'];
+                for(var i=0;i<chapters.length;i++){
+                    if(chapters[i].enable){
+                        sub_items.push(chapters[i]);
+                    }
+                }
+            }
+            this.setData({
+                "subjects_array[1]": sub_items
+            })
+        }
+
     },
     selectModeChange(e) {
         this.setData({
@@ -153,7 +177,7 @@ Page({
         }
         url += "?select_mode=" + sm_index;
         if (this.data.index == 1) {
-            var current_sj = this.data.subjects_array[this.data.subjectIndex];
+            var current_sj = subjects[this.data.subjectIndexs[0]];
             url += "&question_subject=" + current_sj.value;
         }
         wx.navigateTo({
@@ -169,7 +193,7 @@ Page({
         }
         var url = "../questions/question?select_mode=" + sm_index;
         if (this.data.index == 1) {
-            var current_sj = this.data.subjects_array[this.data.subjectIndex];
+            var current_sj = this.data.subjects_array[0][this.data.subjectIndex];
             url += "&question_subject=" + current_sj.value;
         }
         wx.navigateTo({
