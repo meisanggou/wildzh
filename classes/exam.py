@@ -452,6 +452,30 @@ class ExamUsage(object):
         return update_value
 
 
+class QuestionSources(object):
+
+    def __init__(self, db):
+        self.db = db
+        self.cols = ['exam_no', 'question_source', 'update_time']
+        self.t = 'exam_question_sources'
+
+    def select_sources(self, exam_no):
+        where_value = {'exam_no': exam_no}
+        items = self.db.execute_select(self.t, cols=self.cols,
+                                       where_value=where_value)
+        return items
+
+    def insert_source(self, exam_no, question_source):
+        if not question_source:
+            return None
+        u_time = time.time()
+        data = {'exam_no': exam_no, 'question_source': question_source,
+                'update_time': u_time}
+        self.db.execute_duplicate_insert(self.t, kwargs=data,
+                                         u_keys=['update_time'])
+        return data
+
+
 class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
 
     def __init__(self, db_conf_path):
@@ -465,6 +489,7 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                        "question_desc_url", "select_mode", "options",
                        "answer", "question_subject", "question_source",
                        "inside_mark", "answer_pic_url", 'question_chapter']
+        self.qs_man = QuestionSources(self.db)
 
     def _insert_info(self, exam_no, exam_name, exam_desc, adder, status=1, exam_extend=None):
         kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, status=status,
@@ -483,6 +508,8 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
             if key in self.q_cols:
                 data[key] = value
         l = self.db.execute_insert(self.t_q, kwargs=data, ignore=True)
+        if l and 'question_source' in kwargs:
+            self.qs_man.insert_source(exam_no, kwargs['question_source'])
         return l
 
     def _insert_wrong_answer(self, user_no, exam_no, question_nos):
@@ -517,7 +544,10 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
 
     def _update_question(self, exam_no, question_no, **kwargs):
         where_value = dict(exam_no=exam_no, question_no=question_no)
-        l = self.db.execute_update(self.t_q, update_value=kwargs, where_value=where_value)
+        l = self.db.execute_update(self.t_q, update_value=kwargs,
+                                   where_value=where_value)
+        if l and 'question_source' in kwargs:
+            self.qs_man.insert_source(exam_no, kwargs['question_source'])
         return l
 
     def new_exam(self, exam_name, exam_desc, adder, **exam_extend):

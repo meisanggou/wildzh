@@ -18,6 +18,9 @@ Page({
     onLoad: function(options) {
         var selectedOptions = app.getOrSetCacheData(this.data.cacheSelectedKey);
         if (selectedOptions != null) {
+            if ('subjects_array' in selectedOptions){
+                delete selectedOptions['subjects_array'];
+            }
             this.setData(selectedOptions);
         }
         var canUpdate = false;
@@ -86,6 +89,7 @@ Page({
                 if (select_modes.length <= 0) {
                     isAccordingToType = false;
                 }
+                var subjects_array = [[], []];
                 var subjects = [];
                 if ('subjects' in examItem) {
                     var _subjects = examItem['subjects'];
@@ -93,15 +97,24 @@ Page({
                         var _item = _subjects[i];
                         if (_item.enable == true) {
                             _item['value'] = i;
+                            if(!'chapters' in _item){
+                                _item['chapters'] = [];
+                            }
+                            _item['chapters'].unshift({'name': '全部章节', 'enable': true});
                             subjects.push(_item);
                         }
                     }
                 }
-                
+                subjects_array[0] = subjects;
+                var index_0 = this.data.subjectIndexs[0];
+                if(index_0 >= subjects.length){
+                    index_0 = 0;
+                }
                 if (subjects.length > 1) {
                     if (training_modes.indexOf('分科练习') < 0) {
                         training_modes.push('分科练习');
                     }
+                    subjects_array[1] = subjects[index_0]['chapters'];
                 } else {
                     var f_i = training_modes.indexOf('分科练习')
                     if (f_i >= 0) {
@@ -109,15 +122,15 @@ Page({
                     }
                     index = 0;
                 }
-                
                 that.setData({
                     errorMsg: errorMsg,
                     select_modes: select_modes,
-                    "subjects_array[0]": subjects,
+                    subjects_array: subjects_array,
                     training_modes: training_modes,
                     index: index,
                     isAccordingToType: isAccordingToType
                 });
+                
                 wx.hideLoading();
             },
             fail: res => {
@@ -134,8 +147,9 @@ Page({
     },
     subjectChange(e) {
         this.setData({
-            subjectIndexs: parseInt(e.detail.value)
+            subjectIndexs: e.detail.value
         })
+        console.info(this.data.subjects_array);
     },
     bindSubjectColumnChange: function(e){
         var column = e.detail.column;
@@ -153,7 +167,8 @@ Page({
                 }
             }
             this.setData({
-                "subjects_array[1]": sub_items
+                "subjects_array[1]": sub_items,
+                "subjectIndex[0]": value
             })
         }
 

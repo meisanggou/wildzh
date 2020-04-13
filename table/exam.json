@@ -286,5 +286,28 @@
         ],
         "table_comment": "一个周期内做题数目",
         "table_name": "exam_usage_records"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "测试编号",
+                "col_name": "exam_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "题目来源",
+                "col_name": "question_source",
+                "col_type": "varchar(30)"
+            },
+            {
+                "col_comment": "更新时间",
+                "col_name": "update_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "题目来源记录",
+        "table_name": "exam_question_sources"
     }
 ]

@@ -27,8 +27,8 @@
                             <view class="weui-label">科目</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <picker mode="multiSelector" bindchange="subjectChange" range-key="name" value="{{subjectIndex}}" range="{{subjects_array}}" bindcolumnchange="bindSubjectColumnChange">
-                                <view class="weui-input">{{subjects_arrays[subjectIndex[0]]}}</view>
+                            <picker mode="multiSelector" bindchange="subjectChange" range-key="name" value="{{subjectIndexs}}" range="{{subjects_array}}" bindcolumnchange="bindSubjectColumnChange">
+                                <view class="weui-input">{{subjects_array[0][subjectIndexs[0]].name}}</view>
                             </picker>
                         </view>
                     </view>
