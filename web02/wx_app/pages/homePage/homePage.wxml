@@ -1,0 +1,52 @@
+<view class="page">
+  <!-- <view class='head'>
+    <button plain="true" bindgetuserinfo="getUserInfo" open-type="getUserInfo" style="border:0;">
+      <image class='signIn' src='{{userPic}}'></image>
+    </button>
+    <view class='headBottom1'>
+      <view class='name1'>姓名:{{name}}</view>
+      <view class='department1'>班级:{{department}}</view>
+    </view>
+  </view> -->
+  <view wx:if="{{!errorMsg}}">
+    <view class='button-menu'>
+      <picker bindchange="comprehensiveExerciseChange" class='picker' range="{{select_modes}}" range-key="name">
+        <view class='answer'>综合练习</view>
+      </picker>
+    </view>
+    <view class='button-menu'>
+      <picker mode="multiSelector" bindchange="subjectExerciseChange" class='picker' range="{{subjects_array}}" range-key="name" bindcolumnchange="subjectExerciseColumnChange">
+        <view class='study'>分科练习</view>
+      </picker>
+    </view>
+    <view class='button-menu'>
+      <picker mode="multiSelector" bindchange="chapterExerciseChange" class='picker' range="{{chapters_array}}" bindcolumnchange="chapterExerciseColumnChange" range-key="name">
+        <view class='rank'>章节练习</view>
+      </picker>
+    </view>
+    <view class='button-menu'>
+      <picker bindchange="sourceChange" class='picker' range="{{sources_array}}" >
+        <view class='wrong'>真题练习</view>
+      </picker>
+    </view>
+    <view class='button-menu'>
+      <picker bindchange="" class='picker' value="{{index}}" range="{{QBArray}}" disabled='disabled'>
+        <view class='wrong'>更新试题</view>
+      </picker>
+    </view>
+  </view>
+  <view wx:else>
+    <view class='button-menu'>
+      <view class='picker answer' bindtap='wrongExams'>测试</view>
+      <!-- <view class='picker study' bindtap='wrongExams'>练习</view> -->
+    </view>
+    <view class='button-menu'>
+      <view class='picker rank'>排名</view>
+      <!-- <view class='picker wrong' bindtap='wrongExams'>错题</view> -->
+
+    </view>
+  </view>
+  <!-- <button plain="true" class='home' bindgetuserinfo="getUserInfo" open-type="getUserInfo" style="border:0;width: 600rpx;height: 120rpx;background-color: #5CACEE;border-radius: 15rpx;text-align: center;line-height: 120rpx;margin-left: auto;margin-right: auto;margin-top: 30rpx;color: #ffffff;font-size: 40rpx;" >个人中心</button> -->
+
+
+</view>

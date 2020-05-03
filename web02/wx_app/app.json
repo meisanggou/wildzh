@@ -1,5 +1,6 @@
 {
     "pages": [
+        "pages/homePage/homePage",
         "pages/training/training_home",
         "pages/me/me",
         "pages/exam/exam_member",
@@ -15,8 +16,8 @@
         "pages/answer/answer_home",
         "pages/questions/question",
         "pages/exam/exam_info",
-        "pages/exam/exam_usage",
-        "pages/training/training_home2"
+        "pages/exam/exam_usage"
+        
     ],
     "window": {
         "backgroundTextStyle": "light",
@@ -27,7 +28,7 @@
     "tabBar": {
         "list": [
             {
-                "pagePath": "pages/training/training_home",
+                "pagePath": "pages/homePage/homePage",
                 "iconPath": "images/practise.png",
                 "selectedIconPath": "images/practise_fill.png",
                 "text": "练习"
