@@ -33,6 +33,7 @@
                         </view>
                     </view>
                 </view>
+                <view class="weui-cells__title">选择章节： {{subjects_array[1][subjectIndexs[1]].name}}</view>
             </view>
 
             <view class="weui-cells__title">练习题型</view>

@@ -43,6 +43,10 @@ Page({
             that.setData({
                 isShowSubject: false
             })
+            if("question_chapter" in options){
+                args_url += "question_chapter=" + options["question_chapter"] + "&";
+                progressStorageKey += "_" + options["question_chapter"];
+            }
         } else {
             progressStorageKey += "_" + 0;
         }

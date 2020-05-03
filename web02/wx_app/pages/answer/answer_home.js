@@ -31,6 +31,16 @@ Page({
         if (examNo) {
             this.getExam(examNo);
         } else {
+            wx.showModal({
+                title: '未选择题库',
+                content: "未选择题库,确定进入【我的】选择题库",
+                showCancel: false,
+                success(res) {
+                    wx.switchTab({
+                        url: "/pages/me/me"
+                    })
+                }
+            })
             this.setData({
                 errorMsg: '请先选择一个题库'
             })

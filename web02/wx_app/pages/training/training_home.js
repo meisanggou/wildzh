@@ -21,6 +21,9 @@ Page({
             if ('subjects_array' in selectedOptions){
                 delete selectedOptions['subjects_array'];
             }
+            if('training_modes' in selectedOptions){
+                delete selectedOptions['training_modes'];
+            }
             this.setData(selectedOptions);
         }
         var canUpdate = false;
@@ -47,6 +50,16 @@ Page({
         if (examNo) {
             this.getExam(examNo);
         } else {
+            wx.showModal({
+                title: '未选择题库',
+                content: "未选择题库,确定进入【我的】选择题库",
+                showCancel: false,
+                success(res) {
+                    wx.switchTab({
+                        url: "/pages/me/me"
+                    })
+                }
+            });
             this.setData({
                 errorMsg: '请先选择一个题库'
             })
@@ -116,7 +129,7 @@ Page({
                     }
                     subjects_array[1] = subjects[index_0]['chapters'];
                 } else {
-                    var f_i = training_modes.indexOf('分科练习')
+                    var f_i = training_modes.indexOf('分科练习');
                     if (f_i >= 0) {
                         training_modes.splice(f_i, 1);
                     }
@@ -191,9 +204,17 @@ Page({
             sm_index = this.data.select_modes[this.data.modeIndex].value;
         }
         url += "?select_mode=" + sm_index;
+        var subjects = this.data.subjects_array[0];
         if (this.data.index == 1) {
             var current_sj = subjects[this.data.subjectIndexs[0]];
             url += "&question_subject=" + current_sj.value;
+            var ch_index = this.data.subjectIndexs[1];
+            console.info(ch_index);
+            if(ch_index > 0){
+                var question_chapter = this.data.subjects_array[1][ch_index];
+                console.info(question_chapter);
+                url += "&question_chapter=" + question_chapter.name;
+            }
         }
         wx.navigateTo({
             url: url
