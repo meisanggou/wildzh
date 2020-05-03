@@ -1,13 +1,4 @@
 <view class="page">
-  <!-- <view class='head'>
-    <button plain="true" bindgetuserinfo="getUserInfo" open-type="getUserInfo" style="border:0;">
-      <image class='signIn' src='{{userPic}}'></image>
-    </button>
-    <view class='headBottom1'>
-      <view class='name1'>姓名:{{name}}</view>
-      <view class='department1'>班级:{{department}}</view>
-    </view>
-  </view> -->
   <view wx:if="{{!errorMsg}}">
     <view class='button-menu'>
       <picker bindchange="comprehensiveExerciseChange" class='picker' range="{{select_modes}}" range-key="name">
@@ -30,7 +21,7 @@
       </picker>
     </view>
     <view class='button-menu'>
-      <picker bindchange="" class='picker' value="{{index}}" range="{{QBArray}}" disabled='disabled'>
+      <picker bindchange="" class='picker' range="{{QBArray}}">
         <view class='wrong'>更新试题</view>
       </picker>
     </view>

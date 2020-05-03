@@ -143,7 +143,7 @@ Page({
       var column = e.detail.column;
         var value = e.detail.value;
         var subjects = this.data.chapters_array[0];
-        var sub_items = []
+        var sub_items = [];
         if(column == 0){
             var subject_item = subjects[value];
             if('chapters' in subject_item){
@@ -155,7 +155,7 @@ Page({
                 }
             }
             this.setData({
-                "subjects_array[1]": sub_items
+                "chapters_array[1]": sub_items
             })
         }
     },
