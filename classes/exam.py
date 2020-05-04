@@ -665,7 +665,8 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
         return max_no
 
     def select_question_no(self, exam_no, select_mode=None, start_no=None,
-                           question_subject=None, question_chapter=None):
+                           question_subject=None, question_chapter=None,
+                           question_source=None):
         where_value = dict(exam_no=exam_no)
         if select_mode is not None and select_mode >= 0:
             where_value['select_mode'] = select_mode
@@ -673,6 +674,8 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
             where_value['question_subject'] = question_subject
         if question_chapter is not None:
             where_value['question_chapter'] = question_chapter
+        if question_source is not None:
+            where_value['question_source'] = question_source
         where_cond_args = []
         where_cond = []
         if start_no is not None:

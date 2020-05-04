@@ -50,6 +50,10 @@ Page({
         } else {
             progressStorageKey += "_" + 0;
         }
+        if ("question_source" in options) {
+            args_url += "question_source=" + options["question_source"] + "&";
+            progressStorageKey += "_" + options["question_source"];
+        }
         var nosStorageKey = progressStorageKey + "_nos"
         this.setData({
             progressStorageKey: progressStorageKey,

@@ -5,22 +5,22 @@
         <view class='button-color1'>综合练习</view>
       </picker>
     </view>
-    <view class='button-menu'>
+    <view class='button-menu' wx:if="{{subjects_array[0].length>0}}">
       <picker mode="multiSelector" bindchange="subjectExerciseChange" class='picker' range="{{subjects_array}}" range-key="name" >
         <view class='button-color2'>分科练习</view>
       </picker>
     </view>
-    <view class='button-menu'>
+    <view class='button-menu' wx:if="{{subjects_array[0].length>0}}">
       <picker mode="multiSelector" bindchange="chapterExerciseChange" class='picker' range="{{chapters_array}}" bindcolumnchange="chapterExerciseColumnChange" range-key="name">
         <view class='button-color3'>章节练习</view>
       </picker>
     </view>
     <view class='button-menu' wx:if="{{sources_array.length>0}}">
-      <picker bindchange="sourceChange" class='picker' range="{{sources_array}}" >
+      <picker bindchange="sourceChange" class='picker' range="{{sources_array}}" range-key="question_source">
         <view class='button-color4'>真题练习</view>
       </picker>
     </view>
-    <view class='button-menu'>
+    <view class='button-menu' wx:if="{{canUpdate}}">
       <picker bindchange="updateQuestionChange" class='picker' range="{{select_modes}}" range-key="name" >
         <view class='button-color5'>更新试题</view>
       </picker>
@@ -28,14 +28,9 @@
   </view>
   <view wx:else>
     <view class='button-menu'>
-      <view class='picker answer' bindtap='wrongExams'>测试</view>
-      <!-- <view class='picker study' bindtap='wrongExams'>练习</view> -->
+      <view class="error-tip">{{errorMsg}}</view>
     </view>
-    <view class='button-menu'>
-      <view class='picker rank'>排名</view>
-      <!-- <view class='picker wrong' bindtap='wrongExams'>错题</view> -->
 
-    </view>
   </view>
   <!-- <button plain="true" class='home' bindgetuserinfo="getUserInfo" open-type="getUserInfo" style="border:0;width: 600rpx;height: 120rpx;background-color: #5CACEE;border-radius: 15rpx;text-align: center;line-height: 120rpx;margin-left: auto;margin-right: auto;margin-top: 30rpx;color: #ffffff;font-size: 40rpx;" >个人中心</button> -->
 

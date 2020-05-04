@@ -134,12 +134,12 @@ Page({
     getExamSources: function(examNo) {
         var nowT = dt.get_timestamp2();
         var intervalT = nowT - lastUpdateSource;
-        if(intervalT < 300 && lastExamNo != examNo){
+        if(intervalT < 300 && lastExamNo == examNo){
             return false;
         }
         var that = this;
         wx.request2({
-            url: '/exam/questions/source?exam_no=' + examNo,
+            url: '/exam/questions/sources?exam_no=' + examNo,
             method: 'GET',
             success: res => {
                 lastUpdateSource = dt.get_timestamp2();
@@ -197,7 +197,9 @@ Page({
         }
     },
     sourceChange: function(e){
-
+        var source_index = e.detail.value;
+        var s_value = this.data.sources_array[source_index].question_source;
+        this.startTraining(-1, -1, null, s_value);
     },
     updateQuestionChange: function(e){
         var index = e.detail.value;
@@ -223,9 +225,11 @@ Page({
         if(source_value != null){
             url += "&question_source=" + source_value;
         }
-        console.info(url)
         wx.navigateTo({
             url: url
         })
+    },
+    onPullDownRefresh: function(){
+        this.onShow();
     }
 })

@@ -91,6 +91,11 @@
   border-radius: 15rpx;
 }
 
+.error-tip {
+  color: red;
+  text-align: center;
+}
+
 .bottimBG{
   position: absolute;
   bottom: 0;
