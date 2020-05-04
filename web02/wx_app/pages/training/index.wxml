@@ -11,7 +11,7 @@
       </picker>
     </view>
     <view class='button-menu' wx:if="{{subjects_array[0].length>0}}">
-      <picker mode="multiSelector" bindchange="chapterExerciseChange" class='picker' range="{{chapters_array}}" bindcolumnchange="chapterExerciseColumnChange" range-key="name">
+      <picker mode="multiSelector" bindchange="chapterExerciseChange" class='picker' range="{{chapters_array}}" bindcolumnchange="chapterExerciseColumnChange" range-key="name" value="{{chapter_indexs}}">
         <view class='button-color3'>章节练习</view>
       </picker>
     </view>

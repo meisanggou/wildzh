@@ -5,22 +5,23 @@ var dt = require("../common/datetime_tools.js");
 Page({
 
     data: {
-        select_modes: [],  // 对应综合练习菜单 题型
-        subjects_array: [[], []],  // 对应分科练习菜单 科目-题型
-        chapters_array: [[], [], []], // 对应章节练习菜单 科目-章节-题型
-        sources_array: [],  // 对应真题练习 题目来源
+        select_modes: [], // 对应综合练习菜单 题型
+        subjects_array: [
+            [],
+            []
+        ], // 对应分科练习菜单 科目-题型
+        chapters_array: [
+            [],
+            [],
+            []
+        ], // 对应章节练习菜单 科目-章节-题型
+        chapter_indexs: [0, 0, 0],
+        sources_array: [], // 对应真题练习 题目来源
         errorMsg: "题库信息加载中...",
         cacheSelectedKey: "selectedTrainingOptions",
         canUpdate: false
     },
-    onLoad: function(options) {
-        var selectedOptions = app.getOrSetCacheData(this.data.cacheSelectedKey);
-        if (selectedOptions != null) {
-            if ('subjects_array' in selectedOptions){
-                delete selectedOptions['subjects_array'];
-            }
-            this.setData(selectedOptions);
-        }
+    onLoad: function (options) {
         var canUpdate = false;
         var currentUser = app.getOrSetCurrentUserData();
         if (currentUser != null && typeof currentUser == "object") {
@@ -40,12 +41,12 @@ Page({
         }
 
     },
-    onShow: function() {
+    onShow: function () {
+        this.refreshExam(false);
+    },
+    refreshExam(force) {
         var examNo = app.globalData.defaultExamNo;
-        if (examNo) {
-            this.getExam(examNo);
-            this.getExamSources(examNo);
-        } else {
+        if (examNo) {} else {
             wx.showModal({
                 title: '未选择题库',
                 content: "未选择题库,确定进入【我的】选择题库",
@@ -59,15 +60,22 @@ Page({
             this.setData({
                 errorMsg: '请先选择一个题库'
             })
+            return false;
         }
+        var nowT = dt.get_timestamp2();
+        var intervalT = nowT - lastUpdateSource;
+        if (intervalT < 300 && lastExamNo == examNo && force == false) {
+            return false;
+        }
+        this.getExam(examNo);
+        this.getExamSources(examNo);
     },
-    getExam: function(examNo) {
+    getExam: function (examNo) {
         var that = this;
         wx.request2({
             url: '/exam/info/?exam_no=' + examNo,
             method: 'GET',
             success: res => {
-                var allExams = [];
                 var resData = res.data.data;
                 var errorMsg = '';
                 if (res.data.status == false || resData.length <= 0) {
@@ -93,10 +101,16 @@ Page({
                         }
                     }
                 }
-                if(select_modes.length <= 0){
-                    select_modes.push({'name': '全部题型', 'value': -1});
+                if (select_modes.length <= 0) {
+                    select_modes.push({
+                        'name': '全部题型',
+                        'value': -1
+                    });
                 }
-                var subjects_array = [[], []];
+                var subjects_array = [
+                    [],
+                    []
+                ];
                 var subjects = [];
                 if ('subjects' in examItem) {
                     var _subjects = examItem['subjects'];
@@ -104,10 +118,13 @@ Page({
                         var _item = _subjects[i];
                         if (_item.enable == true) {
                             _item['value'] = i;
-                            if(!'chapters' in _item){
+                            if (!'chapters' in _item) {
                                 _item['chapters'] = [];
                             }
-                            _item['chapters'].unshift({'name': '全部章节', 'enable': true});
+                            _item['chapters'].unshift({
+                                'name': '全部章节',
+                                'enable': true
+                            });
                             subjects.push(_item);
                         }
                     }
@@ -116,7 +133,7 @@ Page({
                 subjects_array[1] = select_modes;
                 var chapters_array = [subjects, [], select_modes];
                 if (subjects.length >= 1) {
-                  chapters_array[1] = subjects[0]['chapters'];
+                    chapters_array[1] = subjects[0]['chapters'];
                 }
                 that.setData({
                     errorMsg: errorMsg,
@@ -133,12 +150,7 @@ Page({
             }
         })
     },
-    getExamSources: function(examNo) {
-        var nowT = dt.get_timestamp2();
-        var intervalT = nowT - lastUpdateSource;
-        if(intervalT < 300 && lastExamNo == examNo){
-            return false;
-        }
+    getExamSources: function (examNo) {
         var that = this;
         wx.request2({
             url: '/exam/questions/sources?exam_no=' + examNo,
@@ -153,57 +165,67 @@ Page({
                 });
                 wx.hideLoading();
             },
-            fail: res => {
-            }
+            fail: res => {}
         })
     },
-    comprehensiveExerciseChange(e){
-      var sm_index = e.detail.value;
-      var sm_value = this.data.select_modes[sm_index].value;
-      this.startTraining(sm_value, -1, null, null);
+    comprehensiveExerciseChange(e) {
+        var sm_index = e.detail.value;
+        var sm_value = this.data.select_modes[sm_index].value;
+        this.startTraining(sm_value, -1, null, null);
     },
-    subjectExerciseChange(e){
+    subjectExerciseChange(e) {
         var indexs = e.detail.value;
         var sj_value = this.data.subjects_array[0][indexs[0]].value;
         var sm_value = this.data.subjects_array[1][indexs[1]].value;
         this.startTraining(sm_value, sj_value, null, null);
     },
-    chapterExerciseChange: function(e){
+    chapterExerciseChange: function (e) {
         var indexs = e.detail.value;
         var sj_value = this.data.chapters_array[0][indexs[0]].value;
         var ch_value = null;
-        if(indexs[1] > 0){
+        if (indexs[1] > 0) {
             ch_value = this.data.chapters_array[1][indexs[1]].name;
         }
         var sm_value = this.data.chapters_array[2][indexs[2]].value;
         this.startTraining(sm_value, sj_value, ch_value, null);
     },
-    chapterExerciseColumnChange: function(e){
-      var column = e.detail.column;
+    chapterExerciseColumnChange (e) {
+        var column = e.detail.column;
         var value = e.detail.value;
         var subjects = this.data.chapters_array[0];
+        var chapter_indexs = this.data.chapter_indexs;
         var sub_items = [];
-        if(column == 0){
+        if (column == 0) {
             var subject_item = subjects[value];
-            if('chapters' in subject_item){
+            if ('chapters' in subject_item) {
                 var chapters = subject_item['chapters'];
-                for(var i=0;i<chapters.length;i++){
-                    if(chapters[i].enable){
+                for (var i = 0; i < chapters.length; i++) {
+                    if (chapters[i].enable) {
                         sub_items.push(chapters[i]);
                     }
                 }
             }
+            chapter_indexs[0] = value;
+            chapter_indexs[1] = 0;
             this.setData({
-                "chapters_array[1]": sub_items
+                "chapters_array[1]": sub_items,
+                "chapter_indexs[0]": value,
+                "chapter_indexs[1]": 0
             })
         }
+        else{
+            var key1 = 'chapter_indexs[' + column + ']';
+            var data = {};
+            data[key1] = value;
+            this.setData(data)
+        }
     },
-    sourceChange: function(e){
+    sourceChange: function (e) {
         var source_index = e.detail.value;
         var s_value = this.data.sources_array[source_index].question_source;
         this.startTraining(-1, -1, null, s_value);
     },
-    updateQuestionChange: function(e){
+    updateQuestionChange: function (e) {
         var index = e.detail.value;
         var sm_value = this.data.select_modes[index].value;
         this.startTraining(sm_value, -1, null, null, 'update');
@@ -211,30 +233,29 @@ Page({
     startTraining(sm_value, sj_value, ch_value, source_value, action) {
         app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
         var url = "training?from=home";
-        if(action == 'update'){
+        if (action == 'update') {
             url = "../questions/question?from=home";
         }
-        if(sm_value >= -1){
+        if (sm_value >= -1) {
             url += "&select_mode=" + sm_value;
         }
-        if(sj_value >= 0){
+        if (sj_value >= 0) {
             url += "&question_subject=" + sj_value;
         }
-        if(ch_value != null)
-        {
+        if (ch_value != null) {
             url += "&question_chapter=" + ch_value;
         }
-        if(source_value != null){
+        if (source_value != null) {
             url += "&question_source=" + source_value;
         }
         wx.navigateTo({
             url: url
         })
     },
-    onPullDownRefresh: function(){
-        this.onShow();
+    onPullDownRefresh: function () {
+        this.refreshExam(true);
         wx.stopPullDownRefresh({
-          complete: (res) => {},
+            complete: (res) => {},
         })
     }
 })

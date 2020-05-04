@@ -1,5 +1,5 @@
 var remote_host = "https://meisanggou.vicp.net"
-var version = "5.3.1";
+var version = "5.3.4";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 remote_host = "https://wild.gene.ac"
@@ -107,7 +107,11 @@ App({
     getOrSetCacheData: function(key, value = null) {
         var g_key = "wildzh_cache_" + key;
         if (value == null) {
-            return wx.getStorageSync(g_key);
+            value = wx.getStorageSync(g_key);
+            if(value == "" || value == undefined){
+                value = null;
+            }
+            return value;
         }
         wx.setStorageSync(g_key, value);
         return value
@@ -115,7 +119,11 @@ App({
     getOrSetCacheData2: function (key, value = null) {
         var g_key = "wildzh_cache_" + key;
         if (value == null) {
-            return wx.getStorageSync(g_key);
+            value =  wx.getStorageSync(g_key);
+            if(value == "" || value == undefined){
+                value = null;
+            }
+            return value;
         }
         wx.setStorage({key: g_key, data: value});
         return value
