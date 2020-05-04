@@ -93,7 +93,9 @@ Page({
                         }
                     }
                 }
-
+                if(select_modes.length <= 0){
+                    select_modes.push({'name': '全部题型', 'value': -1});
+                }
                 var subjects_array = [[], []];
                 var subjects = [];
                 if ('subjects' in examItem) {
@@ -231,5 +233,8 @@ Page({
     },
     onPullDownRefresh: function(){
         this.onShow();
+        wx.stopPullDownRefresh({
+          complete: (res) => {},
+        })
     }
 })
