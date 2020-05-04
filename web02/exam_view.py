@@ -410,7 +410,7 @@ def get_exam_questions_nos():
     return jsonify({"status": True, "data": dict(max_no=max_no, next_no=next_no)})
 
 
-@exam_view.route("/questions/source", methods=["GET"])
+@exam_view.route("/questions/sources", methods=["GET"])
 @login_required
 @required_exam_no
 def get_exam_sources():

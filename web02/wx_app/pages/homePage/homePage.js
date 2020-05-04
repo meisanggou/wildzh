@@ -44,6 +44,7 @@ Page({
         var examNo = app.globalData.defaultExamNo;
         if (examNo) {
             this.getExam(examNo);
+            this.getExamSources(examNo);
         } else {
             wx.showModal({
                 title: '未选择题库',
@@ -138,18 +139,15 @@ Page({
         }
         var that = this;
         wx.request2({
-            url: '/exam/question/sources?exam_no=' + examNo,
+            url: '/exam/questions/source?exam_no=' + examNo,
             method: 'GET',
             success: res => {
                 lastUpdateSource = dt.get_timestamp2();
                 lastExamNo = examNo;
                 var resData = res.data.data;
-                
+                var sources = resData['sources'];
                 that.setData({
-                    errorMsg: errorMsg,
-                    select_modes: select_modes,
-                    subjects_array: subjects_array,
-                    chapters_array: chapters_array
+                    sources_array: sources
                 });
                 wx.hideLoading();
             },
