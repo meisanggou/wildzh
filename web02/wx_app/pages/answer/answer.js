@@ -149,7 +149,7 @@ Page({
                     })
 
                     wx.redirectTo({
-                        url: '../result/result?exam_no=' + that.data.examNo + "&timestamp=" + timestamp
+                        url: 'result?exam_no=' + that.data.examNo + "&timestamp=" + timestamp
                     })
                 }
             }

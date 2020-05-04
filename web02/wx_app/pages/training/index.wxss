@@ -1,0 +1,57 @@
+@import "../common/lib/weui.wxss";
+@import "../common/lib/lib_app.wxss";
+
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+
+.button-menu {
+  display: flex;
+  width: 600rpx;
+    margin-left: auto;
+  margin-right: auto;
+}
+
+.picker{
+  width: 80%;
+  height: 100rpx;
+  color: #ffffff;
+  font-size: 45rpx;
+  line-height: 100rpx;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30rpx;
+}
+.button-color1{
+  background-color: #fa4545;
+  border-radius: 15rpx;
+}
+
+.button-color2{
+  background-color: #f19e20;
+  border-radius: 15rpx;
+}
+
+.button-color3{
+  background-color: #de3ef3;
+  border-radius: 15rpx;
+}
+
+.button-color4{
+  background-color: #cbda05;
+  border-radius: 15rpx;
+}
+
+.button-color5{
+  background-color: #52910b;
+  border-radius: 15rpx;
+}
+
+.error-tip {
+  color: red;
+  text-align: center;
+}

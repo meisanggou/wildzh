@@ -1,17 +1,14 @@
 {
     "pages": [
-        "pages/homePage/homePage",
+        "pages/training/index",
         "pages/training/training_home",
         "pages/me/me",
         "pages/exam/exam_member",
-        "pages/rank/rank",
         "pages/training/training",
         "pages/showDetail/showDetail",
         "pages/wrongAnswer/wrongAnswer",
         "pages/answer/answer",
-        "pages/result/result",
-        "pages/register/register",
-        "pages/admin",
+        "pages/answer/result",
         "pages/query/query",
         "pages/answer/answer_home",
         "pages/questions/question",
@@ -28,7 +25,7 @@
     "tabBar": {
         "list": [
             {
-                "pagePath": "pages/homePage/homePage",
+                "pagePath": "pages/training/index",
                 "iconPath": "images/practise.png",
                 "selectedIconPath": "images/practise_fill.png",
                 "text": "练习"

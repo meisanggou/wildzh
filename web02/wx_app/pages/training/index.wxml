@@ -32,7 +32,5 @@
     </view>
 
   </view>
-  <!-- <button plain="true" class='home' bindgetuserinfo="getUserInfo" open-type="getUserInfo" style="border:0;width: 600rpx;height: 120rpx;background-color: #5CACEE;border-radius: 15rpx;text-align: center;line-height: 120rpx;margin-left: auto;margin-right: auto;margin-top: 30rpx;color: #ffffff;font-size: 40rpx;" >个人中心</button> -->
-
 
 </view>

@@ -210,7 +210,7 @@ Page({
     },
     startTraining(sm_value, sj_value, ch_value, source_value, action) {
         app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
-        var url = "../training/training?from=home";
+        var url = "training?from=home";
         if(action == 'update'){
             url = "../questions/question?from=home";
         }
