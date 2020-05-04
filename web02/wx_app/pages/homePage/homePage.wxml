@@ -2,27 +2,27 @@
   <view wx:if="{{!errorMsg}}">
     <view class='button-menu'>
       <picker bindchange="comprehensiveExerciseChange" class='picker' range="{{select_modes}}" range-key="name">
-        <view class='answer'>综合练习</view>
+        <view class='button-color1'>综合练习</view>
       </picker>
     </view>
     <view class='button-menu'>
-      <picker mode="multiSelector" bindchange="subjectExerciseChange" class='picker' range="{{subjects_array}}" range-key="name" bindcolumnchange="subjectExerciseColumnChange">
-        <view class='study'>分科练习</view>
+      <picker mode="multiSelector" bindchange="subjectExerciseChange" class='picker' range="{{subjects_array}}" range-key="name" >
+        <view class='button-color2'>分科练习</view>
       </picker>
     </view>
     <view class='button-menu'>
       <picker mode="multiSelector" bindchange="chapterExerciseChange" class='picker' range="{{chapters_array}}" bindcolumnchange="chapterExerciseColumnChange" range-key="name">
-        <view class='rank'>章节练习</view>
+        <view class='button-color3'>章节练习</view>
       </picker>
     </view>
     <view class='button-menu'>
       <picker bindchange="sourceChange" class='picker' range="{{sources_array}}" >
-        <view class='wrong'>真题练习</view>
+        <view class='button-color4'>真题练习</view>
       </picker>
     </view>
     <view class='button-menu'>
-      <picker bindchange="" class='picker' range="{{QBArray}}">
-        <view class='wrong'>更新试题</view>
+      <picker bindchange="updateQuestionChange" class='picker' range="{{select_modes}}" range-key="name" >
+        <view class='button-color5'>更新试题</view>
       </picker>
     </view>
   </view>

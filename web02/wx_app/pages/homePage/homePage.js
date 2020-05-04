@@ -78,7 +78,8 @@ Page({
                 if (examItem['exam_role'] > 10) {
                     errorMsg = '无权限进行操作，请先升级成会员！';
                 }
-                var select_modes = [{'name': '全部题型', 'value': -1}];
+                // var select_modes = [{'name': '全部题型', 'value': -1}];
+                var select_modes = [];
                 if ('select_modes' in examItem) {
                     var _select_modes = examItem['select_modes'];
                     for (var i = 0; i < _select_modes.length; i++) {
@@ -128,16 +129,25 @@ Page({
         })
     },
     comprehensiveExerciseChange(e){
-      console.info(e.detail.value);
+      var sm_index = e.detail.value;
+      var sm_value = this.data.select_modes[sm_index].value;
+      this.startTraining(sm_value, -1, null, null);
     },
     subjectExerciseChange(e){
-
-    },
-    subjectExerciseColumnChange: function(e){
-
+        var indexs = e.detail.value;
+        var sj_value = this.data.subjects_array[0][indexs[0]].value;
+        var sm_value = this.data.subjects_array[1][indexs[1]].value;
+        this.startTraining(sm_value, sj_value, null, null);
     },
     chapterExerciseChange: function(e){
-
+        var indexs = e.detail.value;
+        var sj_value = this.data.chapters_array[0][indexs[0]].value;
+        var ch_value = null;
+        if(indexs[1] > 0){
+            ch_value = this.data.chapters_array[1][indexs[1]].name;
+        }
+        var sm_value = this.data.chapters_array[2][indexs[2]].value;
+        this.startTraining(sm_value, sj_value, ch_value, null);
     },
     chapterExerciseColumnChange: function(e){
       var column = e.detail.column;
@@ -162,6 +172,11 @@ Page({
     sourceChange: function(e){
 
     },
+    updateQuestionChange: function(e){
+        var index = e.detail.value;
+        var sm_value = this.data.select_modes[index].value;
+        this.startTraining(sm_value, -1, null, null, 'update');
+    },
     bindPickerChange(e) {
         this.setData({
             index: parseInt(e.detail.value)
@@ -173,58 +188,26 @@ Page({
         })
         console.info(this.data.subjects_array);
     },
-    bindSubjectColumnChange: function(e){
-        var column = e.detail.column;
-        var value = e.detail.value;
-        var subjects = this.data.subjects_array[0];
-        var sub_items = []
-        if(column == 0){
-            var subject_item = subjects[value];
-            if('chapters' in subject_item){
-                var chapters = subject_item['chapters'];
-                for(var i=0;i<chapters.length;i++){
-                    if(chapters[i].enable){
-                        sub_items.push(chapters[i]);
-                    }
-                }
-            }
-            this.setData({
-                "subjects_array[1]": sub_items,
-                "subjectIndex[0]": value
-            })
-        }
-
-    },
-    selectModeChange(e) {
-        this.setData({
-            modeIndex: parseInt(e.detail.value)
-        })
-    },
-    startTraining() {
+    startTraining(sm_value, sj_value, ch_value, source_value, action) {
         app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
-        var url = "";
-        if (this.data.to == "answer") {
-            url += "../answer/answer"
-        } else {
-            url += "training"
+        var url = "../training/training?from=home";
+        if(action == 'update'){
+            url = "../questions/question?from=home";
         }
-        var sm_index = -1;
-        if (this.data.modeIndex < this.data.select_modes.length) {
-            sm_index = this.data.select_modes[this.data.modeIndex].value;
+        if(sm_value >= -1){
+            url += "&select_mode=" + sm_value;
         }
-        url += "?select_mode=" + sm_index;
-        var subjects = this.data.subjects_array[0];
-        if (this.data.index == 1) {
-            var current_sj = subjects[this.data.subjectIndexs[0]];
-            url += "&question_subject=" + current_sj.value;
-            var ch_index = this.data.subjectIndexs[1];
-            console.info(ch_index);
-            if(ch_index > 0){
-                var question_chapter = this.data.subjects_array[1][ch_index];
-                console.info(question_chapter);
-                url += "&question_chapter=" + question_chapter.name;
-            }
+        if(sj_value >= 0){
+            url += "&question_subject=" + sj_value;
         }
+        if(ch_value != null)
+        {
+            url += "&question_chapter=" + ch_value;
+        }
+        if(source_value != null){
+            url += "&question_source=" + source_value;
+        }
+        console.info(url)
         wx.navigateTo({
             url: url
         })

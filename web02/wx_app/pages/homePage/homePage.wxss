@@ -66,23 +66,28 @@
   margin-right: auto;
   margin-top: 30rpx;
 }
-.answer{
-  background-color: #ff5757;
+.button-color1{
+  background-color: #fa4545;
   border-radius: 15rpx;
 }
 
-.study{
-  background-color: #ff9800;
+.button-color2{
+  background-color: #f19e20;
   border-radius: 15rpx;
 }
 
-.rank{
-  background-color: #ba33cc;
+.button-color3{
+  background-color: #de3ef3;
   border-radius: 15rpx;
 }
 
-.wrong{
-  background-color: #84d723;
+.button-color4{
+  background-color: #cbda05;
+  border-radius: 15rpx;
+}
+
+.button-color5{
+  background-color: #52910b;
   border-radius: 15rpx;
 }
 

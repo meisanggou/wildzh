@@ -790,6 +790,9 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                 next_no += 1
         return True, items
 
+    def get_sources(self, exam_no):
+        return self.qs_man.select_sources(exam_no)
+
 
 if __name__ == "__main__":
     # print(ExamUsage.calc_period_no(1578844800))
