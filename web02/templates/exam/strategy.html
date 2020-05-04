@@ -1,0 +1,33 @@
+{% extends "base_a.html" %}
+
+
+{% block js_content %}
+{{ 't_js/exam/strategy.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+<div id="div_content">
+    <div class="tab-content" style="padding-top: 20px;">
+        <div class="form-group apiContentLine">
+            <ul>
+                <li>
+                    <label>题库名称：</label>
+                    <select class="box-side width150" type="text" @change="select_exam" v-model="current_exam_index">
+                        <option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>
+                    </select>
+                </li>
+
+                <li>
+                    <label>智能组卷：</label>
+                    <label class="checkbox-inline" v-for="mod_item in select_modes">
+                        <input type="checkbox" v-model="mod_item.enable">{{mod_item.name}}
+                    </label>
+                </li>
+
+
+            </ul>
+        </div>
+        <button class="btn btn-success btn-down api-newBtn" @click="update">更新</button>
+    </div>
+</div>
+{% endblock %}
