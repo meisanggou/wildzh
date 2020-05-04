@@ -1,5 +1,7 @@
 var app = getApp();
-
+var lastExamNo = null;
+var lastUpdateSource = 0;
+var dt = require("../common/datetime_tools.js");
 Page({
 
     data: {
@@ -128,6 +130,33 @@ Page({
             }
         })
     },
+    getExamSources: function(examNo) {
+        var nowT = dt.get_timestamp2();
+        var intervalT = nowT - lastUpdateSource;
+        if(intervalT < 300 && lastExamNo != examNo){
+            return false;
+        }
+        var that = this;
+        wx.request2({
+            url: '/exam/question/sources?exam_no=' + examNo,
+            method: 'GET',
+            success: res => {
+                lastUpdateSource = dt.get_timestamp2();
+                lastExamNo = examNo;
+                var resData = res.data.data;
+                
+                that.setData({
+                    errorMsg: errorMsg,
+                    select_modes: select_modes,
+                    subjects_array: subjects_array,
+                    chapters_array: chapters_array
+                });
+                wx.hideLoading();
+            },
+            fail: res => {
+            }
+        })
+    },
     comprehensiveExerciseChange(e){
       var sm_index = e.detail.value;
       var sm_value = this.data.select_modes[sm_index].value;
@@ -177,17 +206,6 @@ Page({
         var sm_value = this.data.select_modes[index].value;
         this.startTraining(sm_value, -1, null, null, 'update');
     },
-    bindPickerChange(e) {
-        this.setData({
-            index: parseInt(e.detail.value)
-        })
-    },
-    subjectChange(e) {
-        this.setData({
-            subjectIndexs: e.detail.value
-        })
-        console.info(this.data.subjects_array);
-    },
     startTraining(sm_value, sj_value, ch_value, source_value, action) {
         app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
         var url = "../training/training?from=home";
@@ -208,22 +226,6 @@ Page({
             url += "&question_source=" + source_value;
         }
         console.info(url)
-        wx.navigateTo({
-            url: url
-        })
-    },
-    startUpdateQuestion: function() {
-        app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
-        var modeIndex = parseInt(this.data.modeIndex)
-        var sm_index = -1;
-        if (this.data.modeIndex < this.data.select_modes.length) {
-            sm_index = this.data.select_modes[this.data.modeIndex].value;
-        }
-        var url = "../questions/question?select_mode=" + sm_index;
-        if (this.data.index == 1) {
-            var current_sj = this.data.subjects_array[0][this.data.subjectIndex];
-            url += "&question_subject=" + current_sj.value;
-        }
         wx.navigateTo({
             url: url
         })

@@ -15,7 +15,7 @@
         <view class='button-color3'>章节练习</view>
       </picker>
     </view>
-    <view class='button-menu'>
+    <view class='button-menu' wx:if="{{sources_array.length>0}}">
       <picker bindchange="sourceChange" class='picker' range="{{sources_array}}" >
         <view class='button-color4'>真题练习</view>
       </picker>
