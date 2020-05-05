@@ -835,6 +835,19 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
         q_nos = random.sample(m_nos, num)
         return self.select_multi_question(exam_no, q_nos)
 
+    def get_questions_by_strategy(self, exam_no, strategy_id, question_subject=None):
+        strategies = self.get_strategy(exam_no, strategy_id)
+        if len(strategies) <= 0:
+            return []
+        strategy_items = strategies[0]['strategy_items']
+        questions = []
+        for item in strategy_items:
+            _qts = self.select_random_questions(exam_no, item['num'],
+                                                item['value'],
+                                                question_subject)
+            questions.extend(_qts)
+        return questions
+
     def select_multi_question(self, exam_no, q_nos):
         if len(q_nos) <= 0:
             return []

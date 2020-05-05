@@ -315,6 +315,7 @@ def update_question():
 def get_exam_questions():
     start_time = time.time()
     nos = request.args.get("nos", None)
+    strategy_id = request.args.get('strategy_id', None)
     num = request.args.get("num", None)
     start_no = int(request.args.get("start_no", -1))
     select_mode = request.args.get("select_mode", None)
@@ -323,6 +324,10 @@ def get_exam_questions():
     if nos is not None:
         q_nos = filter(lambda x: len(x) > 0, re.split("\D", nos))
         items = c_exam.select_multi_question2(g.exam_no, q_nos)
+    elif strategy_id:
+        # 按照策略获得试题
+        items = c_exam.get_questions_by_strategy(g.exam_no, strategy_id,
+                                                 question_subject)
     elif num is None:
         # 获取全部试题
         items = c_exam.select_questions(g.exam_no)
