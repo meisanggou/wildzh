@@ -19,10 +19,21 @@
 
                 <li>
                     <label>智能组卷：</label>
-                    <label class="checkbox-inline" v-for="mod_item in select_modes">
-                        <input type="checkbox" v-model="mod_item.enable">{{mod_item.name}}
-                    </label>
+                    <button class="btn btn-success" @click="add_mode">增加题型</button>
                 </li>
+                <div class="panel panel-default" v-for="(sub_item, index) in strategy_pattern">
+                    <div class="panel-heading">
+                        <li>
+                            <label>题型：</label>
+                            <select class="box-side width100" type="text"v-model="sub_item.value">
+                                <option v-for="(mod_item,index) in select_modes" v-if="mod_item.enable" :value="index">{{mod_item["name"]}}</option>
+                            </select>
+                            <label>题目数：</label>
+                            <input type="text" class="box-side width100" v-model.number='sub_item.num'>
+                            <a href='javascript:void(0)' @click="remove_mode(index)" class="left5">移除</a>
+                        </li>
+                    </div>
+                </div>
 
 
             </ul>

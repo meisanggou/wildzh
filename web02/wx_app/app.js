@@ -1,5 +1,5 @@
 var remote_host = "https://meisanggou.vicp.net"
-var version = "5.3.4";
+var version = "5.3.5";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 remote_host = "https://wild.gene.ac"
@@ -31,6 +31,7 @@ App({
                 }
             }
             req.header['X-Device-Screen-Width'] = screenData.width;
+            req.header['X-VMP-Version'] = version;
             if (req.url[0] == "/") {
                 req.url = wx.remote_host + req.url
             }

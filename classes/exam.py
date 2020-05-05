@@ -6,6 +6,8 @@ import time
 import json
 import random
 import string
+import uuid
+
 from mysqldb_rich.db2 import DB
 
 __author__ = 'meisa'
@@ -476,6 +478,45 @@ class QuestionSources(object):
         return data
 
 
+class ExamGenStrategy(object):
+
+    def __init__(self, db):
+        self.db = db
+        self.cols = ['exam_no', 'strategy_id', 'strategy_name',
+                     'strategy_items', 'update_time']
+        self.t = 'exam_gen_strategy'
+
+    def select_strategy(self, exam_no, strategy_id=None):
+        where_value = {'exam_no': exam_no}
+        if strategy_id:
+            where_value['strategy_id'] = strategy_id
+        items = self.db.execute_select(self.t, cols=self.cols,
+                                       where_value=where_value)
+        return items
+
+    def insert_strategy(self, exam_no, strategy_name, strategy_items):
+        u_time = time.time()
+        strategy_id = uuid.uuid4().hex
+        data = {'exam_no': exam_no, 'strategy_id': strategy_id,
+                'strategy_name': strategy_name,
+                'strategy_items': strategy_items, 'update_time': u_time}
+        self.db.execute_insert(self.t, kwargs=data)
+        return data
+
+    def update_strategy(self, exam_no, strategy_id, strategy_name=None,
+                        strategy_items=None):
+        u_time = time.time()
+        where_value = dict(strategy_id=strategy_id, exam_no=exam_no)
+        data = {'update_time': u_time}
+        if strategy_name:
+            data['strategy_name'] = strategy_name
+        if strategy_items:
+            data['strategy_items'] = strategy_items
+        l = self.db.execute_update(self.t, update_value=data,
+                                   where_value=where_value)
+        return l
+
+
 class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
 
     def __init__(self, db_conf_path):
@@ -490,6 +531,10 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                        "answer", "question_subject", "question_source",
                        "inside_mark", "answer_pic_url", 'question_chapter']
         self.qs_man = QuestionSources(self.db)
+        self.gs_man = ExamGenStrategy(self.db)
+        self.get_strategy = self.gs_man.select_strategy
+        self.new_strategy = self.gs_man.insert_strategy
+        self.update_strategy = self.gs_man.update_strategy
 
     def _insert_info(self, exam_no, exam_name, exam_desc, adder, status=1, exam_extend=None):
         kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, status=status,

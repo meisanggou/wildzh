@@ -31,15 +31,22 @@ $(function () {
             all_exams: [],
             current_exam_index: -1,
             current_exam: {question_num: 0, exam_no: exam_no},
-            select_modes: []
+            select_modes: [],
+            strategy_pattern: []
         },
         methods: {
             select_exam: function () {
                 this.current_exam = this.all_exams[this.current_exam_index];
                 this.select_modes = this.current_exam["select_modes"];
             },
+            add_mode: function () {
+                this.strategy_pattern.push({'value': -1, 'num': ''});
+            },
+            remove_mode: function(index){
+                this.strategy_pattern.splice(index, 1);
+            },
             update: function(){
-
+                console.info(this.strategy_pattern);
             }
         }
     });
