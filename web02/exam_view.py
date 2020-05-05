@@ -10,7 +10,7 @@ from flask import request, jsonify, g
 from flask_login import login_required
 from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url
-from classes.exam import Exam, ExamObject
+from classes.exam import Exam, ExamObject, StrategyObject
 from web02 import create_blue
 
 __author__ = 'meisa'
@@ -23,9 +23,11 @@ info_url = url_prefix + "/info/"
 online_url = url_prefix + "/online/"
 questions_url = url_prefix + "/questions/"
 page_exam = url_prefix + "/?action=exam"
+strategy_url = url_prefix + '/strategy'
 defined_routes = dict(add_url=add_url, upload_url=upload_url,
                       info_url=info_url, online_url=online_url,
-                      questions_url=questions_url, page_exam=page_exam)
+                      questions_url=questions_url, page_exam=page_exam,
+                      strategy_url=strategy_url)
 rt = RenderTemplate("exam", menu_active="exam", defined_routes=defined_routes)
 menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam", "sub_menu": [
     {"title": u"试题库管理", "url": url_prefix + "/"},
@@ -584,3 +586,26 @@ def update_usage():
     num = data['num']
     item = c_exam.update_usage_records(g.exam_no, g.user_no, num)
     return jsonify({'status': True, 'data': item})
+
+
+@exam_view.route('/strategy/<int:exam_no>', methods=['GET'])
+@login_required
+def get_exam_strategy(exam_no):
+    items = c_exam.get_strategy(exam_no=exam_no)
+    data = {'exam_no': exam_no, 'strategies': items}
+    return jsonify({'status': True, 'data': data})
+
+
+@exam_view.route('/strategy', methods=['PUT', 'POST'])
+@login_required
+@required_manager_exam()
+def set_exam_strategy():
+    data = request.json
+    strategy_o = StrategyObject.parse(**data)
+    if not strategy_o:
+        return jsonify({'status': False, 'data': ''})
+    if strategy_o.id:
+        c_exam.update_strategy(g.exam_no, **strategy_o.to_dict())
+    else:
+        c_exam.new_strategy(g.exam_no, **strategy_o.to_dict())
+    return jsonify({'status': True, 'data': ''})

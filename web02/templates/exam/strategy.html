@@ -19,12 +19,13 @@
 
                 <li>
                     <label>智能组卷：</label>
-                    <button class="btn btn-success" @click="add_mode">增加题型</button>
+                    <button class="btn btn-success" v-if="strategy_pattern.length<10" @click="add_mode">增加题型</button>
                 </li>
                 <div class="panel panel-default" v-for="(sub_item, index) in strategy_pattern">
                     <div class="panel-heading">
                         <li>
-                            <label>题型：</label>
+                            <strong>#{{index+1}}</strong>
+                            <label class="left5">题型：</label>
                             <select class="box-side width100" type="text"v-model="sub_item.value">
                                 <option v-for="(mod_item,index) in select_modes" v-if="mod_item.enable" :value="index">{{mod_item["name"]}}</option>
                             </select>
