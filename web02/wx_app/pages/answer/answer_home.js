@@ -14,7 +14,7 @@ Page({
         cacheSelectedKey: "selectedAnswerOptions",
         errorMsg: "题库信息加载中..."
     },
-    onLoad: function(options) {
+    onLoad: function (options) {
         if ("to" in options) {
             this.setData({
                 to: options["to"]
@@ -26,7 +26,7 @@ Page({
         }
 
     },
-    onShow: function() {
+    onShow: function () {
         var examNo = app.globalData.defaultExamNo;
         if (examNo) {
             this.getExam(examNo);
@@ -46,7 +46,27 @@ Page({
             })
         }
     },
-    getExam: function(examNo) {
+    onReady() {
+        const query = wx.createSelectorQuery()
+        query.select('#myCanvas')
+            .fields({
+                node: true,
+                size: true
+            })
+            .exec((res) => {
+                console.info(res);
+                const canvas = res[0].node
+                const ctx = canvas.getContext('2d')
+
+                const dpr = wx.getSystemInfoSync().pixelRatio
+                canvas.width = res[0].width * dpr
+                canvas.height = res[0].height * dpr
+                ctx.scale(dpr, dpr)
+
+                ctx.fillRect(0, 0, 100, 100)
+            })
+    },
+    getExam: function (examNo) {
         var that = this;
         wx.request2({
             url: '/exam/info/?exam_no=' + examNo,

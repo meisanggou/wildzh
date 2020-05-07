@@ -33,7 +33,10 @@ $(function () {
             current_exam_index: -1,
             current_exam: {question_num: 0, exam_no: exam_no},
             select_modes: [],
+            strategies: [],
+            current_strategy_index: -1,
             strategy_id: null,
+            strategy_name: "",
             strategy_pattern: []
         },
         methods: {
@@ -42,13 +45,15 @@ $(function () {
                 this.select_modes = this.current_exam["select_modes"];
                 if("strategies" in this.current_exam){
                     var strategies = this.current_exam['strategies'];
-                    if(strategies.length <= 0){
-                        this.strategy_pattern = [];
-                        this.strategy_id = null;
-                    }else{
-                        this.strategy_pattern = strategies[0]["strategy_items"];
-                        this.strategy_id = strategies[0]['strategy_id'];
-                    }
+                    //if(strategies.length <= 0){
+                    //    this.strategy_pattern = [];
+                    //    this.strategy_id = null;
+                    //}else{
+                    //    this.strategy_pattern = strategies[0]["strategy_items"];
+                    //    this.strategy_id = strategies[0]['strategy_id'];
+                    //}
+                    this.strategies = strategies;
+                    this.select_strategy(-1);
                 }
                 else{
                     var that = this;
@@ -57,6 +62,19 @@ $(function () {
                         that.current_exam['strategies'] =  data['data']['strategies'];
                         that.select_exam();
                     })
+                }
+            },
+            select_strategy: function(){
+                var index = this.current_strategy_index;
+                if(index < 0){
+                    this.strategy_pattern = [];
+                    this.strategy_id = null;
+                    this.strategy_name = "";
+                }
+                else {
+                    this.strategy_pattern = this.strategies[index]["strategy_items"];
+                    this.strategy_id = this.strategies[index]['strategy_id'];
+                    this.strategy_name = this.strategies[index]['strategy_name'];
                 }
             },
             add_mode: function () {
@@ -95,6 +113,7 @@ $(function () {
                 if(this.strategy_id != null){
                     data['strategy_id'] = this.strategy_id;
                 }
+                data['strategy_name'] = this.strategy_name;
                 my_async_request2(strategy_url, 'PUT', data, function(data){
                         popup_show("操作成功");
                     }

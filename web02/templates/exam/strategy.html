@@ -16,7 +16,17 @@
                         <option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>
                     </select>
                 </li>
-
+                <li>
+                    <label>选择策略：</label>
+                    <select class="box-side width150" type="text" @change="select_strategy" v-model="current_strategy_index">
+                        <option value="-1">--新建策略--</option>
+                        <option v-for="(item,index) in strategies" :value="index">{{item["strategy_name"]}}</option>
+                    </select>
+                </li>
+                <li>
+                    <label>策略名称：</label>
+                    <input type="text" class="box-side width150" v-model='strategy_name'>
+                </li>
                 <li>
                     <label>智能组卷：</label>
                     <button class="btn btn-success" v-if="strategy_pattern.length<10" @click="add_mode">增加题型</button>
