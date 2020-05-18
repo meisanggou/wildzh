@@ -41,7 +41,6 @@ exam_view = create_blue("exam", url_prefix=url_prefix, auth_required=False, menu
 c_exam = Exam(db_conf_path)
 
 G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题"]
-G_SUBJECT = ["无", "微观经济学", "宏观经济学", "政治经济学"]
 
 
 def separate_image(text, max_width=None):
@@ -227,9 +226,7 @@ def get_exam_info():
             r_item['end_time'] = 0
         if r_item['exam_role'] <= min_role:
             r_items.append(r_item)
-    # for item in r_items:
-    #     item["select_modes"] = G_SELECT_MODE
-    #     item["subjects"] = G_SUBJECT
+
     if 'rich' in request.args:
         for item in r_items:
             item['rich_exam_desc'] = separate_image(item['exam_desc'])
@@ -614,3 +611,16 @@ def set_exam_strategy():
     else:
         c_exam.new_strategy(g.exam_no, **strategy_o.to_dict())
     return jsonify({'status': True, 'data': ''})
+
+
+@exam_view.route('/export/word', methods=['POST'])
+@login_required
+@required_exam_no
+def export_question_to_word():
+    data = request.json
+    strategy_id = data['strategy_id']
+    strategies = c_exam.get_strategy(exam_no=g.exam_no,
+                                     strategy_id=strategy_id)
+    if len(strategies) != 1:
+        return {'status': False, 'data': 'Not Found'}
+    return {'status': True, 'data': strategies[0]}

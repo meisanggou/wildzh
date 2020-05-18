@@ -10,6 +10,7 @@
         "pages/answer/answer",
         "pages/answer/result",
         "pages/query/query",
+        "pages/answer/index",
         "pages/answer/answer_home",
         "pages/questions/question",
         "pages/exam/exam_info",
@@ -31,7 +32,7 @@
                 "text": "练习"
             },
             {
-                "pagePath": "pages/answer/answer_home",
+                "pagePath": "pages/answer/index",
                 "iconPath": "images/exam.png",
                 "selectedIconPath": "images/exam_fill.png",
                 "text": "测试"

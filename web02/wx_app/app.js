@@ -41,7 +41,6 @@ App({
                     if (res.statusCode != 302) {
                         origin_success(res);
                     } else {
-                        console.info(res.statusCode);
                         wx.login({
                             success: res => {
                                 wx.request({

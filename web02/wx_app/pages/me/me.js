@@ -69,7 +69,8 @@ Page({
                 wx.setStorageSync(app.globalData.userInfoStorageKey, userItem)
                 that.setData({
                     userAvatar: userItem.avatar_url,
-                    nickName: userItem.nick_name
+                    nickName: userItem.nick_name,
+                    userNo: userItem.user_no
                 })
                 wx.hideLoading();
                 app.getOrSetCacheData2(lastUpdateUserKey, dt.get_timestamp2());

@@ -2,8 +2,9 @@
 # coding: utf-8
 
 import os
-from flask import request, g, Blueprint, jsonify
+from flask import request, g, Blueprint, jsonify, Response
 from flask_login import current_user, LoginManager, login_required
+import functools
 
 from flask_helper import Flask2
 from zh_config import file_prefix_url, upload_folder, accept_agent
@@ -78,12 +79,26 @@ app = create_app()
 portal_menu_list = []
 
 
+class _View(Blueprint):
+
+    def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
+        if view_func:
+            @functools.wraps(view_func)
+            def inner(*args, **kwargs):
+                r = view_func(*args, **kwargs)
+                if isinstance(r, dict):
+                    return jsonify(r)
+                return r
+            view_func = inner
+        Blueprint.add_url_rule(self, rule, endpoint, view_func, **options)
+
+
 def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=False, menu_list=None):
     if url_prefix == "/" or url_prefix is None:
-        add_blue = Blueprint(blue_name, __name__)
+        add_blue = _View(blue_name, __name__)
         url_prefix = ""
     else:
-        add_blue = Blueprint(blue_name, __name__, url_prefix=url_prefix)
+        add_blue = _View(blue_name, __name__, url_prefix=url_prefix)
     if auth_required:
         @add_blue.before_request
         @login_required
