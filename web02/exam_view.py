@@ -315,7 +315,7 @@ def get_exam_questions():
     strategy_id = request.args.get('strategy_id', None)
     num = request.args.get("num", None)
     start_no = int(request.args.get("start_no", -1))
-    select_mode = request.args.get("select_mode", None)
+    select_mode = int(request.args.get("select_mode", -1))
     question_subject = request.args.get("question_subject", None)
     no_rich = request.args.get("no_rich", False)
     if nos is not None:

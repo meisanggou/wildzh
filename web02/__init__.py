@@ -82,6 +82,7 @@ portal_menu_list = []
 class _View(Blueprint):
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
+        n_view_func = view_func
         if view_func:
             @functools.wraps(view_func)
             def inner(*args, **kwargs):
@@ -89,8 +90,8 @@ class _View(Blueprint):
                 if isinstance(r, dict):
                     return jsonify(r)
                 return r
-            view_func = inner
-        Blueprint.add_url_rule(self, rule, endpoint, view_func, **options)
+            n_view_func = inner
+        Blueprint.add_url_rule(self, rule, endpoint, n_view_func, **options)
 
 
 def create_blue(blue_name, url_prefix="/", auth_required=True, special_protocol=False, menu_list=None):

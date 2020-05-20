@@ -42,8 +42,8 @@ Page({
             })
             var url = '/exam/questions/?exam_no=' + that.data.examNo + "&num=20";
             if ("select_mode" in options) {
-                // url += "&select_mode=" + options["select_mode"];
-                url += "&strategy_id=d8028c90dec9457bb30ad22afea1542a"
+                url += "&select_mode=" + options["select_mode"];
+                // url += "&strategy_id=d8028c90dec9457bb30ad22afea1542a"
             }
             if ("question_subject" in options) {
                 url += "&question_subject=" + options["question_subject"];
