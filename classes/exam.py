@@ -824,9 +824,12 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                                        where_cond_args=where_cond_args)
         return items
 
-    def select_random_questions(self, exam_no, num, select_mode=None, question_subject=None):
+    def select_random_questions(self, exam_no, num, select_mode=None,
+                                question_subject=None, exclude_nos=""):
         m_items = self.select_question_no(exam_no, select_mode, None, question_subject)
-        m_nos = map(lambda x: x["question_no"], m_items)
+        exclude_set = set([int(x) for x in re.split('\D', exclude_nos)
+                           if x != ''])
+        m_nos = set(map(lambda x: x["question_no"], m_items)) - exclude_set
         m_nos_len = len(m_nos)
         if m_nos_len <= 0:
             return []
