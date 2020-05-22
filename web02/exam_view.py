@@ -616,6 +616,14 @@ def set_exam_strategy():
     return jsonify({'status': True, 'data': ''})
 
 
+@exam_view.route('/strategy/<strategy_id>', methods=['DELETE'])
+@login_required
+@required_manager_exam()
+def delete_exam_strategy(strategy_id):
+    l = c_exam.delete_strategy(g.exam_no, strategy_id)
+    return jsonify({'status': True, 'data': ''})
+
+
 @exam_view.route('/export/word', methods=['POST'])
 @login_required
 @required_exam_no

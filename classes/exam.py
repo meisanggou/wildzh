@@ -607,6 +607,11 @@ class ExamGenStrategy(object):
                                    where_value=where_value)
         return l
 
+    def delete_strategy(self, exam_no, strategy_id):
+        where_value = dict(exam_no=exam_no, strategy_id=strategy_id)
+        l = self.db.execute_delete(self.t, where_value=where_value)
+        return l
+
 
 class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
 
@@ -626,6 +631,7 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
         self.get_strategy = self.gs_man.select_strategy
         self.new_strategy = self.gs_man.insert_strategy
         self.update_strategy = self.gs_man.update_strategy
+        self.delete_strategy = self.gs_man.delete_strategy
 
     def _insert_info(self, exam_no, exam_name, exam_desc, adder, status=1, exam_extend=None):
         kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, status=status,

@@ -29,7 +29,7 @@
                 </li>
                 <li>
                     <label>智能组卷：</label>
-                    <button class="btn btn-success" v-if="strategy_pattern.length<10" @click="add_mode">增加题型</button>
+                    <button class="btn btn-success" v-if="strategy_pattern.length<10" @click="add_mode(-1)">增加题型</button>
                 </li>
                 <div class="panel panel-default" v-for="(sub_item, index) in strategy_pattern">
                     <div class="panel-heading">
@@ -42,6 +42,7 @@
                             <label>题目数：</label>
                             <input type="text" class="box-side width100" v-model.number='sub_item.num'>
                             <a href='javascript:void(0)' @click="remove_mode(index)" class="left5">移除</a>
+                            <a href='javascript:void(0)' @click="add_mode(index+1)" class="left5">增加题型</a>
                         </li>
                     </div>
                 </div>
@@ -50,6 +51,7 @@
             </ul>
         </div>
         <button class="btn btn-success btn-down api-newBtn" @click="update">更新</button>
+        <button v-if="strategy_id" class="btn btn-warning btn-down api-newBtn" @click="remove_strategy">删除</button>
     </div>
 </div>
 {% endblock %}

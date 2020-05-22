@@ -77,12 +77,17 @@ $(function () {
                     this.strategy_name = this.strategies[index]['strategy_name'];
                 }
             },
-            add_mode: function () {
+            add_mode: function (position) {
                 if(this.current_exam_index < 0){
                     popup_show("请先选择题库");
                     return false;
                 }
-                this.strategy_pattern.push({'value': -1, 'num': ''});
+                if(position == -1){
+                    position = this.strategy_pattern.length;
+                }
+                console.info(position);
+                this.strategy_pattern.splice(position, 0, {'value': -1, 'num': ''});
+                //this.strategy_pattern.push({'value': -1, 'num': ''});
             },
             remove_mode: function(index){
                 this.strategy_pattern.splice(index, 1);
@@ -114,10 +119,20 @@ $(function () {
                     data['strategy_id'] = this.strategy_id;
                 }
                 data['strategy_name'] = this.strategy_name;
-                my_async_request2(strategy_url, 'PUT', data, function(data){
+                var index = this.current_strategy_index;
+                var that = this;
+                my_async_request2(strategy_url, 'PUT', data, function(res_data){
                         popup_show("操作成功");
+                        that.strategies[index] = data;
                     }
                )
+            },
+            remove_strategy: function(){
+                var delete_url = strategy_url + '/' + this.strategy_id;
+                var del_data = {'exam_no': this.current_exam['exam_no']};
+                my_async_request2(delete_url, 'DELETE', del_data, function(data){
+                    popup_show("删除成功");
+                });
             }
         }
     });
