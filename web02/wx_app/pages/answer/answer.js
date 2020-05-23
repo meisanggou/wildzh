@@ -163,7 +163,18 @@ Page({
             if ('loaded' in item) {
                 continue;
             } else {
+                var exclude_nos = "";
+                var existItems = that.data.questionItems;
+                for(var k=0;k<existItems.length;k++){
+                    var _item = existItems[k];
+                    if(_item['select_mode'] == item['value']){
+                        exclude_nos += "," + _item['question_no'];
+                    }
+                }
                 var url = '/exam/questions/?exam_no=' + that.data.examNo + "&num=" + item["num"];
+                if(exclude_nos != ""){
+                    url += "&exclude_nos=" + exclude_nos;
+                }
                 url += "&select_mode=" + item["value"];
                 if (this.data.question_subject != null) {
                     url += "&question_subject=" + this.data.question_subject;
@@ -197,6 +208,12 @@ Page({
                         that.setData(data);
                         item['loaded'] = true;
                         that.getQuestionbyStrategy(strategy_items);
+                    },
+                    fail: res => {
+                        setTimeout(function(){
+                            that.getQuestionbyStrategy(strategy_items);
+                        }, 10000);
+                        
                     }
                 })
                 return;
@@ -292,10 +309,23 @@ Page({
         var questionItems = that.data.questionItems;
         if (nowQuestionIndex + 1 < totalQuestionNumber) {
             nowQuestionIndex++;
+            if(nowQuestionIndex >= questionItems.length){
+                wx.showModal({
+                    title: '试题未加载',
+                    content: "试题尚未加载出来，请检查网络，或稍等片刻！",
+                    showCancel: false,
+                    success(res) {
+                    }
+                })
+                return false;
+            }
             that.setData({
                 nowQuestion: questionItems[nowQuestionIndex],
                 nowQuestionIndex: nowQuestionIndex
             })
+        }
+        else{
+            this.submit();
         }
     },
 
