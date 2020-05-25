@@ -42,100 +42,11 @@
           <w:bCs/>
           <w:sz w:val="24"/>
         </w:rPr>
-        <w:t>一、单选</w:t>
+        <w:t>{{ single_block.title }}</w:t>
       </w:r>
-      <w:r>
-        <w:rPr>
-          <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
-          <w:b/>
-          <w:bCs/>
-          <w:sz w:val="24"/>
-        </w:rPr>
-        <w:t>(</w:t>
-      </w:r>
-      <w:r>
-        <w:rPr>
-          <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
-          <w:b/>
-          <w:bCs/>
-          <w:sz w:val="24"/>
-        </w:rPr>
-        <w:t>每小题</w:t>
-      </w:r>
-      <w:r>
-        <w:rPr>
-          <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
-          <w:b/>
-          <w:bCs/>
-          <w:sz w:val="24"/>
-        </w:rPr>
-        <w:t>1</w:t>
-      </w:r>
-      <w:r>
-        <w:rPr>
-          <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
-          <w:b/>
-          <w:bCs/>
-          <w:sz w:val="24"/>
-        </w:rPr>
-        <w:t>分</w:t>
-      </w:r>
-      <w:r>
-        <w:rPr>
-          <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
-          <w:b/>
-          <w:bCs/>
-          <w:sz w:val="24"/>
-        </w:rPr>
-        <w:t>,</w:t>
-      </w:r>
-      <w:r>
-        <w:rPr>
-          <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
-          <w:b/>
-          <w:bCs/>
-          <w:sz w:val="24"/>
-        </w:rPr>
-        <w:t>共</w:t>
-      </w:r>
-      <w:r>
-        <w:rPr>
-          <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
-          <w:b/>
-          <w:bCs/>
-          <w:sz w:val="24"/>
-        </w:rPr>
-        <w:t>6</w:t>
-      </w:r>
-      <w:r>
-        <w:rPr>
-          <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
-          <w:b/>
-          <w:bCs/>
-          <w:sz w:val="24"/>
-        </w:rPr>
-        <w:t>0</w:t>
-      </w:r>
-      <w:r>
-        <w:rPr>
-          <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
-          <w:b/>
-          <w:bCs/>
-          <w:sz w:val="24"/>
-        </w:rPr>
-        <w:t>分</w:t>
-      </w:r>
-      <w:r>
-        <w:rPr>
-          <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
-          <w:b/>
-          <w:bCs/>
-          <w:sz w:val="24"/>
-        </w:rPr>
-        <w:t>)</w:t>
-      </w:r>
+
     </w:p>
-    {% for item in  single_selected %}
+    {% for item in  single_block.questions %}
     <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9" w:rsidP="008C419A">
       <w:pPr>
         <w:ind w:left="0" w:hangingChars="0" w:hanging="0"/>

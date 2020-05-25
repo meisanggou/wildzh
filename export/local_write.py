@@ -5,6 +5,8 @@ import re
 import os
 import requests
 
+from render_xml import write_xml
+
 
 __author__ = 'meisa'
 
@@ -128,10 +130,7 @@ def download_file(path, save_dir, name):
     return save_path
 
 
-def receive_data(exam_no, media_dir):
-    # 登陆
-    login()
-
+def receive_data(question_items, media_dir):
     def _question_sort(a, b):
         # 按照政治经济学，微观经济学，宏观经济学排序
         # 3 1 2
@@ -139,6 +138,20 @@ def receive_data(exam_no, media_dir):
         a_i = _indexs.index(a['question_subject'])
         b_i = _indexs.index(b['question_subject'])
         return a_i - b_i
+
+    single_selected = []
+    current_block = 0
+    current_questions = []
+
+    for q_item in question_items:
+        sm = q_item['select_mode']
+        if sm <= 0:
+            continue
+        if sm == 1:
+            single_selected.append(q_item)
+        else:
+            pass
+
     # 获取 60道 选择题
     single_selected = request_diff_questions(exam_no, 60, 1)
     single_selected.sort(cmp=_question_sort)
@@ -162,10 +175,6 @@ def receive_data(exam_no, media_dir):
     rid_c = Counter('rid')
     rid_p = 'rIdm'
     medias = []
-    exist_mf = os.listdir(media_dir)
-    for item in exist_mf:
-        _file = os.path.join(media_dir, item)
-        os.remove(_file)
 
     def _handle_rich_desc(rd_item):
         if isinstance(rd_item, dict):
@@ -255,7 +264,8 @@ if __name__ == "__main__":
     # q_data['single_selected'] = []
     # q_data['answer_blocks'] = []
     for num in cn_num[:1]:
-        q_data = receive_data('1570447137', 'demo2/word/media')
+        media_dir = 'demo2/word/media'
+        q_data = receive_data('1570447137', media_dir)
         name = ('自测题' + num).decode('utf-8')
         write_xml(u'%s_答案.docx' % name, 'demo2', exam_name=name, show_answer=True,
                   **q_data)

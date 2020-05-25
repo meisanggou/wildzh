@@ -4,6 +4,8 @@ import jinja2
 import os
 import re
 
+from xml2docx import directory_to_docx
+
 __author__ = 'zhouhenglc'
 
 
@@ -17,6 +19,7 @@ def get_num(s):
 def get_menu_name(s):
     s = "".join(re.split(" ", s))
     return s + " " * (18 - len(s) * 2)
+
 
 text_run_template = u"""<w:r>
   <w:rPr>
@@ -81,14 +84,17 @@ def write_xml(filename, demo_dir, **kwargs):
         with open(rels_file, 'w') as wm:
             wm.write(mr.encode('utf-8'))
 
-    packet_zip(filename, demo_dir)
+    directory_to_docx(filename, demo_dir)
     # clear file
     os.remove(doc_file)
     if medias:
         os.remove(rels_file)
-        media_dir = os.path.join(demo_dir, 'word/media')
-        exist_mf = os.listdir(media_dir)
-        for item in exist_mf:
-            _file = os.path.join(media_dir, item)
-            os.remove(_file)
+        if kwargs.pop('clear_demo', False):
+            media_dir = os.path.join(demo_dir, 'word/media')
+            for m_item in medias:
+                _file = os.path.join(media_dir, m_item['name'])
+                try:
+                    os.remove(_file)
+                except Exception as e:
+                    pass
     return filename
