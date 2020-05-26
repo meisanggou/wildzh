@@ -66,19 +66,22 @@ def write_xml(filename, demo_dir, **kwargs):
     doc_file = os.path.join(demo_dir, 'word/document.xml')
     rels_file = os.path.join(demo_dir, 'word/_rels/document.xml.rels')
 
+    doc_demo2 = os.path.join(abs_dir, "document_demo2.xml")
+    rels_demo = os.path.join(abs_dir, 'rels_demo.xml')
+
     env = jinja2.Environment()
     env.filters["transfer"] = transfer
     env.filters["get_num"] = get_num
     env.filters["get_menu_name"] = get_menu_name
     env.filters['convert_run_xml'] = convert_run_xml
-    template_str = open("document_demo2.xml").read().decode("utf-8")
+    template_str = open(doc_demo2).read().decode("utf-8")
     t = env.from_string(template_str)
     r = t.render(**kwargs)
 
     with open(doc_file, "w") as w:
         w.write(r.encode("utf-8"))
     if medias:
-        m_ts = open('rels_demo.xml').read().decode('utf-8')
+        m_ts = open(rels_demo).read().decode('utf-8')
         mt = env.from_string(m_ts)
         mr = mt.render(medias=medias)
         with open(rels_file, 'w') as wm:

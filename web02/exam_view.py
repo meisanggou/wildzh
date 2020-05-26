@@ -11,7 +11,9 @@ from flask_login import login_required
 from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url
 from classes.exam import Exam, ExamObject, StrategyObject
+from export.local_write import write_docx
 from web02 import create_blue
+
 
 __author__ = 'meisa'
 
@@ -44,6 +46,7 @@ G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "
 
 
 def separate_image(text, max_width=None):
+
     text_groups = []
     s_l = re.findall(r"(\[\[([/\w.]+?):([\d.]+?):([\d.]+?)\]\])", text)
     last_point = 0
@@ -306,6 +309,47 @@ def update_question():
     return jsonify({"status": True, "data": dict(action=request.method, data=data)})
 
 
+def handle_questions(q_items, no_rich=False):
+    if g.user_no is None:
+        for item in q_items:
+            options = item["options"]
+            new_options = map(lambda x: {'desc': x["desc"]}, options)
+            item["options"] = new_options
+    # 按照用户对 题库的权限 再处理 题目
+    exam_item = g.current_exam
+    if g.exam_role > 10:
+        for item in q_items:
+            if not exam_item.verify_no(item['question_no']):
+                item['question_desc'] = '请升级为会员！'
+                item['options'] = []
+                item['answer'] = '请升级为会员！'
+            else:
+                if not exam_item.can_look_analysis():
+                    item['answer'] = '请升级为会员！'
+                if not exam_item.can_look_answer():
+                    options = item['options']
+                    item['options'] = map(lambda x: {'desc': x["desc"]}, options)
+                if not exam_item.can_look_subject():
+                    item['question_desc'] = '请升级为会员！'
+                    item['options'] = []
+
+    if no_rich is False:
+        max_width = None
+        if "X-Device-Screen-Width" in request.headers:
+            max_width = int(request.headers["X-Device-Screen-Width"]) * 0.95
+        for item in q_items:
+            question_desc_rich = separate_image(item["question_desc"],
+                                                max_width)
+            del item['question_desc']
+            item["question_desc_rich"] = question_desc_rich
+            for option in item["options"]:
+                option["desc_rich"] = separate_image(option["desc"])
+                del option["desc"]
+            item["answer_rich"] = separate_image(item["answer"], max_width)
+            del item['answer']
+    return q_items
+
+
 @exam_view.route("/questions/", methods=["GET"])
 @login_required
 @required_exam_no
@@ -342,46 +386,9 @@ def get_exam_questions():
             desc = True
         items = c_exam.select_questions(g.exam_no, start_no=start_no, num=int(num), desc=desc)
 
-    if g.user_no is None:
-        for item in items:
-            options = item["options"]
-            new_options = map(lambda x: {'desc': x["desc"]}, options)
-            item["options"] = new_options
-    query_time = time.time() - start_time
-    # 按照用户对 题库的权限 再处理 题目
-    exam_item = g.current_exam
-    if g.exam_role > 10:
-        for item in items:
-            if not exam_item.verify_no(item['question_no']):
-                item['question_desc'] = '请升级为会员！'
-                item['options'] = []
-                item['answer'] = '请升级为会员！'
-            else:
-                if not exam_item.can_look_analysis():
-                    item['answer'] = '请升级为会员！'
-                if not exam_item.can_look_answer():
-                    options = item['options']
-                    item['options'] = map(lambda x: {'desc': x["desc"]}, options)
-                if not exam_item.can_look_subject():
-                    item['question_desc'] = '请升级为会员！'
-                    item['options'] = []
-
-    if no_rich is False:
-        max_width = None
-        if "X-Device-Screen-Width" in request.headers:
-            max_width = int(request.headers["X-Device-Screen-Width"]) * 0.95
-        for item in items:
-            question_desc_rich = separate_image(item["question_desc"],
-                                                max_width)
-            del item['question_desc']
-            item["question_desc_rich"] = question_desc_rich
-            for option in item["options"]:
-                option["desc_rich"] = separate_image(option["desc"])
-                del option["desc"]
-            item["answer_rich"] = separate_image(item["answer"], max_width)
-            del item['answer']
+    handle_questions(items, no_rich)
     use_time = time.time() - start_time
-    return jsonify({"status": True, "data": items, 'use_time': use_time, 'query_time': query_time})
+    return jsonify({"status": True, "data": items, 'use_time': use_time})
 
 
 @exam_view.route("/questions/no/", methods=["GET"])
@@ -624,14 +631,19 @@ def delete_exam_strategy(strategy_id):
     return jsonify({'status': True, 'data': ''})
 
 
-@exam_view.route('/export/word', methods=['POST'])
+@exam_view.route('/export/word', methods=['POST', 'GET'])
 @login_required
 @required_exam_no
 def export_question_to_word():
-    data = request.json
+    # http://127.0.0.1:2400/exam/export/word?exam_no=1566699611&strategy_id=015db4a7d5a640e59541ceea6982e806
+    data = request.json or request.args
     strategy_id = data['strategy_id']
     strategies = c_exam.get_strategy(exam_no=g.exam_no,
                                      strategy_id=strategy_id)
     if len(strategies) != 1:
         return {'status': False, 'data': 'Not Found'}
+    items = c_exam.get_questions_by_strategy(g.exam_no, strategy_id)
+    items = handle_questions(items, False)
+    print(items)
+    write_docx('Test', False, items, G_SELECT_MODE, upload_folder)
     return {'status': True, 'data': strategies[0]}

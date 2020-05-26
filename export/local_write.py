@@ -3,19 +3,21 @@
 
 import re
 import os
-import requests
+import shutil
+import tempfile
+import uuid
 
 from render_xml import write_xml
 
 
 __author__ = 'meisa'
 
-SERVER_EP = 'https://wild.gene.ac'
+abs_dir = os.path.abspath(os.path.dirname(__file__))
+
+
 OPTION_MAPPING = ["A", "B", "C", "D"]
 cn_num = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一",
           '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十']
-session = requests.session()
-session.headers["User-Agent"] = "jyrequests"
 
 
 class Counter(object):
@@ -45,38 +47,6 @@ class Counter(object):
         self._index += 1
 
 
-class QuestionCache(object):
-    _instance = None
-    _cache = set()
-
-    def __new__(cls, *args, **kwargs):
-        if cls._instance:
-            return cls._instance
-        o = object.__new__(cls)
-        cls._instance = o
-        return o
-
-    def __init__(self, auto_cache=True):
-        self.auto_cache = auto_cache
-
-    def add(self, exam_no, question_no):
-        self._cache.add((exam_no, question_no))
-
-    def exist(self, exam_no, question_no):
-        if (exam_no, question_no) in self._cache:
-            return True
-        if self.auto_cache:
-            self.add(exam_no, question_no)
-        return False
-
-    @property
-    def length(self):
-        return len(self._cache)
-
-
-ONE = False
-
-
 def string_length(s):
     if isinstance(s, str):
         s = s.decode("utf-8")
@@ -87,61 +57,33 @@ def string_length(s):
     return len(s) + plus_len
 
 
-def login():
-    url = "%s/user/login/password/" % SERVER_EP
-    response = session.post(url, json=dict(user_name="admin", password="admin", next=""))
-    print(response.text)
-
-
-def request_questions(exam_no, num, select_mode=None):
-    params = dict(exam_no=exam_no, num=num)
-    if select_mode:
-        params['select_mode'] = select_mode
-    url = "%s/exam/questions/" % SERVER_EP
-    response = session.get(url, params=params)
-    return response.json()
-
-
-def request_diff_questions(exam_no, num, select_mode=None):
-    questions = []
-    rate = 1
-    _qc = QuestionCache()
-    while len(questions) < num:
-        offset = num - len(questions)
-        r_num = rate * offset
-        req_questions = request_questions(exam_no, r_num, select_mode)
-        for item in req_questions['data']:
-            exist = _qc.exist(item['exam_no'], item['question_no'])
-            if not exist:
-                questions.append(item)
-                if len(questions) >= num:
-                    break
-            else:
-                print(item)
-    return questions
-
-
-def download_file(path, save_dir, name):
-    url = '%s%s' % (SERVER_EP, path)
-    resp = session.get(url)
+def download_file(path, upload_folder, save_dir, name):
+    src = path.replace('/file', upload_folder)
     save_path = os.path.join(save_dir, name)
-    with open(save_path, 'wb')as wb:
-        wb.write(resp.content)
+    print(src)
+    print(save_path)
+    shutil.copy(src, save_path)
     return save_path
 
 
-def receive_data(question_items, media_dir):
+def receive_data(question_items, select_modes, media_dir, upload_folder):
     def _question_sort(a, b):
         # 按照政治经济学，微观经济学，宏观经济学排序
         # 3 1 2
         _indexs = [3, 1, 2, 0]
-        a_i = _indexs.index(a['question_subject'])
-        b_i = _indexs.index(b['question_subject'])
+        try:
+            a_i = _indexs.index(a['question_subject'])
+            b_i = _indexs.index(b['question_subject'])
+        except Exception:
+            # print(a)
+            # print(b)
+            return 0
         return a_i - b_i
 
     single_selected = []
     current_block = 0
     current_questions = []
+    answer_blocks = []
 
     for q_item in question_items:
         sm = q_item['select_mode']
@@ -150,25 +92,24 @@ def receive_data(question_items, media_dir):
         if sm == 1:
             single_selected.append(q_item)
         else:
-            pass
-
-    # 获取 60道 选择题
-    single_selected = request_diff_questions(exam_no, 60, 1)
+            if sm == current_block:
+                current_questions.append(q_item)
+            else:
+                if current_block == 0 or current_block >= len(select_modes):
+                    pass
+                else:
+                    title = select_modes[current_block]
+                    answer_blocks.append({'title': title,
+                                          'questions': question_items})
+                    current_block = sm
+                    question_items = [q_item]
+    if current_block == 0 or current_block >= len(select_modes):
+        pass
+    else:
+        title = select_modes[current_block]
+        answer_blocks.append({'title': title,
+                              'questions': question_items})
     single_selected.sort(cmp=_question_sort)
-
-    answer_blocks = []
-    # 获得 5题 名词解释
-    block1 = request_diff_questions(exam_no, 5, 2)
-    answer_blocks.append(dict(title=u"二、名词解释(每小题3分,共15分)", questions=block1))
-    # 获得 4题 简答题
-    block2 = request_diff_questions(exam_no, 4, 3)
-    answer_blocks.append(dict(title=u"三、简答题(每小题5分,共20分)", questions=block2))
-    # 获得 2题 计算题
-    block3 = request_diff_questions(exam_no, 2, 4)
-    answer_blocks.append(dict(title=u"四、计算题(70题10分,71题15分,共25分)", questions=block3))
-    # 获得 2题 论述题
-    block4 = request_diff_questions(exam_no, 2, 5)
-    answer_blocks.append(dict(title=u"五、论述题(每小题15分,共30分)", questions=block4))
 
     #  数据处理
     question_no = 1
@@ -185,7 +126,7 @@ def receive_data(question_items, media_dir):
             rd_item['r_index'] = rid_c.value
             r_name = '%s.%s' % (rid, rd_item['url'].rsplit('.', 1)[-1])
             rd_item['name'] = r_name
-            download_file(rd_item['url'], media_dir, r_name)
+            download_file(rd_item['url'], upload_folder, media_dir, r_name)
             rid_c.plus()
             medias.append({'rid': rid, 'name': r_name})
     for s_item in single_selected:
@@ -253,11 +194,27 @@ def receive_data(question_items, media_dir):
             q_item["multi_question_desc"] = multi_question_desc
 
             question_no += 1
-    r = {'single_selected': single_selected,
+    single_block = {'title':  u'一、选择题(每小题1分,共60分)',
+                    'questions': single_selected}
+    r = {'single_block': single_block,
          'answer_blocks': answer_blocks,
          'option_mapping': OPTION_MAPPING,
          'medias': medias}
     return r
+
+
+def write_docx(exam_name, show_answer, question_items, select_modes, upload_folder):
+    # copy
+    temp_dir = tempfile.gettempdir()
+    demo_dir = os.path.join(temp_dir, '_wildzh_%s' % uuid.uuid4().hex)
+    src_dir = os.path.join(abs_dir, 'demo2')
+    shutil.copytree(src_dir, demo_dir)
+    print(demo_dir)
+    media_dir = os.path.join(demo_dir, 'word', 'media')
+    q_data = receive_data(question_items, select_modes, media_dir, upload_folder)
+    write_xml('a.docx', demo_dir, exam_name=exam_name,
+              show_answer=show_answer, **q_data)
+    return temp_dir
 
 
 if __name__ == "__main__":
