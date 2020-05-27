@@ -343,10 +343,11 @@ def get_qa_answers(answer_items, parse_answer):
     return aw_dict
 
 
-def handle_answers_docx_main_xml(xml_path, select_mode=None):
+def handle_answers_docx_main_xml(xml_path, questions_set):
     dom = minidom.parse(xml_path)
     root = dom.documentElement
     body = root.firstChild
+    select_mode = questions_set.default_select_mode
     current_q_type = select_mode
     current_answers_area = []
     answers_dict = AnswerSet()
@@ -387,9 +388,9 @@ def handle_answers_docx_main_xml(xml_path, select_mode=None):
     return answers_dict
 
 
-def read_answers_docx_xml(root_dir, select_mode=None):
+def read_answers_docx_xml(root_dir, questions_set):
     xml_path = os.path.join(root_dir, 'word', 'document.xml')
-    answers = handle_answers_docx_main_xml(xml_path, select_mode)
+    answers = handle_answers_docx_main_xml(xml_path, questions_set)
     style_path = os.path.join(root_dir, 'word', '_rels', "document.xml.rels")
     relationships = handle_rels(style_path)
     for key in relationships.keys():
@@ -398,10 +399,10 @@ def read_answers_docx_xml(root_dir, select_mode=None):
 
 
 @contextmanager
-def read_answers_docx(docx_path, select_mode):
+def read_answers_docx(docx_path, questions_set):
     with extract_docx(docx_path) as temp_dir:
         print(temp_dir)
-        answers, relationships = read_answers_docx_xml(temp_dir, select_mode)
+        answers, relationships = read_answers_docx_xml(temp_dir, questions_set)
         yield [answers, relationships]
         pass
 

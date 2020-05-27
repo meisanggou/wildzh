@@ -284,6 +284,9 @@ class QuestionSet(object):
             for item in items.values():
                 yield item
 
+    def clear(self):
+        self._s.clear()
+
 
 class ParseAnswer(object):
 

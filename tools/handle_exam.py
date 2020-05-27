@@ -20,7 +20,7 @@ headers = {"User-Agent": "jyrequests"}
 req.headers = headers
 remote_host = "https://meisanggou.vicp.net"
 remote_host = "http://127.0.0.1:2400"
-remote_host = "https://wild.gene.ac"
+# remote_host = "https://wild.gene.ac"
 
 exec_file_dir, exec_file_name = os.path.split(os.path.abspath(__file__))
 EXE_WMF_TO_PNG = os.path.join(exec_file_dir, "Wmf2Png.exe")
@@ -194,8 +194,7 @@ def handle_exam_no_answer(file_path, questions_set):
     return True, "success"
 
 
-def handle_exam_with_answer(exam_no, file_path, select_mode=None,
-                            dry_run=False, set_source=False):
+def handle_exam_with_answer(file_path, questions_set):
     uploaded_aw_rl = dict()
     uploaded_q_rl = dict()
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
@@ -206,16 +205,14 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None,
         print(msg)
         return False, msg
     print("start handle %s" % exam_name)
-
-    with read_docx(file_path, select_mode) as rd, \
-            read_answers_docx(answer_file, select_mode) as rad:
-        question_set, q_rl = rd
-        question_set.exam_no = exam_no
-        question_set.exam_name = exam_name
+    dry_run = questions_set.dry_run
+    with read_docx(file_path, questions_set) as rd, \
+            read_answers_docx(answer_file, questions_set) as rad:
+        _, q_rl = rd
         answers_dict, aw_rl = rad
-        if question_set.length <= 0:
+        if questions_set.length <= 0:
             raise RuntimeError("没发现题目")
-        for q_item in question_set:
+        for q_item in questions_set:
             q_no = q_item.no
             # 判定是否包含答案
             answer_obj = answers_dict.find_answer(q_item)
@@ -236,7 +233,7 @@ def handle_exam_with_answer(exam_no, file_path, select_mode=None,
             # 获取答案中的图片
             q_item.answer = replace_media(q_item.answer, aw_rl, uploaded_aw_rl, dry_run)
             q_item.inside_mark = "%s %s" % (exam_name, q_no)
-        post_questions(question_set, dry_run, set_source)
+        post_questions(questions_set)
     return True, "success"
 
 
@@ -294,7 +291,7 @@ def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode=None,
         print(res)
 
 
-def find_from_dir(exam_no, directory_name, dry_run, set_source, answer_file=False):
+def find_from_dir(directory_name, questions_set):
     files = os.listdir(directory_name)
     for file_item in files:
         if file_item.startswith("~$"):
@@ -314,16 +311,12 @@ def find_from_dir(exam_no, directory_name, dry_run, set_source, answer_file=Fals
         elif file_path.endswith(".docx") is False:
             print(u"跳过文件 %s" % file_path)
             continue
-        if answer_file:
-            r, msg = handle_exam_with_answer(exam_no, file_path,
-                                             dry_run=dry_run,
-                                             set_source=set_source)
+        if AnswerLocation.is_file(questions_set.answer_location):
+            r, msg = handle_exam_with_answer(file_path, questions_set)
         else:
-            r, msg = handle_exam_no_answer(exam_no, file_path,
-                                           dry_run=dry_run,
-                                           set_source=set_source,
-                                           has_answer=True)
+            r, msg = handle_exam_no_answer(file_path, questions_set)
         print(msg)
+        questions_set.clear()
 
 
 def download_questions(exam_no, select_mode):
@@ -388,6 +381,7 @@ if __name__ == "__main__":
     exam_no = 1567506833  # 测试包含图片
     # exam_no = 1569283516  # 专升本经济学题库
     exam_no = 1570447137  # 专升本经济学题库 会员版
+    exam_no = 1585396371  # 本地 测试题库2
     # exam_no = 1573464937  # 英语托业
     # 538 + 319
     # transfer_exam(1575333741, 1, 5, 1575333741)
@@ -398,13 +392,12 @@ if __name__ == "__main__":
     # read_docx(d_path)
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
-    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=True,
-                    answer_location=AnswerLocation.embedded(),
+    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
+                    answer_location=AnswerLocation.file(),
                     set_keys=keys)
     q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'
-    # find_from_dir(exam_no, d, dry_run=True, set_source=False,
-    #               answer_file=True)
+    find_from_dir(d, q_set)
     # download_questions(1569283516, 2)
     # download_usage(exam_no, [1, 2, 3, 4])
     handle_exam_no_answer(d_path, q_set)
