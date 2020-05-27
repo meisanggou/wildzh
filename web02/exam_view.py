@@ -386,7 +386,7 @@ def get_exam_questions():
             desc = True
         items = c_exam.select_questions(g.exam_no, start_no=start_no, num=int(num), desc=desc)
 
-    handle_questions(items, no_rich)
+    items = handle_questions(items, no_rich)
     use_time = time.time() - start_time
     return jsonify({"status": True, "data": items, 'use_time': use_time})
 
@@ -635,7 +635,7 @@ def delete_exam_strategy(strategy_id):
 @login_required
 @required_exam_no
 def export_question_to_word():
-    # http://127.0.0.1:2400/exam/export/word?exam_no=1566699611&strategy_id=015db4a7d5a640e59541ceea6982e806
+    # http://127.0.0.1:2400/exam/export/word?exam_no=1585396371&strategy_id=a1af47f5ec3d4829b143ec348c5f3479
     data = request.json or request.args
     strategy_id = data['strategy_id']
     strategies = c_exam.get_strategy(exam_no=g.exam_no,
@@ -644,6 +644,5 @@ def export_question_to_word():
         return {'status': False, 'data': 'Not Found'}
     items = c_exam.get_questions_by_strategy(g.exam_no, strategy_id)
     items = handle_questions(items, False)
-    print(items)
     write_docx('Test', False, items, G_SELECT_MODE, upload_folder)
     return {'status': True, 'data': strategies[0]}

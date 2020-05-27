@@ -205,7 +205,7 @@ def handle_exam_with_answer(file_path, questions_set):
         print(msg)
         return False, msg
     print("start handle %s" % exam_name)
-    dry_run = questions_set.dry_run
+    real_upload = questions_set.real_upload
     with read_docx(file_path, questions_set) as rd, \
             read_answers_docx(answer_file, questions_set) as rad:
         _, q_rl = rd
@@ -225,13 +225,16 @@ def handle_exam_with_answer(file_path, questions_set):
             q_item.set_answer(answer_obj)
             # 开始上传 题目
             # 获取题目描述中的图片
-            q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl, dry_run)
+            q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl,
+                                        real_upload)
 
             # 获取选项中的图片
             for option in q_item.options:
-                option.desc = replace_media(option.desc, q_rl, uploaded_q_rl, dry_run)
+                option.desc = replace_media(option.desc, q_rl, uploaded_q_rl,
+                                            real_upload)
             # 获取答案中的图片
-            q_item.answer = replace_media(q_item.answer, aw_rl, uploaded_aw_rl, dry_run)
+            q_item.answer = replace_media(q_item.answer, aw_rl, uploaded_aw_rl,
+                                          real_upload)
             q_item.inside_mark = "%s %s" % (exam_name, q_no)
         post_questions(questions_set)
     return True, "success"
@@ -392,7 +395,7 @@ if __name__ == "__main__":
     # read_docx(d_path)
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
-    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
+    s_kwargs = dict(exam_no=exam_no, dry_run=False, set_mode=False,
                     answer_location=AnswerLocation.file(),
                     set_keys=keys)
     q_set = QuestionSet(**s_kwargs)
@@ -400,5 +403,5 @@ if __name__ == "__main__":
     find_from_dir(d, q_set)
     # download_questions(1569283516, 2)
     # download_usage(exam_no, [1, 2, 3, 4])
-    handle_exam_no_answer(d_path, q_set)
+    # handle_exam_no_answer(d_path, q_set)
 

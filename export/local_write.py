@@ -60,8 +60,6 @@ def string_length(s):
 def download_file(path, upload_folder, save_dir, name):
     src = path.replace('/file', upload_folder)
     save_path = os.path.join(save_dir, name)
-    print(src)
-    print(save_path)
     shutil.copy(src, save_path)
     return save_path
 
@@ -81,7 +79,7 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
         return a_i - b_i
 
     single_selected = []
-    current_block = 0
+    current_sm = 0
     current_questions = []
     answer_blocks = []
 
@@ -92,23 +90,23 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
         if sm == 1:
             single_selected.append(q_item)
         else:
-            if sm == current_block:
+            if sm == current_sm:
                 current_questions.append(q_item)
             else:
-                if current_block == 0 or current_block >= len(select_modes):
+                if current_sm == 0 or current_sm >= len(select_modes):
                     pass
                 else:
-                    title = select_modes[current_block]
+                    title = select_modes[current_sm]
                     answer_blocks.append({'title': title,
-                                          'questions': question_items})
-                    current_block = sm
-                    question_items = [q_item]
-    if current_block == 0 or current_block >= len(select_modes):
+                                          'questions': current_questions})
+                current_sm = sm
+                current_questions = [q_item]
+    if current_sm == 0 or current_sm >= len(select_modes):
         pass
     else:
-        title = select_modes[current_block]
+        title = select_modes[current_sm]
         answer_blocks.append({'title': title,
-                              'questions': question_items})
+                              'questions': current_questions})
     single_selected.sort(cmp=_question_sort)
 
     #  数据处理
@@ -164,8 +162,20 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
         else:
             s_item["option_style"] = "one"
         s_item["right_option"] = OPTION_MAPPING[right_index]
+    block_index = 0
+    if single_selected:
+        b_title = '%s、%s（共%s题）' % (cn_num[0], select_modes[1],
+                                   len(single_selected))
+        single_block = {'title':  b_title.decode('utf-8'), 'questions': single_selected}
+        block_index += 1
+    else:
+        single_block = None
 
     for q_block in answer_blocks:
+        b_title = '%s、%s（共%s题）' % (cn_num[block_index], q_block["title"],
+                                   len(q_block["questions"]))
+        block_index += 1
+        q_block['title'] = b_title.decode('utf-8')
         q_block["questions"].sort(cmp=_question_sort)
         for q_item in q_block["questions"]:
             q_item["this_question_no"] = question_no
@@ -194,8 +204,7 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
             q_item["multi_question_desc"] = multi_question_desc
 
             question_no += 1
-    single_block = {'title':  u'一、选择题(每小题1分,共60分)',
-                    'questions': single_selected}
+
     r = {'single_block': single_block,
          'answer_blocks': answer_blocks,
          'option_mapping': OPTION_MAPPING,
