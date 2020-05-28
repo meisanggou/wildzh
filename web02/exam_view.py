@@ -26,10 +26,11 @@ online_url = url_prefix + "/online/"
 questions_url = url_prefix + "/questions/"
 page_exam = url_prefix + "/?action=exam"
 strategy_url = url_prefix + '/strategy'
+query_url = url_prefix + '/query'
 defined_routes = dict(add_url=add_url, upload_url=upload_url,
                       info_url=info_url, online_url=online_url,
                       questions_url=questions_url, page_exam=page_exam,
-                      strategy_url=strategy_url)
+                      strategy_url=strategy_url, query_url=query_url)
 rt = RenderTemplate("exam", menu_active="exam", defined_routes=defined_routes)
 menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam", "sub_menu": [
     {"title": u"试题库管理", "url": url_prefix + "/"},
@@ -495,6 +496,14 @@ def strategy_page():
 @login_required
 def search_question_page():
     return rt.render("search.html", page_title=u"试题搜索")
+
+
+@exam_view.route("/query/", methods=["POST"])
+@login_required
+def query_question_items():
+    query_str = request.json['query_str']
+    items = c_exam.query_questions(query_str)
+    return {'status': True, 'data': items}
 
 
 @exam_view.route('/member', methods=['POST'])

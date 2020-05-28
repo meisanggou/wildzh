@@ -954,6 +954,17 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
     def get_sources(self, exam_no):
         return self.qs_man.select_sources(exam_no)
 
+    def query_questions(self, query_str):
+        query_str = query_str.strip()
+        if len(query_str) <= 3:
+            return []
+        where_cond = ["question_desc LIKE %s"]
+        where_cond_args = [u'%{0}%'.format(query_str)]
+        items = self._select_questions(where_cond=where_cond,
+                                       where_cond_args=where_cond_args,
+                                       limit=10)
+        return items
+
 
 if __name__ == "__main__":
     # print(ExamUsage.calc_period_no(1578844800))
