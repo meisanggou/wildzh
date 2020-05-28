@@ -498,7 +498,7 @@ def search_question_page():
     return rt.render("search.html", page_title=u"试题搜索")
 
 
-@exam_view.route("/query/", methods=["POST"])
+@exam_view.route("/query", methods=["POST"])
 @login_required
 def query_question_items():
     query_str = request.json['query_str']
