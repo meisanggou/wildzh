@@ -10,6 +10,8 @@ import uuid
 
 from mysqldb_rich.db2 import DB
 
+from exam_feedback import ExamQuestionFeedback
+
 __author__ = 'meisa'
 
 """
@@ -628,10 +630,14 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                        "inside_mark", "answer_pic_url", 'question_chapter']
         self.qs_man = QuestionSources(self.db)
         self.gs_man = ExamGenStrategy(self.db)
+        self.qf_man = ExamQuestionFeedback(self.db)
         self.get_strategy = self.gs_man.select_strategy
         self.new_strategy = self.gs_man.insert_strategy
         self.update_strategy = self.gs_man.update_strategy
         self.delete_strategy = self.gs_man.delete_strategy
+        self.new_question_feedback = self.qf_man.new_or_update_feedback
+        self.get_question_feedback = self.qf_man.select_question_feedback
+        self.update_question_feedback = self.qf_man.update_question_feedback
 
     def _insert_info(self, exam_no, exam_name, exam_desc, adder, status=1, exam_extend=None):
         kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, status=status,

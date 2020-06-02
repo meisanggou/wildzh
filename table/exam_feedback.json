@@ -1,0 +1,58 @@
+[
+  {
+    "table_cols": [
+      {
+        "pri_key": true,
+        "col_comment": "测试编号",
+        "col_name": "exam_no",
+        "col_type": "int(11)"
+      },
+      {
+        "pri_key": true,
+        "col_comment": "用户编号",
+        "col_name": "user_no",
+        "col_type": "int(11)"
+      },
+      {
+        "pri_key": true,
+        "col_comment": "题目编号",
+        "col_name": "question_no",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "反馈类型",
+        "col_name": "fb_type",
+        "col_type": "varchar(30)"
+      },
+      {
+        "col_comment": "反馈描述",
+        "col_name": "description",
+        "col_type": "varchar(200)"
+      },
+      {
+        "col_comment": "反馈处理状态 0代表反馈 1已处理",
+        "col_name": "state",
+        "col_type": "tinyint(4)",
+        "default": 0
+      },
+      {
+        "col_comment": "反馈处理结果描述",
+        "col_name": "result",
+        "col_type": "varchar(50)"
+      },
+      {
+        "col_comment": "反馈次数",
+        "col_name": "times",
+        "col_type": "tinyint(4)",
+        "default": 1
+      },
+      {
+        "col_comment": "更新时间",
+        "col_name": "update_time",
+        "col_type": "int(11)"
+      }
+    ],
+    "table_comment": "用户关于题目的反馈",
+    "table_name": "exam_question_feedback"
+  }
+]

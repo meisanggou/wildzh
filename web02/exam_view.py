@@ -659,3 +659,45 @@ def export_question_to_word():
     items = handle_questions(items, False)
     write_docx('Test', False, items, G_SELECT_MODE, upload_folder)
     return {'status': True, 'data': strategies[0]}
+
+
+@exam_view.route('/question/feedback', methods=['GET'])
+@login_required
+@required_exam_no
+def get_question_feedback():
+    args = request.args
+    user_no = g.user_no
+    if g.exam_role <= 3:
+        user_no = None
+    question_no = args.get('question_no', None)
+    state = args.get('state', None)
+    items = c_exam.get_question_feedback(g.exam_no, user_no, question_no, state)
+    return {'status': True, 'data': items}
+
+
+@exam_view.route('/question/feedback', methods=['POST'])
+@login_required
+@required_exam_no
+def new_question_feedback():
+    data = request.json
+    user_no = g.user_no
+    question_no = data['question_no']
+    fd_type = data['fd_type']
+    description = data['description']
+    items = c_exam.new_question_feedback(g.exam_no, user_no, question_no,
+                                         fd_type, description)
+    return {'status': True, 'data': 'success'}
+
+
+@exam_view.route('/question/feedback', methods=['PUT'])
+@login_required
+@required_manager_exam()
+def handle_question_feedback():
+    data = request.json
+    user_no = data['user_no']
+    question_no = data['question_no']
+    result = data['result']
+    state = data['state']
+    items = c_exam.update_question_feedback(g.exam_no, user_no, question_no,
+                                            result=result, state=state)
+    return {'status': True, 'data': 'success'}
