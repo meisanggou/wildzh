@@ -1,6 +1,7 @@
 /**
  * Created by zhouhenglc on 2020/5/28.
  */
+var exam_name_mapping = {}
 $(function () {
     var query_url = $("#query_url").val();
     var vm = new Vue({
@@ -18,8 +19,16 @@ $(function () {
                 var exam_no = this.all_exams[this.current_exam_index].exam_no;
                 var data = {'query_str': this.query_str, 'exam_no': exam_no};
                 my_async_request2(query_url, 'POST', data, function(data){
-                    console.info(data);
-                    that.questions_items = data;
+                    for(var i=0;i<data.length;i++){
+                        var item = data[i];
+                        if(item.exam_no in exam_name_mapping){
+                            item['exam_name'] = exam_name_mapping[item.exam_no];
+                        }
+                        else{
+                            item['exam_name'] = item.exam_no;
+                        }
+                        that.questions_items.push(item);
+                    }
                 });
             }
         }
@@ -27,6 +36,7 @@ $(function () {
     var info_url = $("#info_url").val();
     my_async_request2(info_url, "GET", null, function(data){
         for(var index in data){
+            exam_name_mapping[data[index].exam_no] = data[index].exam_name;
             vm.all_exams.push(data[index]);
             //if(data[index].exam_no == q_vm.current_exam.exam_no){
             //    q_vm.current_exam_index = index;

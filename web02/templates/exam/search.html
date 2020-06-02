@@ -32,7 +32,7 @@
             </div>
 
             <div class="search-item" v-for="(item,index) in questions_items">
-                <h3><a href="#">题库：{{item["exam_no"]}}，编号：{{item["question_no"]}}</a></h3>
+                <h3><a href="#">题库：{{item["exam_name"]}}，编号：{{item["question_no"]}}</a></h3>
                 <a class="search-link" href="javascript:void(0);">
                     <template v-if='item["question_source"]'>{{item["question_source"]}}</template>
                     <template v-if='item["inside_mark"]'>{{item["inside_mark"]}}</template>
