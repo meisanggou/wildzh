@@ -11,7 +11,7 @@ class ExamQuestionFeedback(object):
         self.db = db
         self.cols = ['exam_no', 'user_no', 'question_no', 'fd_type',
                      'description', 'state', 'result', 'times',
-                     'update_time']
+                     'update_time', 'insert_time']
         self.t = 'exam_question_feedback'
 
     def select_question_feedback(self, exam_no, user_no=None,
@@ -34,7 +34,7 @@ class ExamQuestionFeedback(object):
         question_no = int(question_no)
         data = dict(exam_no=exam_no, user_no=user_no, question_no=question_no,
                     description=description, state=state, update_time=u_time,
-                    times=1, fd_type=fd_type)
+                    times=1, fd_type=fd_type, insert_time=u_time)
         l = self.db.execute_insert(self.t, kwargs=data)
         return l
 
@@ -59,6 +59,7 @@ class ExamQuestionFeedback(object):
             if times > 15:
                 times = 15
             update_value['times'] = times
+        update_value['update_time'] = time.time()
         l = self.db.execute_update(self.t, where_value=where_value,
                                    update_value=update_value)
         return l

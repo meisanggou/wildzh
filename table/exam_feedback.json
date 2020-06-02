@@ -47,6 +47,11 @@
         "default": 1
       },
       {
+        "col_comment": "插入时间",
+        "col_name": "insert_time",
+        "col_type": "int(11)"
+      },
+      {
         "col_comment": "更新时间",
         "col_name": "update_time",
         "col_type": "int(11)"
