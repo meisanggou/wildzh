@@ -501,8 +501,10 @@ def search_question_page():
 @exam_view.route("/query", methods=["POST"])
 @login_required
 def query_question_items():
-    query_str = request.json['query_str']
-    items = c_exam.query_questions(query_str)
+    data = request.json
+    exam_no = data['exam_no']
+    query_str = data['query_str']
+    items = c_exam.query_questions(exam_no, query_str)
     return {'status': True, 'data': items}
 
 
