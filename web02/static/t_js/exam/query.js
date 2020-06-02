@@ -1,7 +1,7 @@
 /**
  * Created by zhouhenglc on 2020/5/28.
  */
-var exam_name_mapping = {}
+var exam_name_mapping = {};
 $(function () {
     var query_url = $("#query_url").val();
     var vm = new Vue({
@@ -30,6 +30,13 @@ $(function () {
                         that.questions_items.push(item);
                     }
                 });
+            },
+            to_question: function(index){
+                var q_item = this.questions_items[index];
+                var page_question_url = $("#page_question_url").val();
+                console.info(page_question_url);
+                var url = page_question_url + "?exam_no=" + q_item['exam_no'] + '&question_no=' + q_item['question_no']
+                location.href = url;
             }
         }
     });

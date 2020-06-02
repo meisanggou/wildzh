@@ -133,7 +133,12 @@ function init_info(data){
             q_vm.all_exams.push(data[index]);
             if(data[index].exam_no == q_vm.current_exam.exam_no){
                 q_vm.current_exam_index = index;
-                q_vm.select_exam();
+                if(q_vm.current_question_no > 0) {
+                    q_vm.select_exam(q_vm.current_question_no);
+                }
+                else{
+                    q_vm.select_exam();
+                }
             }
         }
     }
@@ -178,6 +183,13 @@ $(function() {
     if(exam_no != null) {
         exam_no = parseInt(exam_no);
     }
+    var question_no = UrlArgsValue(location.href, "question_no");
+    if(question_no != null) {
+        question_no = parseInt(question_no);
+    }
+    else{
+        question_no = 0;
+    }
     var questions_url = $("#questions_url").val();
     var upload_url= $("#upload_url").val();
     q_vm = new Vue({
@@ -189,7 +201,7 @@ $(function() {
             current_exam_index: -1,
             current_exam: {question_num: 0, exam_no: exam_no},
             action: "new",
-            current_question_no: 0,
+            current_question_no: question_no,
             select_mode: 0,
             question_desc: "",
             question_desc_url: "",
@@ -203,11 +215,16 @@ $(function() {
             selected_option: -1
         },
         methods: {
-            select_exam: function(){
+            select_exam: function(question_no){
                 this.current_exam =this.all_exams[this.current_exam_index];
                 this.select_modes = this.all_exams[this.current_exam_index]["select_modes"];
                 this.subjects = this.all_exams[this.current_exam_index]["subjects"];
-                this.current_question_no = this.current_exam.question_num;
+                if(question_no == undefined|| question_no == null){
+                    this.current_question_no = this.current_exam.question_num;
+                }
+                else{
+                    this.current_question_no = question_no - 1;
+                }
                 this.action_next();
             },
             upload_pic: function(){

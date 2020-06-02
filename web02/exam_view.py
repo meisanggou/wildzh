@@ -25,12 +25,14 @@ info_url = url_prefix + "/info/"
 online_url = url_prefix + "/online/"
 questions_url = url_prefix + "/questions/"
 page_exam = url_prefix + "/?action=exam"
+page_question_url = url_prefix + '/question/'
 strategy_url = url_prefix + '/strategy'
 query_url = url_prefix + '/query'
 defined_routes = dict(add_url=add_url, upload_url=upload_url,
                       info_url=info_url, online_url=online_url,
                       questions_url=questions_url, page_exam=page_exam,
-                      strategy_url=strategy_url, query_url=query_url)
+                      strategy_url=strategy_url, query_url=query_url,
+                      page_question_url=page_question_url)
 rt = RenderTemplate("exam", menu_active="exam", defined_routes=defined_routes)
 menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam", "sub_menu": [
     {"title": u"试题库管理", "url": url_prefix + "/"},
