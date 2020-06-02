@@ -3,56 +3,56 @@
     "table_cols": [
       {
         "pri_key": true,
-        "col_comment": "²âÊÔ±àºÅ",
+        "col_comment": "æµ‹è¯•ç¼–å·",
         "col_name": "exam_no",
         "col_type": "int(11)"
       },
       {
         "pri_key": true,
-        "col_comment": "ÓÃ»§±àºÅ",
+        "col_comment": "ç”¨æˆ·ç¼–å·",
         "col_name": "user_no",
         "col_type": "int(11)"
       },
       {
         "pri_key": true,
-        "col_comment": "ÌâÄ¿±àºÅ",
+        "col_comment": "é¢˜ç›®ç¼–å·",
         "col_name": "question_no",
         "col_type": "int(11)"
       },
       {
-        "col_comment": "·´À¡ÀàĞÍ",
+        "col_comment": "åé¦ˆç±»å‹",
         "col_name": "fb_type",
         "col_type": "varchar(30)"
       },
       {
-        "col_comment": "·´À¡ÃèÊö",
+        "col_comment": "åé¦ˆæè¿°",
         "col_name": "description",
         "col_type": "varchar(200)"
       },
       {
-        "col_comment": "·´À¡´¦Àí×´Ì¬ 0´ú±í·´À¡ 1ÒÑ´¦Àí",
+        "col_comment": "åé¦ˆå¤„ç†çŠ¶æ€ 0ä»£è¡¨åé¦ˆ 1å·²å¤„ç†",
         "col_name": "state",
         "col_type": "tinyint(4)",
         "default": 0
       },
       {
-        "col_comment": "·´À¡´¦Àí½á¹ûÃèÊö",
+        "col_comment": "åé¦ˆå¤„ç†ç»“æœæè¿°",
         "col_name": "result",
         "col_type": "varchar(50)"
       },
       {
-        "col_comment": "·´À¡´ÎÊı",
+        "col_comment": "åé¦ˆæ¬¡æ•°",
         "col_name": "times",
         "col_type": "tinyint(4)",
         "default": 1
       },
       {
-        "col_comment": "¸üĞÂÊ±¼ä",
+        "col_comment": "æ›´æ–°æ—¶é—´",
         "col_name": "update_time",
         "col_type": "int(11)"
       }
     ],
-    "table_comment": "ÓÃ»§¹ØÓÚÌâÄ¿µÄ·´À¡",
+    "table_comment": "ç”¨æˆ·å…³äºé¢˜ç›®çš„åé¦ˆ",
     "table_name": "exam_question_feedback"
   }
 ]
