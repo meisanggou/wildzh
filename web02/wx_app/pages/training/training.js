@@ -25,7 +25,11 @@ Page({
         isShowSubject: false,
         isReq: false,
         progressStorageKey: "",
-        nosStorageKey: ""
+        nosStorageKey: "",
+        hiddenFeedback: true,
+        fbTypes: ['题目错误', '答案错误', '解析错误', '其他'],
+        fbTypeIndex: 1,
+        feedbackDesc: ""
     },
     getQuestionNos: function(options) {
         that = this;
@@ -577,6 +581,58 @@ Page({
             },
             fail: function(){
                 brushNum += _num;
+            }
+        })
+    },
+    feedbackClick:function(){
+        this.setData({
+            hiddenFeedback: false
+        });
+    },
+    feedbackTypeChange(e){
+        this.setData({
+            fbTypeIndex: e.detail.value
+        })
+    },
+    feedbackDescInput: function(e){
+        this.setData({
+            feedbackDesc: e.detail.value
+        });
+    },
+    cancelFeedback: function(){
+        this.setData({
+            hiddenFeedback: true
+        });
+    },
+    confirmFeedback: function(e){
+        this.setData({
+            hiddenFeedback: true
+        });
+        var fb_type = this.data.fbTypes[this.data.fbTypeIndex]
+        var questionNo = this.data.nowQuestion.question_no;
+        var data = {'description': this.data.feedbackDesc, 'fb_type': fb_type, 'question_no': questionNo};
+        wx.request2({
+            url: '/exam/question/feedback?exam_no=' + this.data.examNo,
+            method: 'POST',
+            data: data,
+            success: res => {
+                if (res.data.status != true) {
+                    wx.showModal({
+                        title: '反馈失败',
+                        content: "反馈失败，请稍后重试！",
+                        showCancel: false,
+                        success(res) {
+                        }
+                    })
+                    
+                    return
+                }
+                else{
+                    wx.showToast({
+                        title:"反馈成功"
+                    })
+                }
+                
             }
         })
     },

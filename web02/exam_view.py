@@ -682,10 +682,10 @@ def new_question_feedback():
     data = request.json
     user_no = g.user_no
     question_no = data['question_no']
-    fd_type = data['fd_type']
+    fb_type = data['fb_type']
     description = data['description']
     items = c_exam.new_question_feedback(g.exam_no, user_no, question_no,
-                                         fd_type, description)
+                                         fb_type, description)
     return {'status': True, 'data': 'success'}
 
 

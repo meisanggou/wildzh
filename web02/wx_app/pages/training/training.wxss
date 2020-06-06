@@ -39,7 +39,7 @@ page{
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 15rpx 0rpx 15rpx 0rpx;
+  padding: 15rpx 0rpx 15rpx 50rpx;
   border-bottom: 1rpx solid #5d5d5d;
   font-size: 32rpx;
 }
@@ -144,4 +144,47 @@ page{
   align-items: center;
   justify-content: space-around;
   z-index: 10;
+}
+.top-title {
+  text-align: center;
+  width: 90%;
+}
+.icon {
+  float: right;
+  height: 50rpx;
+  width: 50rpx;
+}
+.feedback-type{
+  width: 100%;
+  font-size: 36rpx;
+  background-color: white;
+  /* background-color: transparent; */
+  margin-top: 20rpx;
+  margin-bottom: 30rpx;
+}
+.fd-type-picker{
+  width: 100%;
+}
+.fb-type-k {
+  width: 35%;
+  font-weight: bold;
+  /* padding-right: 10rpx; */
+  display: inline-block;
+}
+
+.fb-type-v {
+  width: 65%;
+  text-align: center;
+  background-color: white;
+  /* padding-left: 20rpx; */
+  /* padding-right: 20rpx; */
+  padding-top: 20rpx;
+  padding-bottom: 20rpx;
+  display: inline-block;
+}
+
+.fb-desc{
+  font-size: 36rpx;
+  background-color: white;
+  width: 100%;
 }

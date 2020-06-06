@@ -86,7 +86,7 @@ Page({
                     return false;
                 }
                 var examItem = resData[0];
-                if (examItem['exam_role'] > 10) {
+                if (examItem['exam_role'] > 30) {
                     errorMsg = '无权限进行操作，请先升级成会员！';
                 }
                 // var select_modes = [{'name': '全部题型', 'value': -1}];

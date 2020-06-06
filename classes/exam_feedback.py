@@ -9,7 +9,7 @@ class ExamQuestionFeedback(object):
 
     def __init__(self, db):
         self.db = db
-        self.cols = ['exam_no', 'user_no', 'question_no', 'fd_type',
+        self.cols = ['exam_no', 'user_no', 'question_no', 'fb_type',
                      'description', 'state', 'result', 'times',
                      'update_time', 'insert_time']
         self.t = 'exam_question_feedback'
@@ -28,25 +28,25 @@ class ExamQuestionFeedback(object):
         return items
 
     def insert_question_feedback(self, exam_no, user_no, question_no,
-                                 fd_type, description):
+                                 fb_type, description):
         state = 0
         u_time = time.time()
         question_no = int(question_no)
         data = dict(exam_no=exam_no, user_no=user_no, question_no=question_no,
                     description=description, state=state, update_time=u_time,
-                    times=1, fd_type=fd_type, insert_time=u_time)
+                    times=1, fb_type=fb_type, insert_time=u_time)
         l = self.db.execute_insert(self.t, kwargs=data)
         return l
 
     def update_question_feedback(self, exam_no, user_no, question_no,
-                                 fd_type=None, description=None,
+                                 fb_type=None, description=None,
                                  result=None, state=0, times=None):
         question_no = int(question_no)
         where_value = dict(exam_no=exam_no, question_no=question_no,
                            user_no=user_no)
         update_value = dict()
-        if fd_type:
-            update_value['fd_type'] = fd_type
+        if fb_type:
+            update_value['fb_type'] = fb_type
         if description:
             update_value['description'] = description
         if state > 0:
@@ -64,17 +64,17 @@ class ExamQuestionFeedback(object):
                                    update_value=update_value)
         return l
 
-    def new_or_update_feedback(self, exam_no, user_no, question_no, fd_type,
+    def new_or_update_feedback(self, exam_no, user_no, question_no, fb_type,
                                description):
         items = self.select_question_feedback(exam_no, user_no, question_no)
         if len(items) > 0:
             item = items[0]
             times = item['times'] + 1
             l = self.update_question_feedback(exam_no, user_no, question_no,
-                                              fd_type=fd_type,
+                                              fb_type=fb_type,
                                               description=description,
                                               times=times)
         else:
             l = self.insert_question_feedback(exam_no, user_no, question_no,
-                                              fd_type, description)
+                                              fb_type, description)
         return l

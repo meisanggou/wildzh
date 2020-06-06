@@ -33,18 +33,19 @@
         "col_comment": "反馈处理状态 0代表反馈 1已处理",
         "col_name": "state",
         "col_type": "tinyint(4)",
-        "default": 0
+        "default_value": 0
       },
       {
         "col_comment": "反馈处理结果描述",
         "col_name": "result",
-        "col_type": "varchar(50)"
+        "col_type": "varchar(50)",
+        "default_value": ""
       },
       {
         "col_comment": "反馈次数",
         "col_name": "times",
         "col_type": "tinyint(4)",
-        "default": 1
+        "default_value": 1
       },
       {
         "col_comment": "插入时间",

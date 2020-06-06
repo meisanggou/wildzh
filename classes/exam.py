@@ -160,6 +160,8 @@ class ExamObject(object):
             return True
         if self.open_no_end is None:
             _end = float('INF')
+        else:
+            _end = self.open_no_end
         if self.open_no_start <= no <= _end:
             return True
         return False
