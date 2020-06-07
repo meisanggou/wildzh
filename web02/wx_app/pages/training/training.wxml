@@ -13,7 +13,7 @@
                 <text class="fb-type-v">{{ fbTypes[fbTypeIndex] }}</text>
             </picker>
             </view>
-            <textarea class="fb-desc" name='desc' type='text' placeholder="反馈意见" bindinput="feedbackDescInput" maxlength='100' auto-focus/>
+            <textarea class="fb-desc" type='text' placeholder="" bindinput="feedbackDescInput" maxlength='100' auto-focus value="{{feedbackDesc}}"></textarea>
         </modal>
     <view class='pageContent'>
         <view class='top'>

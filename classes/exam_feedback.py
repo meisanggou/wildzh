@@ -21,10 +21,18 @@ class ExamQuestionFeedback(object):
             where_value['user_no'] = user_no
         if question_no:
             where_value['question_no'] = int(question_no)
+
+        where_cond = []
+        where_cond_args = []
         if state is not None:
             where_value['state'] = int(state)
+        else:
+            where_cond.append('state<=%s')
+            where_cond_args.append(1)
         items = self.db.execute_select(self.t, cols=self.cols,
-                                       where_value=where_value)
+                                       where_value=where_value,
+                                       where_cond=where_cond,
+                                       where_cond_args=where_cond_args)
         return items
 
     def insert_question_feedback(self, exam_no, user_no, question_no,
@@ -70,10 +78,13 @@ class ExamQuestionFeedback(object):
         if len(items) > 0:
             item = items[0]
             times = item['times'] + 1
+            state = 0
+            if item['state'] >= 3:
+                state = 1
             l = self.update_question_feedback(exam_no, user_no, question_no,
                                               fb_type=fb_type,
                                               description=description,
-                                              times=times)
+                                              times=times, state=state)
         else:
             l = self.insert_question_feedback(exam_no, user_no, question_no,
                                               fb_type, description)

@@ -611,6 +611,7 @@ Page({
         var fb_type = this.data.fbTypes[this.data.fbTypeIndex]
         var questionNo = this.data.nowQuestion.question_no;
         var data = {'description': this.data.feedbackDesc, 'fb_type': fb_type, 'question_no': questionNo};
+        var that = this;
         wx.request2({
             url: '/exam/question/feedback?exam_no=' + this.data.examNo,
             method: 'POST',
@@ -628,6 +629,9 @@ Page({
                     return
                 }
                 else{
+                    that.setData({
+                        feedbackDesc: ""
+                    })
                     wx.showToast({
                         title:"反馈成功"
                     })

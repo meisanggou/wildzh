@@ -30,7 +30,7 @@
         "col_type": "varchar(200)"
       },
       {
-        "col_comment": "反馈处理状态 0代表反馈 1已处理",
+        "col_comment": "反馈处理状态 0代表反馈 1处理后再次提交 2 保留 3无效 4有效意见",
         "col_name": "state",
         "col_type": "tinyint(4)",
         "default_value": 0

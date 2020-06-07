@@ -110,6 +110,15 @@ Page({
             url: "exam_member?examNo=" + this.data.examNo
         })
     },
+    toFBPage: function () {
+        var examNo = this.data.examNo;
+        if (examNo == null) {
+            return false;
+        }
+        wx.navigateTo({
+            url: "exam_fb?examNo=" + this.data.examNo
+        })
+    },
     toUsagePage: function () {
         var examNo = this.data.examNo;
         if (examNo == null) {
