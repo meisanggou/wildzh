@@ -33,6 +33,8 @@ class MiniProgram(object):
 
     @property
     def access_token(self):
+        if self.app_id not in MiniProgram._token:
+            self.refresh_token()
         return MiniProgram._token[self.app_id]
 
     @access_token.setter
@@ -122,7 +124,23 @@ class MiniProgram(object):
         data = dict(path=path, width=width)
         return self._request_tencent(url, "POST", json=data)
 
+    def send_message(self, to_user, template_id, page, data):
+        url = '/cgi-bin/message/subscribe/send?access_token=%(access_token)s'
+        r_data = {'touser': to_user, 'template_id': template_id,
+                  'page': page, 'data': data}
+        return self._request_tencent(url, 'POST', json=r_data)
+
+    def send_fb_message(self, to_user, t, desc):
+        template_id = '9CjgEfOrvh6sGD34bfcTD9wBV9HFQT8p6GOQ-E2oM_A'
+        page = 'exam/exam_fb'
+        data = {'time1': {'value': t}, 'thing2': {'value': desc}}
+        return self.send_message(to_user, template_id, page, data)
+
+
 if __name__ == "__main__":
     from zh_config import min_program_conf
-    mp = MiniProgram(conf_path=min_program_conf)
-    print(mp.wx_code("pages/index/index"))
+    print(min_program_conf)
+    mp = MiniProgram(conf_path=min_program_conf, section='01')
+    r = mp.send_fb_message('oorDD5AfcJvKLrzQRyyxIdrNoSGo', '2020-06-08 19:38:00', 'Hello World!')
+    print(r)
+    # print(mp.wx_code("pages/index/index"))

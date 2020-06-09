@@ -10,7 +10,9 @@ from flask import request, jsonify, g
 from flask_login import login_required
 from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url
+from zh_config import min_program_conf
 from classes.exam import Exam, ExamObject, StrategyObject
+from classes.wx import MiniProgram
 from export.local_write import write_docx
 from web02 import create_blue
 
@@ -44,6 +46,7 @@ menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam"
 
 exam_view = create_blue("exam", url_prefix=url_prefix, auth_required=False, menu_list=menu_list)
 c_exam = Exam(db_conf_path)
+min_pro = MiniProgram(min_program_conf)
 
 G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题"]
 

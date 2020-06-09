@@ -32,8 +32,7 @@ Page({
         var currentUser = app.getOrSetCurrentUserData();
         if (currentUser != null) {
             if ("role" in currentUser) {
-                if ((currentUser.role & 2) == 2) {
-                }
+                if ((currentUser.role & 2) == 2) {}
             }
         }
         this.setData({
@@ -55,6 +54,22 @@ Page({
                 progressStorageKey += "_" + options["question_subject"];
             } else {
                 progressStorageKey += "_" + 0;
+            }
+            var questionNo = null;
+            if ('question_no' in options) {
+                questionNo = parseInt(options['question_no']);
+                if (isNaN(questionNo)) {
+                    questionNo = null;
+                } else {
+                    questionItems = [{
+                        'question_no': questionNo
+                    }];
+                    that.setData({
+                        questionNum: 1
+                    })
+                    this.reqQuestion(0, true);
+                    return true;
+                }
             }
             this.setData({
                 progressStorageKey: progressStorageKey
@@ -83,11 +98,13 @@ Page({
                         })
                     } else {
                         // 请求questionItems
+
                         var progressIndex = app.getOrSetExamCacheData(that.data.progressStorageKey);
                         if (progressIndex == null || typeof progressIndex != 'number' || progressIndex <= 0) {
                             progressIndex = 0;
                         }
                         that.reqQuestion(progressIndex, true);
+
                     }
                 }
             })
@@ -263,11 +280,10 @@ Page({
                         questionNum: questionItems.length
                     });
                     that.changeNowQuestion(startIndex);
-                }
-                else if (startIndex == that.data.nowQuestionIndex) {
+                } else if (startIndex == that.data.nowQuestionIndex) {
                     // 如果当前请求的内容正好是当前显示的，需要重新更新一下答案显示。答案显示是拼出来的没和变量关联
                 }
-                
+
                 that.setData({
                     isReq: false
                 })
@@ -388,7 +404,9 @@ Page({
 
             num = p_num;
         }
-        r.sort(function (a, b) { return a - b; });
+        r.sort(function (a, b) {
+            return a - b;
+        });
         r.push(_num);
         skipIndex = r.length - 1;
         num = _num;
@@ -444,8 +462,8 @@ Page({
             }
         }
         var subject_index = -1;
-        for(var i=0;i<this.data.subjects_array.length;i++){
-            if(this.data.subjects_array[i].value == nowQuestion.question_subject){
+        for (var i = 0; i < this.data.subjects_array.length; i++) {
+            if (this.data.subjects_array[i].value == nowQuestion.question_subject) {
                 subject_index = i;
                 break
             }
@@ -458,8 +476,8 @@ Page({
         this.changeNowSubject(subject_index);
         this.setSkipNums(index + 1, questionItems.length);
     },
-    changeNowSubject: function(index){
-        if(index == null){
+    changeNowSubject: function (index) {
+        if (index == null) {
             index = -1;
         }
         var selected = index;
@@ -468,26 +486,23 @@ Page({
         var subject_name = '-';
         var chapters = [];
         var chapter_name = '-';
-        if (selected>=0 && selected < subjects.length) {
+        if (selected >= 0 && selected < subjects.length) {
             var subject_name = subjects[selected].name;
             var current_sj = subjects[selected].value;
             if ('chapters' in subjects[selected]) {
                 chapters = subjects[selected]['chapters'];
             }
             if (nowQuestion.question_subject == current_sj) {
-                if (com.find_index(chapters, nowQuestion.question_chapter, 'name') >= 0){
+                if (com.find_index(chapters, nowQuestion.question_chapter, 'name') >= 0) {
                     chapter_name = nowQuestion.question_chapter;
-                }
-                else{
+                } else {
                     nowQuestion.question_chapter = null;
                 }
-            }
-            else{
+            } else {
                 nowQuestion.question_subject = current_sj;
                 nowQuestion.question_chapter = null;
             }
-        }
-        else{
+        } else {
             nowQuestion.question_chapter = null;
             nowQuestion.question_subject = null;
         }
@@ -535,8 +550,7 @@ Page({
             answerIndex: selected
         })
     },
-    updateAnswer: function () {
-    },
+    updateAnswer: function () {},
 
     updateQuestion: function (e) {
         var nowQuestion = this.data.nowQuestion;

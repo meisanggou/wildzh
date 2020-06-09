@@ -89,6 +89,16 @@ Page({
                 if (examItem['exam_role'] > 30) {
                     errorMsg = '无权限进行操作，请先升级成会员！';
                 }
+                else if(examItem['exam_role'] <= 3){
+                    this.setData({
+                        canUpdate: true
+                    })
+                }
+                else{
+                    this.setData({
+                        canUpdate: false
+                    })
+                }
                 // var select_modes = [{'name': '全部题型', 'value': -1}];
                 var select_modes = [];
                 if ('select_modes' in examItem) {

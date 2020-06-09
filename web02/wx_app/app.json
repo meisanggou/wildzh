@@ -14,7 +14,8 @@
         "pages/answer/answer_home",
         "pages/questions/question",
         "pages/exam/exam_info",
-        "pages/exam/exam_usage"
+        "pages/exam/exam_usage",
+        "pages/exam/exam_fb"
         
     ],
     "window": {
