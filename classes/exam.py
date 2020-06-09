@@ -938,7 +938,7 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                                        where_cond=where_cond,
                                        where_cond_args=where_cond_args)
         if kwargs.pop('random', False):
-            items = random.shuffle(items)
+            random.shuffle(items)
         if 'target_start_no' in kwargs:
             t_start_no = kwargs['target_start_no']
             if 'target_end_no' not in kwargs:

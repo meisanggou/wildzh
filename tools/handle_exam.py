@@ -279,7 +279,7 @@ def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode=None,
                   target_start_no=None):
     url = remote_host + '/exam/transfer'
     data = {'source_exam_no': s_exam, 'start_no': start_no,
-            'end_no': end_no, 'target_exam_no': t_exam}
+            'end_no': end_no, 'target_exam_no': t_exam, 'random': True}
     if select_mode:
         data['select_mode'] = select_mode
     if target_start_no is not None:
@@ -385,9 +385,10 @@ if __name__ == "__main__":
     # exam_no = 1569283516  # 专升本经济学题库
     exam_no = 1570447137  # 专升本经济学题库 会员版
     exam_no = 1585396371  # 本地 测试题库2
+    t_exam_no = 1591669814  # 本地 测试题库2-copy
     # exam_no = 1573464937  # 英语托业
     # 538 + 319
-    # transfer_exam(1575333741, 1, 5, 1575333741)
+    transfer_exam(exam_no, 1, 5000, t_exam_no)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
@@ -400,7 +401,7 @@ if __name__ == "__main__":
                     set_keys=keys)
     q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'
-    find_from_dir(d, q_set)
+    # find_from_dir(d, q_set)
     # download_questions(1569283516, 2)
     # download_usage(exam_no, [1, 2, 3, 4])
     # handle_exam_no_answer(d_path, q_set)
