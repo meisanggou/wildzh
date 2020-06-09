@@ -580,6 +580,8 @@ def transfer_exam():
         t_kwargs['target_end_no'] = data['target_end_no']
     if 'select_mode' in data:
         t_kwargs['select_mode'] = data['select_mode']
+    if 'random' in data:
+        t_kwargs['random'] = True
     r, items = c_exam.transfer_exam(source_exam_no, start_no, end_no,
                                     target_exam_no, **t_kwargs)
     return jsonify({'status': r, 'data': items})
