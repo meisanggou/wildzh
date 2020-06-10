@@ -5,6 +5,8 @@ Page({
 
     data: {
         allExams: [],
+        isGrant: false,  // 是否是授权页面，false=查看成员页面 true=授权页面
+        pageButtonText: "用户授权",
         isQuery: true,
         select_modes: ['普通用户'],
         memberNo: "",
@@ -70,6 +72,20 @@ Page({
             }
         })
     },
+    changePage: function(){
+        var isGrant = !this.data.isGrant;
+        var pageButtonText = "";
+        if(isGrant){
+            pageButtonText = "成员查看";
+        }
+        else{
+            pageButtonText = "用户授权";
+        }
+        this.setData({
+            isGrant: isGrant,
+            pageButtonText: pageButtonText
+        })
+    },
     inputNoChange: function(e) {
         var v = e.detail.value;
         this.setData({
@@ -80,6 +96,7 @@ Page({
         this.setData({
             index: parseInt(e.detail.value)
         })
+        this.toQuery();
     },
     toQuery() {
         this.setData({

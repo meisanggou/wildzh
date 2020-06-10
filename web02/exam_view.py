@@ -549,18 +549,22 @@ def get_member():
     exam_no = g.exam_no
     if g.exam_role > 2:
         return jsonify({"status": False, "data": 'forbidden'})
-    member_no = request.args['member_no']
-    items = c_exam.user_exams(member_no, exam_no)
-    if len(items) <= 0:
-        item = None
+    member_no = request.args.get('member_no', None)
+    if member_no:
+        items = c_exam.user_exams(int(member_no), exam_no)
+        if len(items) <= 0:
+            item = None
+        else:
+            item = items[0]
+        if 'flows' in request.args:
+            flows = c_exam.select_member_flows(member_no, exam_no)
+            flows.sort(key=lambda x: x['update_time'], reverse=True)
+            data = {'current': item, 'flows': flows}
+            return jsonify({"status": True, "data": data})
+        return jsonify({"status": True, "data": item})
     else:
-        item = items[0]
-    if 'flows' in request.args:
-        flows = c_exam.select_member_flows(member_no, exam_no)
-        flows.sort(key=lambda x: x['update_time'], reverse=True)
-        data = {'current': item, 'flows': flows}
-        return jsonify({"status": True, "data": data})
-    return jsonify({"status": True, "data": item})
+        items = c_exam.exam_members(exam_no)
+    return jsonify({"status": True, "data": items})
 
 
 @exam_view.route('/transfer', methods=['POST'])

@@ -422,8 +422,10 @@ class ExamMember(ExamMemberFlow):
         self._insert_exam_member_flow(**item)
         return l
 
-    def _select_exam_member(self, user_no, exam_no=None):
-        where_value = dict(user_no=user_no)
+    def _select_exam_member(self, user_no=None, exam_no=None):
+        where_value = dict()
+        if user_no:
+            where_value['user_no'] = user_no
         if exam_no:
             where_value['exam_no'] = exam_no
         cols = ['user_no', 'exam_no', 'exam_role', 'end_time',
@@ -434,6 +436,13 @@ class ExamMember(ExamMemberFlow):
 
     def user_exams(self, user_no, exam_no=None):
         items = self._select_exam_member(user_no, exam_no)
+        now_time = time.time()
+        items = [item for item in items
+                 if item['end_time'] is None or item['end_time'] >= now_time]
+        return items
+
+    def exam_members(self, exam_no):
+        items = self._select_exam_member(exam_no=exam_no)
         now_time = time.time()
         items = [item for item in items
                  if item['end_time'] is None or item['end_time'] >= now_time]

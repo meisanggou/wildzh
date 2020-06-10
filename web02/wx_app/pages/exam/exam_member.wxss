@@ -1,5 +1,6 @@
 @import "../common/lib/weui.wxss";
 @import "../common/lib/lib_app.wxss";
+@import "../common/table.wxss";
 
 .picker{
   padding: 19rpx 26rpx;
@@ -23,4 +24,18 @@ button{
 
 .warn{
     color: red
+}
+
+.bottom {
+  width: 100%;
+  font-size: 28rpx;
+  position: fixed;
+  bottom: 0rpx;
+  background-color: #fff;
+  height: 100rpx;
+  border-top: 1px solid #c9c9d8;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 10;
 }
