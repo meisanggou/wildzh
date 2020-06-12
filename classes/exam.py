@@ -826,7 +826,7 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
     def select_question_no(self, exam_no, select_mode=None, start_no=None,
                            question_subject=None, question_chapter=None,
                            question_source=None):
-        where_value = dict(exam_no=exam_no)
+        where_value = dict(exam_no=exam_no, state=0)
         if select_mode is not None and select_mode >= 0:
             where_value['select_mode'] = select_mode
         if question_subject is not None:
