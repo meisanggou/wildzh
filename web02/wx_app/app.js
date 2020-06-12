@@ -1,10 +1,10 @@
 var remote_host = "https://meisanggou.vicp.net"
-var version = "5.5.1";
+var version = "5.5.5";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 remote_host = "https://wild.gene.ac"
 // var remote_host = "http://172.16.110.10:2401"
-// remote_host = "http://127.0.0.1:2400"
+remote_host = "http://127.0.0.1:2400"
 // {
 //     "pagePath": "pages/query/query",
 //         "iconPath": "images/query.png",
@@ -17,12 +17,15 @@ App({
         console.info("App Lunch")
         wx.remote_host = remote_host
         wx.session_storage_key = session_storage_key;
+        wx.removeStorage({
+          key: wx.session_storage_key,
+        })
         wx.request2 = function(req) {
             var screenData = that.getScreenInfo();
             var origin_req = req;
             if ("header" in req) {
-                req.header["rf"] = "async"
-                req.header["Cookie"] = wx.getStorageSync(wx.session_storage_key)
+                req.header["rf"] = "async";
+                req.header["Cookie"] = wx.getStorageSync(wx.session_storage_key);
                 
             } else {
                 req.header = {
@@ -51,7 +54,7 @@ App({
                                     },
                                     success: res => {
                                         console.info("auto wx login success")
-                                        wx.setStorageSync(that.globalData.userInfoStorageKey, res.data.data)
+                                        that.getOrSetCurrentUserData(res.data.data)
                                         wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
                                         req.retry = 1
                                         wx.request2(req)
@@ -68,6 +71,8 @@ App({
             // }
             return wx.request(req)
         }
+        this.getDefaultExam();
+        return true;
         // 登录
         wx.login({
             success: res => {
@@ -88,7 +93,6 @@ App({
 
 
         })
-        this.getDefaultExam();
         this.getScreenInfo(false);
     },
     setDefaultExam: function(examItem) {

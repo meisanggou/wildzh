@@ -79,6 +79,9 @@ Page({
 
     },
     updateNickNameClick: function() {
+        if(this.data.userNo == ""){
+            return false;
+        }
         var currentTime = dt.get_timestamp2();
         var lastTime = app.getOrSetCacheData2(lastUpdateUserKey);
         console.info(lastTime)
@@ -109,6 +112,16 @@ Page({
     },
     confirmUnickName: function() {
         console.info('start update nick name');
+        if(newNickName.length < 2){
+            wx.showModal({
+                title: '设置昵称',
+                content: '设置的昵称长度太短！',
+                showCancel: false,
+                success(res) {
+                }
+            })
+            return false;
+        }
         this.setData({
             hiddenUnickName: true,
             nickName: newNickName

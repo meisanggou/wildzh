@@ -1,6 +1,6 @@
 <import src="../common/head.wxml" />
 
-<view class="container">
+<view class="container main">
 	<!-- <template is="head" data="{{title: '题库成员管理'}}" /> -->
 
 	<view class="page-body">
@@ -18,7 +18,7 @@
 					</view>
 				</view>
 			</view>
-			<block wx-if="{{ isGrant }}">
+			<block wx:if="{{ isGrant }}">
 				<view class="weui-cells__title">输入用户编号</view>
 				<view class="weui-cells weui-cells_after-title">
 					<view class="weui-cell weui-cell_input">
@@ -98,8 +98,37 @@
 
 				<button wx:if="{{isQuery}}" plain="true" bindtap="queryAction">查询</button>
 			</block>
-            <block wx-else>
-            </block>
+			<block wx:else>
+				<view class="table">
+					<view class="tr bg-w">
+						<view class="th">用户编号</view>
+						<view class="th">用户昵称</view>
+						<view class="th">成员权限</view>
+						<view class="th ">到期时间</view>
+					</view>
+					<block wx:for="{{members}}" wx:key='user_no'>
+						<view class="tr bg-g" wx:if="{{index % 2 == 0}}" data-index="{{index}}" bindtap="showDetail">
+							<view class="td">{{item.user_no}}</view>
+							<view class="td">{{nickNames[index].nick_name}}</view>
+							<view class="td">{{item.memberRole}}</view>
+							<view class="td">{{item.memberEndTime}}</view>
+						</view>
+						<view class="tr bg-f" wx:else data-index="{{index}}" bindtap="showDetail">
+							<view class="td">{{item.user_no}}</view>
+							<view class="td">{{nickNames[index].nick_name}}</view>
+							<view class="td">{{item.memberRole}}</view>
+							<view class="td">{{item.memberEndTime}}</view>
+						</view>
+						<view class="fb-description" wx-if="{{detailIndex==index}}">
+							<view>反馈描述：<textarea class="desc-content" disabled="true" auto-height="true" value="{{item.description}}"></textarea></view>
+							<view wx-if="{{ item.state == 1 }}">上次处理：<textarea class="desc-content" disabled="true" auto-height="true" value="{{item.result}}"></textarea></view>
+							<button size="mini" bindtap="toQuestion">跳转到题目</button>
+							<button size="mini" bindtap="feedbackClick">处理</button>
+						</view>
+					</block>
+
+				</view>
+			</block>
 		</view>
 
 	</view>

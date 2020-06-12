@@ -125,6 +125,12 @@
                 "col_name": "answer_pic_url",
                 "col_type": "varchar(150)",
                 "allow_null": true
+            },
+            {
+                "col_comment": "题目状态 0 正常 1 禁用",
+                "col_name": "state",
+                "col_type": "tinyint(4)",
+                "default_value": 0
             }
         ],
         "table_comment": "测试题目",

@@ -21,7 +21,7 @@
                         <view class="weui-cell__bd" bindtap="updateNickNameClick">
                             <view class="weui-input">{{nickName}}</view>
                         </view>
-                        <view class="weui-cell__ft right-slip">
+                        <view class="weui-cell__ft right-slip" wx:if="{{ userNo }}">
                             <!-- <view class="navigator-arrow"></view> -->
                             <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="updateNickNameClick"></image>
                         </view>

@@ -2,6 +2,10 @@
 @import "../common/lib/lib_app.wxss";
 @import "../common/table.wxss";
 
+.main{
+  height: 90vh;
+  min-height: 90vh;
+}
 .picker{
   padding: 19rpx 26rpx;
   background-color: #FFFFFF;

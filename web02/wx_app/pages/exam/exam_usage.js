@@ -8,7 +8,8 @@ Page({
     data: {
         periods: ['一周情况', '两周情况', '三周情况', '四周情况'],
         periodIndex: 0,
-        usageItems: []
+        usageItems: [],
+        nickNames: []
     },
 
     /**
@@ -78,30 +79,35 @@ Page({
                 usageItems.sort(function (a, b) {
                     return b.num - a.num;
                 })
+                that.setData({
+                    usageItems: usageItems
+                })
                 that.getNickNames(usageItems);
                 
             }
         })
     },
-    getNickNames: function (usageItems) {
+    getNickNames: function (userItems) {
         var user_list = [];
-        for (var i = 0; i < usageItems.length; i++) {
-            if (usageItems[i].user_no in nickNameCache) {
-                usageItems[i].nick_name = nickNameCache[usageItems[i].user_no];
+        var nickNames = [];
+        for (var i = 0; i < userItems.length; i++) {
+            if (userItems[i].user_no in nickNameCache) {
+                nickNames.push({'user_no': userItems[i].user_no, 'nick_name': nickNameCache[userItems[i].user_no]});
             }
             else {
-                user_list.push(usageItems[i].user_no);
+                user_list.push(userItems[i].user_no);
+                nickNames.push({'user_no': userItems[i].user_no, 'nick_name': null});
             }
         }
-
+        var that = this;
         if (user_list.length <= 0) {
             this.setData({
-                usageItems: usageItems
+                nickNames: nickNames
             })
             return true;
         }
         var data = { 'user_list': user_list }
-        var that = this;
+        
         wx.request2({
             url: '/user/nicknames',
             method: 'POST',
@@ -114,13 +120,16 @@ Page({
                 var l1 = resData.length;
                 for(var j=0;j<l1;j++){
                     var nItem = resData[j];
+                    if(nItem['nick_name'] == null){
+                        nItem['nick_name'] = '';
+                    }
                     nickNameCache[nItem.user_no] = nItem['nick_name'];
                 }
 
-                var l2 = usageItems.length;
+                var l2 = nickNames.length;
                 for (var i = 0; i < l2; i++) {
-                    var uItem = usageItems[i];
-                    if('nick_name' in uItem){
+                    var uItem = nickNames[i];
+                    if(uItem['nick_name'] != null){
                         continue;
                     }
                     if(uItem.user_no in nickNameCache){
@@ -128,7 +137,7 @@ Page({
                     }
                 }
                 that.setData({
-                    usageItems: usageItems
+                    nickNames: nickNames
                 })
 
             }
