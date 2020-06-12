@@ -638,7 +638,8 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
         self.q_cols = ["exam_no", "question_no", "question_desc",
                        "question_desc_url", "select_mode", "options",
                        "answer", "question_subject", "question_source",
-                       "inside_mark", "answer_pic_url", 'question_chapter']
+                       "inside_mark", "answer_pic_url", 'question_chapter',
+                       'state']
         self.qs_man = QuestionSources(self.db)
         self.gs_man = ExamGenStrategy(self.db)
         self.qf_man = ExamQuestionFeedback(self.db)
