@@ -55,6 +55,7 @@ function add_question()
     r_data["question_desc_url"] = q_vm.question_desc_url;
     r_data["question_subject"] = q_vm.question_subject;
     r_data["question_source"] = q_vm.question_source;
+    r_data['state'] = q_vm.question_state;
     r_data["options"] = new Array();
     var chars_o = ["A", "B", "C", "D"];
     var options = [q_vm.option_a, q_vm.option_b, q_vm.option_c, q_vm.option_d];
@@ -149,6 +150,7 @@ function receive_questions(data){
     q_vm.current_question_no = current_question.question_no;
     q_vm.select_mode = current_question.select_mode;
     q_vm.question_source = current_question.question_source;
+    q_vm.question_state = current_question.state;
     q_vm.question_subject = current_question.question_subject;
     q_vm.question_desc = current_question.question_desc;
     if(current_question.question_desc_url == null){
@@ -198,6 +200,7 @@ $(function() {
             all_exams: [],
             select_modes: [],
             subjects: [],
+            q_states: [{'name': '正常'}, {'name': '停用'}],
             current_exam_index: -1,
             current_exam: {question_num: 0, exam_no: exam_no},
             action: "new",
@@ -207,6 +210,7 @@ $(function() {
             question_desc_url: "",
             question_subject: 0,
             question_source: "",
+            question_state: 0,
             answer: "",
             option_a: "",
             option_b: "",

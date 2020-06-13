@@ -307,7 +307,7 @@ def update_question():
     question_no = data["question_no"]
     keys = ("question_desc", "select_mode", "question_subject",
             "question_source", "options", "answer", "question_desc_url",
-            'question_chapter')
+            'question_chapter', 'state')
     for key in keys:
         if key in data:
             extra_data[key] = data[key]

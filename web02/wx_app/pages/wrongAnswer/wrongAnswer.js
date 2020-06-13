@@ -124,9 +124,9 @@ Page({
                         content: "没有发现错题",
                         showCancel: false,
                         success(res) {
-                            wx.navigateBack({
-                                delta: 1
-                            })
+                            // wx.navigateBack({
+                            //     delta: 1
+                            // })
                         }
                     })
                     return false;

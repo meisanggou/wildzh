@@ -57,6 +57,12 @@
                             <label>题目来源：</label>
                             <input class="box-side width300" type="text" v-model="question_source"/>
                         </li>
+                        <li>
+                            <label>题目状态：</label>
+                            <select class="box-side width150" type="text" v-model="question_state">
+                                <option v-for="(item,index) in q_states" :value="index">{{item.name}}</option>
+                            </select>
+                        </li>
                         <li name="li_option">
                             <label>A、</label>
                             <input class="box-side width500" type="text" v-model.trim="option_a"/>
