@@ -422,16 +422,23 @@ class ExamMember(ExamMemberFlow):
         self._insert_exam_member_flow(**item)
         return l
 
-    def _select_exam_member(self, user_no=None, exam_no=None):
+    def _select_exam_member(self, user_no=None, exam_no=None, max_role=None):
         where_value = dict()
         if user_no:
             where_value['user_no'] = user_no
         if exam_no:
             where_value['exam_no'] = exam_no
+        where_cond = []
+        where_cond_args = []
+        if max_role is not None:
+            where_cond.append('exam_role <= %s')
+            where_cond_args.append(max_role)
         cols = ['user_no', 'exam_no', 'exam_role', 'end_time',
                 'insert_time', 'update_time']
         items = self.db.execute_select(self.t_em, cols=cols,
-                                       where_value=where_value)
+                                       where_value=where_value,
+                                       where_cond_args=where_cond_args,
+                                       where_cond=where_cond)
         return items
 
     def user_exams(self, user_no, exam_no=None):
@@ -441,12 +448,15 @@ class ExamMember(ExamMemberFlow):
                  if item['end_time'] is None or item['end_time'] >= now_time]
         return items
 
-    def exam_members(self, exam_no):
-        items = self._select_exam_member(exam_no=exam_no)
+    def exam_members(self, exam_no, max_role=None):
+        items = self._select_exam_member(exam_no=exam_no, max_role=max_role)
         now_time = time.time()
         items = [item for item in items
                  if item['end_time'] is None or item['end_time'] >= now_time]
         return items
+
+    def exam_admin_members(self, exam_no):
+        return self.exam_members(exam_no, 3)
 
     def select_user_exams(self, user_no):
         items = self.user_exams(user_no)

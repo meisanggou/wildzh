@@ -90,6 +90,16 @@ class AsyncWorker(object):
         self.try_start_thread()
 
 
+_POOL = None
+
+
+def get_pool():
+    global _POOL
+    if _POOL is None:
+        _POOL = AsyncWorker(5)
+    return _POOL
+
+
 if __name__ == '__main__':
     import time
     aw = AsyncWorker(3)

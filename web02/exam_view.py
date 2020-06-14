@@ -12,9 +12,11 @@ from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url
 from zh_config import min_program_conf
 from classes.exam import Exam, ExamObject, StrategyObject
+from classes.user import User
 from classes.wx import MiniProgram
 from export.local_write import write_docx
 from web02 import create_blue
+from utils.async import get_pool
 
 
 __author__ = 'meisa'
@@ -46,7 +48,9 @@ menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam"
 
 exam_view = create_blue("exam", url_prefix=url_prefix, auth_required=False, menu_list=menu_list)
 c_exam = Exam(db_conf_path)
-min_pro = MiniProgram(min_program_conf)
+c_user = User(db_conf_path=db_conf_path, upload_folder=upload_folder)
+min_pro = MiniProgram(conf_path=min_program_conf, section='01')
+ASYNC_POOL = get_pool()
 
 G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题"]
 
@@ -684,6 +688,31 @@ def get_question_feedback():
     return {'status': True, 'data': items}
 
 
+def notify_feedback(data):
+    exam_no = data['exam_no']
+    # 获得题库名称
+    e_items = c_exam.select_exam(exam_no)
+    if len(e_items) <= 0:
+        return
+    e_item = e_items[0]
+    exam_name = e_item['exam_name']
+    # 查询管理员
+    admin_members = c_exam.exam_admin_members(exam_no)
+    admin_nos = [u["user_no"] for u in admin_members]
+    wx_ids = []
+    for user_no in admin_nos:
+        user_items = c_user.verify_user_exist(user_no=user_no)
+        for u_item in user_items:
+            if u_item['wx_id']:
+                wx_ids.append(u_item['wx_id'])
+    if len(data['description']) <= 0:
+        data['description'] = '<用户未填写>'
+    for wx_id in wx_ids:
+        min_pro.send_fb_message(wx_id, exam_name, data['fb_type'],
+                                data['question_no'], data['description'])
+    return True
+
+
 @exam_view.route('/question/feedback', methods=['POST'])
 @login_required
 @required_exam_no
@@ -695,6 +724,10 @@ def new_question_feedback():
     description = data['description']
     items = c_exam.new_question_feedback(g.exam_no, user_no, question_no,
                                          fb_type, description)
+    n_data = data
+    n_data['user_no'] = user_no
+    n_data['exam_no'] = g.exam_no
+    ASYNC_POOL.submit(notify_feedback, data)
     return {'status': True, 'data': 'success'}
 
 

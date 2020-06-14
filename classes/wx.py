@@ -72,7 +72,6 @@ class MiniProgram(object):
         res = self._request("GET", url)
         if res.status_code == 200:
             r = res.json()
-            print(r)
             if "access_token" in r:
                 self.access_token = r["access_token"]
                 # self.expires_time = datetime.datetime.now() + datetime.timedelta(seconds=r["expires_in"])
@@ -122,18 +121,21 @@ class MiniProgram(object):
     def wx_code(self, path, width=430):
         url = "/wxa/getwxacode?access_token=%(access_token)s"
         data = dict(path=path, width=width)
-        return self._request_tencent(url, "POST", json=data)
+        res = self._request_tencent(url, "POST", json=data)
+        return res
 
     def send_message(self, to_user, template_id, page, data):
         url = '/cgi-bin/message/subscribe/send?access_token=%(access_token)s'
         r_data = {'touser': to_user, 'template_id': template_id,
                   'page': page, 'data': data}
-        return self._request_tencent(url, 'POST', json=r_data)
+        res = self._request_tencent(url, 'POST', json=r_data)
+        return res
 
-    def send_fb_message(self, to_user, t, desc):
-        template_id = '9CjgEfOrvh6sGD34bfcTD9wBV9HFQT8p6GOQ-E2oM_A'
+    def send_fb_message(self, to_user, exam_name, fb_type, question_no, desc):
+        template_id = 'BvdlC-Wv_oTNseRF8xSu_5B-r2dxv5GIbApYLgqoHMw'
         page = 'exam/exam_fb'
-        data = {'time1': {'value': t}, 'thing2': {'value': desc}}
+        data = {'thing1': {'value': exam_name}, 'thing2': {'value': fb_type},
+                'number3': {'value': question_no}, 'thing4': {'value': desc}}
         return self.send_message(to_user, template_id, page, data)
 
 
