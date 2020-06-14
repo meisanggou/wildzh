@@ -708,8 +708,10 @@ def notify_feedback(data):
     if len(data['description']) <= 0:
         data['description'] = '<用户未填写>'
     for wx_id in wx_ids:
-        min_pro.send_fb_message(wx_id, exam_name, data['fb_type'],
-                                data['question_no'], data['description'])
+        res = min_pro.send_fb_message(wx_id, exam_no, exam_name,
+                                      data['fb_type'],
+                                      data['question_no'],
+                                      data['description'])
     return True
 
 

@@ -131,9 +131,9 @@ class MiniProgram(object):
         res = self._request_tencent(url, 'POST', json=r_data)
         return res
 
-    def send_fb_message(self, to_user, exam_name, fb_type, question_no, desc):
+    def send_fb_message(self, to_user, exam_no, exam_name, fb_type, question_no, desc):
         template_id = 'BvdlC-Wv_oTNseRF8xSu_5B-r2dxv5GIbApYLgqoHMw'
-        page = 'exam/exam_fb'
+        page = '/pages/exam/exam_fb?examNo=%s' % exam_no
         data = {'thing1': {'value': exam_name}, 'thing2': {'value': fb_type},
                 'number3': {'value': question_no}, 'thing4': {'value': desc}}
         return self.send_message(to_user, template_id, page, data)
