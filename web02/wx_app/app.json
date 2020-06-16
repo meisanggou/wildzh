@@ -16,7 +16,6 @@
         "pages/exam/exam_info",
         "pages/exam/exam_usage",
         "pages/exam/exam_fb"
-        
     ],
     "window": {
         "backgroundTextStyle": "light",
@@ -37,6 +36,12 @@
                 "iconPath": "images/exam.png",
                 "selectedIconPath": "images/exam_fill.png",
                 "text": "测试"
+            },
+            {
+                "pagePath": "pages/query/query",
+                "iconPath": "images/query.png",
+                "selectedIconPath": "images/query_fill.png",
+                "text": "搜题"
             },
             {
                 "pagePath": "pages/wrongAnswer/wrongAnswer",

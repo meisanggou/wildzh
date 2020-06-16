@@ -905,6 +905,8 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
     def select_multi_question2(self, exam_no, q_nos):
         if len(q_nos) <= 0:
             return []
+        else:
+            q_nos = [str(no) for no in q_nos]
         cols = self.q_cols
         sql_f = "SELECT %s FROM %s WHERE exam_no=%s AND question_no in (%s);" \
                 % (",".join(cols), self.t_q, exam_no, ','.join(q_nos))

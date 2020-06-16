@@ -12,6 +12,7 @@ from flask_helper import RenderTemplate, support_upload2
 from zh_config import db_conf_path, upload_folder, file_prefix_url
 from zh_config import min_program_conf
 from classes.exam import Exam, ExamObject, StrategyObject
+from classes.exam_es import ExamEs
 from classes.user import User
 from classes.wx import MiniProgram
 from export.local_write import write_docx
@@ -49,6 +50,7 @@ menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam"
 exam_view = create_blue("exam", url_prefix=url_prefix, auth_required=False, menu_list=menu_list)
 c_exam = Exam(db_conf_path)
 c_user = User(db_conf_path=db_conf_path, upload_folder=upload_folder)
+c_exam_es = ExamEs()
 min_pro = MiniProgram(conf_path=min_program_conf, section='01')
 ASYNC_POOL = get_pool()
 
@@ -267,6 +269,10 @@ def delete_exam():
     exam_no = g.request_data["exam_no"]
     l = c_exam.delete_exam(exam_no)
     return jsonify({"status": True, "data": "删除成功"})
+
+
+def sync_one_question(exam_no):
+    pass
 
 
 @exam_view.route("/questions/", methods=["POST"])
@@ -745,3 +751,37 @@ def handle_question_feedback():
     items = c_exam.update_question_feedback(g.exam_no, user_no, question_no,
                                             result=result, state=state)
     return {'status': True, 'data': 'success'}
+
+
+def start_sync_es(exam_no):
+    # 获得所有question_no
+    _c_exam = Exam(db_conf_path)
+    q_items = _c_exam.select_question_no(exam_no)
+    missing_nos = []
+    # 查看哪些没有数据
+    for item in q_items:
+        doc_id = '%s_%s' % (exam_no, item['question_no'])
+        if not c_exam_es.exists(doc_id):
+            missing_nos.append(item['question_no'])
+    # 插入数据
+    step = 30
+    for i in range(0, len(missing_nos), step):
+        a_items = _c_exam.select_multi_question2(exam_no,
+                                                 missing_nos[i:i + step])
+        for q_item in a_items:
+            doc_id = '%s_%s' % (exam_no, q_item['question_no'])
+            desc = q_item['question_desc']
+            answer = q_item['answer']
+            options = ''
+            if q_item['select_mode'] == 0:
+                options = '\n'.join([o['desc'] for o in q_item['options']])
+            c_exam_es.add_one_item(doc_id, desc, options, answer)
+    return missing_nos
+
+
+@exam_view.route('/es/sync', methods=['POST', 'GET'])
+@login_required
+@required_manager_exam(param_location='args')
+def sync_to_es():
+    ASYNC_POOL.submit(start_sync_es, g.exam_no)
+    return jsonify({'status': True, 'data': 'success'})
