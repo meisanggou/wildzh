@@ -34,7 +34,7 @@ Page({
             return;
           }
           var items = res.data.data;
-          for(var i=0;i<items.length;i++){
+          for (var i = 0; i < items.length; i++) {
             var item = items[i];
             item['text'] = item['question_desc'];
             item['value'] = item['question_no'];
@@ -42,8 +42,9 @@ Page({
           resolve(items);
           console.info(res.data);
         },
-        fail: function ({errMsg}) {
-        }
+        fail: function ({
+          errMsg
+        }) {}
       })
     })
   },
@@ -53,7 +54,7 @@ Page({
     var question_no = item['question_no'];
     wx.navigateTo({
       url: "../training/training?select_mode=-1&question_no=" + question_no
-  })
+    })
   },
 
   /**

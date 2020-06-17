@@ -231,6 +231,14 @@ Page({
                 if (res.data.status != true) {
                     return;
                 }
+                var canUpdate = false;
+                if ('exam' in res.data) {
+                    var exam_item = res.data.exam;
+
+                    if (exam_item.exam_role <= 3) {
+                        canUpdate = true;
+                    }
+                }
                 var newItems = res.data.data;
                 for (var i = _end - 1; i >= _start; i--) {
                     for (var j = 0; j < newItems.length; j++) {
@@ -242,6 +250,7 @@ Page({
                             questionItems[i]["answer_rich"] = newItems[j]["answer_rich"]
                             questionItems[i]["question_source"] = newItems[j]["question_source"]
                             questionItems[i].forceUpdate = false;
+                            questionItems[i].canUpdate = canUpdate
                             break;
                         }
                     }
@@ -464,6 +473,16 @@ Page({
         that.setData({
             showAnswer: true,
             questionAnswer: questionAnswer
+        })
+    },
+    toUpdate: function (e) {
+        var nowQuestion = that.data.nowQuestion;
+        if (nowQuestion == null) {
+            return false;
+        }
+        var question_no = nowQuestion.question_no;
+        wx.navigateTo({
+            url: "../questions/question?select_mode=-1&question_no=" + question_no
         })
     },
     choseItem: function (e) {

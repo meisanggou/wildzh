@@ -97,7 +97,8 @@
     </view>
     <view class='bottom'>
         <view wx:if="{{questionNum>1}}" bindtap='before1' class='switch'>‹</view>
-        <view class='afterQuestion switchtext' bindtap='showAnswer'>显示答案</view>
+        <view wx:if="{{!(showAnswer && nowQuestion.canUpdate) }}" class='afterQuestion switchtext' bindtap='showAnswer'>显示答案</view>
+        <view wx:if="{{showAnswer && nowQuestion.canUpdate}}" class='afterQuestion switchtext' bindtap='toUpdate'>修改</view>
         <view wx:if="{{questionNum>1}}" bindtap='after1' class='switch'>›</view>
     </view>
 </view>
