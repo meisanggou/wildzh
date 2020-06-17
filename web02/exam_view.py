@@ -271,8 +271,17 @@ def delete_exam():
     return jsonify({"status": True, "data": "删除成功"})
 
 
-def sync_one_question(exam_no):
-    pass
+def sync_one_question(exam_no, q_item, update=False):
+    doc_id = '%s_%s' % (exam_no, q_item['question_no'])
+    desc = q_item['question_desc']
+    answer = q_item['answer']
+    options = ''
+    if q_item['select_mode'] == 0:
+        options = '\n'.join([o['desc'] for o in q_item['options']])
+    if update:
+        c_exam_es.update_one_item(doc_id, desc, options, answer)
+    else:
+        c_exam_es.add_one_item(doc_id, desc, options, answer)
 
 
 @exam_view.route("/questions/", methods=["POST"])
@@ -285,7 +294,7 @@ def entry_questions():
     extra_data = dict()
     question_no = data["question_no"]
     question_desc = data["question_desc"]
-    select_mode = data["select_mode"]
+    select_mode = int(data["select_mode"])
     question_subject = data["question_subject"]
     question_source = data["question_source"]
     if question_source and question_source.strip():
@@ -298,7 +307,6 @@ def entry_questions():
         extra_data["question_desc_url"] = data["question_desc_url"]
     if "inside_mark" in data:
         extra_data["inside_mark"] = data["inside_mark"]
-
     r, l = c_exam.new_exam_questions(g.exam_no, question_no, question_desc,
                                      select_mode, options, answer,
                                      **extra_data)
@@ -322,6 +330,7 @@ def update_question():
         if key in data:
             extra_data[key] = data[key]
     l = c_exam.update_exam_questions(g.exam_no, question_no, **extra_data)
+
     return jsonify({"status": True, "data": dict(action=request.method, data=data)})
 
 
@@ -404,7 +413,10 @@ def get_exam_questions():
 
     items = handle_questions(items, no_rich)
     use_time = time.time() - start_time
-    return jsonify({"status": True, "data": items, 'use_time': use_time})
+    exam_item = g.current_exam.to_dict()
+    exam_item['exam_role'] = g.exam_role
+    return jsonify({"status": True, "data": items, 'use_time': use_time,
+                    'exam': exam_item})
 
 
 @exam_view.route("/questions/no/", methods=["GET"])
@@ -769,13 +781,7 @@ def start_sync_es(exam_no):
         a_items = _c_exam.select_multi_question2(exam_no,
                                                  missing_nos[i:i + step])
         for q_item in a_items:
-            doc_id = '%s_%s' % (exam_no, q_item['question_no'])
-            desc = q_item['question_desc']
-            answer = q_item['answer']
-            options = ''
-            if q_item['select_mode'] == 0:
-                options = '\n'.join([o['desc'] for o in q_item['options']])
-            c_exam_es.add_one_item(doc_id, desc, options, answer)
+            sync_one_question(exam_no, q_item)
     return missing_nos
 
 

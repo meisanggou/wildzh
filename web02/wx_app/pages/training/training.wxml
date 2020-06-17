@@ -21,14 +21,14 @@
             <image wx:if="examNo && nowQuestion" bindtap="feedbackClick" class="icon" src="/images/feedback.png"></image>
         </view>
         
-        <view class='middle'>
+        <view class='middle' >
             <!-- <view bindtap='before1' class='switch'>‹</view> -->
-            <view bindtap='before10' class='switch'>‹‹</view>
+            <view wx:if="{{questionNum>1}}" bindtap='before10' class='switch'>‹‹</view>
             <picker bindchange="skipAction" value="{{skipIndex}}" range="{{skipNums}}" >
                 <view class='switchtext'>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
             </picker>
 
-            <view bindtap='after10' class='switch'>››</view>
+            <view wx:if="{{questionNum>1}}" bindtap='after10' class='switch'>››</view>
             <!-- <view bindtap='after1' class='switch'>›</view> -->
             
         </view>
@@ -96,8 +96,8 @@
         </view>
     </view>
     <view class='bottom'>
-        <view bindtap='before1' class='switch'>‹</view>
+        <view wx:if="{{questionNum>1}}" bindtap='before1' class='switch'>‹</view>
         <view class='afterQuestion switchtext' bindtap='showAnswer'>显示答案</view>
-        <view bindtap='after1' class='switch'>›</view>
+        <view wx:if="{{questionNum>1}}" bindtap='after1' class='switch'>›</view>
     </view>
 </view>

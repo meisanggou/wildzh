@@ -31,7 +31,7 @@ Page({
         fbTypeIndex: 1,
         feedbackDesc: ""
     },
-    getQuestionNos: function(options) {
+    getQuestionNos: function (options) {
         that = this;
         var args_url = "";
         var progressStorageKey = "training";
@@ -47,7 +47,7 @@ Page({
             that.setData({
                 isShowSubject: false
             })
-            if("question_chapter" in options){
+            if ("question_chapter" in options) {
                 args_url += "question_chapter=" + options["question_chapter"] + "&";
                 progressStorageKey += "_" + options["question_chapter"];
             }
@@ -123,7 +123,7 @@ Page({
             }
         })
     },
-    onLoad: function(options) {
+    onLoad: function (options) {
         brushList = [];
         this.setData({
             examNo: app.globalData.defaultExamNo,
@@ -132,6 +132,22 @@ Page({
         that = this;
 
         if (that.data.examNo != null) {
+            var questionNo = null;
+            if ('question_no' in options) {
+                questionNo = parseInt(options['question_no']);
+                if (isNaN(questionNo)) {
+                    questionNo = null;
+                } else {
+                    questionItems = [{
+                        'question_no': questionNo
+                    }];
+                    that.setData({
+                        questionNum: 1
+                    })
+                    this.reqQuestion(0, true);
+                    return true;
+                }
+            }
             that.getQuestionNos(options);
         } else {
             wx.showModal({
@@ -147,8 +163,8 @@ Page({
         }
 
     },
-    extractQuestionNos: function(nos_l) {
-        if(typeof nos_l == "string" || nos_l == null ){
+    extractQuestionNos: function (nos_l) {
+        if (typeof nos_l == "string" || nos_l == null) {
             return [];
         }
         var items = [];
@@ -165,7 +181,7 @@ Page({
         }
         return items
     },
-    reqQuestion: function(startIndex, updateShow = false, stepNum = 13) {
+    reqQuestion: function (startIndex, updateShow = false, stepNum = 13) {
         that = this;
         var exam_no = that.data.examNo;
         if (that.data.examNo == null) {
@@ -249,7 +265,7 @@ Page({
                     isReq: false
                 })
             },
-            fail: function({
+            fail: function ({
                 errMsg
             }) {
                 wx.hideLoading();
@@ -260,7 +276,7 @@ Page({
             }
         })
     },
-    after: function(afterNum) {
+    after: function (afterNum) {
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
         var questionLen = questionItems.length;
@@ -272,7 +288,7 @@ Page({
                 content: "是否从头开始练习？",
                 showCancel: true,
                 icon: "none",
-                success: function(res) {
+                success: function (res) {
                     if (res.confirm) {
                         that.reqQuestion(0, true)
                     }
@@ -303,14 +319,14 @@ Page({
             that.reqQuestion(nextIndex, true)
         }
     },
-    after1: function() {
+    after1: function () {
         that.after(1);
     },
 
-    after10: function() {
+    after10: function () {
         that.after(10);
     },
-    before: function(preNum) {
+    before: function (preNum) {
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
         var preIndex = nowQuestionIndex - preNum;
@@ -339,12 +355,12 @@ Page({
         }
 
     },
-    before1: function() {
+    before1: function () {
         that.before(1)
 
     },
 
-    before10: function() {
+    before10: function () {
         that.before(10)
     },
     setSkipNums(num, end_num) {
@@ -371,7 +387,7 @@ Page({
 
             num = p_num;
         }
-        r.sort(function(a, b) {
+        r.sort(function (a, b) {
             return a - b;
         });
         r.push(_num);
@@ -401,11 +417,11 @@ Page({
         return r;
 
     },
-    skipAction: function(e) {
+    skipAction: function (e) {
         var index = e.detail.value;
         this.changeNowQuestion(this.data.skipNums[index] - 1);
     },
-    changeNowQuestion: function(index) {
+    changeNowQuestion: function (index) {
         var skipNums = [];
         var nowQuestion = questionItems[index];
         if ("options" in nowQuestion) {
@@ -427,7 +443,7 @@ Page({
         this.setSkipNums(index + 1, questionItems.length);
         this.saveTrainingProcess();
     },
-    showAnswer: function(e) {
+    showAnswer: function (e) {
         var nowQuestion = that.data.nowQuestion;
         if (nowQuestion == null) {
             return false;
@@ -450,7 +466,7 @@ Page({
             questionAnswer: questionAnswer
         })
     },
-    choseItem: function(e) {
+    choseItem: function (e) {
         var choseIndex = parseInt(e.currentTarget.dataset.choseitem);
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
@@ -464,7 +480,7 @@ Page({
             // 自动进入下一题
             if (this.data.showAnswer == false) {
                 // 当前显示答案 不进入下一题
-                var interval = setInterval(function() {
+                var interval = setInterval(function () {
                     clearInterval(interval)
                     that.after1();
                 }, 1000)
@@ -480,7 +496,7 @@ Page({
             nowQuestion: nowQuestion
         })
     },
-    updateAnswerOption: function(event) {
+    updateAnswerOption: function (event) {
         var selected = event.detail.value;
         var nowQuestion = this.data.nowQuestion;
         var index = this.data.nowQuestionIndex;
@@ -499,29 +515,29 @@ Page({
         nowQuestion.forceUpdate = true;
         this.updateQuestion(nowQuestion.question_no, index, options);
     },
-    actionUpdateAnswer: function() {
+    actionUpdateAnswer: function () {
         var nowQuestion = this.data.nowQuestion;
         var index = this.data.nowQuestionIndex;
         nowQuestion.forceUpdate = true;
         this.updateQuestion(nowQuestion.question_no, index, null, nowQuestion.answer);
     },
-    previewImage: function(event) {
+    previewImage: function (event) {
         var src = event.currentTarget.dataset.src; //获取data-src
         //图片预览
         console.info(src);
         wx.previewImage({
             current: src, // 当前显示图片的http链接
             urls: [src], // 需要预览的图片http链接列表
-            fail: function(e) {
+            fail: function (e) {
                 console.info("preview fail");
             },
-            complete: function(e) {
+            complete: function (e) {
                 console.info("preview complete");
             }
         })
 
     },
-    updateQuestion: function(questionNo, index, options = null, answer = null) {
+    updateQuestion: function (questionNo, index, options = null, answer = null) {
         var uData = new Object();
         uData["question_no"] = questionNo;
         if (options != null) {
@@ -547,7 +563,7 @@ Page({
             }
         })
     },
-    recordWrong: function(exam_no, wrong_question) {
+    recordWrong: function (exam_no, wrong_question) {
         wx.request2({
             url: '/exam/wrong/',
             method: "POST",
@@ -557,60 +573,66 @@ Page({
             }
         })
     },
-    addBrushNum: function(q_no){
-        if (brushList.indexOf(q_no) >= 0){
+    addBrushNum: function (q_no) {
+        if (brushList.indexOf(q_no) >= 0) {
             return false;
         }
         brushNum += 1;
         brushList.push(q_no);
         this.saveBrushNum();
     },
-    saveBrushNum: function(){
-        if(brushNum <= 0){
+    saveBrushNum: function () {
+        if (brushNum <= 0) {
             return false;
         }
         var _num = brushNum;
         brushNum = 0;
         var examNo = this.data.examNo;
-        var data = {'exam_no': examNo, 'num': _num}
+        var data = {
+            'exam_no': examNo,
+            'num': _num
+        }
         wx.request2({
             url: '/exam/usage?exam_no=' + examNo,
             method: 'POST',
             data: data,
-            success: res => {
-            },
-            fail: function(){
+            success: res => {},
+            fail: function () {
                 brushNum += _num;
             }
         })
     },
-    feedbackClick:function(){
+    feedbackClick: function () {
         this.setData({
             hiddenFeedback: false
         });
     },
-    feedbackTypeChange(e){
+    feedbackTypeChange(e) {
         this.setData({
             fbTypeIndex: e.detail.value
         })
     },
-    feedbackDescInput: function(e){
+    feedbackDescInput: function (e) {
         this.setData({
             feedbackDesc: e.detail.value
         });
     },
-    cancelFeedback: function(){
+    cancelFeedback: function () {
         this.setData({
             hiddenFeedback: true
         });
     },
-    confirmFeedback: function(e){
+    confirmFeedback: function (e) {
         this.setData({
             hiddenFeedback: true
         });
         var fb_type = this.data.fbTypes[this.data.fbTypeIndex]
         var questionNo = this.data.nowQuestion.question_no;
-        var data = {'description': this.data.feedbackDesc, 'fb_type': fb_type, 'question_no': questionNo};
+        var data = {
+            'description': this.data.feedbackDesc,
+            'fb_type': fb_type,
+            'question_no': questionNo
+        };
         var that = this;
         wx.request2({
             url: '/exam/question/feedback?exam_no=' + this.data.examNo,
@@ -622,21 +644,19 @@ Page({
                         title: '反馈失败',
                         content: "反馈失败，请稍后重试！",
                         showCancel: false,
-                        success(res) {
-                        }
+                        success(res) {}
                     })
-                    
+
                     return
-                }
-                else{
+                } else {
                     that.setData({
                         feedbackDesc: ""
                     })
                     wx.showToast({
-                        title:"反馈成功"
+                        title: "反馈成功"
                     })
                 }
-                
+
             }
         })
     },
@@ -650,22 +670,22 @@ Page({
         app.getOrSetExamCacheData(this.data.progressStorageKey, this.data.nowQuestionIndex);
 
     },
-    onUnload: function() {
+    onUnload: function () {
         console.info("un load")
         this.saveBrushNum();
         this.saveTrainingProcess();
     },
     // 触摸开始事件
-    touchStart: function(e) {
+    touchStart: function (e) {
         touchStartX = e.touches[0].pageX; // 获取触摸时的原点
         touchStartY = e.touches[0].pageY;
         // 使用js计时器记录时间    
-        touchInterval = setInterval(function() {
+        touchInterval = setInterval(function () {
             touchTime++;
         }, 100);
     },
     // 触摸结束事件
-    touchEnd: function(e) {
+    touchEnd: function (e) {
         var touchEndX = e.changedTouches[0].pageX;
         var touchEndY = e.changedTouches[0].pageY;
         var touchMoveX = touchEndX - touchStartX;

@@ -14,13 +14,15 @@ class ExamEs(object):
         host = '192.168.152.133'
         port = '9200'
         ent = {"host": host, "port": port}
-        self.es_man = elasticsearch.Elasticsearch(hosts=[ent])
+        self.es_man = None  #  elasticsearch.Elasticsearch(hosts=[ent])
         self.index = 'exam_v1'
         self.index_type = 'exam'
         self.index_fields = ['desc', 'options', 'answer']
         self.create_index()
 
     def create_index(self):
+        if not self.es_man:
+            return
         if self.es_man.indices.exists(self.index):
             return
         properties = {}

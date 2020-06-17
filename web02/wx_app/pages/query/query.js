@@ -52,7 +52,7 @@ Page({
     var item = e.detail.item;
     var question_no = item['question_no'];
     wx.navigateTo({
-      url: "../questions/question?select_mode=-1&question_no=" + question_no
+      url: "../training/training?select_mode=-1&question_no=" + question_no
   })
   },
 
