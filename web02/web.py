@@ -11,10 +11,10 @@ from web02 import app, portal_menu_list
 __author__ = 'meisa'
 
 app_dir = os.path.split(os.path.abspath(__file__))[0]
-view_files = os.listdir(os.path.join(app_dir))
+view_files = os.listdir(os.path.join(app_dir, 'views'))
 for view_file in view_files:
     if view_file.endswith("_view.py"):
-        __import__("web02.%s" % view_file[:-3])
+        __import__("web02.views.%s" % view_file[:-3])
 
 app.register_blues()
 l_menu = len(portal_menu_list) + 10
