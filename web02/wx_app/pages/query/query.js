@@ -6,7 +6,9 @@ Page({
    * 页面的初始数据
    */
   data: {
-    examNo: ""
+    examNo: "",
+    noResult: false,
+    queryStr: ""
   },
 
   /**
@@ -18,11 +20,22 @@ Page({
     })
   },
   search: function (value) {
-    console.info(value);
+    var that = this;
+    if(value.length <= 0){
+      return new Promise((resolve, reject) => {
+        resolve([]);
+        that.setData({
+          noResult: false,
+          queryStr: ""
+        })
+      })
+    }
     var data = {
       'query_str': value,
       'exam_no': this.data.examNo
     }
+
+    var queryStr = value;
     return new Promise((resolve, reject) => {
       wx.request2({
         url: '/exam/query',
@@ -40,6 +53,14 @@ Page({
             item['value'] = item['question_no'];
           }
           resolve(items);
+          var noResult = false;
+          if(items.length <= 0){
+            var noResult = true;
+          }
+          that.setData({
+            noResult: noResult,
+            queryStr: queryStr
+          })
           console.info(res.data);
         },
         fail: function ({

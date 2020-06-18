@@ -1,1 +1,2 @@
 <mp-searchbar placeholder="请输入关键字搜索" bindselectresult="selectResult" search="{{search}}"></mp-searchbar>
+<view wx:if="{{ noResult }}" class="tip">未搜索到<text class='warn'>{{ queryStr }}</text>相关内容</view>

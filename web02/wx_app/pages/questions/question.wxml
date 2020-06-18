@@ -12,13 +12,13 @@
             </view>
 
             <view class='middle'>
-                <view bindtap='before1' class='switch'>‹</view>
-                <view bindtap='before10' class='switch'>‹‹</view>
+                <view wx:if="{{ questionNum > 1 }}" bindtap='before1' class='switch'>‹</view>
+                <view wx:if="{{ questionNum > 1 }}" bindtap='before10' class='switch'>‹‹</view>
                 <picker bindchange="skipAction" value="{{skipIndex}}" range="{{skipNums}}">
                     <view class='switchtext'>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
                 </picker>
-                <view bindtap='after10' class='switch'>››</view>
-                <view bindtap='after1' class='switch'>›</view>
+                <view wx:if="{{ questionNum > 1 }}" bindtap='after10' class='switch'>››</view>
+                <view wx:if="{{ questionNum > 1 }}" bindtap='after1' class='switch'>›</view>
             </view>
 
             <view class='content'>
@@ -81,11 +81,11 @@
 
         </view>
         <view class='bottom'>
-            <view bindtap='before1' class='switch'>‹</view>
+            <view wx:if="{{ questionNum > 1 }}" bindtap='before1' class='switch'>‹</view>
 
             <button class='updateButton' form-type="submit">更新</button>
 
-            <view bindtap='after1' class='switch'>›</view>
+            <view wx:if="{{ questionNum > 1 }}" bindtap='after1' class='switch'>›</view>
         </view>
 
     </form>

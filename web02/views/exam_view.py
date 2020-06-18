@@ -730,6 +730,7 @@ def notify_feedback(data):
                                       data['fb_type'],
                                       data['question_no'],
                                       data['description'])
+        print(res)
     return True
 
 
