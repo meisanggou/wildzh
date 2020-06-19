@@ -1,8 +1,0 @@
-/* pages/query/query.wxss */
-.tip {
-    margin-top: 50rpx;
-    text-align: center;
-}
-.warn {
-    color: red;
-}

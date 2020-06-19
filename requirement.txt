@@ -3,7 +3,7 @@ mysqldb-rich
 Flask
 Flask-Login
 Flask-Helper
-pycrypto
+pycryptodome
 Image
 qrcode
 requests
