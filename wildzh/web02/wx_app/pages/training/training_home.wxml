@@ -1,0 +1,58 @@
+<import src="../common/head.wxml" />
+
+<view class="container">
+    <template is="head" data="{{title: '选择科目和题型'}}" />
+
+    <view class="page-body">
+        <view class="page-section">
+            <view class="weui-cells__title">练习模式</view>
+            <view class="weui-cells weui-cells_after-title">
+                <view class="weui-cell weui-cell_input">
+                    <view class="weui-cell__hd">
+                        <view class="weui-label">模式</view>
+                    </view>
+                    <view class="weui-cell__bd">
+                        <picker bindchange="bindPickerChange" value="{{index}}" range="{{training_modes}}">
+                            <view class="weui-input">{{training_modes[index]}}</view>
+                        </picker>
+                    </view>
+                </view>
+            </view>
+
+            <view wx:if="{{index==1}}">
+                <view class="weui-cells__title">练习科目</view>
+                <view class="weui-cells weui-cells_after-title">
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">科目</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <picker mode="multiSelector" bindchange="subjectChange" range-key="name" value="{{subjectIndexs}}" range="{{subjects_array}}" bindcolumnchange="bindSubjectColumnChange">
+                                <view class="weui-input">{{subjects_array[0][subjectIndexs[0]].name}}</view>
+                            </picker>
+                        </view>
+                    </view>
+                </view>
+                <view class="weui-cells__title">选择章节： {{subjects_array[1][subjectIndexs[1]].name}}</view>
+            </view>
+
+            <view class="weui-cells__title">练习题型</view>
+            <view class="weui-cells weui-cells_after-title">
+                <view class="weui-cell weui-cell_input">
+                    <view class="weui-cell__hd">
+                        <view class="weui-label">题型</view>
+                    </view>
+                    <view class="weui-cell__bd">
+                        <picker bindchange="selectModeChange" range-key="name" value="{{modeIndex}}" range="{{select_modes}}">
+                            <view class="weui-input">{{select_modes[modeIndex].name}}</view>
+                        </picker>
+                    </view>
+                </view>
+            </view>
+
+        </view>
+    </view>
+    <button type="default"  plain="true" bindtap='startTraining' disabled="{{errorMsg}}">开始练习</button>
+    <button wx:if='{{canUpdate}}' plain="true" bindtap='startUpdateQuestion'>更新题目</button>
+    <view wx:if='{{errorMsg}}' class="error-tip">{{errorMsg}}</view>
+</view>

@@ -1,0 +1,4 @@
+var slice = function (a, start, end) {
+    return a.slice(start, end)
+}
+module.exports.slice = slice;

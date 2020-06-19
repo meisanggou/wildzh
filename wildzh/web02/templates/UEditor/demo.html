@@ -1,0 +1,27 @@
+{% extends "base_menu.html" %}
+
+
+{% block title %}{% if h_title %}{{ h_title }}{% else %}UEditor富文本编辑{% endif %}{% endblock %}
+
+
+
+{% block js_content %}
+    {{ 't_js/ueditor/ueditor.config.js' | make_static_html | safe }}
+    {{ 't_js/ueditor/ueditor.all.js' | make_static_html | safe }}
+    {{ 't_js/ueditor/demo.js' | make_static_html | safe }}
+    {{ 't_js/Common/download_json.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+    <a class="btn btn-primary pull-right margin10" href="javascript:void(0)" title="">返回</a>
+    <!-- 加载编辑器的容器 -->
+    <div style="padding-top: 50px">
+    <script id="container" name="content" type="text/plain">
+        欢迎使用UEditor
+    </script>
+    </div>
+    <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_save_all_html">保存All Html</a>
+    <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_save_content">保存Content</a>
+    <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_save_content_text">保存Content Text</a>
+    <a class="btn btn-primary" href="javascript:void(0)" title="" id="btn_save_plain_text">保存Plain Text</a>
+{% endblock %}

@@ -1,0 +1,5 @@
+/* tab选项卡的相关样式 */
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{background: #337ab7;color: #fff;}
+.inputPadding5{padding: 5px;}
+.sidebarBox{position: absolute;left: 20px;top:142px;width: 18%;z-index: 1;background-color: #fff;}
+.div_jy_about_task a:hover{z-index: 10;text-decoration: none;}

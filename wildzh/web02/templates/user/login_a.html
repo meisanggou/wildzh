@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/static01/images/favicon.jpg" type="image/jpg">
+    <title></title>
+    {{ 'css/icons.css' | make_static_html | safe }}
+    {{ 'css/bootstrap.min.css' | make_static_html | safe }}
+    {{ 'css/style.css' | make_static_html | safe }}
+    {{ 'css/responsive.css' | make_static_html | safe }}
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    {{ 'js/html5shiv.min.js' | make_static_html | safe }}
+    {{ 'js/respond.min.js' | make_static_html | safe }}
+    <![endif]-->
+    {{ 't_js/my_requests.js' | make_static_html2 | safe }}
+    {{ 't_js/vue.js' | make_static_html2 | safe }}
+
+</head>
+
+<body class="sticky-header">
+
+
+<!--Start login Section-->
+<section class="login-section">
+    <div class="container" id="div_login">
+        <div class="row">
+            <div class="login-wrapper">
+                <div class="login-inner">
+                    {#                       <div class="logo">#}
+                    {#                         <img src="/static01/images/favicon.jpg"  alt="logo"/>#}
+                    {#                       </div>#}
+                    <h2 class="header-title text-center">登录</h2>
+
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Username" v-model.trim="user_name">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="Password" v-model="password">
+                        </div>
+
+                        <div class="form-group">
+                            <div class="pull-left">
+                                <div class="checkbox primary">
+                                    <input id="checkbox-2" type="checkbox">
+                                    <label for="checkbox-2">Remember me</label>
+                                </div>
+                            </div>
+
+                            <!--<div class="pull-right">-->
+                                <!--<a href="reset-password.html" class="a-link"><i class="fa fa-unlock-alt"></i>忘记密码? </a>-->
+                            <!--</div>-->
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-block" @click="login">登录</button>
+                        </div>
+                        <div class="form-group text-center">没有账号? <a href="registration.html">注册</a>
+                        </div>
+
+
+                    <div class="copy-text">
+                        <p class="m-0">2018 &copy; wild admin</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <input id="login_url" value="{{ login_url }}" style="display:none;"/>
+    <input id="next_url" value="{{ next_url }}" style="display:none;"/>
+</section>
+<!--End login Section-->
+
+
+<!--Begin core plugin -->
+{{ 'js/jquery.min.js' | make_static_html | safe }}
+{{ 'js/bootstrap.min.js' | make_static_html | safe }}
+{{ 't_js/user/login_a.js' | make_static_html | safe }}
+<!-- End core plugin -->
+
+</body>
+
+</html>

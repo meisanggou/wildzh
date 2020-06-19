@@ -1,0 +1,73 @@
+<import src="../common/head.wxml" />
+
+<view class="container">
+	<!-- <template is="head" data="{{title: '选择科目和题型'}}" /> -->
+
+	<view class="page-body">
+		<view class="page-section">
+			<view class="weui-cells__title">测试模式</view>
+			<view class="weui-cells weui-cells_after-title">
+				<view class="weui-cell weui-cell_input">
+					<view class="weui-cell__hd">
+						<view class="weui-label">模式</view>
+					</view>
+					<view class="weui-cell__bd">
+						<picker bindchange="bindPickerChange" value="{{index}}" range="{{training_modes}}">
+							<view class="weui-input">{{training_modes[index]}}</view>
+						</picker>
+					</view>
+				</view>
+			</view>
+
+			<view wx:if="{{index==1}}">
+				<view class="weui-cells__title">测试科目</view>
+				<view class="weui-cells weui-cells_after-title">
+					<view class="weui-cell weui-cell_input">
+						<view class="weui-cell__hd">
+							<view class="weui-label">科目</view>
+						</view>
+						<view class="weui-cell__bd">
+							<picker bindchange="subjectChange" range-key="name" value="{{subjectIndex}}" range="{{subjects_array}}">
+								<view class="weui-input">{{subjects_array[subjectIndex].name}}</view>
+							</picker>
+						</view>
+					</view>
+				</view>
+			</view>
+
+			<view class="weui-cells__title">分题型测试</view>
+			<view class="weui-cells weui-cells_after-title">
+				<view class="weui-cell weui-cell_switch">
+					<view class="weui-cell__bd">分题型测试</view>
+					<view class="weui-cell__ft">
+						<switch wx:if="{{isAccordingToType}}" checked bindchange="switchModeChange" />
+						<switch wx:else bindchange="switchModeChange" />
+					</view>
+				</view>
+			</view>
+
+			<view wx:if="{{isAccordingToType}}">
+				<view class="weui-cells__title">测试题型</view>
+				<view class="weui-cells weui-cells_after-title">
+					<view class="weui-cell weui-cell_input">
+						<view class="weui-cell__hd">
+							<view class="weui-label">题型</view>
+						</view>
+						<view class="weui-cell__bd">
+							<picker bindchange="selectModeChange" range-key="name" value="{{modeIndex}}" range="{{select_modes}}">
+								<view class="weui-input">{{select_modes[modeIndex].name}}</view>
+							</picker>
+						</view>
+					</view>
+				</view>
+			</view>
+
+
+		</view>
+        <view>
+        </view> 
+        
+	</view>
+	<button type="default" plain="true" bindtap='startTraining' disabled="{{errorMsg}}">开始测试</button>
+	<view wx:if='{{errorMsg}}' class="error-tip">{{errorMsg}}</view>
+</view>

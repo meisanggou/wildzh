@@ -1,0 +1,52 @@
+<view class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
+  <view class="loading_box" wx:if="{{loading}}">
+    <view class="loading3 loading3_1"></view>
+    <view class="loading3 loading3_2"></view>
+    <view class="loading3 loading3_3"></view>
+  </view>
+  <view class='top'>
+    <view class='topLeft'>
+      <text style='margin-left:20rpx;'>{{examName}}</text>
+    </view>
+    <view class='topRight'>
+      <view class='topRightContent'>
+        <text style='font-style:italic;margin-right:10rpx;'>{{nowQuestionIndex+1}}</text>
+        <text> / {{ totalQuestionNumber }}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class='questionTitle'>
+    <block wx:for="{{nowQuestion.question_desc_rich}}">
+      <block wx:if="{{item.url}}">
+        <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+      </block>
+      <block wx:else>
+        {{item}}
+      </block>
+    </block>
+  </view>
+  <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
+  <view class='questionOption'>
+    <view class="{{nowQuestion.options[idx].chosed==true? 'chose':'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}">{{optionChar[idx]}}、
+      <block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item">
+        <block wx:if="{{desc_item.url}}">
+          <image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;' src="{{remote_host}}{{desc_item.url}}"></image>
+        </block>
+        <block wx:else>
+          {{desc_item}}
+        </block>
+
+      </block>
+    </view>
+  </view>
+
+
+
+  <view class='bottom'>
+    <view bindtap='before1' class='switch'>‹</view>
+    <view class='afterQuestion' bindtap='submit'>交卷</view>
+    <view bindtap='after1' class='switch'>›</view>
+  </view>
+
+</view>

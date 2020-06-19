@@ -1,0 +1,66 @@
+<view class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
+  <view class='top'>
+    <view bindtap='before1'>‹</view>
+    <view bindtap='remove'>{{nowQuestionIndex + 1}}/{{ totalQuestionNum}}</view>
+    <view bindtap='after1'>›</view>
+  </view>
+
+  <view class='content'>
+    <view class='title'>{{nowQuestionIndex+1}}.
+      <block wx:for="{{nowQuestion.question_desc_rich}}">
+        <block wx:if="{{item.url}}">
+          <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+        </block>
+        <block wx:else>
+          {{item}}
+        </block>
+      </block>
+    </view>
+    <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
+  </view>
+
+  <view class='options'>
+    <view class='item' wx:for="{{nowQuestion.options}}" wx:for-index="idx">{{optionChar[idx]}}、
+      <block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item">
+        <block wx:if="{{desc_item.url}}">
+          <image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;' src="{{remote_host}}{{desc_item.url}}"></image>
+        </block>
+        <block wx:else>
+          {{desc_item}}
+        </block>
+
+      </block>
+    </view>
+  </view>
+
+  <view class='line'></view>
+
+  <view wx:if="{{showAnswer}}">
+    <view class='item'>
+      <block wx:for="{{questionAnswer}}">
+        <block wx:if="{{item.url}}">
+          <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+        </block>
+        <block wx:else>
+          {{item}}
+        </block>
+      </block>
+    </view>
+    <scroll-view scroll-y="true" class='item'>解析：
+      <block wx:for="{{nowQuestion.answer_rich}}">
+        <block wx:if="{{item.url}}">
+          <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+        </block>
+        <block wx:else>
+          {{item}}
+        </block>
+      </block>
+    </scroll-view>
+  </view>
+
+  <view class='bottom'>
+    <view class='backHome' bindtap='backHome'>返回首页</view>
+    <view class='showAnswer' bindtap='showAnswer'>查看答案</view>
+  </view>
+
+</view>

@@ -1,0 +1,139 @@
+<import src="../common/head.wxml" />
+
+<view class="container main">
+	<!-- <template is="head" data="{{title: '题库成员管理'}}" /> -->
+
+	<view class="page-body">
+		<view class="page-section">
+			<view class="weui-cells__title">选择题库</view>
+			<view class="weui-cells weui-cells_after-title">
+				<view class="weui-cell weui-cell_input">
+					<view class="weui-cell__hd">
+						<view class="weui-label">题库</view>
+					</view>
+					<view class="weui-cell__bd">
+						<picker bindchange="bindPickerChange" range-key="exam_name" value="{{index}}" range="{{allExams}}">
+							<view class="weui-input">{{allExams[index].exam_name}}</view>
+						</picker>
+					</view>
+				</view>
+			</view>
+			<block wx:if="{{ isGrant }}">
+				<view class="weui-cells__title">输入用户编号</view>
+				<view class="weui-cells weui-cells_after-title">
+					<view class="weui-cell weui-cell_input">
+						<view class="weui-cell__hd">
+							<view class="weui-label">编号</view>
+						</view>
+						<view class="weui-cell__bd">
+							<input wx:if="{{isQuery}}" name="memberNo" class="weui-input" type="number" maxlength="8" bindinput="inputNoChange" value="{{memberNo}}"></input>
+							<input wx:else class="weui-input" type="number" maxlength="8" value="{{memberNo}}" disabled></input>
+						</view>
+						<view wx:if="{{!isQuery}}" class="weui-cell__ft">
+							<text bindtap="toQuery">更换</text>
+						</view>
+					</view>
+				</view>
+
+				<!-- <view class="weui-cells__title">设置用户角色</view>
+                <view class="weui-cells weui-cells_after-title">
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">角色</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <picker bindchange="selectModeChange" value="{{roleIndex}}" range="{{select_modes}}">
+                                <view class="weui-input">{{select_modes[roleIndex]}}</view>
+                            </picker>
+                        </view>
+                    </view>
+                </view> -->
+				<block wx:if="{{!isQuery}}">
+					<view class="weui-cells__title">当前权限：{{currentMember.memberRole}}</view>
+					<view class="weui-cells__title">截止日期：<text class="warn">{{currentMember.memberEndTime}}</text></view>
+					<view class="center" wx:for="{{flows}}" wx:key="updateTime">{{item.grantTime}}<text class="warn" wx:if="{{item.prefix}}">({{item.prefix}})</text> 授权至 {{item.endTime}}</view>
+					<view class="weui-cells__title center">更新或增加授权</view>
+					<view class="weui-cells weui-cells_after-title">
+						<view class="weui-cell weui-cell_switch">
+							<view class="weui-cell__bd">按照天数授权</view>
+							<view class="weui-cell__ft">
+								<switch wx:if="{{byDays}}" checked bindchange="switchbyDaysChange" />
+								<switch wx:else bindchange="switchbyDaysChange" />
+							</view>
+						</view>
+					</view>
+					<block wx:if="{{byDays}}">
+						<view class="weui-cells__title">选择天数</view>
+						<view class="weui-cells weui-cells_after-title">
+							<view class="weui-cell weui-cell_input">
+								<view class="weui-cell__hd">
+									<view class="weui-label">天数</view>
+								</view>
+								<view class="weui-cell__bd">
+									<picker bindchange="bindDaysChange" value="selectDayIndex" range-key="desc" range="{{gDays}}">
+										<view class="weui-input">{{gDays[selectDayIndex]['desc']}}</view>
+									</picker>
+								</view>
+							</view>
+						</view>
+					</block>
+					<view wx:if="{{byDays}}" class="weui-cells__title">授权终止时间: <text class="warn">{{endTime}}</text></view>
+					<block wx:else>
+						<view class="weui-cells__title">授权终止时间</view>
+						<view class="weui-cells weui-cells_after-title">
+							<view class="weui-cell weui-cell_input">
+								<view class="weui-cell__hd">
+									<view class="weui-label">时间</view>
+								</view>
+								<view class="weui-cell__bd">
+									<picker mode="date" value="{{endTime}}" start="2015-09-01" end="2999-12-31" bindchange="bindDateChange">
+										<view class="weui-input warn">{{endTime}}</view>
+									</picker>
+								</view>
+							</view>
+						</view>
+					</block>
+					<button plain="true" bindtap="grantAction">授权</button>
+				</block>
+
+				<button wx:if="{{isQuery}}" plain="true" bindtap="queryAction">查询</button>
+			</block>
+			<block wx:else>
+				<view class="table">
+					<view class="tr bg-w">
+						<view class="th">用户编号</view>
+						<view class="th">用户昵称</view>
+						<view class="th">成员权限</view>
+						<view class="th ">到期时间</view>
+					</view>
+					<block wx:for="{{members}}" wx:key='user_no'>
+						<view class="tr bg-g" wx:if="{{index % 2 == 0}}" data-index="{{index}}" bindtap="showDetail">
+							<view class="td">{{item.user_no}}</view>
+							<view class="td">{{nickNames[index].nick_name}}</view>
+							<view class="td">{{item.memberRole}}</view>
+							<view class="td">{{item.memberEndTime}}</view>
+						</view>
+						<view class="tr bg-f" wx:else data-index="{{index}}" bindtap="showDetail">
+							<view class="td">{{item.user_no}}</view>
+							<view class="td">{{nickNames[index].nick_name}}</view>
+							<view class="td">{{item.memberRole}}</view>
+							<view class="td">{{item.memberEndTime}}</view>
+						</view>
+						<view class="fb-description" wx-if="{{detailIndex==index}}">
+							<view>反馈描述：<textarea class="desc-content" disabled="true" auto-height="true" value="{{item.description}}"></textarea></view>
+							<view wx-if="{{ item.state == 1 }}">上次处理：<textarea class="desc-content" disabled="true" auto-height="true" value="{{item.result}}"></textarea></view>
+							<button size="mini" bindtap="toQuestion">跳转到题目</button>
+							<button size="mini" bindtap="feedbackClick">处理</button>
+						</view>
+					</block>
+
+				</view>
+			</block>
+		</view>
+
+	</view>
+
+</view>
+<view class='bottom'>
+	<view class='' bindtap='changePage'>{{pageButtonText}}</view>
+</view>

@@ -1,0 +1,57 @@
+{% extends "base_a.html" %}
+
+
+{% block js_content %}
+{{ 't_js/exam/strategy.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+<div id="div_content">
+    <div class="tab-content" style="padding-top: 20px;">
+        <div class="form-group apiContentLine">
+            <ul>
+                <li>
+                    <label>题库名称：</label>
+                    <select class="box-side width150" type="text" @change="select_exam" v-model="current_exam_index">
+                        <option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>
+                    </select>
+                </li>
+                <li>
+                    <label>选择策略：</label>
+                    <select class="box-side width150" type="text" @change="select_strategy" v-model="current_strategy_index">
+                        <option value="-1">--新建策略--</option>
+                        <option v-for="(item,index) in strategies" :value="index">{{item["strategy_name"]}}</option>
+                    </select>
+                </li>
+                <li>
+                    <label>策略名称：</label>
+                    <input type="text" class="box-side width150" v-model='strategy_name'>
+                </li>
+                <li>
+                    <label>智能组卷：</label>
+                    <button class="btn btn-success" v-if="strategy_pattern.length<10" @click="add_mode(-1)">增加题型</button>
+                </li>
+                <div class="panel panel-default" v-for="(sub_item, index) in strategy_pattern">
+                    <div class="panel-heading">
+                        <li>
+                            <strong>#{{index+1}}</strong>
+                            <label class="left5">题型：</label>
+                            <select class="box-side width100" type="text"v-model="sub_item.value">
+                                <option v-for="(mod_item,index) in select_modes" v-if="mod_item.enable" :value="index">{{mod_item["name"]}}</option>
+                            </select>
+                            <label>题目数：</label>
+                            <input type="text" class="box-side width100" v-model.number='sub_item.num'>
+                            <a href='javascript:void(0)' @click="remove_mode(index)" class="left5">移除</a>
+                            <a href='javascript:void(0)' @click="add_mode(index+1)" class="left5">增加题型</a>
+                        </li>
+                    </div>
+                </div>
+
+
+            </ul>
+        </div>
+        <button class="btn btn-success btn-down api-newBtn" @click="update">更新</button>
+        <button v-if="strategy_id" class="btn btn-warning btn-down api-newBtn" @click="remove_strategy">删除</button>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+/* pages/me/exam_usage.wxss */
+@import "../common/table.wxss";
+
+.bottom {
+  width: 100%;
+  font-size: 28rpx;
+  position: fixed;
+  bottom: 0rpx;
+  background-color: #fff;
+  height: 100rpx;
+  border-top: 1px solid #c9c9d8;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 10;
+}
+/* .bottom-p {
+    float:right;
+}
+
+.down-slip {
+    width: 50rpx;
+    height: 50rpx;
+    float: left;
+} */
+
+.fb-description{
+  margin-left: 20rpx;
+  margin-top: 20rpx;
+  margin-bottom: 25rpx;
+  background-color: white;
+}
+
+.desc-content{
+  border-width: 0rpx;
+  border-style: solid;
+  border-left-width: 2rpx;
+  padding-left: 20rpx;
+  border-left-color: black;
+  margin-top: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.feedback-type{
+  width: 100%;
+  font-size: 36rpx;
+  background-color: white;
+  /* background-color: transparent; */
+  margin-top: 20rpx;
+  margin-bottom: 30rpx;
+}
+.fd-type-picker{
+  width: 100%;
+}
+.fb-type-k {
+  width: 35%;
+  font-weight: bold;
+  /* padding-right: 10rpx; */
+  display: inline-block;
+}
+
+.fb-type-v {
+  width: 65%;
+  text-align: center;
+  background-color: white;
+  /* padding-left: 20rpx; */
+  /* padding-right: 20rpx; */
+  padding-top: 20rpx;
+  padding-bottom: 20rpx;
+  display: inline-block;
+}
+
+.fb-desc{
+  font-size: 36rpx;
+  background-color: white;
+  width: 100%;
+}
