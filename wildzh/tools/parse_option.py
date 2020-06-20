@@ -88,7 +88,7 @@ class ParseOptions(object):
         if self._o_compile:
             return self._o_compile
         jr_chars = "|".join(self.e_follow_chars)
-        self._o_compile = re.compile(ur"(?:^|\s)\(?\s*([ABCD])\s*\)?(?:%s)" % jr_chars)
+        self._o_compile = re.compile(r"(?:^|\s)\(?\s*([ABCD])\s*\)?(?:%s)" % jr_chars)
         return self._o_compile
 
     def split_special_option(self, option_key, s):

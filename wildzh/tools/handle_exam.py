@@ -9,9 +9,9 @@ import requests
 import subprocess
 import uuid
 
-from parse_question import QuestionSet, AnswerLocation
+from wildzh.tools.parse_question import QuestionSet, AnswerLocation
 
-from read_xml import read_docx, read_answers_docx
+from wildzh.tools.read_xml import read_docx, read_answers_docx
 
 __author__ = 'zhouhenglc'
 
@@ -20,7 +20,7 @@ headers = {"User-Agent": "jyrequests"}
 req.headers = headers
 remote_host = "https://meisanggou.vicp.net"
 remote_host = "http://127.0.0.1:2400"
-# remote_host = "https://wild.gene.ac"
+remote_host = "https://wild.gene.ac"
 
 exec_file_dir, exec_file_name = os.path.split(os.path.abspath(__file__))
 EXE_WMF_TO_PNG = os.path.join(exec_file_dir, "Wmf2Png.exe")
@@ -29,9 +29,16 @@ REAL_UPLOAD = False
 
 
 def execute_cmd(cmd):
+    cmd = [str(p) for p in cmd]
     sub_pro = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # sub_pro.wait()
-    output = "\n".join(sub_pro.communicate())
+    s = sub_pro.communicate()
+    o_lines = []
+    for l in s:
+        if isinstance(l, bytes):
+            l = l.decode('utf-8').strip()
+        o_lines.append(l)
+    output = "\n".join(o_lines)
     return sub_pro.returncode, output
 
 
@@ -68,12 +75,15 @@ def req_max_no(exam_no):
     url = remote_host + "/exam/questions/no/"
     response = req.get(url, params=dict(exam_no=exam_no))
     res = response.json()
+    if res['status'] is False:
+        raise RuntimeError(res['data'])
     return res["data"]
 
 
 def post_questions(questions_set):
     exam_no = questions_set.exam_no
     no_info = req_max_no(exam_no)
+    print(no_info)
     next_no = no_info["next_no"]
     url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
     question_no = next_no
@@ -384,25 +394,25 @@ if __name__ == "__main__":
     exam_no = 1567506833  # 测试包含图片
     # exam_no = 1569283516  # 专升本经济学题库
     exam_no = 1570447137  # 专升本经济学题库 会员版
-    exam_no = 1585396371  # 本地 测试题库2
+    # exam_no = 1585396371  # 本地 测试题库2
     t_exam_no = 1591669814  # 本地 测试题库2-copy
     # exam_no = 1573464937  # 英语托业
     # 538 + 319
-    transfer_exam(exam_no, 1, 5000, t_exam_no)
+    # transfer_exam(exam_no, 1, 5000, t_exam_no)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
-    d_path = ur'D:\Project\word\app\更新题9.docx'
+    d_path = r'D:\Project\word\app\试卷（二）.docx'
     # read_docx(d_path)
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
-    s_kwargs = dict(exam_no=exam_no, dry_run=False, set_mode=False,
-                    answer_location=AnswerLocation.file(),
+    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
+                    answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
     q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'
     # find_from_dir(d, q_set)
     # download_questions(1569283516, 2)
     # download_usage(exam_no, [1, 2, 3, 4])
-    # handle_exam_no_answer(d_path, q_set)
+    handle_exam_no_answer(d_path, q_set)
 

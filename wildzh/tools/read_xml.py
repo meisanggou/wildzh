@@ -9,20 +9,20 @@ import shutil
 import sys
 import tempfile
 import uuid
-from win32com import client as wc
+# from win32com import client as wc
 import xml.dom.minidom as minidom
 import zipfile
 
-from parse_question import ParseQuestion, QuestionType, QuestionSet
-from parse_question import Answer, AnswerSet, ParseAnswer, AnswerLocation
+from wildzh.tools.parse_question import ParseQuestion, QuestionType, QuestionSet
+from wildzh.tools.parse_question import Answer, AnswerSet, ParseAnswer, AnswerLocation
 
-reload(sys)
-sys.setdefaultencoding('utf8')
+# reload(sys)
+# sys.setdefaultencoding('utf8')
 
 
 Q_TYPE_COMP = re.compile(u"((一|二|三|四|五|六)[、.]|^)(单选|单项|选择|名词解释|简答|简答题|计算|计算题|论述|论述题)")
-S_ANSWER_COMP = re.compile(ur"(\d+)(?:-|—)(\d+)([a-d]+)", re.I)
-S_ANSWER_COMP2 = re.compile(ur"(?:\s|^)(\d+)([a-d](?:\s|$))", re.I)
+S_ANSWER_COMP = re.compile(r"(\d+)(?:-|—)(\d+)([a-d]+)", re.I)
+S_ANSWER_COMP2 = re.compile(r"(?:\s|^)(\d+)([a-d](?:\s|$))", re.I)
 G_SELECT_MODE = [u"无", u"选择", u"名词解释", u"简答题", u"计算题", u"论述题"]
 
 
@@ -67,18 +67,19 @@ def extract_docx(docx_path):
     shutil.rmtree(temp_dir)
 
 
-def doc_to_docx(doc_path):
-    word = wc.Dispatch("Word.Application")
-    doc = word.Documents.Open(doc_path)
-    docx_path = doc_path + "x"
-    doc.SaveAs(docx_path, 12)  # 12为docx
-    doc.Close()
-    word.Quit()
-    return docx_path
+# def doc_to_docx(doc_path):
+#     word = wc.Dispatch("Word.Application")
+#     doc = word.Documents.Open(doc_path)
+#     docx_path = doc_path + "x"
+#     doc.SaveAs(docx_path, 12)  # 12为docx
+#     doc.Close()
+#     word.Quit()
+#     return docx_path
 
 
 def _get_node(p_node, node_name):
-    return filter(lambda x: x.nodeName == node_name, p_node.childNodes)
+    f =  filter(lambda x: x.nodeName == node_name, p_node.childNodes)
+    return list(f)
 
 
 def _get_one_node(p_node, node_name):
@@ -207,7 +208,7 @@ def handle_docx_main_xml(xml_path, *args, **kwargs):
     current_question = []
     current_question_no = 0
     s_c = args
-    m_compile = re.compile(ur"(\d+)(%s)" % "|".join(map(lambda x: re.escape(x), s_c)))
+    m_compile = re.compile(r"(\d+)(%s)" % "|".join(map(lambda x: re.escape(x), s_c)))
 
     def _get_question():
         if not current_question:
@@ -308,7 +309,7 @@ def get_answers(answer_items, parse_answer):
 
 def get_qa_answers(answer_items, parse_answer):
     aw_dict = []
-    qa_aw_comp = re.compile(ur"^(\d+)(.|、|．)([\s\S]*)")
+    qa_aw_comp = re.compile(r"^(\d+)(.|、|．)([\s\S]*)")
     current_no = -1
     current_answer = ""
     answer_items = map(lambda x: x.strip(), answer_items)
@@ -419,10 +420,10 @@ def find_from_dir(directory_name):
             continue
         elif file_path.endswith(u"答案.docx") is True:
             continue
-        elif file_path.endswith(".doc") is True:
-            if os.path.exists(file_path + "x"):
-                continue
-            file_path = doc_to_docx(file_path)
+        # elif file_path.endswith(".doc") is True:
+        #     if os.path.exists(file_path + "x"):
+        #         continue
+        #     file_path = doc_to_docx(file_path)
         elif file_path.endswith(".docx") is False:
             print(u"跳过文件 %s" % file_path)
             continue
