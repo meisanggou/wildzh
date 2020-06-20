@@ -172,6 +172,8 @@ class User(object):
         for u_item in db_items:
             try:
                 u_item["nick_name"] = base64.b64decode(u_item["nick_name"])
+                if isinstance(u_item['nick_name'], bytes):
+                    u_item['nick_name'] = u_item['nick_name'].decode('utf-8')
             except Exception as e:
                 print(e)
         return db_items
@@ -257,6 +259,8 @@ class User(object):
         for u_item in items:
             try:
                 u_item["nick_name"] = base64.b64decode(u_item["nick_name"])
+                if isinstance(u_item['nick_name'], bytes):
+                    u_item['nick_name'] = u_item['nick_name'].decode('utf-8')
             except Exception as e:
                 print(e)
         return items

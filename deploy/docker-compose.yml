@@ -1,12 +1,11 @@
 services:
   wildzh:
-    command:
     container_name: wildzh
     network_mode: host
-    image: mysql:5.7
+    image: wildzh
     restart: always
     volumes:
-    - dms-mysql:/opt/wildzh
+    - $(pwd)/../:/opt/wildzh
   wildzh-es:
     container_name: wildzh-es
     environment:

@@ -685,7 +685,8 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
     def _insert_wrong_answer(self, user_no, exam_no, question_nos):
         cols = ["user_no", "exam_no", "question_no", "wrong_time", "wrong_freq"]
         wrong_time = int(time.time())
-        values = map(lambda x: [user_no, exam_no, x, wrong_time, 1], question_nos)
+        values = list(map(lambda x: [user_no, exam_no, x, wrong_time, 1],
+                          question_nos))
         l = self.db.execute_duplicate_insert_mul(self.t_w, cols, values, u_keys=["wrong_time"],
                                                  p1_keys=["wrong_freq"])
         return l
