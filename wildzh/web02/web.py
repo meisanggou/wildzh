@@ -26,4 +26,7 @@ portal_menu_list.sort(key=lambda x: x["index"])
 app.jinja_env.globals["portal_menu_list"] = portal_menu_list
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=2400)
+    port = 2400
+    if len(sys.argv) > 1:
+        port = int(sys.argv[1])
+    app.run(host="0.0.0.0", port=port)

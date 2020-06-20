@@ -22,6 +22,10 @@ class AnswerLocation(object):
     def __init__(self, value):
         self.value = value
 
+    @property
+    def IAmFile(self):
+        return AnswerLocation.is_file(self)
+
     @classmethod
     def embedded(cls):
         return cls('Embedded')

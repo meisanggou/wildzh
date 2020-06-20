@@ -249,33 +249,11 @@ def handle_exam_with_answer(file_path, questions_set):
         post_questions(questions_set)
     return True, "success"
 
-
-def upload_js_with_answer(exam_no, file_path, dry_run=True, set_source=False):
-    login("admin", "admin")
-    return handle_exam_with_answer(exam_no, file_path, 4, dry_run=dry_run,
-                                   set_source=set_source)
-
-
-def upload_xz_no_answer(exam_no, file_path, dry_run=True, set_source=False):
-    # 选择题
-    login("admin", "admin")
-    return handle_exam_no_answer(exam_no, file_path, 1, dry_run=dry_run,
-                                 set_source=set_source)
-
-
-def upload_jd_no_answer(exam_no, file_path, dry_run=True, set_source=False):
-    # 简答题
-    login("admin", "admin")
-    return handle_exam_no_answer(exam_no, file_path, 3, dry_run=dry_run,
-                                 set_source=set_source)
-
-
-def upload_mc_no_answer(exam_no, file_path, dry_run=True, set_source=False,
-                        has_answer=True):
-    # 简答题
-    login("admin", "admin")
-    return handle_exam_no_answer(exam_no, file_path, 2, dry_run=dry_run,
-                                 set_source=set_source, has_answer=has_answer)
+def handle_exam(file_path, question_set):
+    if question_set.answer_location.IAmFile:
+        handle_exam_with_answer(file_path, question_set)
+    else:
+        handle_exam_no_answer(file_path, question_set)
 
 
 def upload_js_no_answer(exam_no, file_path, questions_set):
@@ -414,5 +392,5 @@ if __name__ == "__main__":
     # find_from_dir(d, q_set)
     # download_questions(1569283516, 2)
     # download_usage(exam_no, [1, 2, 3, 4])
-    handle_exam_no_answer(d_path, q_set)
+    handle_exam(d_path, q_set)
 

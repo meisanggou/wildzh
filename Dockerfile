@@ -2,7 +2,7 @@ FROM docker.io/python
 MAINTAINER meisanggou
 
 
-ADD https://raw.githubusercontent.com/zhmsg/dms/master/requirement.txt /tmp/
+ADD https://github.com/meisanggou/wildzh/blob/exam/requirement.txt /tmp/
 RUN pip install --no-cache-dir -r /tmp/requirement.txt
 
 ENV WILDPATH /opt/wildzh
