@@ -1,0 +1,22 @@
+services:
+  wildzh:
+    command:
+    container_name: wildzh
+    network_mode: host
+    image: mysql:5.7
+    restart: always
+    volumes:
+    - dms-mysql:/opt/wildzh
+  wildzh-es:
+    container_name: wildzh-es
+    environment:
+      - discovery.type=single-node
+    network_mode: host
+    image: meisanggou/elasticsearch-ik:7.7.1
+    restart: always
+    volumes:
+      - wildzh-es:/usr/share/elasticsearch/data
+version: '2.4'
+volumes:
+  wildzh-es:
+    name: wildzh-es

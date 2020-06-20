@@ -2,11 +2,11 @@ FROM docker.io/python
 MAINTAINER meisanggou
 
 
-ADD https://github.com/meisanggou/wildzh/blob/exam/requirement.txt /tmp/
+ADD https://raw.githubusercontent.com/meisanggou/wildzh/exam/requirement.txt /tmp/
 RUN pip install --no-cache-dir -r /tmp/requirement.txt
 
 ENV WILDPATH /opt/wildzh
 ENV PYTHONPATH $WILDPATH
-ENV LISTENPORT 2200
-
-CMD ["/bin/bash", "-c", "gunicorn -b 0.0.0.0:$LISTENPORT -w 4 -k gevent --chdir $WILDPATH/Web msg_web:msg_web"]
+ENV LISTENPORT 2401
+WORKDIR $WILDPATH
+CMD ["python", "wildzh/web02/web.py", "$LISTENPORT"]

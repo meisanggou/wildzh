@@ -1,0 +1,3 @@
+docker run -d --name dms-mysql --restart always -e MYSQL_ROOT_PASSWORD="dmS1021<zh>" -e MYSQL_DATABASE=dms -p 9536:3306 mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+docker run -d --name dms-mongo --restart always -e MONGO_INITDB_ROOT_USERNAME=dms -e MONGO_INITDB_ROOT_PASSWORD="mongo<dms>" --network host mongo
+docker run -d --name dms --network host -u root -v $(pwd):/opt/dms meisanggou/dms

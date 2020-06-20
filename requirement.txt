@@ -1,4 +1,3 @@
-MySQL-python
 mysqldb-rich
 Flask
 Flask-Login

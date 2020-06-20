@@ -1,0 +1,13 @@
+1、
+yum install -y mysql-devel
+
+2、
+pip install -r requirement.txt
+
+3、
+docker-compose up -d
+
+4、
+python init_t.py
+
+5、
