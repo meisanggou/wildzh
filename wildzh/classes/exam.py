@@ -805,6 +805,13 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
             item["options"] = json.loads(item["options"])
         return items
 
+    def select_one_question(self, exam_no, question_no):
+        where_value = {'exam_no': exam_no, 'question_no': question_no}
+        items = self._select_questions(where_value=where_value)
+        if len(items) <= 0:
+            return None
+        return items[0]
+
     def select_questions(self, exam_no, start_no=None, num=None, desc=False):
         where_value = dict(exam_no=exam_no)
         where_cond = []

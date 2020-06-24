@@ -87,6 +87,7 @@ def post_questions(questions_set):
     next_no = no_info["next_no"]
     url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
     question_no = next_no
+    print(questions_set.set_source)
     for q_item in questions_set:
         q_item_d = q_item.to_exam_dict()
         q_item_d["question_no"] = question_no
@@ -380,13 +381,16 @@ if __name__ == "__main__":
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
-    d_path = r'D:\Project\word\app\试卷（二）.docx'
+    d_path = r'D:\Project\word\app\2019年经济学真题（回忆版）.docx'
     # read_docx(d_path)
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
     s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
+    s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
+    s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
+    s_kwargs['exam_name'] = '2019年经济学真题'  # 设置题目来源 一般真题需要设置
     q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'
     # find_from_dir(d, q_set)

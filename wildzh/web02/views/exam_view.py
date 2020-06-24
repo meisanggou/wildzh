@@ -274,6 +274,9 @@ def delete_exam():
 
 def sync_one_question(exam_no, q_item, update=False):
     doc_id = '%s_%s' % (exam_no, q_item['question_no'])
+    if 'question_desc' not in q_item:
+        _c_exam = Exam(db_conf_path)
+        q_item = _c_exam.select_one_question(exam_no, q_item['question_no'])
     desc = q_item['question_desc']
     answer = q_item['answer']
     options = ''
@@ -311,7 +314,7 @@ def entry_questions():
     r, l = c_exam.new_exam_questions(g.exam_no, question_no, question_desc,
                                      select_mode, options, answer,
                                      **extra_data)
-
+    sync_one_question(g.exam_no, {'question_no': question_no}, update=False)
     return jsonify({"status": r, "data": dict(action=request.method, data=data)})
 
 
@@ -331,7 +334,7 @@ def update_question():
         if key in data:
             extra_data[key] = data[key]
     l = c_exam.update_exam_questions(g.exam_no, question_no, **extra_data)
-
+    sync_one_question(g.exam_no, {'question_no': question_no}, update=True)
     return jsonify({"status": True, "data": dict(action=request.method, data=data)})
 
 
@@ -533,6 +536,14 @@ def query_question_items():
     exam_no = data['exam_no']
     query_str = data['query_str']
     items = c_exam.query_questions(exam_no, query_str)
+    s_items = c_exam_es.search_multi(query_str)
+    for item in  s_items:
+        _id = item['_id']
+        id_items = _id.split('_')
+        if len(id_items) != 2:
+            continue
+        _exam_no, question_no = id_items
+
     return {'status': True, 'data': items}
 
 

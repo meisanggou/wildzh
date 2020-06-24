@@ -19,6 +19,10 @@ Page({
       search: this.search.bind(this)
     })
   },
+  replaceImg: function(s){
+    var ss = s.replace(/(\[\[([/\w\.]+?):([\d\.]+?):([\d\.]+?)\]\])/g, '<img>');
+    return ss;
+  },
   search: function (value) {
     var that = this;
     if(value.length <= 0){
@@ -49,7 +53,9 @@ Page({
           var items = res.data.data;
           for (var i = 0; i < items.length; i++) {
             var item = items[i];
-            item['text'] = item['question_desc'];
+            console.info(item['question_desc'])
+            item['text'] = that.replaceImg(item['question_desc']);
+            console.info(item['text'])
             item['value'] = item['question_no'];
           }
           resolve(items);

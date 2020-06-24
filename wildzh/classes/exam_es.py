@@ -14,7 +14,7 @@ class ExamEs(object):
         host = '192.168.152.133'
         port = '9200'
         ent = {"host": host, "port": port}
-        self.es_man = None  #  elasticsearch.Elasticsearch(hosts=[ent])
+        self.es_man = None # elasticsearch.Elasticsearch(hosts=[ent])
         self.index = 'exam_v1'
         self.index_type = 'exam'
         self.index_fields = ['desc', 'options', 'answer']
@@ -85,17 +85,18 @@ class ExamEs(object):
             fields = list(set(self.index_fields) & set(fields))
         if len(fields) <= 0:
             return []
-        print()
         res = self.es_man.search(index=self.index,
                                  body={
                                      "query": {
                                          "multi_match": {
                                              'query': s,
                                              'fields': fields}}})
-        print("Got %d Hits:" % res['hits']['total']['value'])
+        q_items = []
         for hit in res['hits']['hits']:
             print(hit)
-            print("%(desc)s %(options)s: %(answer)s" % hit["_source"])
+            q_item = {'_id': hit['_id'], '_score': hit['_score']}
+            q_item.update(hit["_source"])
+        return q_items
 
 
 if __name__ == "__main__":

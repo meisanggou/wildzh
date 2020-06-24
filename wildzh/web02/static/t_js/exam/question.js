@@ -223,7 +223,7 @@ $(function() {
                 this.current_exam =this.all_exams[this.current_exam_index];
                 this.select_modes = this.all_exams[this.current_exam_index]["select_modes"];
                 this.subjects = this.all_exams[this.current_exam_index]["subjects"];
-                if(question_no == undefined|| question_no == null){
+                if(question_no == undefined|| question_no == null || isNaN(question_no)){
                     this.current_question_no = this.current_exam.question_num;
                 }
                 else{

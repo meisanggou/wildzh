@@ -354,6 +354,8 @@ def handle_answers_docx_main_xml(xml_path, questions_set):
     answers_dict = AnswerSet()
 
     def _get_answers():
+        if current_q_type is None:
+            return
         if current_q_type < 0:
             return
         # if current_q_type == 5:

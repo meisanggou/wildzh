@@ -259,7 +259,7 @@ class QuestionSet(object):
         self.answer_location = kwargs.pop('answer_location', '')
         self.set_keys = kwargs.pop('set_keys', ['answer', 'question_desc'])
         self.exam_no = exam_no
-        self.exam_name = None
+        self.exam_name = kwargs.pop('exam_name', None)
         self.dry_run = dry_run
         self._s = collections.OrderedDict()
         # self._select_mode_s = dict()
