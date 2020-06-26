@@ -19,6 +19,7 @@ $(function () {
                 var exam_no = this.all_exams[this.current_exam_index].exam_no;
                 var data = {'query_str': this.query_str, 'exam_no': exam_no};
                 my_async_request2(query_url, 'POST', data, function(data){
+                    that.questions_items.splice(0, that.questions_items.length);
                     for(var i=0;i<data.length;i++){
                         var item = data[i];
                         if(item.exam_no in exam_name_mapping){

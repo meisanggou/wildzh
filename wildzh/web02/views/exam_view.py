@@ -1,5 +1,6 @@
 # !/usr/bin/env python
 # coding: utf-8
+from collections import OrderedDict
 import re
 import time
 from functools import wraps
@@ -536,15 +537,55 @@ def query_question_items():
     exam_no = data['exam_no']
     query_str = data['query_str']
     items = c_exam.query_questions(exam_no, query_str)
+    query2_question_items()
+    return {'status': True, 'data': items}
+
+
+@exam_view.route("/query2", methods=["POST"])
+@login_required
+def query2_question_items():
+    data = request.json
+    exam_no = data['exam_no']
+    query_str = data['query_str']
     s_items = c_exam_es.search_multi(query_str)
+    current = []
+    better = OrderedDict()
+    worse = OrderedDict()
     for item in  s_items:
         _id = item['_id']
         id_items = _id.split('_')
         if len(id_items) != 2:
             continue
-        _exam_no, question_no = id_items
-
-    return {'status': True, 'data': items}
+        try:
+            _exam_no, question_no = [int(i) for i in id_items]
+        except ValueError:
+            continue
+        if _exam_no == exam_no:
+            print(item)
+            q_item = {'exam_no': _exam_no, 'question_no': question_no,
+                      'question_desc': item['desc'],
+                      'options': item['options'],
+                      'answer': item['answer']}
+            current.append(q_item)
+            continue
+        if _exam_no in better:
+            better[_exam_no] += 1
+        q = better
+        if current:
+            q = worse
+        if _exam_no not in q:
+            q[_exam_no] = 0
+        q[_exam_no] += 1
+    better_exams = []
+    for be in better:
+        e_item , e_role = c_exam.user_exam_role(g.user_role, g.user_role, be)
+        if e_item is None:
+            continue
+        e_item_d = e_item.to_dict()
+        e_item_d['exam_role'] = e_role
+        better_exams.append(e_item_d)
+    data = {'current': current, 'better_exams': better_exams}
+    return {'status': True, 'data': data}
 
 
 @exam_view.route('/member', methods=['POST'])

@@ -14,7 +14,7 @@ class ExamEs(object):
         host = '192.168.152.133'
         port = '9200'
         ent = {"host": host, "port": port}
-        self.es_man = None # elasticsearch.Elasticsearch(hosts=[ent])
+        self.es_man = elasticsearch.Elasticsearch(hosts=[ent])
         self.index = 'exam_v1'
         self.index_type = 'exam'
         self.index_fields = ['desc', 'options', 'answer']
@@ -93,9 +93,9 @@ class ExamEs(object):
                                              'fields': fields}}})
         q_items = []
         for hit in res['hits']['hits']:
-            print(hit)
             q_item = {'_id': hit['_id'], '_score': hit['_score']}
             q_item.update(hit["_source"])
+            q_items.append(q_item)
         return q_items
 
 

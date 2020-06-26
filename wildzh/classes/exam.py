@@ -1007,6 +1007,23 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                                        limit=10)
         return items
 
+    def user_exam_role(self, sys_user_role, user_no, exam_no):
+        exist_items = self.select_exam2(exam_no)
+        if len(exist_items) <= 0:
+            return None, None
+        exam_item = exist_items[0]
+        if(sys_user_role & 2) == 2:
+            exam_role = 0
+        else:
+            if int(exam_item.adder) == user_no:
+                exam_role = 1
+            else:
+                e_items = self.user_exams(user_no, exam_no)
+                if len(e_items) <= 0:
+                    exam_role = exam_item.exam_role
+                else:
+                    exam_role = e_items[0]['exam_role']
+        return exam_item, exam_role
 
 if __name__ == "__main__":
     # print(ExamUsage.calc_period_no(1578844800))
