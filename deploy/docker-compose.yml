@@ -1,11 +1,14 @@
 services:
   wildzh:
     container_name: wildzh
+    environment:
+     - ES_HOST=127.0.0.1
+     - ES_PORT=9200
     network_mode: host
-    image: wildzh
+    image: meisanggou/wildzh
     restart: always
     volumes:
-    - $(pwd)/../:/opt/wildzh
+    - ../:/opt/wildzh
   wildzh-es:
     container_name: wildzh-es
     environment:

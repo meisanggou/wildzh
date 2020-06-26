@@ -5,14 +5,17 @@ import elasticsearch
 from elasticsearch.exceptions import NotFoundError
 import uuid
 
+from wildzh.utils.config import ConfigLoader
+
 __author__ = 'zhouhenglc'
 
 
 class ExamEs(object):
 
-    def __init__(self):
-        host = '192.168.152.133'
-        port = '9200'
+    def __init__(self, es_conf):
+        cl = ConfigLoader(es_conf)
+        host = cl.get('es', 'host')
+        port = cl.get('es', 'port')
         ent = {"host": host, "port": port}
         self.es_man = elasticsearch.Elasticsearch(hosts=[ent])
         self.index = 'exam_v1'

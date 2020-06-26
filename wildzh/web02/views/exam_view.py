@@ -11,7 +11,7 @@ from flask_helper.template import RenderTemplate
 from flask_helper.upload import support_upload2
 
 from zh_config import db_conf_path, upload_folder, file_prefix_url
-from zh_config import min_program_conf
+from zh_config import min_program_conf, es_conf
 from wildzh.classes.exam import Exam, ExamObject, StrategyObject
 from wildzh.classes.exam_es import ExamEs
 from wildzh.classes.user import User
@@ -52,7 +52,7 @@ exam_view = View2("exam", __name__, url_prefix=url_prefix,
 
 c_exam = Exam(db_conf_path)
 c_user = User(db_conf_path=db_conf_path, upload_folder=upload_folder)
-c_exam_es = ExamEs()
+c_exam_es = ExamEs(es_conf)
 min_pro = MiniProgram(conf_path=min_program_conf, section='01')
 ASYNC_POOL = get_pool()
 
