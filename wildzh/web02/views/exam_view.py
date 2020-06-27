@@ -821,6 +821,7 @@ def handle_question_feedback():
 
 def start_sync_es(exam_no):
     # 获得所有question_no
+    print('start sync es %s' %  exam_no)
     _c_exam = Exam(db_conf_path)
     q_items = _c_exam.select_question_no(exam_no)
     missing_nos = []
@@ -829,6 +830,7 @@ def start_sync_es(exam_no):
         doc_id = '%s_%s' % (exam_no, item['question_no'])
         if not c_exam_es.exists(doc_id):
             missing_nos.append(item['question_no'])
+    print('found missing_nos %s' %  missing_nos)
     # 插入数据
     step = 30
     for i in range(0, len(missing_nos), step):
@@ -836,6 +838,7 @@ def start_sync_es(exam_no):
                                                  missing_nos[i:i + step])
         for q_item in a_items:
             sync_one_question(exam_no, q_item)
+    print('success async es %s' % exam_no)
     return missing_nos
 
 
