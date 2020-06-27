@@ -22,7 +22,6 @@ class ExamEs(object):
         self.index = 'exam_v1'
         self.index_type = 'exam'
         self.index_fields = ['desc', 'options', 'answer']
-        self.create_index()
 
     @property
     def es_man(self):
