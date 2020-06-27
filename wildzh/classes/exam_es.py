@@ -104,7 +104,7 @@ class ExamEs(object):
                                              'fields': fields}}})
         q_items = []
         for hit in res['hits']['hits']:
-            q_item = {'_id': hit['_id'], '_score': hit['_score']}
+            q_item = {'_id': hit['_id'], 'score': hit['_score']}
             q_item.update(hit["_source"])
             q_items.append(q_item)
         return q_items

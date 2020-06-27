@@ -28,3 +28,4 @@ accept_agent = "firefox|chrome|safari|window|GitHub|jyrequests|micro|Aliyun"
 
 
 elastic_search = ""
+log_file = '/opt/wildzh.log'

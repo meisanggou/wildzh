@@ -18,10 +18,12 @@ from wildzh.classes.user import User
 from wildzh.classes.wx import MiniProgram
 from wildzh.export.local_write import write_docx
 from wildzh.utils.async_pool import get_pool
+from wildzh.utils.log import getLogger
 from wildzh.web02.view import View2
 
 __author__ = 'meisa'
 
+LOG = getLogger()
 url_prefix = "/exam"
 
 add_url = url_prefix + "/"
@@ -564,7 +566,8 @@ def query2_question_items():
             q_item = {'exam_no': _exam_no, 'question_no': question_no,
                       'question_desc': item['desc'],
                       'options': item['options'],
-                      'answer': item['answer']}
+                      'answer': item['answer'],
+                      'score': item['score']}
             current.append(q_item)
             continue
         if _exam_no in better:
@@ -821,7 +824,7 @@ def handle_question_feedback():
 
 def start_sync_es(exam_no):
     # 获得所有question_no
-    print('start sync es %s' %  exam_no)
+    LOG.info('start sync es %s',  exam_no)
     _c_exam = Exam(db_conf_path)
     q_items = _c_exam.select_question_no(exam_no)
     missing_nos = []
@@ -830,7 +833,7 @@ def start_sync_es(exam_no):
         doc_id = '%s_%s' % (exam_no, item['question_no'])
         if not c_exam_es.exists(doc_id):
             missing_nos.append(item['question_no'])
-    print('found missing_nos %s' %  missing_nos)
+    LOG.info('found missing_nos %s',  missing_nos)
     # 插入数据
     step = 30
     for i in range(0, len(missing_nos), step):
@@ -838,7 +841,7 @@ def start_sync_es(exam_no):
                                                  missing_nos[i:i + step])
         for q_item in a_items:
             sync_one_question(exam_no, q_item)
-    print('success async es %s' % exam_no)
+    LOG.info('success async es %s', exam_no)
     return missing_nos
 
 
@@ -846,6 +849,7 @@ def start_sync_es(exam_no):
 @login_required
 @required_manager_exam(param_location='args')
 def sync_to_es():
+    LOG.info('receive request sync %s', g.exam_no)
     ASYNC_POOL.submit(start_sync_es, g.exam_no)
     return jsonify({'status': True, 'data': 'success'})
 
