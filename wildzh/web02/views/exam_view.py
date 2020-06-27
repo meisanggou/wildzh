@@ -845,3 +845,14 @@ def start_sync_es(exam_no):
 def sync_to_es():
     ASYNC_POOL.submit(start_sync_es, g.exam_no)
     return jsonify({'status': True, 'data': 'success'})
+
+
+@exam_view.route('/es/one', methods=['POST', 'GET'])
+@login_required
+@required_manager_exam(param_location='args')
+def sync_to_es():
+    exam_no = g.exam_no
+    question_no = request.args['question_no']
+    doc_id = '%s_%s' % (exam_no, question_no)
+    r = c_exam_es.get_one(doc_id)
+    return jsonify({'status': True, 'data': r})

@@ -1,8 +1,7 @@
 1、
-yum install -y mysql-devel
-
-2、
-pip install -r requirement.txt
+set env
+export EXEC_USER_ID=
+export ZH_UPLOAD_FOLDER=
 
 3、
 docker-compose up -d
