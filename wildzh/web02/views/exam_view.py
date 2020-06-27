@@ -850,7 +850,7 @@ def sync_to_es():
 @exam_view.route('/es/one', methods=['POST', 'GET'])
 @login_required
 @required_manager_exam(param_location='args')
-def sync_to_es():
+def get_one_from_es():
     exam_no = g.exam_no
     question_no = request.args['question_no']
     doc_id = '%s_%s' % (exam_no, question_no)
