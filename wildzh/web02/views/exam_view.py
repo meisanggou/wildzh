@@ -561,7 +561,6 @@ def query2_question_items():
         except ValueError:
             continue
         if _exam_no == exam_no:
-            print(item)
             q_item = {'exam_no': _exam_no, 'question_no': question_no,
                       'question_desc': item['desc'],
                       'options': item['options'],

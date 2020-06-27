@@ -10,4 +10,8 @@ ENV PYTHONPATH $WILDPATH
 ENV LISTENPORT 2402
 WORKDIR $WILDPATH
 
-CMD ["bash", "-c", "python3 wildzh/web02/web.py $LISTENPORT"]
+ADD Dockerfile /root
+ADD entrypoint.sh /opt/
+RUN chmod a+x /opt/entrypoint.sh
+ENTRYPOINT ["/opt/entrypoint.sh"]
+CMD ["python3", "wildzh/web02/web.py", "$LISTENPORT"]
