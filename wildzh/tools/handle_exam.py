@@ -144,7 +144,8 @@ def replace_media(text, q_rl, cache_rl, real_upload):
     return text
 
 
-def upload_media(r_id, rl, width, height, cache_rl, clip_data=None, real_upload=False):
+def upload_media(r_id, rl, width, height, cache_rl, clip_data=None,
+                 real_upload=False, freq=0):
     if r_id in cache_rl:
         return cache_rl[r_id]
 
@@ -168,8 +169,15 @@ def upload_media(r_id, rl, width, height, cache_rl, clip_data=None, real_upload=
         return "/dummy/%s" % r_id
     url = remote_host + "/exam/upload/"
     files = dict(pic=open(png_file, "rb"))
-    resp = req.post(url, files=files)
-    return resp.json()["data"]["pic"]
+    try:
+        resp = req.post(url, files=files)
+        return resp.json()["data"]["pic"]
+    except Exception as e:
+        if freq >= 5:
+            raise
+        freq += 1
+        upload_media(r_id, rl, width, height, cache_rl, clip_data=clip_data,
+                     real_upload=real_upload, freq=freq)
 
 
 def handle_exam_no_answer(file_path, questions_set):
@@ -381,7 +389,7 @@ if __name__ == "__main__":
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
-    d_path = r'D:\Project\word\app\2019年经济学真题（回忆版）.docx'
+    d_path = r'D:\Project\word\app\upload\2019年经济学真题（回忆版）.docx'
     # read_docx(d_path)
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
@@ -389,8 +397,8 @@ if __name__ == "__main__":
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
     s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
-    s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
-    s_kwargs['exam_name'] = '2019年经济学真题'  # 设置题目来源 一般真题需要设置
+    # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
+    # s_kwargs['exam_name'] = '2019年经济学真题'  # 设置题目来源 一般真题需要设置
     q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'
     # find_from_dir(d, q_set)

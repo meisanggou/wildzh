@@ -5,6 +5,7 @@ services:
      - ES_HOST=127.0.0.1
      - ES_PORT=9200
      - ZH_UPLOAD_FOLDER=/opt/upload
+     - EXEC_USER_ID=
     network_mode: host
     image: meisanggou/wildzh
     restart: always

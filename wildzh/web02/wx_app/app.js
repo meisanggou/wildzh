@@ -5,7 +5,7 @@ var exam_storage_key = "wildzh_current_exam";
 remote_host = "https://wild.gene.ac"
 // var remote_host = "http://172.16.110.10:2401"
 remote_host = "http://127.0.0.1:2400"
-remote_host = "https://wild2.gene.ac"
+remote_host = "https://wild.gene.ac"
 // {
 //     "pagePath": "pages/query/query",
 //         "iconPath": "images/query.png",

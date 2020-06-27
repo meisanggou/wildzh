@@ -5,14 +5,9 @@ from contextlib import contextmanager
 import os
 import pdb
 import re
-import shutil
-import sys
-import tempfile
-import uuid
 # from win32com import client as wc
 import xml.dom.minidom as minidom
-import zipfile
-
+from wildzh.tools.docx.object import DocxObject
 from wildzh.tools.parse_question import ParseQuestion, QuestionType, QuestionSet
 from wildzh.tools.parse_question import Answer, AnswerSet, ParseAnswer, AnswerLocation
 
@@ -52,19 +47,6 @@ def replace_special_space(s):
     # for c in (u"\u6bb5", ):
     #     s = s.replace(c, "\n")
     return s
-
-
-@contextmanager
-def extract_docx(docx_path):
-    temp_dir_name = "_wildzh_%s" % uuid.uuid4().hex
-    temp_dir = os.path.join(tempfile.gettempdir(), temp_dir_name)
-    if os.path.isdir(temp_dir):
-        shutil.rmtree(temp_dir)
-    os.mkdir(temp_dir)
-    zf = zipfile.ZipFile(docx_path)
-    zf.extractall(path=temp_dir)
-    yield temp_dir
-    shutil.rmtree(temp_dir)
 
 
 # def doc_to_docx(doc_path):
@@ -186,24 +168,10 @@ def handle_paragraph(p_node):
     return "".join(p_contents)
 
 
-def handle_rels(rels_path):
-    rels_dom = minidom.parse(rels_path)
-    relationships_node = rels_dom.firstChild
-    relationships = dict()
-    for rs in _get_node(relationships_node, "Relationship"):
-        r_id = rs.getAttribute("Id")
-        target = rs.getAttribute("Target")
-        relationships[r_id] = target
-    return relationships
-
-
-def handle_docx_main_xml(xml_path, *args, **kwargs):
+def handle_docx_main_xml(docx_obj, *args, **kwargs):
     questions_set = kwargs.pop('questions_set')
     select_mode = questions_set.default_select_mode
     embedded_answer = AnswerLocation.is_embedded(questions_set.answer_location)
-    dom = minidom.parse(xml_path)
-    root = dom.documentElement
-    body = _get_one_node(root, "w:body")
     current_q_type = questions_set.default_select_mode
     current_question = []
     current_question_no = 0
@@ -227,12 +195,7 @@ def handle_docx_main_xml(xml_path, *args, **kwargs):
         q_item.select_mode = current_question[0]
         questions_set.append(q_item)
 
-    for node in body.childNodes:
-        if node.nodeName != "w:p":
-            continue
-        p_content = handle_paragraph(node).strip()
-        if len(p_content) <= 0:
-            continue
+    for p_content in docx_obj.read_paragraphs(handle_paragraph=handle_paragraph):
         # 判断是否是题目类型
         if not select_mode:
             _q_tpe = get_select_mode(p_content)
@@ -266,22 +229,12 @@ def handle_docx_main_xml(xml_path, *args, **kwargs):
     return questions_set
 
 
-def read_docx_xml(root_dir, questions_set):
-    xml_path = os.path.join(root_dir, 'word', 'document.xml')
-    questions_s = handle_docx_main_xml(xml_path, ".", u"、", u"．", ':',
-                                       questions_set=questions_set)
-    style_path = os.path.join(root_dir, 'word', '_rels', "document.xml.rels")
-    relationships = handle_rels(style_path)
-    for key in relationships.keys():
-        relationships[key] = os.path.join(root_dir, "word", relationships[key])
-    return questions_s, relationships
-
-
 @contextmanager
 def read_docx(docx_path, questions_set):
-    with extract_docx(docx_path) as temp_dir:
-        questions_s, relationships = read_docx_xml(temp_dir, questions_set)
-        yield [questions_s, relationships]
+    with DocxObject(docx_path) as do:
+        questions_s = handle_docx_main_xml(do, ".", u"、", u"．", ':',
+                                       questions_set=questions_set)
+        yield [questions_s, do.relationships]
         pass
 
 
@@ -344,10 +297,7 @@ def get_qa_answers(answer_items, parse_answer):
     return aw_dict
 
 
-def handle_answers_docx_main_xml(xml_path, questions_set):
-    dom = minidom.parse(xml_path)
-    root = dom.documentElement
-    body = root.firstChild
+def handle_answers_docx_main_xml(docx_obj, questions_set):
     select_mode = questions_set.default_select_mode
     current_q_type = select_mode
     current_answers_area = []
@@ -370,13 +320,7 @@ def handle_answers_docx_main_xml(xml_path, questions_set):
         for item in sub_aw:
             answers_dict.add(item)
 
-    for node in body.childNodes:
-        if node.nodeName != "w:p":
-            continue
-        p_content = handle_paragraph(node).strip()
-
-        if len(p_content) <= 0:
-            continue
+    for p_content in docx_obj.read_paragraphs(handle_paragraph=handle_paragraph):
         _q_type = get_select_mode(p_content)
         if not select_mode:
             if _q_type >= 0:
@@ -391,22 +335,11 @@ def handle_answers_docx_main_xml(xml_path, questions_set):
     return answers_dict
 
 
-def read_answers_docx_xml(root_dir, questions_set):
-    xml_path = os.path.join(root_dir, 'word', 'document.xml')
-    answers = handle_answers_docx_main_xml(xml_path, questions_set)
-    style_path = os.path.join(root_dir, 'word', '_rels', "document.xml.rels")
-    relationships = handle_rels(style_path)
-    for key in relationships.keys():
-        relationships[key] = os.path.join(root_dir, "word", relationships[key])
-    return answers, relationships
-
-
 @contextmanager
 def read_answers_docx(docx_path, questions_set):
-    with extract_docx(docx_path) as temp_dir:
-        print(temp_dir)
-        answers, relationships = read_answers_docx_xml(temp_dir, questions_set)
-        yield [answers, relationships]
+    with DocxObject(docx_path) as do:
+        answers = handle_answers_docx_main_xml(do, questions_set)
+        yield [answers, do.relationships]
         pass
 
 
