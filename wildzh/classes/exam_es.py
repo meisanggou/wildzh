@@ -17,11 +17,20 @@ class ExamEs(object):
         host = cl.get('es', 'host')
         port = cl.get('es', 'port')
         ent = {"host": host, "port": port}
-        self.es_man = elasticsearch.Elasticsearch(hosts=[ent])
+        self._es_man = None
+        self.es_endpoint = ent
         self.index = 'exam_v1'
         self.index_type = 'exam'
         self.index_fields = ['desc', 'options', 'answer']
         self.create_index()
+
+    @property
+    def es_man(self):
+        if self._es_man is None:
+            hosts = [self.es_endpoint]
+            self._es_man = elasticsearch.Elasticsearch(hosts=hosts)
+            self.create_index()
+        return self._es_man
 
     def create_index(self):
         if not self.es_man:

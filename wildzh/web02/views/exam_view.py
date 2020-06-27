@@ -583,6 +583,7 @@ def query2_question_items():
             continue
         e_item_d = e_item.to_dict()
         e_item_d['exam_role'] = e_role
+        e_item_d['match_num'] = better[be]
         better_exams.append(e_item_d)
     data = {'current': current, 'better_exams': better_exams}
     return {'status': True, 'data': data}

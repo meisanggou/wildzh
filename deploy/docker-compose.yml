@@ -4,11 +4,13 @@ services:
     environment:
      - ES_HOST=127.0.0.1
      - ES_PORT=9200
+     - ZH_UPLOAD_FOLDER=/opt/upload
     network_mode: host
     image: meisanggou/wildzh
     restart: always
     volumes:
     - ../:/opt/wildzh
+    - $ZH_UPLOAD_FOLDER:/opt/upload
   wildzh-es:
     container_name: wildzh-es
     environment:

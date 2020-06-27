@@ -3,6 +3,12 @@
     margin-top: 50rpx;
     text-align: center;
 }
+.tip-link {
+    margin-top: 50rpx;
+    text-align: center;
+    text-decoration: underline;
+}
+
 .warn {
     color: red;
 }

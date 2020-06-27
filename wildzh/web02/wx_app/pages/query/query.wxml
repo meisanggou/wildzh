@@ -1,2 +1,3 @@
-<mp-searchbar placeholder="请输入关键字搜索" bindselectresult="selectResult" search="{{search}}"></mp-searchbar>
+<mp-searchbar id="searchbar" placeholder="请输入关键字搜索" bindselectresult="selectResult" search="{{search}}" ></mp-searchbar>
 <view wx:if="{{ noResult }}" class="tip">未搜索到<text class='warn'>{{ queryStr }}</text>相关内容</view>
+<view wx:for="{{ betterExams }}" bindtap="toChangeExam" class="tip-link" data-exam-index="{{index}}" wx:key="exam_no">题库<text class='warn'>{{ item.exam_name }}</text>包含更匹配<text class='warn'>{{ queryStr }}</text>的内容</view>
