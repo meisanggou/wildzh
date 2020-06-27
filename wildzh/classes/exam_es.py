@@ -111,7 +111,7 @@ class ExamEs(object):
 
 
 if __name__ == "__main__":
-    ee = ExamEs()
+    ee = ExamEs('../../etc/es.conf')
     doc_id = uuid.uuid4().hex
     ee.clear_index()
     # ee.add_one_item(doc_id, '网络操作', '编辑网络', '创建网络，vlan网络类型不可编辑，如果多个网络类型，默认选择第一个')

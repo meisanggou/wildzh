@@ -7,10 +7,12 @@ sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
 
 from wildzh.web02 import app
+from wildzh.utils.log import getLogger
 from wildzh.web02.view import portal_menu_list
 
 __author__ = 'meisa'
 
+LOG = getLogger()
 app_dir = os.path.split(os.path.abspath(__file__))[0]
 view_files = os.listdir(os.path.join(app_dir, 'views'))
 # for view_file in view_files:
