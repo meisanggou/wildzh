@@ -551,8 +551,8 @@ def query2_question_items():
     query_str = data['query_str']
     s_items = c_exam_es.search_multi(query_str)
     current = []
-    better = OrderedDict()
-    worse = OrderedDict()
+    c_score = -1
+    others = OrderedDict()
     for item in  s_items:
         _id = item['_id']
         id_items = _id.split('_')
@@ -568,24 +568,26 @@ def query2_question_items():
                       'options': item['options'],
                       'answer': item['answer'],
                       'score': item['score']}
+            if item['score'] > c_score:
+                c_score = item['score']
             current.append(q_item)
             continue
-        if _exam_no in better:
-            better[_exam_no] += 1
-        q = better
-        if current:
-            q = worse
-        if _exam_no not in q:
-            q[_exam_no] = 0
-        q[_exam_no] += 1
+        if _exam_no not in others:
+            others[_exam_no] = {'score': -1, 'num': 0}
+        others[_exam_no]['num'] += 1
+        if item['score'] > others[_exam_no]['score']:
+            others[_exam_no]['score'] = item['score']
     better_exams = []
-    for be in better:
-        e_item , e_role = c_exam.user_exam_role(g.user_role, g.user_role, be)
+    for o_exam_no, m_data in others.items():
+        if m_data['score'] <= c_score:
+            continue
+        e_item , e_role = c_exam.user_exam_role(g.user_role, g.user_role,
+                                                o_exam_no)
         if e_item is None:
             continue
         e_item_d = e_item.to_dict()
         e_item_d['exam_role'] = e_role
-        e_item_d['match_num'] = better[be]
+        e_item_d['match_num'] = m_data['num']
         better_exams.append(e_item_d)
     data = {'current': current, 'better_exams': better_exams}
     return {'status': True, 'data': data}
