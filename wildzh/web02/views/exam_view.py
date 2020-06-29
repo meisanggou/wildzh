@@ -844,7 +844,7 @@ def start_sync_es(exam_no, start_no=None, force=False):
             a_items = _c_exam.select_multi_question2(exam_no,
                                                      missing_nos[i:i + step])
             for q_item in a_items:
-                sync_one_question(exam_no, q_item)
+                sync_one_question(exam_no, q_item, update=force)
         except Exception as e:
             LOG.error(e)
     LOG.info('success async es %s', exam_no)
