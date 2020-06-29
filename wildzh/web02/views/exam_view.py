@@ -858,6 +858,8 @@ def sync_to_es():
     LOG.info('receive request sync %s', g.exam_no)
     if 'start_no' in request.args:
         start_no = int(request.args['start_no'])
+        LOG.info('receive request sync %s start_no is %s', g.exam_no,
+                 start_no)
         ASYNC_POOL.submit(start_sync_es, g.exam_no, start_no=start_no,
                           force=True)
     else:
