@@ -89,6 +89,12 @@ class AsyncWorker(object):
         self.wait_queue.append((fn, args, kwargs))
         self.try_start_thread()
 
+    def submit_task(self, task_id, interval, fn, *args, **kwargs):
+        return self.submit(fn, *args, **kwargs)
+
+    def __call__(self, fn, *args, **kwargs):
+        return self.submit(fn, *args, **kwargs)
+
 
 _POOL = None
 

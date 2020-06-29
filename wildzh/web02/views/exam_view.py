@@ -458,7 +458,7 @@ def get_exam_questions_nos():
             return jsonify({"status": True, "data": dict(exam_no=g.exam_no, nos=nos_l)})
         return jsonify({"status": True, "data": dict(exam_no=g.exam_no, questions=items)})
     max_no = c_exam.select_max_question(g.exam_no)
-    next_no = (max_no + 1) if isinstance(max_no, (int, long)) else 1
+    next_no = (max_no + 1) if isinstance(max_no, (int, )) else 1
     return jsonify({"status": True, "data": dict(max_no=max_no, next_no=next_no)})
 
 

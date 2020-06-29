@@ -157,7 +157,7 @@ class User(object):
                 del update_value[key]
         if "nick_name" in update_value:
             nick_name = update_value["nick_name"]
-            if isinstance(nick_name, unicode):
+            if isinstance(nick_name, str):
                 nick_name = nick_name.encode("utf-8")
             update_value["nick_name"] = base64.b64encode(nick_name)
         l = self.db.execute_update(self.t, update_value=update_value, where_value=dict(user_no=user_no))

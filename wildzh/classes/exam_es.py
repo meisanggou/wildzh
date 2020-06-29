@@ -103,6 +103,7 @@ class ExamEs(object):
                                              'query': s,
                                              'fields': fields}}})
         q_items = []
+        print(res)
         for hit in res['hits']['hits']:
             q_item = {'_id': hit['_id'], 'score': hit['_score']}
             q_item.update(hit["_source"])
@@ -112,10 +113,10 @@ class ExamEs(object):
 
 if __name__ == "__main__":
     ee = ExamEs('../../etc/es.conf')
-    doc_id = uuid.uuid4().hex
-    ee.clear_index()
+    # doc_id = uuid.uuid4().hex
+    # ee.clear_index()
     # ee.add_one_item(doc_id, '网络操作', '编辑网络', '创建网络，vlan网络类型不可编辑，如果多个网络类型，默认选择第一个')
-    # ee.search_multi('网络类型 vlan')
+    ee.search_multi('网络类型 vlan')
     # ee.update_one_item('1111111', '网络操作2', '更新网络', '网络都是vlan的')
     # ee.get_one(doc_id)
     # ee.get_one('1111111111')
