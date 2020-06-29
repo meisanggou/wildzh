@@ -381,6 +381,7 @@ if __name__ == "__main__":
     exam_no = 1567506833  # 测试包含图片
     # exam_no = 1569283516  # 专升本经济学题库
     exam_no = 1570447137  # 专升本经济学题库 会员版
+    exam_no = 1575333741 # 专升本经济学题库 试用版
     # exam_no = 1585396371  # 本地 测试题库2
     t_exam_no = 1591669814  # 本地 测试题库2-copy
     # exam_no = 1573464937  # 英语托业
@@ -397,8 +398,8 @@ if __name__ == "__main__":
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
     s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
-    # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
-    # s_kwargs['exam_name'] = '2019年经济学真题'  # 设置题目来源 一般真题需要设置
+    s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
+    s_kwargs['exam_name'] = '2019年经济学真题'  # 设置题目来源 一般真题需要设置
     q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'
     # find_from_dir(d, q_set)
