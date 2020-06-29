@@ -20,7 +20,7 @@ headers = {"User-Agent": "jyrequests"}
 req.headers = headers
 remote_host = "https://meisanggou.vicp.net"
 remote_host = "http://127.0.0.1:2400"
-remote_host = "https://wild.gene.ac"
+remote_host = "https://wild2.gene.ac"
 
 exec_file_dir, exec_file_name = os.path.split(os.path.abspath(__file__))
 EXE_WMF_TO_PNG = os.path.join(exec_file_dir, "Wmf2Png.exe")
@@ -274,14 +274,16 @@ def upload_js_no_answer(exam_no, file_path, questions_set):
 
 
 def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode=None,
-                  target_start_no=None):
+                  target_start_no=None, random=False):
     url = remote_host + '/exam/transfer'
     data = {'source_exam_no': s_exam, 'start_no': start_no,
-            'end_no': end_no, 'target_exam_no': t_exam, 'random': True}
+            'end_no': end_no, 'target_exam_no': t_exam}
     if select_mode:
         data['select_mode'] = select_mode
     if target_start_no is not None:
         data['target_start_no'] = target_start_no
+    if random:
+        data['random'] = True
     response = req.post(url, json=data)
     res = response.json()
     if res['status'] is True:
@@ -387,7 +389,8 @@ if __name__ == "__main__":
     t_exam_no = 1591669814  # 本地 测试题库2-copy
     # exam_no = 1573464937  # 英语托业
     # 538 + 319
-    # transfer_exam(exam_no, 1, 5000, t_exam_no)
+    # 会员版 to 试用版
+    transfer_exam(1570447137, 4295, 4357, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
@@ -406,5 +409,5 @@ if __name__ == "__main__":
     # find_from_dir(d, q_set)
     # download_questions(1569283516, 2)
     # download_usage(exam_no, [1, 2, 3, 4])
-    handle_exam(d_path, q_set)
+    # handle_exam(d_path, q_set)
 

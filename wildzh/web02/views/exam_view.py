@@ -664,10 +664,11 @@ def transfer_exam():
         t_kwargs['target_end_no'] = data['target_end_no']
     if 'select_mode' in data:
         t_kwargs['select_mode'] = data['select_mode']
-    if 'random' in data:
+    if 'random' in data and data['random']:
         t_kwargs['random'] = True
     r, items = c_exam.transfer_exam(source_exam_no, start_no, end_no,
                                     target_exam_no, **t_kwargs)
+    ASYNC_POOL(start_sync_es, target_exam_no)
     return jsonify({'status': r, 'data': items})
 
 
@@ -824,16 +825,16 @@ def handle_question_feedback():
     return {'status': True, 'data': 'success'}
 
 
-def start_sync_es(exam_no):
+def start_sync_es(exam_no, start_no=None, force=False):
     # 获得所有question_no
     LOG.info('start sync es %s',  exam_no)
     _c_exam = Exam(db_conf_path)
-    q_items = _c_exam.select_question_no(exam_no)
+    q_items = _c_exam.select_question_no(exam_no, start_no=start_no)
     missing_nos = []
     # 查看哪些没有数据
     for item in q_items:
         doc_id = '%s_%s' % (exam_no, item['question_no'])
-        if not c_exam_es.exists(doc_id):
+        if force or not c_exam_es.exists(doc_id):
             missing_nos.append(item['question_no'])
     LOG.info('found missing_nos %s',  missing_nos)
     # 插入数据
@@ -855,7 +856,12 @@ def start_sync_es(exam_no):
 @required_manager_exam(param_location='args')
 def sync_to_es():
     LOG.info('receive request sync %s', g.exam_no)
-    ASYNC_POOL.submit(start_sync_es, g.exam_no)
+    if 'start_no' in request.args:
+        start_no = int(request.args['start_no'])
+        ASYNC_POOL.submit(start_sync_es, g.exam_no, start_no=start_no,
+                          force=True)
+    else:
+        ASYNC_POOL.submit(start_sync_es, g.exam_no)
     return jsonify({'status': True, 'data': 'success'})
 
 
