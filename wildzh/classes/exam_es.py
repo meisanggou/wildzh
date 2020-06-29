@@ -103,7 +103,6 @@ class ExamEs(object):
                                              'query': s,
                                              'fields': fields}}})
         q_items = []
-        print(res)
         for hit in res['hits']['hits']:
             q_item = {'_id': hit['_id'], 'score': hit['_score']}
             q_item.update(hit["_source"])
