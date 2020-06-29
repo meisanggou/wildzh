@@ -827,7 +827,8 @@ def handle_question_feedback():
 
 def start_sync_es(exam_no, start_no=None, force=False):
     # 获得所有question_no
-    LOG.info('start sync es %s',  exam_no)
+    LOG.info('start sync es %s start_no=%s force=%s', exam_no,
+             start_no, force)
     _c_exam = Exam(db_conf_path)
     q_items = _c_exam.select_question_no(exam_no, start_no=start_no)
     missing_nos = []
@@ -860,8 +861,7 @@ def sync_to_es():
         start_no = int(request.args['start_no'])
         LOG.info('receive request sync %s start_no is %s', g.exam_no,
                  start_no)
-        ASYNC_POOL.submit(start_sync_es, g.exam_no, start_no=start_no,
-                          force=True)
+        ASYNC_POOL(start_sync_es, g.exam_no, start_no=start_no, force=True)
     else:
         ASYNC_POOL.submit(start_sync_es, g.exam_no)
     return jsonify({'status': True, 'data': 'success'})
