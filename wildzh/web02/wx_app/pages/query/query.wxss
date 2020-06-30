@@ -12,3 +12,12 @@
 .warn {
     color: red;
 }
+
+.server-message {
+    color: red;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    position: fixed;
+    bottom: 50rpx;
+}

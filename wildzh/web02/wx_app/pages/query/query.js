@@ -9,7 +9,8 @@ Page({
     examNo: "",
     noResult: false,
     queryStr: "",
-    betterExams: []
+    betterExams: [],
+    serverMessage: ""
   },
 
   /**
@@ -32,7 +33,8 @@ Page({
         that.setData({
           noResult: false,
           queryStr: "",
-          betterExams: []
+          betterExams: [],
+          serverMessage: ""
         })
       })
     }
@@ -57,9 +59,13 @@ Page({
             return;
           }
           var betterExams = []
+          var serverMessage = "功能测试中";
           var items = res.data.data;
           if ('current' in res.data.data) {
             items = res.data.data['current'];
+          }
+          if('message' in res.data.data){
+            serverMessage = res.data.data['message'];
           }
           if ('better_exams' in res.data.data) {
             betterExams = res.data.data['better_exams'];
@@ -77,7 +83,8 @@ Page({
           that.setData({
             noResult: noResult,
             queryStr: queryStr,
-            betterExams: betterExams
+            betterExams: betterExams,
+            serverMessage: serverMessage
           })
         },
         fail: function ({

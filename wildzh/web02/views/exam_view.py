@@ -590,6 +590,7 @@ def query2_question_items():
         e_item_d['match_num'] = m_data['num']
         better_exams.append(e_item_d)
     data = {'current': current, 'better_exams': better_exams}
+    data['message'] = '功能测试中'
     return {'status': True, 'data': data}
 
 
@@ -831,6 +832,7 @@ def start_sync_es(exam_no, start_no=None, force=False):
              start_no, force)
     _c_exam = Exam(db_conf_path)
     q_items = _c_exam.select_question_no(exam_no, start_no=start_no)
+    LOG.info('query %s questions from %s', len(q_items), exam_no)
     missing_nos = []
     # 查看哪些没有数据
     for item in q_items:

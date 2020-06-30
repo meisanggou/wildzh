@@ -1,11 +1,11 @@
 var remote_host = "https://meisanggou.vicp.net"
-var version = "6.0.3";
+var version = "6.0.4";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 remote_host = "https://wild.gene.ac"
 // var remote_host = "http://172.16.110.10:2401"
 remote_host = "http://127.0.0.1:2400"
-// remote_host = "https://wild2.gene.ac"
+remote_host = "https://wild2.gene.ac"
 // {
 //     "pagePath": "pages/query/query",
 //         "iconPath": "images/query.png",
@@ -39,12 +39,16 @@ App({
             if (req.url[0] == "/") {
                 req.url = wx.remote_host + req.url
             }
-            if ("success" in req && !("retry" in req)) {
+            var retry = 0;
+            if('retry' in req){
+                retry = req.retry
+            }
+            if ("success" in req) {
                 var origin_success = req.success
                 req.success = function (res) {
                     if (res.statusCode != 302) {
                         origin_success(res);
-                    } else {
+                    } else if(retry < 3) {
                         wx.login({
                             success: res => {
                                 wx.request({
@@ -58,7 +62,7 @@ App({
                                             console.info("auto wx login success")
                                             that.getOrSetCurrentUserData(res.data.data)
                                             wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
-                                            req.retry = 1
+                                            req.retry = retry + 1;
                                             wx.request2(req)
                                         }
                                     }

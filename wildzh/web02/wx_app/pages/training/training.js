@@ -286,6 +286,9 @@ Page({
         })
     },
     after: function (afterNum) {
+        if(this.data.questionNum <= 1){
+            return false
+        }
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
         var questionLen = questionItems.length;
@@ -336,6 +339,9 @@ Page({
         that.after(10);
     },
     before: function (preNum) {
+        if(this.data.questionNum <= 1){
+            return false
+        }
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
         var preIndex = nowQuestionIndex - preNum;
