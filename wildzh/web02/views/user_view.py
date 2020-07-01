@@ -87,18 +87,23 @@ def login_action():
 
 @user_view.route("/login/wx/", methods=["POST"])
 def wx_login_action():
+    LOG.info('someone login from wx')
     rd = g.request_data
     code = rd["code"]
+    LOG.info('someone login from wx, code is %s', code)
     exec_r, data = mp.code2session(code)
     if exec_r is False:
+        LOG.error('someone login from wx, code has error: %s', data)
         return jsonify({"status": False, "data": data})
     items = c_user.verify_user_exist(wx_id=data["openid"])
     if len(items) <= 0:
+        LOG.info('someone login from wx, user not exist, new user %s', data["openid"])
         item = c_user.new_wx_user(data["openid"])
         c_user.generate_user_qr(item["user_no"])
     else:
         item = items[0]
     if item is None:
+        LOG.error('someone login from wx, code has error: %s', data)
         return jsonify({"status": False, "data": "内部错误"})
     user = FlaskUser()
     user.user_no = item["user_no"]

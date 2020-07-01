@@ -37,6 +37,9 @@ def create_app():
         else:
             g.user_role = 0
             g.user_no = None
+            LOG.info('receive request: method:%s full_path:%s user-agent:%s',
+                     request.method, request.full_path,
+                     request.headers.get('User-Agent'))
         if "Accept" in request.headers and request.headers["Accept"].find("application/json") >= 0:
             g.accept_json = True
         else:
