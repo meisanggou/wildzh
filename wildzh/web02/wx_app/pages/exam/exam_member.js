@@ -21,7 +21,8 @@ Page({
         roleIndex: 0,
         // 成员页面
         members: [],
-        nickNames: []
+        nickNames: [],
+        sumItems: [] // 统计信息 成员个数
     },
     onLoad: function (options) {
         var examNo = null;
@@ -277,7 +278,7 @@ Page({
                         return b.end_time - a.end_time
                     })
                     var mLen = mItems.length;
-
+                    var sumItems = {};
                     for (var i = 0; i < mLen; i++) {
                         var mItem = mItems[i];
                         if (mItem.end_time == null) {
@@ -304,9 +305,12 @@ Page({
                             default:
                                 mItem.memberRole = '未定义：' + mItem.exam_role
                         }
-
+                        if(!(mItem.memberRole in sumItems)){
+                            sumItems[mItem.memberRole] = 0;
+                        }
+                        sumItems[mItem.memberRole] += 1;
                     }
-
+                    console.info(sumItems);
                     that.setData({
                         members: mItems
                     })

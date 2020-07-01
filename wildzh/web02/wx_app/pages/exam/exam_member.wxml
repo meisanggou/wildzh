@@ -5,7 +5,7 @@
 
 	<view class="page-body">
 		<view class="page-section">
-			<view class="weui-cells__title">选择题库</view>
+			<!-- <view class="weui-cells__title">选择题库</view> -->
 			<view class="weui-cells weui-cells_after-title">
 				<view class="weui-cell weui-cell_input">
 					<view class="weui-cell__hd">
@@ -99,6 +99,16 @@
 				<button wx:if="{{isQuery}}" plain="true" bindtap="queryAction">查询</button>
 			</block>
 			<block wx:else>
+				<view class="page-section">
+					<view class="weui-cells__title">
+						<text class="sum-text">超级管理员: 2</text>
+						<text class="sum-text">普通用户：10</text>
+					</view>
+					<view class="weui-cells__title">
+						<text class="sum-text">超级管理员: 2</text>
+						<text class="sum-text">普通用户：10</text>
+					</view>
+				</view>
 				<view class="table">
 					<view class="tr bg-w">
 						<view class="th">用户编号</view>

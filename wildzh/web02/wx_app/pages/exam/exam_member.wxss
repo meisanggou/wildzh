@@ -43,3 +43,9 @@ button{
   justify-content: space-around;
   z-index: 10;
 }
+
+.sum-text{
+  display: inline-block;
+  text-align: center;
+  width: 50%;
+}

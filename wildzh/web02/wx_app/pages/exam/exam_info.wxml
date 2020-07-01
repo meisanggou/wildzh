@@ -28,7 +28,7 @@
 
             <view class="title">题库介绍</view>
             <view>
-                <block wx:for="{{ examDescRich }}">
+                <block wx:for="{{ examDescRich }}" wx:key="*this">
                     <block wx:if="{{item.url}}">
                         <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
                     </block>

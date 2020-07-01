@@ -59,7 +59,7 @@ Page({
             return;
           }
           var betterExams = []
-          var serverMessage = "功能测试中";
+          var serverMessage = "";
           var items = res.data.data;
           if ('current' in res.data.data) {
             items = res.data.data['current'];

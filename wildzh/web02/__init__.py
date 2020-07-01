@@ -11,12 +11,14 @@ from flask_helper import Flask2
 from zh_config import file_prefix_url, upload_folder, accept_agent
 from wildzh.function.web_func import make_static_html, make_default_static_url, make_static_url
 from wildzh.function.web_func import make_static_html2
+from wildzh.utils.log import getLogger
 
 __author__ = 'zhouheng'
 
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
+LOG = getLogger()
 
 
 def create_app():
@@ -30,6 +32,8 @@ def create_app():
         if current_user.is_authenticated:
             g.user_role = current_user.role
             g.user_no = current_user.user_no
+            LOG.info('receive request: user:%s role:%s url:%s', g.user_no,
+                     g.user_role, request.path)
         else:
             g.user_role = 0
             g.user_no = None
