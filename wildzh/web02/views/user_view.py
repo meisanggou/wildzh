@@ -9,9 +9,11 @@ from wildzh.classes.user import User
 from wildzh.classes.wx import MiniProgram
 from wildzh.web02 import login_manager
 from wildzh.web02.view import View2
+from wildzh.utils.log import getLogger
 
 __author__ = 'meisa'
 
+LOG = getLogger()
 url_prefix = "/user"
 rt = RenderTemplate("user")
 c_user = User(db_conf_path=db_conf_path, upload_folder=upload_folder)
@@ -102,6 +104,7 @@ def wx_login_action():
     user.user_no = item["user_no"]
     session["role"] = item["role"]
     login_user(user)
+    LOG.info('%s login success from wx', user.user_no)
     return jsonify({"status": True, "data": item})
 
 
