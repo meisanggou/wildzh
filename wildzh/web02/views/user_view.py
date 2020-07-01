@@ -87,7 +87,7 @@ def login_action():
 
 @user_view.route("/login/wx/", methods=["POST"])
 def wx_login_action():
-    LOG.info('someone login from wx')
+    LOG.info('someone try login from wx')
     rd = g.request_data
     code = rd["code"]
     LOG.info('someone login from wx, code is %s', code)

@@ -37,9 +37,6 @@ def create_app():
         else:
             g.user_role = 0
             g.user_no = None
-            LOG.info('receive request: method:%s full_path:%s user-agent:%s',
-                     request.method, request.full_path,
-                     request.headers.get('User-Agent'))
         if "Accept" in request.headers and request.headers["Accept"].find("application/json") >= 0:
             g.accept_json = True
         else:
@@ -53,6 +50,10 @@ def create_app():
             except Exception as e:
                 print(e)
         res.headers["Server"] = "Wild Server"
+        LOG.info('receive request: [%s][%s][%s] full_path:%s user-agent:%s',
+                 res.status_code, request.method, g.user_no,
+                 request.full_path,
+                 request.headers.get('User-Agent'))
         return res
 
     one_web.add_url_rule("/static00" + '/<path:filename>', endpoint='static00', view_func=one_web.send_static_file2,
