@@ -33,7 +33,7 @@ def create_app():
             g.user_role = current_user.role
             g.user_no = current_user.user_no
             LOG.info('receive request: user:%s role:%s method:%s full_path:%s',
-                     g.user_no, g.user_role, request.method, request.path)
+                     g.user_no, g.user_role, request.method, request.full_path)
         else:
             g.user_role = 0
             g.user_no = None
