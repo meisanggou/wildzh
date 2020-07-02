@@ -1,5 +1,5 @@
 var remote_host = "https://meisanggou.vicp.net"
-var version = "6.0.4";
+var version = "6.0.5";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 remote_host = "https://wild.gene.ac"
@@ -21,6 +21,26 @@ App({
         wx.removeStorage({
             key: wx.session_storage_key,
         })
+        wx.login({
+            success: res => {
+                wx.request({
+                    url: wx.remote_host + '/user/login/wx/',
+                    method: "POST",
+                    data: {
+                        "code": res.code
+                    },
+                    success: res => {
+                        if (res.statusCode == 200 && res.data.status == true) {
+                            console.info("auto wx login success")
+                            that.getOrSetCurrentUserData(res.data.data)
+                            wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
+                        }
+                    }
+                })
+                // 发送 res.code 到后台换取 openId, sessionKey, unionId
+            }
+        })
+
         wx.request2 = function (req) {
             var screenData = that.getScreenInfo();
             var origin_req = req;
@@ -36,19 +56,20 @@ App({
             }
             req.header['X-Device-Screen-Width'] = screenData.width;
             req.header['X-VMP-Version'] = version;
+            req.header['X-REQ-API'] = 'v1';
             if (req.url[0] == "/") {
                 req.url = wx.remote_host + req.url
             }
             var retry = 0;
-            if('retry' in req){
+            if ('retry' in req) {
                 retry = req.retry
             }
             if ("success" in req) {
                 var origin_success = req.success
                 req.success = function (res) {
-                    if (res.statusCode != 302) {
+                    if (res.statusCode != 302 && res.statusCode != 401) {
                         origin_success(res);
-                    } else if(retry < 3) {
+                    } else if (retry < 3) {
                         wx.login({
                             success: res => {
                                 wx.request({

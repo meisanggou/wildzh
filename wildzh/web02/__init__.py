@@ -4,8 +4,9 @@
 import os
 import functools
 
-from flask import request, g, Blueprint, jsonify
-from flask_login import current_user, LoginManager, login_required
+from flask import request, g, redirect, make_response
+from flask_login import current_user, LoginManager
+from flask_login.utils import login_url as make_login_url
 from flask_helper import Flask2
 
 from zh_config import file_prefix_url, upload_folder, accept_agent
@@ -26,6 +27,13 @@ def create_app():
 
     one_web.secret_key = 'a string'
     login_manager.init_app(one_web)
+    @login_manager.unauthorized_handler
+    def unauthorized():
+        if request.headers.get('X-REQ-API'):
+            return make_response('Unauthorized', 401)
+        redirect_url = make_login_url(login_manager.login_view,
+                                      next_url=request.url)
+        return redirect(redirect_url)
 
     @one_web.before_request
     def before_request():
