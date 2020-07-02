@@ -310,9 +310,17 @@ Page({
                         }
                         sumItems[mItem.memberRole] += 1;
                     }
+                    var sumItemsList = [{'name': '超级管理员', 'value': 0}, {'name': '普通用户', 'value': 0}];
+                    if('超级管理员' in sumItems){
+                        sumItemsList[0]['value'] = sumItems['超级管理员'];
+                    }
+                    if('普通用户' in sumItems){
+                        sumItemsList[1]['value'] = sumItems['普通用户'];
+                    }
                     console.info(sumItems);
                     that.setData({
-                        members: mItems
+                        members: mItems,
+                        sumItems: sumItemsList
                     })
                     that.getNickNames(mItems);
                 }

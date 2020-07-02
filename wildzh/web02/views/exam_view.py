@@ -549,6 +549,11 @@ def query2_question_items():
     data = request.json
     exam_no = data['exam_no']
     query_str = data['query_str']
+    item = c_exam.get_one_usage_records(g.user_no, g.exam_no)
+    if item['num'] < 100:
+        data = {'current': [], 'better_exams': []}
+        data['message'] = '当前做题较少，暂无法使用！'
+        return {'status': True, 'data': data}
     s_items = c_exam_es.search_multi(query_str)
     current = []
     c_score = -1

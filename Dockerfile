@@ -3,8 +3,9 @@ MAINTAINER meisanggou
 
 
 ADD https://raw.githubusercontent.com/meisanggou/wildzh/exam/requirement.txt /tmp/
-RUN pip install --no-cache-dir -r /tmp/requirement.txt -i https://mirrors.aliyun.com/pypi/simple/
-RUN pip install --no-cache-dir gevent gunicorn  -i https://mirrors.aliyun.com/pypi/simple/
+RUN pip install --no-cache-dir -r /tmp/requirement.txt -i https://mirrors.aliyun.com/pypi/simple/ && \
+    pip install --no-cache-dir gevent gunicorn  -i https://mirrors.aliyun.com/pypi/simple/ && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 ENV WILDPATH /opt/wildzh
 ENV PYTHONPATH $WILDPATH
