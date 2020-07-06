@@ -6,8 +6,9 @@ import json
 import re
 import sys
 
-from parse_option import ListOption
-from parse_option import ParseOptions
+from wildzh.tools.parse_exception import QuestionNoRepeat
+from wildzh.tools.parse_option import ListOption
+from wildzh.tools.parse_option import ParseOptions
 
 
 class AnswerLocation(object):
@@ -50,7 +51,8 @@ class QuestionType(object):
 
 class Question(object):
 
-    def __init__(self):
+    def __init__(self, q_items=None):
+        self.q_items = q_items
         self.no = None
         self.options = None
         self._desc = None
@@ -212,7 +214,7 @@ class ParseQuestion(object):
             i = cls.find_options_location(question_items[:])
         else:
             i = -1
-        q = Question()
+        q = Question(question_items)
         q.no = q_no
         if i < 0:
             desc = "\n".join(question_items[1:])
@@ -277,7 +279,7 @@ class QuestionSet(object):
         if question.select_mode not in self._s:
             self._s[question.select_mode] = collections.OrderedDict()
         if question.no in self._s[question.select_mode]:
-            raise RuntimeError(question)
+            raise QuestionNoRepeat(question.q_items, question.no)
         self._s[question.select_mode][question.no] = question
 
     def append(self, question):

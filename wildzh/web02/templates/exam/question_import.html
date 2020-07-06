@@ -1,0 +1,63 @@
+{% extends "base_a.html" %}
+
+{% block title %}试题上传{% endblock %}
+
+{% block js_content %}
+{{ 't_js/exam/upload.js' | make_static_html | safe }}
+{% endblock %}
+{% block css_content %}
+{{ 't_css/exam/upload.css' | make_static_html | safe }}
+{% endblock %}
+{% block center_content %}
+<!--Start row-->
+<div class="row">
+    <div class="col-md-12" id="div_content">
+        <div class="white-box">
+
+            <div class="search-box-top">
+                <form>
+                    <div class="input-group">
+                        <input @change="file_change" type="file" ref="fileElem" class="form-control input-search" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                        <!--<span class="input-group-btn">-->
+                        <!--<select class="form-control input-sm" style="width:auto;"  v-model="current_exam_index">-->
+                               <!--<option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>-->
+                           <!--</select>-->
+                        <!--</span>-->
+                          <span class="input-group-btn">
+                              <button @click="upload" class="btn btn-primary" type="button">上传</button>
+                          </span>
+                    </div>
+                </form>
+            </div>
+            <div class="panel panel-default q-content">
+                请上传题目
+            </div>
+            <div class="search-item" v-for="(item,index) in questions_items">
+                <h3><a href="#" @click="to_question(index)">题库：{{item["exam_name"]}}，编号：{{item["question_no"]}}</a></h3>
+                <a class="search-link" href="javascript:void(0);" @click="to_question(index)">
+                    <template v-if='item["question_source"]'>{{item["question_source"]}}</template>
+                    <template v-if='item["inside_mark"]'>{{item["inside_mark"]}}</template>
+                </a>
+
+                <p>{{item["question_desc"]}}</p>
+            </div>
+            <!-- /.search item-->
+            <!--<ul class="pagination m-t-30">-->
+            <!--<li><a href="#" aria-label="Previous"><span aria-hidden="true">«</span></a></li>-->
+            <!--<li><a href="#">1</a></li>-->
+            <!--<li class="active"><a href="#">2</a></li>-->
+            <!--<li><a href="#">3</a></li>-->
+            <!--<li><a href="#">4</a></li>-->
+            <!--<li><a href="#">5</a></li>-->
+            <!--<li><a href="#">6</a></li>-->
+            <!--<li><a href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>-->
+            <!--</ul>-->
+
+        </div>
+    </div>
+</div>
+<!--End row-->
+{% endblock %}
+
+
+

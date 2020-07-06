@@ -2,12 +2,13 @@
 # coding: utf-8
 from flask_login import current_user, LoginManager, login_required
 
+from flask_helper.utils.registry import DataRegistry
 from flask_helper.view import View
 
 __author__ = 'zhouhenglc'
 
 
-portal_menu_list = []
+DR = DataRegistry.get_instance()
 
 
 class View2(View):
@@ -22,19 +23,20 @@ class View2(View):
             @login_required
             def before_request():
                 pass
+        DataRegistry().set_default('portal_menu_list', [])
         if menu_list is not None:
             if isinstance(menu_list, (list, tuple)) is True:
                 for item in menu_list:
                     if "index" not in item:
-                        item["index"] = len(portal_menu_list) + 10
+                        item["index"] = len(DR.get('portal_menu_list', [])) + 10
                     if "url" not in item:
-                        item["url"] = url_prefix + "/"
+                        item["url"] = url_prefix.rstrip('/') + "/"
                     else:
                         item['url'] = url_prefix + item["url"]
-                    portal_menu_list.append(item)
+                    DR.append('portal_menu_list', item)
             elif isinstance(menu_list, dict) is True:
                 if "index" not in menu_list:
-                    menu_list["index"] = len(portal_menu_list) + 10
+                    menu_list["index"] = len(DR.get('portal_menu_list', [])) + 10
                 if "url" not in menu_list:
-                    menu_list["url"] = url_prefix + "/"
-                portal_menu_list.append(menu_list)
+                    menu_list["url"] = url_prefix.rstrip('/') + "/"
+                DR.append('portal_menu_list', menu_list)

@@ -4,6 +4,8 @@ from collections import OrderedDict
 import re
 import time
 from functools import wraps
+from werkzeug.utils import secure_filename
+import uuid
 
 from flask import request, jsonify, g
 from flask_login import login_required
@@ -17,6 +19,11 @@ from wildzh.classes.exam_es import ExamEs
 from wildzh.classes.user import User
 from wildzh.classes.wx import MiniProgram
 from wildzh.export.local_write import write_docx
+from wildzh.tools.docx.object import DocxObject
+from wildzh.tools.handle_exam import QuestionSet
+from wildzh.tools.parse_exception import ParseException
+from wildzh.tools.parse_question import AnswerLocation
+from wildzh.tools.read_xml import handle_docx_main_xml
 from wildzh.utils.async_pool import get_pool
 from wildzh.utils.log import getLogger
 from wildzh.web02.view import View2
@@ -35,16 +42,18 @@ page_exam = url_prefix + "/?action=exam"
 page_question_url = url_prefix + '/question/'
 strategy_url = url_prefix + '/strategy'
 query_url = url_prefix + '/query'
+file_url = url_prefix + '/question/file'
 defined_routes = dict(add_url=add_url, upload_url=upload_url,
                       info_url=info_url, online_url=online_url,
                       questions_url=questions_url, page_exam=page_exam,
                       strategy_url=strategy_url, query_url=query_url,
-                      page_question_url=page_question_url)
+                      page_question_url=page_question_url, file_url=file_url)
 rt = RenderTemplate("exam", menu_active="exam", defined_routes=defined_routes)
 menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam", "sub_menu": [
     {"title": u"试题库管理", "url": url_prefix + "/"},
     {"title": u"添加试题库", "url": url_prefix + "/?action=exam"},
     {"title": u"试题管理", "url": url_prefix + "/question/"},
+    {"title": u"导入试题", "url": url_prefix + "/question/import"},
     {"title": u"组卷策略", "url": url_prefix + "/strategy"},
     {"title": u"试题搜索", "url": url_prefix + "/search/"}
 ]}
@@ -518,6 +527,41 @@ def remove_my_wrong_action():
     l = c_exam.delete_wrong(g.user_no, g.exam_no, question_no)
     d_item = dict(exam_no=g.exam_no, question_no=question_no, l=l)
     return jsonify({"status": True, "data": d_item})
+
+
+@exam_view.route("/question/import/", methods=["GET"])
+@login_required
+def upload_question_page():
+    return rt.render("question_import.html", page_title=u"试题上传")
+
+
+@exam_view.route("/question/file/", methods=["POST"])
+@login_required
+def upload_question_file():
+    r = dict()
+    for key in request.files:
+        file_item = request.files[key]
+        filename = secure_filename(file_item.filename)
+        extension = filename.rsplit(".", 1)[-1].lower()
+        save_name = uuid.uuid4().hex + ".%s" % extension
+        file_item.save(save_name)
+        r[key] = save_name
+    docx_path = r['q_file']
+    s_kwargs = dict(dry_run=True, set_mode=False,
+                    answer_location=AnswerLocation.embedded())
+    q_set = QuestionSet(**s_kwargs)
+
+    with DocxObject(docx_path) as do:
+        try:
+            handle_docx_main_xml(do, ".", u"、", u"．", ':',
+                                 questions_set=q_set)
+        except ParseException as pe:
+            pass
+        q_list = []
+        for q_item in q_set:
+            q_list.append(q_item.to_dict())
+        data = {'q_list': q_list}
+        return jsonify({"status": True, "data": data})
 
 
 @exam_view.route("/strategy", methods=["GET"])

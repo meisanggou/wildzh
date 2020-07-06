@@ -23,7 +23,7 @@ LOG = getLogger()
 
 
 def create_app():
-    one_web = Flask2(__name__)
+    one_web = Flask2(__name__, log=LOG)
 
     one_web.secret_key = 'a string'
     login_manager.init_app(one_web)
@@ -37,14 +37,6 @@ def create_app():
 
     @one_web.before_request
     def before_request():
-        if current_user.is_authenticated:
-            g.user_role = current_user.role
-            g.user_no = current_user.user_no
-            LOG.info('receive request: user:%s role:%s method:%s full_path:%s',
-                     g.user_no, g.user_role, request.method, request.full_path)
-        else:
-            g.user_role = 0
-            g.user_no = None
         if "Accept" in request.headers and request.headers["Accept"].find("application/json") >= 0:
             g.accept_json = True
         else:

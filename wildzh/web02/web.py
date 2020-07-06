@@ -4,14 +4,15 @@
 import os
 import sys
 
+from flask_helper.utils.registry import DataRegistry
+
 from wildzh.web02 import app
 from wildzh.utils.log import getLogger
-from wildzh.web02.view import portal_menu_list
 
 __author__ = 'meisa'
 
 LOG = getLogger()
-
+portal_menu_list = DataRegistry.get_instance().get('portal_menu_list', [])
 l_menu = len(portal_menu_list) + 10
 for item in portal_menu_list:
     if item["index"] < 0:

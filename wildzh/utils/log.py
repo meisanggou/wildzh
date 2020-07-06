@@ -27,7 +27,10 @@ console_handle.setFormatter(fmt)
 
 def set_logger_as_root(name):
     logger = logging.getLogger(name)
-    logger.addHandler(file_handler)
+    # if not os.environ.get('LOG_NO_FILE'):
+    #     logger.addHandler(file_handler)
+    # if os.environ.get('LOG_CONSOLE'):
+    logger.addHandler(console_handle)
     logger.setLevel(LOG_LEVEL)
     logger.propagate = False
     return logger

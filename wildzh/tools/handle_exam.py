@@ -409,5 +409,5 @@ if __name__ == "__main__":
     # find_from_dir(d, q_set)
     # download_questions(1569283516, 2)
     # download_usage(exam_no, [1, 2, 3, 4])
-    # handle_exam(d_path, q_set)
+    handle_exam(d_path, q_set)
 
