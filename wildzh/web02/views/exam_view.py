@@ -552,15 +552,19 @@ def upload_question_file():
     q_set = QuestionSet(**s_kwargs)
 
     with DocxObject(docx_path) as do:
+        error_question = None
+        error_msg = None
         try:
             handle_docx_main_xml(do, ".", u"、", u"．", ':',
                                  questions_set=q_set)
         except ParseException as pe:
-            pass
+            error_msg = pe.msg
+            error_question = pe.q_items
         q_list = []
         for q_item in q_set:
             q_list.append(q_item.to_dict())
-        data = {'q_list': q_list}
+        data = {'q_list': q_list, 'error_question': error_question,
+                'error_msg': error_msg}
         return jsonify({"status": True, "data": data})
 
 

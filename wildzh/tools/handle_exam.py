@@ -384,26 +384,26 @@ if __name__ == "__main__":
     exam_no = 1567506833  # 测试包含图片
     # exam_no = 1569283516  # 专升本经济学题库
     exam_no = 1570447137  # 专升本经济学题库 会员版
-    exam_no = 1575333741 # 专升本经济学题库 试用版
+    # exam_no = 1575333741 # 专升本经济学题库 试用版
     # exam_no = 1585396371  # 本地 测试题库2
     t_exam_no = 1591669814  # 本地 测试题库2-copy
     # exam_no = 1573464937  # 英语托业
     # 538 + 319
     # 会员版 to 试用版
-    transfer_exam(1570447137, 4295, 4357, 1575333741)
+    # transfer_exam(1570447137, 4295, 4357, 1575333741)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
-    d_path = r'D:\Project\word\app\upload\2013年经济学真题.docx'
+    d_path = r'D:\Project\word\app\upload\整理题（三）.docx'
     # read_docx(d_path)
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
     s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
-    s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
-    s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
-    s_kwargs['exam_name'] = '2013年经济学真题'  # 设置题目来源 一般真题需要设置
+    # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
+    # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
+    # s_kwargs['exam_name'] = '2013年经济学真题'  # 设置题目来源 一般真题需要设置
     q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'
     # find_from_dir(d, q_set)

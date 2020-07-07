@@ -17,3 +17,9 @@ class QuestionNoRepeat(ParseException):
     def __init__(self, q_items, no):
         msg = no
         ParseException.__init__(self, q_items, msg)
+
+
+class AnswerNotFound(ParseException):
+
+    def __init__(self, q_items, msg):
+        ParseException.__init__(self, q_items, msg)
