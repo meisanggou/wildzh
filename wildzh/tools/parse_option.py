@@ -168,10 +168,7 @@ class ParseOptions(object):
         s = replace_special_space(s)
         r = self.o_compile.split(s)
         v_result, data = self.verify_split_r(r)
-        if v_result is False:
-            sys.stderr.write(s)
-            raise RuntimeError(data.encode("gbk"))
-        return data
+        return v_result, data
 
     @classmethod
     def test(cls, case_name, s):

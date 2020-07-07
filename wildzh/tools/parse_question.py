@@ -6,7 +6,7 @@ import json
 import re
 import sys
 
-from wildzh.tools.parse_exception import QuestionNoRepeat
+from wildzh.tools.parse_exception import QuestionNoRepeat, InvalidOption
 from wildzh.tools.parse_option import ListOption
 from wildzh.tools.parse_option import ParseOptions
 
@@ -237,7 +237,9 @@ class ParseQuestion(object):
                     q.set_answer(answers)
         else:
             desc = "\n".join(question_items[1:i])
-            p_data = ParseOptions().parse(question_items[i:])
+            p_r, p_data = ParseOptions().parse(question_items[i:])
+            if p_r is False:
+                raise InvalidOption(q.q_items, p_data)
             if p_data['prefix']:
                 desc += "\n" + p_data['prefix']
             q.options = p_data['options']

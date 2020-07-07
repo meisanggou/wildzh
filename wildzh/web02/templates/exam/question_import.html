@@ -30,6 +30,11 @@
                 </form>
             </div>
             <div class="panel panel-default q-content">
+                <div class="search-item" v-if="error_msg">
+                    <p class="error-msg">请仔细检查以下内容，并根据提示修改</p>
+                    <p v-for="v in error_question">{{v}}</p>
+                    <p class="error-msg">【错误提示】{{error_msg}}</p>
+                </div>
                 <div class="search-item" v-for="q_item in questions_items">
                     <p>{{q_item["no"]}}、{{q_item["desc"]}}</p>
                     <template v-for="(option, o_index) in q_item['options']">

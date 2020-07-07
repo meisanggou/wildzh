@@ -2,7 +2,9 @@
     width: 100%;
     /*height: 100cm;*/
 }
-
+.error-msg {
+    color: red;
+}
 .right-option {
     background-color: #f0f5fb;
     font-weight: bold;

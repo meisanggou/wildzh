@@ -23,3 +23,10 @@ class AnswerNotFound(ParseException):
 
     def __init__(self, q_items, msg):
         ParseException.__init__(self, q_items, msg)
+
+
+class InvalidOption(ParseException):
+
+    def __init__(self, q_items, msg):
+        msg = '选项有误：%s' % msg
+        ParseException.__init__(self, q_items, msg)
