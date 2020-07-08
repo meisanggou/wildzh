@@ -8,7 +8,7 @@ import re
 # from win32com import client as wc
 import xml.dom.minidom as minidom
 from wildzh.tools.docx.object import DocxObject
-from wildzh.tools.parse_question import ParseQuestion, QuestionType, QuestionSet
+from wildzh.tools.parse_question import ParseQuestion, QuestionType
 from wildzh.tools.parse_question import Answer, AnswerSet, ParseAnswer, AnswerLocation
 
 # reload(sys)

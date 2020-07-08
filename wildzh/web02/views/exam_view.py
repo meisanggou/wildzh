@@ -22,9 +22,8 @@ from wildzh.classes.user import User
 from wildzh.classes.wx import MiniProgram
 from wildzh.export.local_write import write_docx
 from wildzh.tools.docx.object import DocxObject
-from wildzh.tools.handle_exam import QuestionSet
 from wildzh.tools.parse_exception import ParseException
-from wildzh.tools.parse_question import AnswerLocation
+from wildzh.tools.parse_question import AnswerLocation, QuestionSet
 from wildzh.tools.read_xml import handle_docx_main_xml
 from wildzh.utils.async_pool import get_pool
 from wildzh.utils.log import getLogger
