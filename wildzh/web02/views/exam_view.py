@@ -1,9 +1,11 @@
 # !/usr/bin/env python
 # coding: utf-8
 from collections import OrderedDict
+from functools import wraps
+import os
 import re
 import time
-from functools import wraps
+import tempfile
 from werkzeug.utils import secure_filename
 import uuid
 
@@ -543,7 +545,10 @@ def upload_question_file():
         file_item = request.files[key]
         filename = secure_filename(file_item.filename)
         extension = filename.rsplit(".", 1)[-1].lower()
-        save_name = uuid.uuid4().hex + ".%s" % extension
+        if extension != 'docx':
+            continue
+        save_name = "wildzh_%s.%s" % (uuid.uuid4().hex, extension)
+        save_path = os.path.join(tempfile.gettempdir(), save_name)
         file_item.save(save_name)
         r[key] = save_name
     docx_path = r['q_file']
@@ -551,7 +556,7 @@ def upload_question_file():
                     answer_location=AnswerLocation.embedded())
     q_set = QuestionSet(**s_kwargs)
 
-    with DocxObject(docx_path) as do:
+    with DocxObject(docx_path, exit_delete=True) as do:
         error_question = None
         error_msg = None
         try:
@@ -565,7 +570,7 @@ def upload_question_file():
             q_list.append(q_item.to_dict())
         data = {'q_list': q_list, 'error_question': error_question,
                 'error_msg': error_msg}
-        return jsonify({"status": True, "data": data})
+    return jsonify({"status": True, "data": data})
 
 
 @exam_view.route("/strategy", methods=["GET"])

@@ -31,11 +31,11 @@ $(function () {
                     popup_show('请先选择文件');
                     return false;
                 }
+                this.questions_items = [];
                 var a_file = this.docx_file;
                 var data = {"q_file": a_file};
                 var that = this;
                 upload_request(file_url, "POST", data, function(data){
-                    console.info(data);
                     that.questions_items = data.q_list;
                     that.error_question = data.error_question;
                     that.error_msg = data.error_msg;

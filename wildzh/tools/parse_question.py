@@ -6,7 +6,7 @@ import json
 import re
 import sys
 
-from wildzh.tools.parse_exception import QuestionNoRepeat, InvalidOption
+import wildzh.tools.parse_exception as p_exc
 from wildzh.tools.parse_option import ListOption
 from wildzh.tools.parse_option import ParseOptions
 
@@ -91,7 +91,7 @@ class Question(object):
     def to_dict(self):
         real_options = self.options.to_list()
         return dict(no=self.no, desc=self.desc, options=real_options,
-                    select_mode=self.select_mode)
+                    select_mode=self.select_mode, answer=self.answer)
 
     def to_exam_dict(self):
         if self.answer is None:
@@ -239,7 +239,7 @@ class ParseQuestion(object):
             desc = "\n".join(question_items[1:i])
             p_r, p_data = ParseOptions().parse(question_items[i:])
             if p_r is False:
-                raise InvalidOption(q.q_items, p_data)
+                raise p_exc.InvalidOption(q.q_items, p_data)
             if p_data['prefix']:
                 desc += "\n" + p_data['prefix']
             q.options = p_data['options']
@@ -247,6 +247,8 @@ class ParseQuestion(object):
             n_desc, answers = cls.find_choice_answer(desc)
             if len(answers) > 0:
                 q.set_answer(answers[0])
+            elif embedded_answer:
+                raise p_exc.AnswerNotFound(q.q_items)
 
         q.desc = n_desc
         return q
@@ -281,7 +283,7 @@ class QuestionSet(object):
         if question.select_mode not in self._s:
             self._s[question.select_mode] = collections.OrderedDict()
         if question.no in self._s[question.select_mode]:
-            raise QuestionNoRepeat(question.q_items, question.no)
+            raise p_exc.QuestionNoRepeat(question.q_items, question.no)
         self._s[question.select_mode][question.no] = question
 
     def append(self, question):

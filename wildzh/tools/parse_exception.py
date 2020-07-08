@@ -15,13 +15,14 @@ class ParseException(Exception):
 class QuestionNoRepeat(ParseException):
 
     def __init__(self, q_items, no):
-        msg = no
+        msg = '不允许设置重复的题目编号，已存在题目编号：%s' % no
         ParseException.__init__(self, q_items, msg)
 
 
 class AnswerNotFound(ParseException):
 
-    def __init__(self, q_items, msg):
+    def __init__(self, q_items):
+        msg = '没有设置答案'
         ParseException.__init__(self, q_items, msg)
 
 

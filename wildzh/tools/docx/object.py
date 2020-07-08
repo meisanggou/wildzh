@@ -15,11 +15,12 @@ __author__ = 'zhouhenglc'
 
 class DocxObject(object):
 
-    def __init__(self, path):
+    def __init__(self, path, exit_delete=False):
         self.path = path
         self._extract_dir = None
         self._document_path = None
         self._relationships = None
+        self.exit_delete = exit_delete
 
     @property
     def extract_dir(self):
@@ -86,6 +87,8 @@ class DocxObject(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.extract_dir:
             try:
-                shutil.rmtree(self.extract_dir)
-            except Exception:
+                shutil.rmtree(self.extract_dir, ignore_errors=True)
+                if self.exit_delete:
+                    os.remove(self.path)
+            except Exception as e:
                 pass
