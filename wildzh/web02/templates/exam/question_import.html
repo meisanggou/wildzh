@@ -9,39 +9,92 @@
 {{ 't_css/exam/upload.css' | make_static_html | safe }}
 {% endblock %}
 {% block center_content %}
+
 <!--Start row-->
+
 <div class="row">
     <div class="col-md-12" id="div_content">
+
         <div class="white-box">
 
             <div class="search-box-top">
-                <form>
-                    <div class="input-group">
-                        <input @change="file_change" type="file" ref="fileElem" class="form-control input-search" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-                        <!--<span class="input-group-btn">-->
-                        <!--<select class="form-control input-sm" style="width:auto;"  v-model="current_exam_index">-->
-                               <!--<option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>-->
-                           <!--</select>-->
-                        <!--</span>-->
-                          <span class="input-group-btn">
-                              <button @click="upload" class="btn btn-primary" type="button">上传</button>
-                          </span>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label>题目文件：</label>
                     </div>
+                    <div class="form-group">
+                        <input @change="file_change" type="file" ref="fileElem"
+                               accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                    </div>
+                    <!--<div class="form-group">-->
+                        <!--<label>答案文件：</label>-->
+                    <!--</div>-->
+                    <!--<div class="form-group">-->
+                        <!--<input @change="file_change" type="file" ref="answerFileElem"-->
+                               <!--accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">-->
+                    <!--</div>-->
+                    <!--<div class="checkbox">-->
+                        <!--<label>请打勾-->
+                            <!--<input type="checkbox">-->
+                        <!--</label>-->
+                    <!--</div>-->
+                    <button type="button" @click="upload" class="btn btn-primary" >上传</button>
                 </form>
+                <!--<form>-->
+                <!--<div class="input-group">-->
+                <!--<label>题目文件：</label>-->
+                <!--<input @change="file_change" type="file" ref="fileElem" class="input-file input-search"-->
+                <!--accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">-->
+                <!--<label>答案文件：</label>-->
+                <!--<input @change="file_change" type="file" ref="fileElem" class="input-file input-search"-->
+                <!--accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">-->
+                <!--&lt;!&ndash;<span class="input-group-btn">&ndash;&gt;-->
+                <!--&lt;!&ndash;<select class="form-control input-sm" style="width:auto;"  v-model="current_exam_index">&ndash;&gt;-->
+                <!--&lt;!&ndash;<option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>&ndash;&gt;-->
+                <!--&lt;!&ndash;</select>&ndash;&gt;-->
+                <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                <!--&lt;!&ndash;<span class="input-group-btn">&ndash;&gt;-->
+                <!--&lt;!&ndash;<button @click="upload" class="btn btn-primary" type="button">上传</button>&ndash;&gt;-->
+                <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                <!--</div>-->
+                <!--<div class="input-group">-->
+                <!--<label>答案文件：</label>-->
+                <!--<input @change="file_change" type="file" ref="fileElem"-->
+                <!--class="input-file form-control input-search"-->
+                <!--accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">-->
+                <!--&lt;!&ndash;<input @change="file_change" type="file" ref="fileElem" class="input-file form-control input-search" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">&ndash;&gt;-->
+                <!--&lt;!&ndash;<span class="input-group-btn">&ndash;&gt;-->
+                <!--&lt;!&ndash;<select class="form-control input-sm" style="width:auto;"  v-model="current_exam_index">&ndash;&gt;-->
+                <!--&lt;!&ndash;<option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>&ndash;&gt;-->
+                <!--&lt;!&ndash;</select>&ndash;&gt;-->
+                <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                <!--&lt;!&ndash;<span class="input-group-btn">&ndash;&gt;-->
+                <!--&lt;!&ndash;<button @click="upload" class="btn btn-primary" type="button">上传</button>&ndash;&gt;-->
+                <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                <!--</div>-->
+                <!--<span class="input-group-btn">-->
+                <!--<button @click="upload" class="btn btn-primary" type="button">上传</button>-->
+                <!--</span>-->
+                <!--</form>-->
             </div>
             <div class="panel panel-default q-content">
                 <div class="search-item" v-if="error_msg">
                     <p class="error-msg">请仔细检查以下内容，并根据提示修改</p>
+
                     <p v-for="v in error_question">{{v}}</p>
+
                     <p class="error-msg">【错误提示】{{error_msg}}</p>
                 </div>
                 <div class="search-item" v-for="q_item in questions_items">
                     <p>{{q_item["no"]}}、{{q_item["desc"]}}</p>
                     <template v-for="(option, o_index) in q_item['options']">
-                        <p v-if="option['score']>0" class="right-option">{{option_mapping[o_index]}}、{{option['desc']}}</p>
+                        <p v-if="option['score']>0" class="right-option">
+                            {{option_mapping[o_index]}}、{{option['desc']}}</p>
+
                         <p v-else>{{option_mapping[o_index]}}、{{option['desc']}}</p>
                     </template>
                     <p>解析：</p>
+
                     <p>{{q_item.answer}}</p>
                 </div>
             </div>

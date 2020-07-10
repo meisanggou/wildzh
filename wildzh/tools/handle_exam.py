@@ -10,8 +10,8 @@ import subprocess
 import uuid
 
 from wildzh.tools.parse_question import QuestionSet, AnswerLocation
-
-from wildzh.tools.read_xml import read_docx, read_answers_docx
+from wildzh.tools.docx.object import DocxObject
+from wildzh.tools.read_xml import handle_answers_docx_main_xml, handle_docx_main_xml
 
 __author__ = 'zhouhenglc'
 
@@ -186,8 +186,10 @@ def handle_exam_no_answer(file_path, questions_set):
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     print("start handle %s" % exam_name)
 
-    with read_docx(file_path, questions_set=questions_set) as rd:
-        _temp, q_rl = rd
+    with DocxObject(file_path) as do:
+        handle_docx_main_xml(do, ".", u"、", u"．", ':',
+                             questions_set=questions_set)
+        q_rl = do.relationships
         if questions_set.length <= 0:
             raise RuntimeError("没发现题目")
         for q_item in questions_set:
@@ -226,10 +228,11 @@ def handle_exam_with_answer(file_path, questions_set):
         return False, msg
     print("start handle %s" % exam_name)
     real_upload = questions_set.real_upload
-    with read_docx(file_path, questions_set) as rd, \
-            read_answers_docx(answer_file, questions_set) as rad:
-        _, q_rl = rd
-        answers_dict, aw_rl = rad
+    with DocxObject(file_path) as do, DocxObject(answer_file) as ado:
+        handle_docx_main_xml(do, ".", u"、", u"．", ':', questions_set=questions_set)
+        answers_dict = handle_answers_docx_main_xml(ado, questions_set)
+        q_rl = do.relationships
+        aw_rl = ado.relationships
         if questions_set.length <= 0:
             raise RuntimeError("没发现题目")
         for q_item in questions_set:
@@ -258,6 +261,7 @@ def handle_exam_with_answer(file_path, questions_set):
             q_item.inside_mark = "%s %s" % (exam_name, q_no)
         post_questions(questions_set)
     return True, "success"
+
 
 def handle_exam(file_path, question_set):
     if question_set.answer_location.IAmFile:
@@ -395,7 +399,6 @@ if __name__ == "__main__":
     # print(all_members)
 
     d_path = r'D:\Project\word\app\upload\整理题（三）.docx'
-    # read_docx(d_path)
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
     s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,

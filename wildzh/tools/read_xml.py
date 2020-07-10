@@ -7,9 +7,8 @@ import pdb
 import re
 # from win32com import client as wc
 import xml.dom.minidom as minidom
-from wildzh.tools.docx.object import DocxObject
 from wildzh.tools.parse_question import ParseQuestion, QuestionType
-from wildzh.tools.parse_question import Answer, AnswerSet, ParseAnswer, AnswerLocation
+from wildzh.tools.parse_question import AnswerSet, ParseAnswer, AnswerLocation
 
 # reload(sys)
 # sys.setdefaultencoding('utf8')
@@ -229,15 +228,6 @@ def handle_docx_main_xml(docx_obj, *args, **kwargs):
     return questions_set
 
 
-@contextmanager
-def read_docx(docx_path, questions_set):
-    with DocxObject(docx_path) as do:
-        questions_s = handle_docx_main_xml(do, ".", u"、", u"．", ':',
-                                       questions_set=questions_set)
-        yield [questions_s, do.relationships]
-        pass
-
-
 def get_answers(answer_items, parse_answer):
     aw_dict = []
     for a_item in answer_items:
@@ -335,14 +325,6 @@ def handle_answers_docx_main_xml(docx_obj, questions_set):
     return answers_dict
 
 
-@contextmanager
-def read_answers_docx(docx_path, questions_set):
-    with DocxObject(docx_path) as do:
-        answers = handle_answers_docx_main_xml(do, questions_set)
-        yield [answers, do.relationships]
-        pass
-
-
 def find_from_dir(directory_name):
     files = os.listdir(directory_name)
     for file_item in files:
@@ -371,4 +353,3 @@ def find_from_dir(directory_name):
         # if len(members) <= 0:
         #     print(u"请检查文件%s" % file_path)
         # all_member.extend(members)
-

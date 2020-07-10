@@ -19,9 +19,10 @@
     {#    <link href="assets/css/responsive.css" rel="stylesheet">#}
     {{ 't_css/bootstrap2.min.css' | make_static_html | safe }}
     <!-- 新 Bootstrap 核心 CSS 文件 -->
+    {{ 'css/style.css' | make_static_html | safe }}
     {{ 't_css/main.css' | make_static_html | safe }}
     {{ 'css/icons.css' | make_static_html | safe }}
-    {{ 'css/style.css' | make_static_html | safe }}
+
     {% block css_content %} {% endblock %}
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

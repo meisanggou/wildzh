@@ -20,7 +20,9 @@ $(function () {
         },
         methods: {
             file_change: function () {
+                console.info('chage');
                 var u_files = this.$refs.fileElem.files;
+                console.info(u_files);
                 if(u_files.length <= 0){
                     return 1;
                 }
