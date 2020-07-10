@@ -603,9 +603,14 @@ def query2_question_items():
     data = request.json
     exam_no = data['exam_no']
     query_str = data['query_str']
+    e_item , e_role = c_exam.user_exam_role(g.user_role, g.user_no,
+                                            exam_no)
+    data = {'current': [], 'better_exams': []}
+    if e_item is None:
+        data['message'] = '题库不存在！'
+        return {'status': True, 'data': data}
     item = c_exam.get_one_usage_records(g.user_no, exam_no)
-    if item['num'] < 100:
-        data = {'current': [], 'better_exams': []}
+    if e_role >= 5 and item['num'] < 100:
         data['message'] = '当前做题较少，暂无法使用！'
         return {'status': True, 'data': data}
     s_items = c_exam_es.search_multi(query_str)
@@ -640,7 +645,7 @@ def query2_question_items():
     for o_exam_no, m_data in others.items():
         if m_data['score'] <= c_score:
             continue
-        e_item , e_role = c_exam.user_exam_role(g.user_role, g.user_role,
+        e_item , e_role = c_exam.user_exam_role(g.user_role, g.user_no,
                                                 o_exam_no)
         if e_item is None:
             continue
@@ -648,7 +653,7 @@ def query2_question_items():
         e_item_d['exam_role'] = e_role
         e_item_d['match_num'] = m_data['num']
         better_exams.append(e_item_d)
-    data = {'current': current, 'better_exams': better_exams}
+    data.update({'current': current, 'better_exams': better_exams})
     data['message'] = '功能测试中'
     return {'status': True, 'data': data}
 
@@ -748,7 +753,7 @@ def get_usage_state():
 @required_exam_no
 def query_usage():
     item = c_exam.get_one_usage_records(g.user_no, g.exam_no)
-    if(g.user_role & 2) != 2 and item['num'] < 100:
+    if (g.user_role & 2) != 2 and item['num'] < 100:
         item['num'] = -1
     return jsonify({'status': True, 'data': item})
 
