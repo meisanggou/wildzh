@@ -551,6 +551,7 @@ def upload_question_file():
         file_item.save(save_path)
         r[key] = save_path
     docx_path = r['q_file']
+    LOG.info('import file %s', docx_path)
     s_kwargs = dict(dry_run=True, set_mode=False,
                     answer_location=AnswerLocation.embedded())
     q_set = QuestionSet(**s_kwargs)
