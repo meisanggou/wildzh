@@ -536,7 +536,7 @@ def upload_question_page():
     return rt.render("question_import.html", page_title=u"试题上传")
 
 
-@exam_view.route("/question/file/", methods=["POST"])
+@exam_view.route("/question/file", methods=["POST"])
 @login_required
 def upload_question_file():
     r = dict()
