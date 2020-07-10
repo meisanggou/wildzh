@@ -548,8 +548,8 @@ def upload_question_file():
             continue
         save_name = "wildzh_%s.%s" % (uuid.uuid4().hex, extension)
         save_path = os.path.join(tempfile.gettempdir(), save_name)
-        file_item.save(save_name)
-        r[key] = save_name
+        file_item.save(save_path)
+        r[key] = save_path
     docx_path = r['q_file']
     s_kwargs = dict(dry_run=True, set_mode=False,
                     answer_location=AnswerLocation.embedded())
