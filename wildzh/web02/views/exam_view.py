@@ -530,7 +530,7 @@ def remove_my_wrong_action():
     return jsonify({"status": True, "data": d_item})
 
 
-@exam_view.route("/question/import/", methods=["GET"])
+@exam_view.route("/question/import", methods=["GET"])
 @login_required
 def upload_question_page():
     return rt.render("question_import.html", page_title=u"试题上传")
@@ -541,6 +541,8 @@ def upload_question_page():
 def upload_question_file():
     r = dict()
     for key in request.files:
+        if key not in ('q_file', 'answer_file'):
+            continue
         file_item = request.files[key]
         filename = secure_filename(file_item.filename)
         extension = filename.rsplit(".", 1)[-1].lower()
@@ -551,6 +553,8 @@ def upload_question_file():
         LOG.info('save upload file %s to %s', key, save_path)
         file_item.save(save_path)
         r[key] = save_path
+    if 'q_file' not in r:
+        return jsonify({"status": False, "data": '请上传题目文件'})
     docx_path = r['q_file']
     LOG.info('import file %s', docx_path)
     s_kwargs = dict(dry_run=True, set_mode=False,

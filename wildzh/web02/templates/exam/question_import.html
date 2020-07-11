@@ -22,60 +22,26 @@
                     <div class="form-group">
                         <label>题目文件：</label>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group input-file">
                         <input @change="file_change" type="file" ref="fileElem"
                                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                     </div>
-                    <!--<div class="form-group">-->
-                        <!--<label>答案文件：</label>-->
-                    <!--</div>-->
-                    <!--<div class="form-group">-->
-                        <!--<input @change="file_change" type="file" ref="answerFileElem"-->
-                               <!--accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">-->
-                    <!--</div>-->
-                    <!--<div class="checkbox">-->
-                        <!--<label>请打勾-->
-                            <!--<input type="checkbox">-->
-                        <!--</label>-->
-                    <!--</div>-->
-                    <button type="button" @click="upload" class="btn btn-primary" >上传</button>
+                    <template v-if="has_answer">
+                        <div class="form-group">
+                            <label>答案文件：</label>
+                        </div>
+                        <div class="form-group input-file">
+                            <input @change="answer_file_change" type="file" ref="answerFileElem"
+                                   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                        </div>
+                    </template>
+                    <div class="form-group input-file">
+                        <label>答案单独文件
+                            <input type="checkbox" v-model="has_answer">
+                        </label>
+                    </div>
+                    <button type="button" @click="upload" class="btn btn-primary">上传</button>
                 </form>
-                <!--<form>-->
-                <!--<div class="input-group">-->
-                <!--<label>题目文件：</label>-->
-                <!--<input @change="file_change" type="file" ref="fileElem" class="input-file input-search"-->
-                <!--accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">-->
-                <!--<label>答案文件：</label>-->
-                <!--<input @change="file_change" type="file" ref="fileElem" class="input-file input-search"-->
-                <!--accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">-->
-                <!--&lt;!&ndash;<span class="input-group-btn">&ndash;&gt;-->
-                <!--&lt;!&ndash;<select class="form-control input-sm" style="width:auto;"  v-model="current_exam_index">&ndash;&gt;-->
-                <!--&lt;!&ndash;<option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>&ndash;&gt;-->
-                <!--&lt;!&ndash;</select>&ndash;&gt;-->
-                <!--&lt;!&ndash;</span>&ndash;&gt;-->
-                <!--&lt;!&ndash;<span class="input-group-btn">&ndash;&gt;-->
-                <!--&lt;!&ndash;<button @click="upload" class="btn btn-primary" type="button">上传</button>&ndash;&gt;-->
-                <!--&lt;!&ndash;</span>&ndash;&gt;-->
-                <!--</div>-->
-                <!--<div class="input-group">-->
-                <!--<label>答案文件：</label>-->
-                <!--<input @change="file_change" type="file" ref="fileElem"-->
-                <!--class="input-file form-control input-search"-->
-                <!--accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">-->
-                <!--&lt;!&ndash;<input @change="file_change" type="file" ref="fileElem" class="input-file form-control input-search" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">&ndash;&gt;-->
-                <!--&lt;!&ndash;<span class="input-group-btn">&ndash;&gt;-->
-                <!--&lt;!&ndash;<select class="form-control input-sm" style="width:auto;"  v-model="current_exam_index">&ndash;&gt;-->
-                <!--&lt;!&ndash;<option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>&ndash;&gt;-->
-                <!--&lt;!&ndash;</select>&ndash;&gt;-->
-                <!--&lt;!&ndash;</span>&ndash;&gt;-->
-                <!--&lt;!&ndash;<span class="input-group-btn">&ndash;&gt;-->
-                <!--&lt;!&ndash;<button @click="upload" class="btn btn-primary" type="button">上传</button>&ndash;&gt;-->
-                <!--&lt;!&ndash;</span>&ndash;&gt;-->
-                <!--</div>-->
-                <!--<span class="input-group-btn">-->
-                <!--<button @click="upload" class="btn btn-primary" type="button">上传</button>-->
-                <!--</span>-->
-                <!--</form>-->
             </div>
             <div class="panel panel-default q-content">
                 <div class="search-item" v-if="error_msg">

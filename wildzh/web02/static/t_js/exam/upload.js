@@ -14,29 +14,44 @@ $(function () {
             query_str: "",
             option_mapping: ["A", "B", "C", "D"],
             docx_file: null,
+            answer_docx_file: null,
+            has_answer: false,
             questions_items: [],
             error_question: [],
             error_msg: ''
         },
         methods: {
             file_change: function () {
-                console.info('chage');
                 var u_files = this.$refs.fileElem.files;
-                console.info(u_files);
                 if(u_files.length <= 0){
                     return 1;
                 }
                 this.docx_file = u_files[0];
             },
+            answer_file_change: function(){
+                var u_files = this.$refs.answerFileElem.files;
+                if(u_files.length <= 0){
+                    return 1;
+                }
+                this.answer_docx_file = u_files[0];
+            },
             upload: function(){
                 if(this.docx_file == null){
-                    popup_show('请先选择文件');
+                    popup_show('请先选择题目文件');
                     return false;
                 }
                 this.questions_items = [];
                 var a_file = this.docx_file;
                 var data = {"q_file": a_file};
+                if(this.has_answer){
+                    if(this.answer_docx_file == null){
+                        popup_show('请选择答案文件');
+                        return false;
+                    }
+                    data['answer_file'] = this.answer_docx_file;
+                }
                 var that = this;
+                //swal.showLoading();
                 upload_request(file_url, "POST", data, function(data){
                     that.questions_items = data.q_list;
                     that.error_question = data.error_question;
