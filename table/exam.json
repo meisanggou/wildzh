@@ -97,6 +97,12 @@
                 "allow_null": true
             },
             {
+                "col_comment": "题目来源序号",
+                "col_name": "question_source_no",
+                "col_type": "int(11)",
+                "allow_null": true
+            },
+            {
                 "col_comment": "内部标记",
                 "col_name": "inside_mark",
                 "col_type": "varchar(80)",

@@ -316,6 +316,8 @@ def entry_questions():
     question_source = data["question_source"]
     if question_source and question_source.strip():
         extra_data["question_source"] = question_source.strip()
+        extra_data['question_source_no'] = data.get('question_source_no',
+                                                    None)
     if question_subject:
         extra_data["question_subject"] = question_subject
     options = data["options"]
@@ -341,8 +343,8 @@ def update_question():
     extra_data = dict()
     question_no = data["question_no"]
     keys = ("question_desc", "select_mode", "question_subject",
-            "question_source", "options", "answer", "question_desc_url",
-            'question_chapter', 'state')
+            "question_source", 'question_source_no', "options", "answer",
+            "question_desc_url",  'question_chapter', 'state')
     for key in keys:
         if key in data:
             extra_data[key] = data[key]

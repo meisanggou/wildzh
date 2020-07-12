@@ -94,6 +94,7 @@ def post_questions(questions_set):
         q_item_d["question_no"] = question_no
         if questions_set.set_source:
             q_item_d["question_source"] = questions_set.exam_name
+            q_item_d['question_source_no'] = q_item.no
         else:
             q_item_d["question_source"] = ""
         q_item_d["question_subject"] = 0  # 无

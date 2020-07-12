@@ -57,47 +57,6 @@ Page({
                 this.getQuestionbyStrategy(strategy_items);
             }
             return true;
-            wx.request2({
-                url: url,
-                method: 'GET',
-                success: res => {
-                    if (res.data.status == false) {
-                        wx.hideLoading();
-                        wx.showModal({
-                            title: '无法访问题库',
-                            content: "题库已删除，或无权访问。确定进入【我的】更换题库",
-                            showCancel: false,
-                            success(res) {
-                                wx.switchTab({
-                                    url: "/pages/me/me"
-                                })
-                            }
-                        })
-                        return;
-                    }
-                    wx.hideLoading();
-                    var questionItems = res.data.data;
-                    if (questionItems.length <= 0) {
-                        wx.showModal({
-                            title: '无试题',
-                            content: "暂无相关试题，请重新选择试题类型或者更换试题库",
-                            showCancel: false,
-                            success(res) {
-                                wx.navigateBack({
-                                    delta: 1
-                                })
-                            }
-                        })
-                        return;
-
-                    }
-                    that.setData({
-                        questionItems: questionItems,
-                        nowQuestion: questionItems[0],
-                        totalQuestionNumber: questionItems.length
-                    });
-                }
-            })
         }
 
 
@@ -118,7 +77,6 @@ Page({
                         for(var j=0;j<strategy_items.length;j++){
                             totalQuestionNumber += strategy_items[j]['num'];
                         }
-                        console.info(totalQuestionNumber);
                         that.setData({
                             totalQuestionNumber: totalQuestionNumber
                         })
@@ -276,9 +234,13 @@ Page({
     },
 
     submit: function () {
+        var msg = '确定要交卷吗？';
+        if(this.data.questionItems.length != this.data.totalQuestionNumber){
+            msg = '题目信息都没记载完，确定要交卷吗？';
+        }
         wx.showModal({
             title: '交卷',
-            content: "确定要交卷吗？",
+            content: msg,
             success(res) {
                 if (res.confirm) {
                     var timestamp = (new Date()).valueOf()

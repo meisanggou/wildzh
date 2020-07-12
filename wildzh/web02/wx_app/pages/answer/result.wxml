@@ -8,7 +8,7 @@
   <view class='row' wx:for="{{ allQuestionIndexs }}" wx:for-item="lineNums">
     <view wx:for="{{ lineNums }}" bindtap='showDeatil' data-index="{{ item }}" class="{{questionItems[item].right==true? 'item':'item2'}}">{{ item + 1 }}</view>
   </view>
-  <view class='bottom'>
+  <view class='bottom-tip'>
     <view style='font-size:35rpx;'>错题已收录至错题本，再接再厉！</view>
   </view>
 

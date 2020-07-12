@@ -648,8 +648,8 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
         self.q_cols = ["exam_no", "question_no", "question_desc",
                        "question_desc_url", "select_mode", "options",
                        "answer", "question_subject", "question_source",
-                       "inside_mark", "answer_pic_url", 'question_chapter',
-                       'state']
+                       'question_source_no', "inside_mark", "answer_pic_url",
+                       'question_chapter', 'state']
         self.qs_man = QuestionSources(self.db)
         self.gs_man = ExamGenStrategy(self.db)
         self.qf_man = ExamQuestionFeedback(self.db)
@@ -1024,6 +1024,7 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                 else:
                     exam_role = e_items[0]['exam_role']
         return exam_item, exam_role
+
 
 if __name__ == "__main__":
     # print(ExamUsage.calc_period_no(1578844800))
