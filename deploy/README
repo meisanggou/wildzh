@@ -7,6 +7,6 @@ export ZH_UPLOAD_FOLDER=
 docker-compose up -d
 
 4、
-python init_t.py
+docker exec -u root wildzh python /opt/wildzh/init_t.py
 
 5、

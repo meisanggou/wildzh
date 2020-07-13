@@ -608,8 +608,10 @@ def query_question_items():
 def query2_question_items():
     data = request.json
     exam_no = data['exam_no']
+    data = {'current': [], 'better_exams': []}
     if exam_no == 1570447137:
-        return {'status': True, 'data': '该题库暂时不支持搜索'}
+        data['message'] = '该题库暂时不支持搜索！'
+        return {'status': True, 'data': data}
     query_str = data['query_str']
     e_item , e_role = c_exam.user_exam_role(g.user_role, g.user_no,
                                             exam_no)
