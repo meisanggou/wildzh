@@ -391,11 +391,14 @@ if __name__ == "__main__":
     exam_no = 1570447137  # 专升本经济学题库 会员版
     # exam_no = 1575333741 # 专升本经济学题库 试用版
     # exam_no = 1585396371  # 本地 测试题库2
+    exam_no = 1594597891  # 专升本经济学题库 搜题版
     t_exam_no = 1591669814  # 本地 测试题库2-copy
     # exam_no = 1573464937  # 英语托业
     # 538 + 319
     # 会员版 to 试用版
     # transfer_exam(1570447137, 4295, 4357, 1575333741)
+    # 会员版 to 搜题版
+    # transfer_exam(1570447137, 0, 20000, 1594597891, random=True)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
@@ -410,8 +413,6 @@ if __name__ == "__main__":
     # s_kwargs['exam_name'] = '2020年经济学真题'  # 设置题目来源 一般真题需要设置
     q_set = QuestionSet(**s_kwargs)
     d = r'D:/Project/word/app/upload'
-    # find_from_dir(d, q_set)
     # download_questions(1569283516, 2)
-    # download_usage(exam_no, [1, 2, 3, 4])
-    handle_exam(d_path, q_set)
+    # handle_exam(d_path, q_set)
 
