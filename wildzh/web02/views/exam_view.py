@@ -608,21 +608,20 @@ def query_question_items():
 def query2_question_items():
     data = request.json
     exam_no = data['exam_no']
-    data = {'current': [], 'better_exams': []}
+    res_data = {'current': [], 'better_exams': []}
     if exam_no == 1570447137:
-        data['message'] = '该题库暂时不支持搜索！'
-        return {'status': True, 'data': data}
+        res_data['message'] = '该题库暂时不支持搜索！'
+        return {'status': True, 'data': res_data}
     query_str = data['query_str']
     e_item , e_role = c_exam.user_exam_role(g.user_role, g.user_no,
                                             exam_no)
-    data = {'current': [], 'better_exams': []}
     if e_item is None:
-        data['message'] = '题库不存在！'
-        return {'status': True, 'data': data}
+        res_data['message'] = '题库不存在！'
+        return {'status': True, 'data': res_data}
     item = c_exam.get_one_usage_records(g.user_no, exam_no)
     if e_role >= 5 and item['num'] < 100:
-        data['message'] = '当前做题较少，暂无法使用！'
-        return {'status': True, 'data': data}
+        res_data['message'] = '当前做题较少，暂无法使用！'
+        return {'status': True, 'data': res_data}
     s_items = c_exam_es.search_multi(query_str)
     current = []
     c_score = -1
@@ -663,9 +662,9 @@ def query2_question_items():
         e_item_d['exam_role'] = e_role
         e_item_d['match_num'] = m_data['num']
         better_exams.append(e_item_d)
-    data.update({'current': current, 'better_exams': better_exams})
-    data['message'] = '功能测试中'
-    return {'status': True, 'data': data}
+    res_data.update({'current': current, 'better_exams': better_exams})
+    res_data['message'] = '功能测试中'
+    return {'status': True, 'data': res_data}
 
 
 @exam_view.route('/member', methods=['POST'])
