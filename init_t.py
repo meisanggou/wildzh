@@ -3,7 +3,7 @@
 import os
 import sys
 
-from mysqldb_rich import DB, TableDB
+from mysqldb_rich.db2 import DB, TableDB
 from zh_config import db_conf_path
 
 __author__ = 'meisa'
