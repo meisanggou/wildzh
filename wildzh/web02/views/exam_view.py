@@ -296,9 +296,9 @@ def sync_one_question(exam_no, q_item, update=False):
     if q_item['select_mode'] == 0:
         options = '\n'.join([o['desc'] for o in q_item['options']])
     if update:
-        c_exam_es.update_one_item(doc_id, desc, options, answer)
+        c_exam_es.update_one_item(doc_id, exam_no, desc, options, answer)
     else:
-        c_exam_es.add_one_item(doc_id, desc, options, answer)
+        c_exam_es.add_one_item(doc_id, exam_no, desc, options, answer)
 
 
 @exam_view.route("/questions/", methods=["POST"])

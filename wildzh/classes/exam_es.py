@@ -19,9 +19,10 @@ class ExamEs(object):
         ent = {"host": host, "port": port}
         self._es_man = None
         self.es_endpoint = ent
-        self.index = 'exam_v1'
+        self.index = 'exam_v2'
         self.index_type = 'exam'
         self.index_fields = ['desc', 'options', 'answer']
+        self.no_index_fields = ['exam_no']
 
     @property
     def es_man(self):
@@ -43,6 +44,9 @@ class ExamEs(object):
                    'search_analyzer': 'ik_max_word'}
         for field in self.index_fields:
             properties[field] = index_p
+        no_index_p = {'index': False, 'type': 'text'}
+        for field in self.no_index_fields:
+            properties[field] = no_index_p
         body = {'mappings': {'properties': properties}}
         self.es_man.indices.create(self.index, body=body)
 
@@ -55,16 +59,18 @@ class ExamEs(object):
         res = self.es_man.update(self.index, doc_id, doc)
         return res
 
-    def update_one_item(self, doc_id, desc, options, answer):
+    def update_one_item(self, doc_id, exam_no, desc, options, answer):
         body = {'desc': desc, 'options': options, 'answer': answer}
         try:
             res = self.update_one(doc_id, body)
         except NotFoundError:
+            body['exam_no'] = exam_no
             res = self.add_one(doc_id, body)
         return res
 
-    def add_one_item(self, doc_id, desc, options, answer):
-        body = {'desc': desc, 'options': options, 'answer': answer}
+    def add_one_item(self, doc_id, exam_no, desc, options, answer):
+        body = {'exam_no': exam_no, 'desc': desc, 'options': options,
+                'answer': answer}
         return self.add_one(doc_id, body)
 
     def exists(self, doc_id):
@@ -83,15 +89,6 @@ class ExamEs(object):
         doc_prefix = '%s_' % exam_no
         body = {"query": {"prefix": {'doc_id': doc_prefix}}}
         r = self.es_man.delete_by_query(self.index, body=body)
-
-    def search_exam(self, exam_no):
-        doc_prefix = '%s_' % exam_no
-        body = {"query": {"prefix": {'_id': {'value': doc_prefix}}}}
-        res = self.es_man.search(index=self.index, body=body)
-        print("Got %d Hits:" % res['hits']['total']['value'])
-        for hit in res['hits']['hits']:
-            print(hit)
-            print("%(desc)s %(options)s: %(answer)s" % hit["_source"])
 
     def search(self, s, field=None):
         if field not in self.index_fields:
@@ -129,7 +126,6 @@ if __name__ == "__main__":
     # doc_id = uuid.uuid4().hex
     # ee.clear_index()
     # ee.add_one_item(doc_id, '网络操作', '编辑网络', '创建网络，vlan网络类型不可编辑，如果多个网络类型，默认选择第一个')
-    ee.search_exam('1585396371')
     print(ee.search_multi('经济'))
     # ee.update_one_item('1111111', '网络操作2', '更新网络', '网络都是vlan的')
     # ee.get_one(doc_id)
