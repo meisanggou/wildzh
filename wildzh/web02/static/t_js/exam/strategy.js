@@ -53,7 +53,8 @@ $(function () {
                     //    this.strategy_id = strategies[0]['strategy_id'];
                     //}
                     this.strategies = strategies;
-                    this.select_strategy(-1);
+                    this.current_strategy_index = -1;
+                    this.select_strategy();
                 }
                 else{
                     var that = this;
@@ -123,15 +124,27 @@ $(function () {
                 var that = this;
                 my_async_request2(strategy_url, 'PUT', data, function(res_data){
                         popup_show("操作成功");
-                        that.strategies[index] = data;
+                        if(index == -1){
+                            console.info(res_data);
+                            that.strategies.push(res_data);
+                            that.current_strategy_index = that.strategies.length - 1;
+                            that.select_strategy();
+                        }
+                        else {
+                            that.strategies[index] = res_data;
+                        }
                     }
                )
             },
             remove_strategy: function(){
+                var that = this;
                 var delete_url = strategy_url + '/' + this.strategy_id;
                 var del_data = {'exam_no': this.current_exam['exam_no']};
                 my_async_request2(delete_url, 'DELETE', del_data, function(data){
                     popup_show("删除成功");
+                    that.strategies.splice(that.current_strategy_index, 1);
+                    that.current_strategy_index = -1;
+                    that.select_strategy();
                 });
             }
         }

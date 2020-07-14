@@ -794,10 +794,10 @@ def set_exam_strategy():
     if not strategy_o:
         return jsonify({'status': False, 'data': ''})
     if strategy_o.id:
-        c_exam.update_strategy(g.exam_no, **strategy_o.to_dict())
+        res_data = c_exam.update_strategy(g.exam_no, **strategy_o.to_dict())
     else:
-        c_exam.new_strategy(g.exam_no, **strategy_o.to_dict())
-    return jsonify({'status': True, 'data': ''})
+        res_data = c_exam.new_strategy(g.exam_no, **strategy_o.to_dict())
+    return jsonify({'status': True, 'data': res_data})
 
 
 @exam_view.route('/strategy/<strategy_id>', methods=['DELETE'])

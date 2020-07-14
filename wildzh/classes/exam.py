@@ -34,7 +34,16 @@ __author__ = 'meisa'
 
 100 无任何权限
 """
-
+"""
+题库状态
+1代表已录入基本信息
+2代表已录入测试题目
+4代表已录入结果
+8 16 32
+64代表已上线 对题库管理员以外的人员开放访问
+128代表已下线
+0代表已删除
+"""
 
 class ExamObject(object):
     extend_keys = ['openness_level', 'open_mode', 'open_no_start',
@@ -615,6 +624,8 @@ class ExamGenStrategy(object):
                 'strategy_name': strategy_name,
                 'strategy_items': strategy_items, 'update_time': u_time}
         self.db.execute_insert(self.t, kwargs=data)
+        if data['strategy_items']:
+            data['strategy_items'] = json.loads(data['strategy_items'])
         return data
 
     def update_strategy(self, exam_no, strategy_id, strategy_name=None,
