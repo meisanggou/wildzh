@@ -79,6 +79,20 @@ class ExamEs(object):
         body = {"query": {"match_all": {}}}
         r = self.es_man.delete_by_query(self.index, body=body)
 
+    def clear_exam(self, exam_no):
+        doc_prefix = '%s_' % exam_no
+        body = {"query": {"prefix": {'doc_id': doc_prefix}}}
+        r = self.es_man.delete_by_query(self.index, body=body)
+
+    def search_exam(self, exam_no):
+        doc_prefix = '%s_' % exam_no
+        body = {"query": {"prefix": {'_id': {'value': doc_prefix}}}}
+        res = self.es_man.search(index=self.index, body=body)
+        print("Got %d Hits:" % res['hits']['total']['value'])
+        for hit in res['hits']['hits']:
+            print(hit)
+            print("%(desc)s %(options)s: %(answer)s" % hit["_source"])
+
     def search(self, s, field=None):
         if field not in self.index_fields:
             field = self.index_fields[0]
@@ -115,7 +129,8 @@ if __name__ == "__main__":
     # doc_id = uuid.uuid4().hex
     # ee.clear_index()
     # ee.add_one_item(doc_id, '网络操作', '编辑网络', '创建网络，vlan网络类型不可编辑，如果多个网络类型，默认选择第一个')
-    ee.search_multi('网络类型 vlan')
+    ee.search_exam('1585396371')
+    print(ee.search_multi('经济'))
     # ee.update_one_item('1111111', '网络操作2', '更新网络', '网络都是vlan的')
     # ee.get_one(doc_id)
     # ee.get_one('1111111111')

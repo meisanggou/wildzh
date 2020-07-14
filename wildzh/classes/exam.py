@@ -846,6 +846,7 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                            question_subject=None, question_chapter=None,
                            question_source=None):
         where_value = dict(exam_no=exam_no, state=0)
+        order_by = None
         if select_mode is not None and select_mode >= 0:
             where_value['select_mode'] = select_mode
         if question_subject is not None:
@@ -854,16 +855,19 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
             where_value['question_chapter'] = question_chapter
         if question_source is not None:
             where_value['question_source'] = question_source
+            order_by = ['question_source_no']
         where_cond_args = []
         where_cond = []
         if start_no is not None:
             where_cond.append('question_no>=%s')
             where_cond_args.append(start_no)
         cols = self.q_cols[:2]
+
         items = self.db.execute_select(self.t_q, cols=cols,
                                        where_value=where_value,
                                        where_cond=where_cond,
-                                       where_cond_args=where_cond_args)
+                                       where_cond_args=where_cond_args,
+                                       order_by=order_by)
         return items
 
     def select_random_questions(self, exam_no, num, select_mode=None,
