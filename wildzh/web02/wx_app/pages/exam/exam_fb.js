@@ -179,6 +179,7 @@ Page({
         })
     },
     feedbackClick:function(){
+        this.showsubscribeMessage();
         this.setData({
             hiddenModal: false
         });
@@ -194,6 +195,7 @@ Page({
         });
     },
     toQuestion: function(){
+        this.showsubscribeMessage();
         if(this.data.detailIndex < 0){
             return false;
         }
@@ -254,10 +256,20 @@ Page({
         })
     },
     subscribeMessage: function(){
+        this.showsubscribeMessage();
+    },
+    showsubscribeMessage: function(){
+        if(this.data.showSubscription == false){
+            return false;
+        }
+        var that = this;
         wx.requestSubscribeMessage({
             tmplIds: this.data.subTemps,
             success (res) {
                 console.info(res);
+                that.setData({
+                    showSubscription: false
+                })
              }
           })
     },
