@@ -285,6 +285,17 @@ def delete_exam():
     return jsonify({"status": True, "data": "删除成功"})
 
 
+@exam_view.route('/tips', methods=['GET'])
+@login_required
+@required_manager_exam(param_location='args')
+def get_exam_tips():
+    data = []
+    f_items = c_exam.get_question_feedback(g.exam_no)
+    if len(f_items) > 0:
+        data.append({'tip_type': 'feedback', 'items': f_items,
+                     'tip': '有待处理的用户反馈'})
+    return {'status': True, 'data': data}
+
 def sync_one_question(exam_no, q_item, update=False):
     doc_id = '%s_%s' % (exam_no, q_item['question_no'])
     if 'question_desc' not in q_item:

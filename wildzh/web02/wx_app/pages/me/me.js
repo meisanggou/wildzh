@@ -16,6 +16,7 @@ Page({
         examNo: 0,
         examEndTime: null,
         examTip: "未拥有当前题库所有操作权限",
+        currentTip: null,
         brushNum: -1,
         version: app.globalData.version
     },
@@ -168,6 +169,9 @@ Page({
                     examIndex: examIndex
                 });
                 that.getBrushNum();
+                if(examNo != 0 && allExams[examIndex].exam_role <= 3){
+                    that.getTips();
+                }
                 wx.hideLoading();
             }
         })
@@ -223,6 +227,36 @@ Page({
             }
         })
     },
+    getTips: function() {
+        var examNo = this.data.examNo;
+        var examTip = '';
+        var currentTip = null;
+        this.setData({
+            currentTip: null
+        })
+        that = this;
+        wx.request2({
+            url: '/exam/tips?exam_no=' + examNo,
+            method: 'GET',
+            success: res => {
+                if (res.data.status == false) {
+                    return false;
+                }
+                var resData = res.data.data;
+                if(resData.length <= 0){
+                    return;
+                }
+                currentTip = resData[0];
+                examTip = currentTip.tip;
+                that.setData({
+                    examTip: examTip,
+                    currentTip: currentTip
+                })
+                
+            }
+        })
+        
+    },
     examChange: function(e) {
         var examIndex = e.detail.value;
         var currentExam = this.data.allExams[examIndex];
@@ -233,6 +267,9 @@ Page({
         });
         app.setDefaultExam(currentExam);
         this.getBrushNum();
+        if(currentExam.exam_role <= 3){
+            this.getTips();
+        }
     },
     lookExam: function() {
         wx.navigateTo({
