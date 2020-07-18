@@ -47,7 +47,8 @@ __author__ = 'meisa'
 
 class ExamObject(object):
     extend_keys = ['openness_level', 'open_mode', 'open_no_start',
-                   'open_no_end', 'pic_url', 'subjects', 'select_modes']
+                   'open_no_end', 'pic_url', 'subjects', 'allow_search',
+                   'search_tip', 'select_modes']
 
     def __init__(self, **kwargs):
         self._d = dict()
@@ -62,6 +63,8 @@ class ExamObject(object):
         self._open_mode = ExamOpenMode.SUBJECT
         self._open_no_start = -1
         self._open_no_end = None
+        self._allow_search = 0
+        self._search_tip = ""
         self._select_modes = []
         self._subjects = []
         self.pic_url = None
@@ -155,6 +158,29 @@ class ExamObject(object):
             cv = v
         self._open_no_end = v
         self._d['open_no_end'] = cv
+
+    @property
+    def allow_search(self):
+        return self._allow_search
+
+    @allow_search.setter
+    def allow_search(self, v):
+        if v in (1, '1'):
+            self._allow_search = 1
+        else:
+            self._allow_search = 0
+        self._d['allow_search'] = self._allow_search
+
+    @property
+    def search_tip(self):
+        return self._search_tip
+
+    @search_tip.setter
+    def search_tip(self, v):
+        if v is None:
+            v = ''
+        self._search_tip = v.strip()
+        self._d['search_tip'] = self._search_tip
 
     @property
     def exam_role(self):

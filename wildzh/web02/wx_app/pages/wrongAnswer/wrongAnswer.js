@@ -6,6 +6,7 @@ var touchStartY = 0;
 var touchInterval = null;
 var questionItems = [];
 var brushNum = 0;
+var firstEnter = true;
 var brushList = new Array();
 Page({
     data: {
@@ -13,7 +14,7 @@ Page({
         optionChar: app.globalData.optionChar,
         examNo: null,
         examName: "",
-        questionNum: 0,
+        questionNum: -1,
         nowQuestionIndex: 0,
         questionAnswer: "",
         nowQuestion: null,
@@ -26,17 +27,13 @@ Page({
     onShow: function() {
         brushList = [];
         var initR = this.initExam();
-        console.info(initR);
         if (initR != false) {
             this.reqWrongAnswer();
         }
-
     },
     initExam: function() {
         that = this;
         var examNo = app.globalData.defaultExamNo;
-        console.info("app no " + examNo);
-        console.info("this no " + this.data.examNo);
         var examName = app.globalData.defaultExamNo;
         if (this.data.examNo != null && this.data.examNo != examNo) {
             // 切换题库后 又再次进入
@@ -49,6 +46,7 @@ Page({
                 showRemove: false,
             })
             questionItems = [];
+            firstEnter = true;
         }
         that.setData({
             examNo: examNo,
@@ -116,9 +114,8 @@ Page({
                 }
                 // 判定最新的试题是否在
                 questionItems = latestQuestionItems;
-                
-                if (questionItems.length <= 0) {
-                    wx.hideLoading();
+                wx.hideLoading();
+                if (questionItems.length <= 0 && firstEnter) {
                     wx.showModal({
                         title: '无错题',
                         content: "没有发现错题",
@@ -129,6 +126,7 @@ Page({
                             // })
                         }
                     })
+                    firstEnter = false;
                     return false;
                 }
                 if (addQuestionItems.length > 0) {
@@ -171,6 +169,10 @@ Page({
         if (endIndex > questionItems.length) {
             endIndex = questionItems.length;
         }
+
+        wx.showLoading({
+            title: '加载题目中...',
+        })
         for (var i = startIndex; i < endIndex; i++) {
             if ("options" in questionItems[i]){
                 continue;
@@ -373,6 +375,9 @@ Page({
     },
     showAnswer: function(e) {
         var nowQuestion = that.data.nowQuestion;
+        if(nowQuestion == null){
+            return false;
+        }
         this.addBrushNum(nowQuestion.question_no);
         var questionAnswer = new Array();
         for (var index in nowQuestion.options) {

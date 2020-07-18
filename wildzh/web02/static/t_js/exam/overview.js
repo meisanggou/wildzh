@@ -29,6 +29,12 @@ function init_info(data) {
             var e_item = data[i];
             e_item["add_time"] = timestamp_2_datetime(e_item["exam_no"]);
             e_item["cn_status"] = explain_status(e_item["status"]);
+            e_item['show_btn_del'] = true;
+            e_item['show_btn_man'] = true;
+            e_item['show_btn_info'] = true;
+            e_item['show_btn_online'] = true;
+            e_item['show_btn_offline'] = true;
+            e_item['show_btn_sync'] = true;
             e_vm.all_exams.push(e_item);
         }
     }

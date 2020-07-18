@@ -16,15 +16,14 @@ page {
   z-index: 2;
 }
 
-/* .toptitle {
-  float: right;
+.centTip{
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-around;
-  padding: 15rpx 0rpx 15rpx 0rpx;
-  font-size: 32rpx;
-  clear: left;
-} */
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
 
 .bottimBG {
   position: absolute;

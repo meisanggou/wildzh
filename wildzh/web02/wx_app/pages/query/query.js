@@ -7,6 +7,7 @@ Page({
    */
   data: {
     examNo: "",
+    allowSearch: true,
     noResult: false,
     queryStr: "",
     betterExams: [],
@@ -51,10 +52,10 @@ Page({
         data: data,
         success: res => {
           wx.hideLoading();
-          if(res.statusCode != 200){
+          if (res.statusCode != 200) {
             return false;
           }
-          
+
           if (res.data.status == false) {
             return;
           }
@@ -64,7 +65,7 @@ Page({
           if ('current' in res.data.data) {
             items = res.data.data['current'];
           }
-          if('message' in res.data.data){
+          if ('message' in res.data.data) {
             serverMessage = res.data.data['message'];
           }
           if ('better_exams' in res.data.data) {
@@ -78,7 +79,12 @@ Page({
           resolve(items);
           var noResult = false;
           if (items.length <= 0) {
-            var noResult = true;
+            noResult = true;
+          }
+          if ('allow_search' in res.data.data) {
+            if (res.data.data['allow_search'] == false) {
+              noResult = false;
+            }
           }
           that.setData({
             noResult: noResult,
@@ -101,37 +107,35 @@ Page({
     })
   },
   toChangeExam(e) {
-      console.info(e);
-      var examIndex = e.currentTarget.dataset.examIndex;
-      if(examIndex >= this.data.betterExams.length){
-        return false;
-      }
-      var examItem = this.data.betterExams[examIndex];
-      if(examItem.exam_role <= app.globalData.roleMap.partDesc){
-        var msg = '您需要切换到题库【' + examItem.exam_name + '】再进行搜索，点击确定进入【我的】切换题库' 
-        wx.showModal({
-          title: '需要切换题库',
-          content: msg,
-          showCancel: true,
-          success(res) {
-            wx.switchTab({
-              url: "/pages/me/me"
-            })
-          }
-        });
-      }
-      else{
-        // 无权限
-        var msg = '您暂时无访问题库【' + examItem.exam_name + '】的权限' 
-        wx.showModal({
-          title: '无权访问题库',
-          content: msg,
-          showCancel: false,
-          success(res) {
-          }
-        });
-      }
-      console.info(examItem);
+    console.info(e);
+    var examIndex = e.currentTarget.dataset.examIndex;
+    if (examIndex >= this.data.betterExams.length) {
+      return false;
+    }
+    var examItem = this.data.betterExams[examIndex];
+    if (examItem.exam_role <= app.globalData.roleMap.partDesc) {
+      var msg = '您需要切换到题库【' + examItem.exam_name + '】再进行搜索，点击确定进入【我的】切换题库'
+      wx.showModal({
+        title: '需要切换题库',
+        content: msg,
+        showCancel: true,
+        success(res) {
+          wx.switchTab({
+            url: "/pages/me/me"
+          })
+        }
+      });
+    } else {
+      // 无权限
+      var msg = '您暂时无访问题库【' + examItem.exam_name + '】的权限'
+      wx.showModal({
+        title: '无权访问题库',
+        content: msg,
+        showCancel: false,
+        success(res) {}
+      });
+    }
+    console.info(examItem);
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
@@ -158,15 +162,19 @@ Page({
       });
       return false;
     }
-    if(examNo != this.data.examNo){
+    if (examNo != this.data.examNo) {
       this.setData({
         examNo: examNo
       });
       let searchbarComponent = this.selectComponent('#searchbar'); // 页面获取自定义组件实例
-      var e = {'detail': {'value': this.data.queryStr}}
+      var e = {
+        'detail': {
+          'value': this.data.queryStr
+        }
+      }
       searchbarComponent.inputChange(e);
     }
-    
+
   },
 
   /**

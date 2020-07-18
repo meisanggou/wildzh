@@ -619,15 +619,19 @@ def query_question_items():
 def query2_question_items():
     data = request.json
     exam_no = data['exam_no']
-    res_data = {'current': [], 'better_exams': []}
-    if exam_no == 1570447137:
-        res_data['message'] = '该题库暂时不支持搜索！'
-        return {'status': True, 'data': res_data}
+    res_data = {'current': [], 'better_exams': [], 'allow_search': True}
     query_str = data['query_str']
     e_item , e_role = c_exam.user_exam_role(g.user_role, g.user_no,
                                             exam_no)
     if e_item is None:
+        res_data['allow_search'] = False
         res_data['message'] = '题库不存在！'
+        return {'status': True, 'data': res_data}
+    if e_item.allow_search <= 0:
+        res_data['allow_search'] = False
+        res_data['message'] = '该题库暂时不支持搜索！'
+        if e_item.search_tip:
+            res_data['message'] = e_item.search_tip
         return {'status': True, 'data': res_data}
     item = c_exam.get_one_usage_records(g.user_no, exam_no)
     if e_role >= 5 and item['num'] < 100:
@@ -674,7 +678,8 @@ def query2_question_items():
         e_item_d['match_num'] = m_data['num']
         better_exams.append(e_item_d)
     res_data.update({'current': current, 'better_exams': better_exams})
-    res_data['message'] = '功能测试中'
+    if e_item.search_tip:
+        res_data['message'] = e_item.search_tip
     return {'status': True, 'data': res_data}
 
 
