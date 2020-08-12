@@ -44,11 +44,13 @@ page_question_url = url_prefix + '/question/'
 strategy_url = url_prefix + '/strategy'
 query_url = url_prefix + '/query'
 file_url = url_prefix + '/question/file'
+sync_url = url_prefix + '/es/sync'
 defined_routes = dict(add_url=add_url, upload_url=upload_url,
                       info_url=info_url, online_url=online_url,
                       questions_url=questions_url, page_exam=page_exam,
                       strategy_url=strategy_url, query_url=query_url,
-                      page_question_url=page_question_url, file_url=file_url)
+                      page_question_url=page_question_url, file_url=file_url,
+                      sync_url=sync_url)
 rt = RenderTemplate("exam", menu_active="exam", defined_routes=defined_routes)
 menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam", "sub_menu": [
     {"title": u"试题库管理", "url": url_prefix + "/"},
@@ -637,6 +639,8 @@ def query2_question_items():
     if ce_role >= 5 and item['num'] < 100:
         res_data['message'] = '当前做题较少，暂无法使用！'
         return {'status': True, 'data': res_data}
+    if ce_item.search_tip:
+        res_data['message'] = ce_item.search_tip
     s_items = c_exam_es.search_multi(query_str)
     current = []
     c_score = -1
@@ -678,8 +682,7 @@ def query2_question_items():
         e_item_d['match_num'] = m_data['num']
         better_exams.append(e_item_d)
     res_data.update({'current': current, 'better_exams': better_exams})
-    if ce_item.search_tip:
-        res_data['message'] = ce_item.search_tip
+
     return {'status': True, 'data': res_data}
 
 
@@ -943,13 +946,13 @@ def start_sync_es(exam_no, start_no=None, force=False):
     return missing_nos
 
 
-@exam_view.route('/es/sync', methods=['POST', 'GET'])
+@exam_view.route('/es/sync', methods=['POST'])
 @login_required
-@required_manager_exam(param_location='args')
+@required_manager_exam()
 def sync_to_es():
     LOG.info('receive request sync %s', g.exam_no)
-    if 'start_no' in request.args:
-        start_no = int(request.args['start_no'])
+    if 'start_no' in request.json:
+        start_no = int(request.json['start_no'])
         LOG.info('receive request sync %s start_no is %s', g.exam_no,
                  start_no)
         ASYNC_POOL(start_sync_es, g.exam_no, start_no=start_no, force=True)

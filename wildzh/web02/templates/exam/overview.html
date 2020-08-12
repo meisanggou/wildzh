@@ -23,10 +23,10 @@
                     <div style="position: relative">
                         <table class="table table-bordered table-hover api-list-table margintop20" id="t_exams">
                             <tr>
-                                <th scope="col" width="30%">名称</th>
+                                <th scope="col" width="20%">名称</th>
                                 <th scope="col" width=15%">创建时间</th>
                                 <th scope="col" width=10%">状态</th>
-                                <th scope="col" width=20%">操作</th>
+                                <th scope="col" width=30%">操作</th>
                             </tr>
                             <tr id="tr_none" class="display_none">
                                 <td colSpan="9" class="text-center">一条记录都没有</td>
@@ -51,6 +51,10 @@
                                     <template v-if="(item.status & 64) == 64">
                                         <label>|</label>
                                         <a href='javascript:void(0)' @click="offline(index)">下线</a>
+                                    </template>
+                                    <template v-if="item.show_btn_sync">
+                                        <label>|</label>
+                                        <a href='javascript:void(0)' @click="sync_search_data(index)">同步数据</a>
                                     </template>
                                 </td>
                             </tr>
