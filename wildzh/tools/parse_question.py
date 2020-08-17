@@ -268,6 +268,8 @@ class QuestionSet(object):
         self.exam_name = kwargs.pop('exam_name', None)
         self.dry_run = dry_run
         self._s = collections.OrderedDict()
+        self.question_subject = kwargs.pop('question_subject', 0)  # 0-微观经济学 1-宏观经济学 2-政治经济学
+        self.inside_mark_prefix = kwargs.pop('inside_mark_prefix', '')
         # self._select_mode_s = dict()
 
     @property

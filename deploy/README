@@ -7,6 +7,13 @@ export ZH_UPLOAD_FOLDER=
 docker-compose up -d
 
 4、
-docker exec -u root wildzh python /opt/wildzh/init_t.py
+create database wild;
+CREATE USER 'zhw'@'%' IDENTIFIED BY '123456';
+CREATE USER 'zhw'@'localhost' IDENTIFIED BY '123456';
+GRANT ALL PRIVILEGES ON wild.* TO 'zhw'@'%';
+GRANT ALL PRIVILEGES ON wild.* TO 'zhw'@'localhost';
 
 5、
+docker exec -u root wildzh python /opt/wildzh/init_t.py
+
+6、

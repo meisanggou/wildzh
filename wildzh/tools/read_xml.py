@@ -212,9 +212,13 @@ def handle_docx_main_xml(docx_obj, *args, **kwargs):
                 s_q_no = str(q_no)
                 p_content = p_content[len(s_q_no):]
         else:
-            is_question_item = True
             q_no = int(m_no.groups()[0])
-            p_content = p_content[len("".join(m_no.groups())):]
+            # 可能匹配到 小数点数字
+            if m_no.groups()[1] == '.'and q_no == 0:
+                pass
+            else:
+                is_question_item = True
+                p_content = p_content[len("".join(m_no.groups())):]
         if is_question_item:
             _get_question()
             current_question = [current_q_type, q_no]
@@ -298,8 +302,7 @@ def handle_answers_docx_main_xml(docx_obj, questions_set):
             return
         if current_q_type < 0:
             return
-        # if current_q_type == 5:
-        #     pdb.set_trace()
+
         p_answer = ParseAnswer(current_q_type)
         if current_q_type == 1:
             # 获取选择题答案

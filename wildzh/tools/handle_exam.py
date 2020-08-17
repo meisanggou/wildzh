@@ -20,7 +20,7 @@ headers = {"User-Agent": "jyrequests"}
 req.headers = headers
 remote_host = "https://meisanggou.vicp.net"
 remote_host = "http://127.0.0.1:2400"
-remote_host = "https://wild2.gene.ac"
+remote_host = "https://wild.gene.ac"
 
 exec_file_dir, exec_file_name = os.path.split(os.path.abspath(__file__))
 EXE_WMF_TO_PNG = os.path.join(exec_file_dir, "Wmf2Png.exe")
@@ -97,10 +97,7 @@ def post_questions(questions_set):
             q_item_d['question_source_no'] = q_item.no
         else:
             q_item_d["question_source"] = ""
-        q_item_d["question_subject"] = 0  # 无
-        # q_item_d["question_subject"] = 1  # 微观经济学
-        # q_item_d["question_subject"] = 2  # 宏观经济学
-        q_item_d["question_subject"] = 3  # 政治经济学
+        q_item_d["question_subject"] = questions_set.question_subject  # 无
         if questions_set.dry_run:
             print(json.dumps(q_item_d))
         if not questions_set.dry_run:
@@ -392,7 +389,7 @@ if __name__ == "__main__":
     # exam_no = 1575333741 # 专升本经济学题库 试用版
     # exam_no = 1585396371  # 本地 测试题库2
     exam_no = 1594597891  # 专升本经济学题库 搜题版
-    t_exam_no = 1591669814  # 本地 测试题库2-copy
+    # t_exam_no = 1591669814  # 本地 测试题库2-copy
     # exam_no = 1573464937  # 英语托业
     # 538 + 319
     # 会员版 to 试用版
@@ -402,17 +399,18 @@ if __name__ == "__main__":
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
 
-    d_path = r'D:\Project\word\app\整理题（五）.docx'
+    d_path = r'D:\Project\word\app\upload\第一章.docx'
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
-    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
+    s_kwargs = dict(exam_no=exam_no, dry_run=False, set_mode=False,
+                    question_subject=0, # 微观经济学
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
     # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
     # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
     # s_kwargs['exam_name'] = '2020年经济学真题'  # 设置题目来源 一般真题需要设置
     q_set = QuestionSet(**s_kwargs)
-    d = r'D:/Project/word/app/upload'
+    # d = r'D:/Project/word/app/upload'
     # download_questions(1569283516, 2)
-    # handle_exam(d_path, q_set)
+    handle_exam(d_path, q_set)
 
