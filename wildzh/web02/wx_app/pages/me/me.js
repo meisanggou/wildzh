@@ -83,6 +83,10 @@ Page({
         if(this.data.userNo == ""){
             return false;
         }
+        wx.navigateTo({
+            url: "./info"
+        })
+        return;
         var currentTime = dt.get_timestamp2();
         var lastTime = app.getOrSetCacheData2(lastUpdateUserKey);
         console.info(lastTime)

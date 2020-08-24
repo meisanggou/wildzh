@@ -15,7 +15,8 @@
         "pages/questions/question",
         "pages/exam/exam_info",
         "pages/exam/exam_usage",
-        "pages/exam/exam_fb"
+        "pages/exam/exam_fb",
+        "pages/me/info"
     ],
     "window": {
         "backgroundTextStyle": "light",
@@ -57,5 +58,8 @@
             }
         ]
     },
-    "sitemapLocation": "sitemap.json"
+    "sitemapLocation": "sitemap.json",
+    "useExtendedLib": {
+        "weui": true
+    }
 }
