@@ -152,6 +152,37 @@ def update_info_action():
     return jsonify({"status": True, "data": items[0]})
 
 
+@user_view.route("/username", methods=["PUT"])
+@login_required
+def update_username_action():
+    data = g.request_data
+    password = data['password']
+    if 'user_name' in data:
+        user_name = data['user_name']
+        v_r = c_user.verify_user_name_exist(user_name)
+        if v_r:
+            return jsonify({"status": False, "data": '账户名已存在'})
+        c_user.set_username(g.user_no, user_name, password)
+        items = c_user.verify_user_exist(user_no=g.user_no)
+        if len(items) <= 0:
+            return jsonify({"status": False, "data": "账户不存在"})
+        user_data = items[0]
+        if user_data['user_name'] is None:
+            return jsonify({"status": False, "data": "设置账户名失败"})
+        if user_data['user_name'] != user_name:
+            return jsonify({"status": False, "data": "不允许修改账户名"})
+        return jsonify({"status": True, "data": items[0]})
+    else:
+        items = c_user.verify_user_exist(user_no=g.user_no)
+        if len(items) <= 0:
+            return jsonify({"status": False, "data": "账户不存在"})
+        user_data = items[0]
+        if user_data['user_name'] is None:
+            return jsonify({"status": False, "data": "未设置账户名，不允许设置密码"})
+        c_user.update_password(user_data['user_name'], password)
+        return jsonify({"status": True, "data": user_data})
+
+
 @user_view.route("/whoIam/", methods=["GET"])
 @login_required
 def who_i_am_action():

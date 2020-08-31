@@ -398,12 +398,13 @@ if __name__ == "__main__":
     # transfer_exam(1570447137, 0, 20000, 1594597891, random=True)
     # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
     # print(all_members)
-
-    d_path = r'D:\Project\word\app\upload\第一章.docx'
+    upload_dir = r'D:\Project\word\app\upload'
+    items = os.listdir(upload_dir)
+    d_path = os.path.join(upload_dir, items[0])
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
-    s_kwargs = dict(exam_no=exam_no, dry_run=False, set_mode=False,
-                    question_subject=0, # 微观经济学
+    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
+                    question_subject=0, # 0-微观经济学 2-政治经济学
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
     # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件

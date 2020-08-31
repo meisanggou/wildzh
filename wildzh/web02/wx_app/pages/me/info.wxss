@@ -1,1 +1,5 @@
 /* pages/me/info.wxss */
+
+.btn-view {
+    margin-top: 28rpx;
+}

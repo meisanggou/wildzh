@@ -132,8 +132,6 @@ class User(object):
                     role=1):
         add_time = int(time.time())
         if nick_name is not None:
-            if isinstance(nick_name, unicode):
-                nick_name = nick_name.encode("utf-8")
             nick_name = base64.b64encode(nick_name)
         else:
             nick_name = ''
@@ -162,6 +160,26 @@ class User(object):
             update_value["nick_name"] = base64.b64encode(nick_name)
         l = self.db.execute_update(self.t, update_value=update_value, where_value=dict(user_no=user_no))
         return l
+
+    def verify_user_name_exist(self, user_name):
+        if re.search("(system|admin|123|abc|wild)", user_name, re.I):
+            return True
+        if len(user_name) <= 5:
+            return True
+        items = self.verify_user_exist(user_name=user_name)
+        if len(items) >= 0:
+            return True
+        return False
+
+    def set_username(self, user_no, user_name, password):
+        en_password = generate_password_hash(
+            self._md5_hash_password(user_name, password))
+        update_value = {"password": en_password, "user_name": user_name}
+        where_is_none = ['user_name']
+        result = self.db.execute_update(self.t, update_value=update_value,
+                                        where_value={"user_no": user_no},
+                                        where_is_none=where_is_none)
+        return result
 
     # 验证auth是否存在 包括 account tel alias wx_id
     def verify_user_exist(self, **kwargs):

@@ -209,9 +209,14 @@ class ParseQuestion(object):
     def parse(cls, question_items, select_mode=None, embedded_answer=None):
         if len(question_items) == 0:
             return None
+        for i in range(len(question_items)):
+            question_items[i] = cls.equal_replace(question_items[i])
         q_no = question_items[0]
         if select_mode in (None, 1):
             i = cls.find_options_location(question_items[:])
+            if i < 0 and select_mode == 1:
+                raise p_exc.QuestionTypeNotMatch(question_items,
+                                                 '题型应该是选择题，未发现选项')
         else:
             i = -1
         q = Question(question_items)
@@ -252,6 +257,22 @@ class ParseQuestion(object):
 
         q.desc = n_desc
         return q
+
+    @classmethod
+    def equal_replace(cls, s):
+        if not isinstance(s, str):
+            return s
+        new_s = ''
+
+        for c in s:
+            oc = ord(c)
+            if 65313 <= oc <= 65338:
+                # 全角字母 A = 65313 Z = 65338
+                # 半角字母 A = 65
+                new_s += chr(oc - 65248)
+            else:
+                new_s += c
+        return new_s
 
 
 class QuestionSet(object):

@@ -7,6 +7,7 @@ import pdb
 import re
 # from win32com import client as wc
 import xml.dom.minidom as minidom
+from wildzh.tools.parse_exception import QuestionTypeNotMatch
 from wildzh.tools.parse_question import ParseQuestion, QuestionType
 from wildzh.tools.parse_question import AnswerSet, ParseAnswer, AnswerLocation
 
@@ -186,8 +187,8 @@ def handle_docx_main_xml(docx_obj, *args, **kwargs):
 
         if current_question[0] == 1:
             if q_item.q_type != QuestionType.Choice:
-                pdb.set_trace()
-                raise RuntimeError(u"问题类型解析错误 %s".encode("gbk") % q_item.no)
+                raise QuestionTypeNotMatch(current_question[1:],
+                                           '题型应该是选择题，未在题目中发现选择题')
         else:
             if q_item.q_type != QuestionType.QA:
                 raise RuntimeError(u"问题类型解析错误")
