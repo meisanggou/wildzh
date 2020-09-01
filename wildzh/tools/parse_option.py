@@ -146,12 +146,14 @@ class ParseOptions(object):
                 if p_index < 0:
                     s_result, pv_values = self.split_special_option(op, prefix)
                     if s_result is False:
+
                         return False, u"有不存在的选项：%s" % op
                     prefix = pv_values[0]
                 else:
                     p_p = self.option_prefix[p_index]
                     s_result, pv_values = self.split_special_option(op, kp[p_p])
                     if s_result is False:
+                        # 判断是否有其他选项 如果不包含其他后序选项，说明本身设置选项少
                         return False, u"有不存在的选项：%s" % op
                     kp[p_p] = pv_values[0]
                 kp[op] = pv_values[1]

@@ -207,10 +207,11 @@ def handle_docx_main_xml(docx_obj, *args, **kwargs):
         m_no = m_compile.match(p_content)
         if m_no is None:
             # 有可能有些题目，题号后面没有逗号顿号, 我们以当前题号+1 尝试判定
-            if p_content.startswith("%s" % (current_question_no + 1)):
+            _com = re.compile('^%s[^\d]' % (current_question_no + 1))
+            if _com.match(p_content):
                 is_question_item = True
-                q_no = current_question_no + 1
-                s_q_no = str(q_no)
+                s_q_no = '%s' % (current_question_no + 1)
+                q_no = '%s?' % s_q_no
                 p_content = p_content[len(s_q_no):]
         else:
             q_no = int(m_no.groups()[0])
@@ -223,7 +224,10 @@ def handle_docx_main_xml(docx_obj, *args, **kwargs):
         if is_question_item:
             _get_question()
             current_question = [current_q_type, q_no]
-            current_question_no = q_no
+            if isinstance(q_no, int):
+                current_question_no = q_no
+            else:
+                current_question_no = int(q_no[:-1])
             current_question.append(p_content)
         else:
             if current_question:

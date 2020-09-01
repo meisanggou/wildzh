@@ -53,13 +53,26 @@ class Question(object):
 
     def __init__(self, q_items=None):
         self.q_items = q_items
-        self.no = None
+        self._no = None
         self.options = None
         self._desc = None
         self.answer = None
         self.q_type = None
         self.select_mode = None
         self.inside_mark = None
+        self.in_doubt = False
+
+    @property
+    def no(self):
+        return self._no
+
+    @no.setter
+    def no(self, v):
+        if isinstance(v, int):
+            self._no = v
+        else:
+            self._no = int(v[:-1])
+            self.in_doubt = True
 
     @property
     def desc(self):
@@ -87,6 +100,10 @@ class Question(object):
         else:
             self.options.A.score = 1
             self.answer = answer
+
+    def ensure_has_answer(self):
+        if self.answer is None:
+            raise p_exc.AnswerNotFound(self.q_items)
 
     def to_dict(self):
         real_options = self.options.to_list()
@@ -306,7 +323,20 @@ class QuestionSet(object):
         if question.select_mode not in self._s:
             self._s[question.select_mode] = collections.OrderedDict()
         if question.no in self._s[question.select_mode]:
-            raise p_exc.QuestionNoRepeat(question.q_items, question.no)
+            if self._s[question.select_mode][question.no].in_doubt:
+                # 存疑
+                doubt_q = self._s[question.select_mode][question.no]
+
+                if (question.no - 1) in self._s[question.select_mode]:
+                    pre_q = self._s[question.select_mode][question.no - 1]
+                    _temp = '%s%s' % (doubt_q.no, doubt_q.q_items[1])
+                    n_items = pre_q.q_items + [_temp] + doubt_q.q_items[2:]
+                    _n_question = ParseQuestion.parse(n_items, question.select_mode)
+                    if _n_question:
+                        self._s[question.select_mode][_n_question.no] = _n_question
+                        del self._s[question.select_mode][question.no]
+            if question.no in self._s[question.select_mode]:
+                raise p_exc.QuestionNoRepeat(question.q_items, question.no)
         self._s[question.select_mode][question.no] = question
 
     def append(self, question):
@@ -319,6 +349,10 @@ class QuestionSet(object):
 
     def clear(self):
         self._s.clear()
+
+    def ensure_has_answer(self):
+        for item in self:
+            item.ensure_has_answer()
 
 
 class ParseAnswer(object):

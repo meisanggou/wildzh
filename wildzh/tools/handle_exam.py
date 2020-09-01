@@ -202,8 +202,7 @@ def handle_exam_no_answer(file_path, questions_set):
                 option.desc = replace_media(option.desc, q_rl, uploaded_q_rl,
                                             real_upload=questions_set.real_upload)
             # 获取答案中的图片
-            if q_item.answer is None:
-                print(q_item)
+            q_item.ensure_has_answer()
             q_item.answer = replace_media(q_item.answer, q_rl, uploaded_q_rl,
                                           real_upload=questions_set.real_upload)
             q_item.inside_mark = "%s %s" % (exam_name, q_no)

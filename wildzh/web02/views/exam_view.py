@@ -582,6 +582,7 @@ def upload_question_file():
         try:
             handle_docx_main_xml(do, ".", u"、", u"．", ':',
                                  questions_set=q_set)
+            q_set.ensure_has_answer()
         except ParseException as pe:
             error_msg = pe.msg
             error_question = pe.q_items
