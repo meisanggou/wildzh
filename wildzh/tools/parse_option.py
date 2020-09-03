@@ -74,6 +74,11 @@ class ListOption(object):
         else:
             object.__setattr__(self, key, value)
 
+    def __str__(self):
+        print(self.to_list())
+        return self.to_list().__str__()
+
+
 
 class ParseOptions(object):
     option_prefix = ["A", "B", "C", "D"]
@@ -137,6 +142,7 @@ class ParseOptions(object):
             if nl[i] not in self.option_prefix:
                 return False, u"选项KEY不正确 理论上不应该出现的"
             kp[nl[i]] = nl[i + 1]
+        miss_options = []
         # 判断每个选项A B C D是否存在
         for o_index in range(len(self.option_prefix)):
             op = self.option_prefix[o_index]
@@ -146,18 +152,45 @@ class ParseOptions(object):
                 if p_index < 0:
                     s_result, pv_values = self.split_special_option(op, prefix)
                     if s_result is False:
-
+                        miss_options.append(op)
+                        continue
                         return False, u"有不存在的选项：%s" % op
                     prefix = pv_values[0]
                 else:
                     p_p = self.option_prefix[p_index]
+                    if p_p not in kp:
+                        continue
                     s_result, pv_values = self.split_special_option(op, kp[p_p])
                     if s_result is False:
+                        miss_options.append(op)
+                        continue
                         # 判断是否有其他选项 如果不包含其他后序选项，说明本身设置选项少
                         return False, u"有不存在的选项：%s" % op
                     kp[p_p] = pv_values[0]
                 kp[op] = pv_values[1]
-        options = ListOption(self.option_prefix)
+        found = True
+        while found and miss_options:
+            found = False
+            for i in range(len(miss_options) - 1, -1, -1):
+                miss_op = miss_options[i]
+                _kp = dict()
+                for key in kp.keys():
+                    s_result, pv_values = self.split_special_option(miss_op,
+                                                                    kp[key])
+                    if s_result is True:
+                        kp[key] = pv_values[0]
+                        _kp[miss_op] = pv_values[1]
+                        miss_options.remove(miss_op)
+                if _kp:
+                    found = True
+                    kp.update(_kp)
+        current_len = len(kp.keys())
+        if set(kp.keys()) != set(self.option_prefix[:current_len]):
+            # 存在的选项必须是连续的
+            for o in self.option_prefix[:current_len]:
+                if o not in kp.keys():
+                    return False, '有不存在的选项: %s' % o
+        options = ListOption(self.option_prefix[:current_len])
         for key in kp.keys():
             setattr(options, key, kp[key])
         return True, {"prefix": prefix, "options": options}
@@ -176,7 +209,7 @@ class ParseOptions(object):
     def test(cls, case_name, s):
         po = cls()
         print(case_name)
-        po.parse(s)
+        print(po.parse(s))
 
     @classmethod
     def test_case1(cls):
@@ -195,9 +228,25 @@ class ParseOptions(object):
         cls.test(case_name, s)
 
     @classmethod
+    def test_case3(cls):
+        case_name = "测试 选项乱序排列"
+        s = u"""A既定资源的配置C资源总量的决定
+                B.如何实现充分就业    D.国民收入的决定
+            """
+        cls.test(case_name, s)
+
+    @classmethod
+    def test_case4(cls):
+        case_name = "测试 选项题目同一行"
+        s = '微观经济学要解决的问题是（A） A.既定资源的配置       B.资源总量的决定 C.如何实现充分就业     D.国民收入的决定'
+        cls.test(case_name, s)
+
+    @classmethod
     def test_all(cls):
         cls.test_case1()
         cls.test_case2()
+        cls.test_case3()
+        cls.test_case4()
 
 
 if __name__ == "__main__":

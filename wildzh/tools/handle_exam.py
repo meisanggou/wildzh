@@ -183,7 +183,7 @@ def handle_exam_no_answer(file_path, questions_set):
     uploaded_q_rl = dict()
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     print("start handle %s" % exam_name)
-
+    questions_set.exam_name = exam_name
     with DocxObject(file_path) as do:
         handle_docx_main_xml(do, ".", u"、", u"．", ':',
                              questions_set=questions_set)
@@ -205,7 +205,7 @@ def handle_exam_no_answer(file_path, questions_set):
             q_item.ensure_has_answer()
             q_item.answer = replace_media(q_item.answer, q_rl, uploaded_q_rl,
                                           real_upload=questions_set.real_upload)
-            q_item.inside_mark = "%s %s" % (exam_name, q_no)
+
         if questions_set.set_mode:
             set_questions(questions_set)
         else:
@@ -255,7 +255,6 @@ def handle_exam_with_answer(file_path, questions_set):
             # 获取答案中的图片
             q_item.answer = replace_media(q_item.answer, aw_rl, uploaded_aw_rl,
                                           real_upload)
-            q_item.inside_mark = "%s %s" % (exam_name, q_no)
         post_questions(questions_set)
     return True, "success"
 
@@ -409,6 +408,7 @@ if __name__ == "__main__":
     # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
     # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
     # s_kwargs['exam_name'] = '2020年经济学真题'  # 设置题目来源 一般真题需要设置
+    s_kwargs['inside_mark_prefix'] = '百度文库VIP下载2'
     q_set = QuestionSet(**s_kwargs)
     # d = r'D:/Project/word/app/upload'
     # download_questions(1569283516, 2)

@@ -79,7 +79,8 @@ class DocxObject(object):
             p_content = handle_paragraph(node).strip()
             if len(p_content) <= 0 and skip_empty:
                 continue
-            yield p_content
+            for p_content_line in p_content.split('\n'):
+                yield p_content_line
 
     def __enter__(self):
         return self

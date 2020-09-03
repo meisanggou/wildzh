@@ -282,6 +282,10 @@ class ParseQuestion(object):
         new_s = ''
 
         for c in s:
+            if c in (u"\u3000", u"\xa0"):
+                # 替换空白字符
+                new_s += ' '
+                continue
             oc = ord(c)
             if 65313 <= oc <= 65338:
                 # 全角字母 A = 65313 Z = 65338
@@ -317,6 +321,22 @@ class QuestionSet(object):
     def __len__(self):
         return self.length
 
+    def reset_inside_mark(self):
+        for item in self:
+            self.set_inside_mark(item)
+
+    def set_inside_mark(self, question):
+        if not self.exam_name:
+            return
+        ms = [self.exam_name, '%s' % question.no]
+        if self.inside_mark_prefix:
+            ms.insert(0, self.inside_mark_prefix)
+        question.inside_mark = ' '.join(ms)
+
+    def _add(self, question):
+        self._s[question.select_mode][question.no] = question
+        self.set_inside_mark(question)
+
     def add(self, question):
         if not isinstance(question, Question):
             raise RuntimeError("Please add Question item")
@@ -326,18 +346,17 @@ class QuestionSet(object):
             if self._s[question.select_mode][question.no].in_doubt:
                 # 存疑
                 doubt_q = self._s[question.select_mode][question.no]
-
                 if (question.no - 1) in self._s[question.select_mode]:
                     pre_q = self._s[question.select_mode][question.no - 1]
                     _temp = '%s%s' % (doubt_q.no, doubt_q.q_items[1])
                     n_items = pre_q.q_items + [_temp] + doubt_q.q_items[2:]
                     _n_question = ParseQuestion.parse(n_items, question.select_mode)
                     if _n_question:
-                        self._s[question.select_mode][_n_question.no] = _n_question
+                        self._add(_n_question)
                         del self._s[question.select_mode][question.no]
             if question.no in self._s[question.select_mode]:
                 raise p_exc.QuestionNoRepeat(question.q_items, question.no)
-        self._s[question.select_mode][question.no] = question
+        self._add(question)
 
     def append(self, question):
         return self.add(question)
