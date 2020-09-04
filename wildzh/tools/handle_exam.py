@@ -402,7 +402,7 @@ if __name__ == "__main__":
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
     s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
-                    question_subject=0, # 0-微观经济学 2-政治经济学
+                    question_subject=2, # 0-微观经济学 2-政治经济学
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
     # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件

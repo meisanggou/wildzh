@@ -249,9 +249,9 @@ class ParseQuestion(object):
                 # 名词解释
                 n_desc, answers = cls.find_answer_by_separator(desc,
                                                                [':', u'：'])
+
                 if len(answers) == 0:
-                    raise RuntimeError('Not Found Answer. desc is %s. '
-                                       'question is %s' % (desc, q))
+                    raise p_exc.AnswerNotFound(question_items)
                 q.set_answer(answers)
             else:
                 n_desc, answers = cls.find_qa_answer(desc)
