@@ -26,13 +26,13 @@
 		</view>
 		<mp-form id="n_form" rules="{{n_rules}}" models="{{n_form_data}}">
 			<mp-cells title="更改昵称">
-				<mp-cell show-error prop="nickname" title="昵称" ext-class="">
-					<input bindinput="formInputChange" data-field="nickname" class="weui-input" placeholder="请输入昵称" maxlength="15"/>
+				<mp-cell show-error prop="nick_name" title="昵称" ext-class="">
+					<input bindinput="formNickNameChange" data-field="nick_name" class="weui-input" placeholder="请输入昵称" maxlength="15" value="{{nickName}}"/>
 				</mp-cell>
 			</mp-cells>
 		</mp-form>
 		<view class="weui-btn-area btn-view">
-			<button class="weui-btn" type="primary" bindtap="submitForm2">确定</button>
+			<button class="weui-btn" type="primary" bindtap="submitNickNameForm">确定</button>
 		</view>
 	</view>
 </view>

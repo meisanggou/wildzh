@@ -1,4 +1,5 @@
 // pages/me/info.js
+var app = getApp();
 function verify_username(rule, value, param, models) {
     var patt = /^[\w]+$/;
     if (!patt.test(value)) {
@@ -13,6 +14,7 @@ Page({
      */
     data: {
         userName: null,
+        nickName: '',
         showTopTips: false,
         rules: [{
                 'name': 'user_name',
@@ -43,7 +45,18 @@ Page({
                 }]
             }
         ],
-        formData: {}
+        formData: {},
+        n_rules: [{
+            'name': 'nick_name',
+            'rules': [{
+                'minlength': 2,
+                'message': '昵称至少2个字符'
+            }, {
+                'maxlength': 15,
+                'message': '昵称不能超过15个字符'
+            }]
+        }],
+        n_form_data: {}
     },
 
     /**
@@ -76,7 +89,9 @@ Page({
                 var userData = res.data.data[0];
                 that.setData({
                     userName: userData['user_name'],
-                    [`formData.user_name`]: userData['user_name']
+                    [`formData.user_name`]: userData['user_name'],
+                    nickName: userData['nick_name'],
+                    [`n_form_data.nick_name`]: userData['nick_name']
                 });
                 wx.hideLoading();
             }
@@ -88,6 +103,14 @@ Page({
         } = e.currentTarget.dataset
         this.setData({
             [`formData.${field}`]: e.detail.value
+        })
+    },
+    formNickNameChange(e) {
+        const {
+            field
+        } = e.currentTarget.dataset
+        this.setData({
+            [`n_form_data.${field}`]: e.detail.value
         })
     },
     submitForm: function () {
@@ -127,6 +150,24 @@ Page({
             }
         })
     },
+    submitNickNameForm: function () {
+        this.selectComponent('#n_form').validate((valid, errors) => {
+            console.log('valid', valid, errors)
+            if (!valid) {
+                const firstError = Object.keys(errors)
+                if (firstError.length) {
+                    this.setData({
+                        error: errors[firstError[0]].message
+                    })
+
+                }
+            } else {
+                var data = this.data.n_form_data;
+                var that = this;
+                this.updateUserInfoAction(data);
+            }
+        })
+    },
     setUserNamePassword: function (data) {
         var that = this;
         wx.request2({
@@ -154,6 +195,24 @@ Page({
                 wx.hideLoading();
             }
         })
+    },
+    updateUserInfoAction: function(data) {
+        var that = this;
+        wx.request2({
+            url: '/user/info/',
+            method: 'PUT',
+            data: data,
+            success: res => {
+                var userItem = res.data.data
+                wx.setStorageSync(app.globalData.userInfoStorageKey, userItem)
+                wx.hideLoading();
+                // app.getOrSetCacheData2(lastUpdateUserKey, dt.get_timestamp2());
+                wx.showToast({
+                    title: '更新成功',
+                });
+            }
+        })
+
     },
     /**
      * 生命周期函数--监听页面隐藏
