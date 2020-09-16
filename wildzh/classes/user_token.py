@@ -36,7 +36,7 @@ def hmac_info(key, s):
     return hc.digest()
 
 
-def generate_token(user_name, scope, grant_type, refresh_token=None,
+def generate_token(user_no, scope, grant_type, refresh_token=None,
                    timeout=None, extra_data=None):
     # 生成access_token
     if not timeout:
@@ -45,7 +45,7 @@ def generate_token(user_name, scope, grant_type, refresh_token=None,
     expires_in = datetime.now() + timedelta(seconds=timeout)
     salt = random.random()
     token_info = {"expires_in": expires_in.strftime(TIME_FORMAT),
-                  "salt": salt, "user_name": user_name,
+                  "salt": salt, "user_no": user_no,
                   "scope": scope, "grant_type": grant_type,
                   "timestamp": calc_timestamp(),
                   "extra_data": extra_data}
@@ -58,7 +58,7 @@ def generate_token(user_name, scope, grant_type, refresh_token=None,
         refresh_expires_in = datetime.now() + timedelta(seconds=refresh_timeout)
         refresh_token_info = {
             "expires_in": refresh_expires_in.strftime(TIME_FORMAT),
-            "salt": salt, "user_name": user_name, "scope": scope,
+            "salt": salt, "user_no": user_no, "scope": scope,
             "grant_type": grant_type, "refresh": True,
             "timestamp": calc_timestamp()}
         str_refresh_info = json.dumps(refresh_token_info)
@@ -69,7 +69,7 @@ def generate_token(user_name, scope, grant_type, refresh_token=None,
             "expires_in": timeout,
             "scope": scope,
             "refresh_token": refresh_token.decode(ENCODING),
-            "user_name": user_name}
+            "user_no": user_no}
     return True, data
 
 
@@ -131,17 +131,17 @@ class UserToken(object):
     def __init__(self, db_conf_path):
         self.db = DB(conf_path=db_conf_path)
         self.t_token = 'user_token'
-        self.token_cols = ['user_name', 'access_token', 'identity',
+        self.token_cols = ['user_no', 'access_token', 'identity',
                            'refresh_token', 'update_time']
 
-    def gen_token(self, user_name, identity, timeout, user_role):
+    def gen_token(self, user_no, identity, timeout, user_role):
         # TODO 限制不能无限生成
-        r, data = generate_token(user_name, '', 'password',
+        r, data = generate_token(user_no, '', 'password',
                                  timeout=timeout,
                                  extra_data={'user_role': user_role})
         access_token = data['access_token']
         time_stamp = int(time.time())
-        db_data = {'user_name': user_name, 'access_token': access_token,
+        db_data = {'user_no': user_no, 'access_token': access_token,
                    'update_time': time_stamp, 'identity': identity,
                    'refresh_token': data['refresh_token']}
         u_keys = ['access_token', 'refresh_token', 'update_time']
@@ -164,7 +164,7 @@ class UserToken(object):
         r, _token_data = analysis_token(access_token)
         if r is False:
             return False, ''
-        where_value = dict(user_name=_token_data['user_name'],
+        where_value = dict(user_no=_token_data['user_no'],
                            access_token=access_token)
         db_items = self.db.execute_select(self.t_token, where_value,
                                           cols=self.token_cols)
@@ -172,7 +172,7 @@ class UserToken(object):
             return False, ''
         db_token = db_items[0]
         # TODO verify sign
-        return True, ''
+        return True, _token_data
 
     @registry.receive_callback('hook', 'verify_token')
     def verify_token_callback(self, resource, event ,trigger, token):
@@ -184,3 +184,4 @@ if __name__ == '__main__':
     print(token_data)
     a_data = analysis_token(token_data[1]['access_token'])
     print(a_data)
+

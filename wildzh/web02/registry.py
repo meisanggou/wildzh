@@ -17,6 +17,10 @@ def notify(resource, event, trigger, **kwargs):
     _HOOK.notify(resource, event, trigger, **kwargs)
 
 
+def notify_callback(resource, event,trigger, **kwargs):
+    return _HOOK.callback(resource, event, trigger, **kwargs)
+
+
 def receives(resource, events):
     def decorator(f):
         for e in events:
@@ -27,7 +31,7 @@ def receives(resource, events):
 
 def receive_callback(resource, event):
     def decorator(f):
-        _REGISTERED_CLASS_METHODS[f].append((resource, event))
+        _REGISTERED_CLASS_CALLBACK[f].append((resource, event))
         return f
     return decorator
 

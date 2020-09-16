@@ -41,7 +41,7 @@ def gen_token():
     # 生成token
     timeout = 365 * 24 * 60 * 60
     identity = data['identity']
-    r, t_data = c_token.gen_token(user_name, identity=identity,
+    r, t_data = c_token.gen_token(item['user_no'], identity=identity,
                                   timeout=timeout, user_role=item['role'])
     print(t_data)
     return {'status': r, 'data': t_data}
