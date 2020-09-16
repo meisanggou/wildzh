@@ -1,10 +1,24 @@
 // pages/me/info.js
 var app = getApp();
+var dt = require("../common/datetime_tools.js");
+var that;
+var lastUpdateUserKey = 'updateUserTime'
+
 function verify_username(rule, value, param, models) {
     var patt = /^[\w]+$/;
     if (!patt.test(value)) {
         return '账户名仅允许由数字字母下划线组成';
     }
+}
+
+function verify_nickname(rule, value, param, models) {
+    var currentTime = dt.get_timestamp2();
+    var lastTime = app.getOrSetCacheData2(lastUpdateUserKey);
+    var intervalTime = 3600 * 24 * 30;
+    var msg = '昵称可在30天内更新一次！';
+    if (lastTime != null && currentTime - lastTime < intervalTime) {
+        return msg;
+    } 
 }
 
 Page({
@@ -54,6 +68,8 @@ Page({
             }, {
                 'maxlength': 15,
                 'message': '昵称不能超过15个字符'
+            }, {
+                'validator': verify_nickname
             }]
         }],
         n_form_data: {}
@@ -142,8 +158,7 @@ Page({
                             }
                         },
                     })
-                }
-                else{
+                } else {
                     delete(data['user_name']);
                     that.setUserNamePassword(data);
                 }
@@ -151,6 +166,7 @@ Page({
         })
     },
     submitNickNameForm: function () {
+        var that = this;
         this.selectComponent('#n_form').validate((valid, errors) => {
             console.log('valid', valid, errors)
             if (!valid) {
@@ -162,8 +178,14 @@ Page({
 
                 }
             } else {
+                if(this.data.nickName == this.data.n_form_data['nick_name']){
+                    that.setData({
+                        error: '昵称未发生改变'
+                    })
+                    return false;
+                }
+                
                 var data = this.data.n_form_data;
-                var that = this;
                 this.updateUserInfoAction(data);
             }
         })
@@ -184,19 +206,17 @@ Page({
                     wx.showToast({
                         title: '设置成功',
                     });
-                }
-                else{
+                } else {
                     that.setData({
                         error: res.data.data
                     })
                 }
 
-                console.info(res);
                 wx.hideLoading();
             }
         })
     },
-    updateUserInfoAction: function(data) {
+    updateUserInfoAction: function (data) {
         var that = this;
         wx.request2({
             url: '/user/info/',
@@ -204,12 +224,15 @@ Page({
             data: data,
             success: res => {
                 var userItem = res.data.data
-                wx.setStorageSync(app.globalData.userInfoStorageKey, userItem)
+                app.getOrSetCurrentUserData(userItem);
                 wx.hideLoading();
-                // app.getOrSetCacheData2(lastUpdateUserKey, dt.get_timestamp2());
+                app.getOrSetCacheData2(lastUpdateUserKey, dt.get_timestamp2());
                 wx.showToast({
                     title: '更新成功',
                 });
+                that.setData({
+                    nickName: userItem.nick_name
+                })
             }
         })
 

@@ -6,8 +6,12 @@ from datetime import datetime, timedelta, date
 import hmac
 import json
 import random
+import time
 
-from wildzh.utils.constants import TIME_FORMAT
+from mysqldb_rich.db2 import DB
+
+from wildzh.utils.constants import TIME_FORMAT, ENCODING
+from wildzh.web02 import registry
 
 
 __author__ = 'zhouhenglc'
@@ -23,23 +27,35 @@ dict_token_timeout = 3600
 refresh_token_timeout = access_token_timeout * 100
 
 def hmac_info(key, s):
-    return hmac.new(key, s).digest()
+    if isinstance(key, str):
+        key = bytearray(key, encoding=ENCODING)
+    hc = hmac.new(key, digestmod='sha256')
+    if isinstance(s, str):
+        s = s.encode(ENCODING)
+    hc.update(s)
+    return hc.digest()
 
 
-def generate_token(user_name, scope, grant_type, refresh_token=None):
+def generate_token(user_name, scope, grant_type, refresh_token=None,
+                   timeout=None, extra_data=None):
     # 生成access_token
-    expires_in = datetime.now() + timedelta(seconds=access_token_timeout)
+    if not timeout:
+        timeout = access_token_timeout
+    refresh_timeout = timeout * 100
+    expires_in = datetime.now() + timedelta(seconds=timeout)
     salt = random.random()
     token_info = {"expires_in": expires_in.strftime(TIME_FORMAT),
                   "salt": salt, "user_name": user_name,
                   "scope": scope, "grant_type": grant_type,
-                  "timestamp": calc_timestamp()}
+                  "timestamp": calc_timestamp(),
+                  "extra_data": extra_data}
     str_token_info = json.dumps(token_info)
     hmac_token_info = hmac_info(hmac_key, str_token_info)
-    access_token = base64.b64encode(hmac_token_info + str_token_info)
+    access_token = base64.b64encode(hmac_token_info +
+                                    str_token_info.encode(ENCODING))
     # 生成refresh_token
     if refresh_token is None:
-        refresh_expires_in = datetime.now() + timedelta(seconds=refresh_token_timeout)
+        refresh_expires_in = datetime.now() + timedelta(seconds=refresh_timeout)
         refresh_token_info = {
             "expires_in": refresh_expires_in.strftime(TIME_FORMAT),
             "salt": salt, "user_name": user_name, "scope": scope,
@@ -47,11 +63,12 @@ def generate_token(user_name, scope, grant_type, refresh_token=None):
             "timestamp": calc_timestamp()}
         str_refresh_info = json.dumps(refresh_token_info)
         hmac_refresh_info = hmac_info(refresh_hmac_key, str_refresh_info)
-        refresh_token = base64.b64encode(hmac_refresh_info + str_refresh_info)
-    data = {"access_token": access_token,
-            "expires_in": access_token_timeout,
+        refresh_token = base64.b64encode(hmac_refresh_info +
+                                         str_refresh_info.encode(ENCODING))
+    data = {"access_token": access_token.decode(ENCODING),
+            "expires_in": timeout,
             "scope": scope,
-            "refresh_token": refresh_token,
+            "refresh_token": refresh_token.decode(ENCODING),
             "user_name": user_name}
     return True, data
 
@@ -59,9 +76,9 @@ def generate_token(user_name, scope, grant_type, refresh_token=None):
 def analysis_token(access_token):
     try:
         info = base64.b64decode(access_token)
-        str_token_info = info[16:]
+        str_token_info = info[32:]
         hmac_token_info = hmac_info(hmac_key, str_token_info)
-        if hmac_token_info != info[:16]:
+        if hmac_token_info != info[:32]:
             return False, ""
         token_info = json.loads(str_token_info)
         if "expires_in" not in token_info:
@@ -108,9 +125,62 @@ def calc_timestamp(dt=None, sdt=None):
 
 # common function end
 
-
+@registry.has_registry_receivers
 class UserToken(object):
 
-    def gen_token(self):
-        pass
+    def __init__(self, db_conf_path):
+        self.db = DB(conf_path=db_conf_path)
+        self.t_token = 'user_token'
+        self.token_cols = ['user_name', 'access_token', 'identity',
+                           'refresh_token', 'update_time']
 
+    def gen_token(self, user_name, identity, timeout, user_role):
+        # TODO 限制不能无限生成
+        r, data = generate_token(user_name, '', 'password',
+                                 timeout=timeout,
+                                 extra_data={'user_role': user_role})
+        access_token = data['access_token']
+        time_stamp = int(time.time())
+        db_data = {'user_name': user_name, 'access_token': access_token,
+                   'update_time': time_stamp, 'identity': identity,
+                   'refresh_token': data['refresh_token']}
+        u_keys = ['access_token', 'refresh_token', 'update_time']
+        l = self.db.execute_duplicate_insert(self.t_token, kwargs=db_data, u_keys=u_keys)
+        if l <= 0:
+            return False, 'internal error: gen token insert'
+        return True, data
+
+    def verify_token(self, token):
+        # token:timestamp:algorithm:sign
+        t_items = token.split(":")
+        if len(t_items) != 4:
+            return False, ''
+        access_token, timestamp, algorithm, sign = t_items
+        try:
+            if abs(time.time() - int(timestamp)) > 10:
+                return False, ''
+        except ValueError:
+            return False, ''
+        r, _token_data = analysis_token(access_token)
+        if r is False:
+            return False, ''
+        where_value = dict(user_name=_token_data['user_name'],
+                           access_token=access_token)
+        db_items = self.db.execute_select(self.t_token, where_value,
+                                          cols=self.token_cols)
+        if len(db_items) <= 0:
+            return False, ''
+        db_token = db_items[0]
+        # TODO verify sign
+        return True, ''
+
+    @registry.receive_callback('hook', 'verify_token')
+    def verify_token_callback(self, resource, event ,trigger, token):
+        return self.verify_token(token)
+
+
+if __name__ == '__main__':
+    token_data = generate_token('admin', 'api', 'password', timeout=60)
+    print(token_data)
+    a_data = analysis_token(token_data[1]['access_token'])
+    print(a_data)

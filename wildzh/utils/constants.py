@@ -6,3 +6,4 @@ __author__ = 'zhouhenglc'
 
 
 TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+ENCODING = 'utf-8'

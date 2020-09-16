@@ -40,3 +40,14 @@ class View2(View):
                 if "url" not in menu_list:
                     menu_list["url"] = url_prefix.rstrip('/') + "/"
                 DR.append('portal_menu_list', menu_list)
+
+    def add_handler(self, handler_obj, name=None):
+        if not name:
+            name = self.name
+        kwargs = {name: handler_obj}
+        DR.update('handlers', **kwargs)
+
+    def get_handler(self, name=None):
+        if not name:
+            name = self.name
+        return DR.get('handlers').get(name)

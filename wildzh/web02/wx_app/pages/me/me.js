@@ -27,6 +27,13 @@ Page({
                 examNo: app.globalData.defaultExamNo
             })
         }
+        this.loadCacheUserInfo()
+    },
+    onShow: function() {
+        this.getExams();
+        this.loadCacheUserInfo();
+    },
+    loadCacheUserInfo: function(){
         var currentUser = app.getOrSetCurrentUserData();
         if (currentUser != null) {
             if ("user_no" in currentUser) {
@@ -41,9 +48,6 @@ Page({
                 })
             }
         }
-    },
-    onShow: function() {
-        this.getExams();
     },
     getUserInfo: function(e) {
         var that = this
@@ -87,58 +91,7 @@ Page({
             url: "./info"
         })
         return;
-        var currentTime = dt.get_timestamp2();
-        var lastTime = app.getOrSetCacheData2(lastUpdateUserKey);
-        console.info(lastTime)
-        var intervalTime = 3600 * 24 * 30;
-        var msg = '您的昵称是：' + this.data.nickName + ' 昵称可在30天内更新一次！';
-        if (lastTime != null && currentTime - lastTime < intervalTime) {
-            wx.showModal({
-                title: '昵称',
-                content: msg,
-                showCancel: false,
-                success(res) {
-                }
-            })
-        } else {
-            this.setData({
-                hiddenUnickName: false
-            })
-        }
-    },
-    nickNameChange: function(e) {
-        var nNickName = e.detail.value;
-        newNickName = nNickName;
-    },
-    cancelUnickName: function() {
-        this.setData({
-            hiddenUnickName: true
-        })
-    },
-    confirmUnickName: function() {
-        console.info('start update nick name');
-        if(newNickName.length < 2){
-            wx.showModal({
-                title: '设置昵称',
-                content: '设置的昵称长度太短！',
-                showCancel: false,
-                success(res) {
-                }
-            })
-            return false;
-        }
-        this.setData({
-            hiddenUnickName: true,
-            nickName: newNickName
-        })
-        var data = {
-            "nick_name": newNickName
-        }
-        wx.showLoading({
-            title: '更新中...',
-            mask: true
-        })
-        this.updateUserInfoAction(data);
+        
     },
     getExams: function() {
         that = this;
