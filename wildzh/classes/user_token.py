@@ -10,7 +10,7 @@ import time
 
 from mysqldb_rich.db2 import DB
 
-from wildzh.utils.constants import TIME_FORMAT, ENCODING
+from wildzh.utils import constants
 from wildzh.web02 import registry
 
 
@@ -25,6 +25,9 @@ basic_date = date(year=2020, month=8, day=27)
 access_token_timeout = 7200
 dict_token_timeout = 3600
 refresh_token_timeout = access_token_timeout * 100
+ENCODING = constants.ENCODING
+TIME_FORMAT = constants.TIME_FORMAT
+
 
 def hmac_info(key, s):
     if isinstance(key, str):
@@ -57,7 +60,7 @@ def generate_token(user_no, scope, grant_type, refresh_token=None,
     if refresh_token is None:
         refresh_expires_in = datetime.now() + timedelta(seconds=refresh_timeout)
         refresh_token_info = {
-            "expires_in": refresh_expires_in.strftime(TIME_FORMAT),
+            "expires_in": refresh_expires_in.strftime(constants.TIME_FORMAT),
             "salt": salt, "user_no": user_no, "scope": scope,
             "grant_type": grant_type, "refresh": True,
             "timestamp": calc_timestamp()}
@@ -79,17 +82,19 @@ def analysis_token(access_token):
         str_token_info = info[32:]
         hmac_token_info = hmac_info(hmac_key, str_token_info)
         if hmac_token_info != info[:32]:
-            return False, ""
+            return False, "failed to verify signature"
         token_info = json.loads(str_token_info)
         if "expires_in" not in token_info:
-            return False, ""
+            return False, "lack expires_in"
         if datetime.strptime(token_info["expires_in"], TIME_FORMAT) < datetime.now():
-            return False, ""
+            token_info['expired'] = True
+        else:
+            token_info['expired'] = False
         return True, token_info
     except Exception as e:
-        error_message = "%s TOKEN ANALYSIS ERROR %s" % (datetime.now().strftime(TIME_FORMAT), str(e.args))
+        error_message = "%s TOKEN ANALYSIS ERROR %s" % (datetime.now().strftime(TIME_FORMAT), str(e))
         print(error_message)
-        return False, ""
+        return False, set(e)
 
 
 def analysis_refresh_token(refresh_token):
@@ -132,7 +137,7 @@ class UserToken(object):
         self.db = DB(conf_path=db_conf_path)
         self.t_token = 'user_token'
         self.token_cols = ['user_no', 'access_token', 'identity',
-                           'refresh_token', 'update_time']
+                           'refresh_token', 'update_time', 'need_refresh']
 
     def gen_token(self, user_no, identity, timeout, user_role):
         # TODO 限制不能无限生成
@@ -154,23 +159,35 @@ class UserToken(object):
         # token:timestamp:algorithm:sign
         t_items = token.split(":")
         if len(t_items) != 4:
-            return False, ''
+            return False, {'error': constants.TOKEN_BAD_FORMAT,
+                           'detail': 'token should consist of four parts'}
         access_token, timestamp, algorithm, sign = t_items
         try:
             if abs(time.time() - int(timestamp)) > 10:
-                return False, ''
+                return False, {'error': constants.TOKEN_BAD_FORMAT,
+                           'detail': 'the request timestamp deviation '
+                                     'is too large'}
         except ValueError:
-            return False, ''
+            return False, {'error': constants.TOKEN_BAD_FORMAT,
+                           'detail': 'the request timestamp not an integer'}
         r, _token_data = analysis_token(access_token)
         if r is False:
-            return False, ''
+            return False, {'error': constants.TOKEN_BAD_FORMAT,
+                           'detail': 'analysis token fail: %s' % _token_data}
+        if _token_data['expired']:
+            return False, {'error': constants.TOKEN_EXPIRED,
+                           'detail': ''}
         where_value = dict(user_no=_token_data['user_no'],
                            access_token=access_token)
         db_items = self.db.execute_select(self.t_token, where_value,
                                           cols=self.token_cols)
         if len(db_items) <= 0:
-            return False, ''
+            return False, {'error': constants.TOKEN_NOT_STORAGE,
+                           'detail': ''}
         db_token = db_items[0]
+        if db_token['need_refresh']:
+            return False, {'error': constants.TOKEN_REQUIRE_REFRESH,
+                           'detail': ''}
         # TODO verify sign
         return True, _token_data
 
