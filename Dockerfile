@@ -17,4 +17,5 @@ ADD entrypoint.sh /opt/
 RUN chmod a+x /opt/entrypoint.sh
 ENTRYPOINT ["/opt/entrypoint.sh"]
 # CMD ["python3", "wildzh/web02/web.py", "$LISTENPORT"]
-CMD ["gunicorn", "-b", "0.0.0.0:$LISTENPORT", "-w", "4", "-k", "eventlet", "--chdir", "wildzh/web02", "web:app"]
+# CMD ["gunicorn", "-b", "0.0.0.0:$LISTENPORT", "-w", "4", "-k", "eventlet", "--chdir", "wildzh/web02", "web:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:$LISTENPORT", "-w", "4", "-k", "gevent", "--chdir", "wildzh/web02", "web:app"]

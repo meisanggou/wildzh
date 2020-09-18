@@ -28,6 +28,7 @@ class TokenHook(FlaskHook):
         v_r, data = registry.notify_callback('hook', 'verify_token', self,
                                              token=auth_data)
         if v_r is True:
+            g.token = data
             session['user_id'] = data['user_no']
             session['role'] = data['extra_data']['user_role']
             g.user_role = data['extra_data']['user_role']
@@ -35,5 +36,6 @@ class TokenHook(FlaskHook):
         else:
             error = data.get('error', '')
             detail = data.get('detail', '')
-            self.log.info('')
-            return make_response('', 401)
+            self.log.info('verify token fail, error: %s, detail: %s',
+                          error, detail)
+            return make_response(error, 401)
