@@ -167,7 +167,7 @@ class User(object):
         if len(user_name) <= 5:
             return True
         items = self.verify_user_exist(user_name=user_name)
-        if len(items) >= 0:
+        if len(items) > 0:
             return True
         return False
 
