@@ -29,10 +29,10 @@ class TokenHook(FlaskHook):
                                              token=auth_data)
         if v_r is True:
             g.token = data
-            session['user_id'] = data['user_no']
+            session['_user_id'] = data['user_no']
             session['role'] = data['extra_data']['user_role']
             g.user_role = data['extra_data']['user_role']
-            login_manager.reload_user()
+            login_manager._load_user()
         else:
             error = data.get('error', '')
             detail = data.get('detail', '')

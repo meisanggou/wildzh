@@ -18,7 +18,7 @@ __author__ = 'zhouheng'
 
 
 login_manager = LoginManager()
-login_manager.session_protection = 'strong'
+login_manager.session_protection = 'basic'
 LOG = getLogger()
 
 
