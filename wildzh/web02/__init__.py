@@ -51,7 +51,8 @@ def create_app():
                 print(e)
         res.headers["Server"] = "Wild Server"
         LOG.info('receive request: [%s][%s][%s] full_path:%s user-agent:%s',
-                 res.status_code, request.method, g.user_no,
+                 res.status_code, request.method,
+                 getattr(g, 'user_o', None),
                  request.full_path,
                  request.headers.get('User-Agent'))
         return res
