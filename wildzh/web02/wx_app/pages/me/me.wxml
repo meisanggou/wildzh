@@ -2,7 +2,7 @@
 
 <view class="container">
     <view class="page-body">
-        <view wx:if="{{userAvatar}}">
+        <view wx:if="{{userAvatar}}" bindtap="changeAvatar">
             <image class="avatar bottom30" mode="aspectFit" src="{{userAvatar}}"></image>
         </view>
         <view wx:else>

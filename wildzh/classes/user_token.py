@@ -141,6 +141,12 @@ class UserToken(object):
 
     def gen_token(self, user_no, identity, timeout, user_role):
         # TODO 限制不能无限生成
+        # 获得当前活跃的终端
+        ## 判定申请的终端是否是活跃的终端
+        ### 如果是 允许申请
+        ### 如果不是 判定当前活跃终端数是否超过限制 删除申请时间靠前的终端授权
+        ### 如果是新终端 判定是否以前有过授权 判定间隔时间是否够长
+
         r, data = generate_token(user_no, '', 'password',
                                  timeout=timeout,
                                  extra_data={'user_role': user_role})

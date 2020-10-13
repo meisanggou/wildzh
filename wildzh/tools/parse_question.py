@@ -94,7 +94,7 @@ class Question(object):
             answer = answer.answer
         if self.q_type == QuestionType.Choice:
             if not hasattr(self.options, answer):
-                raise RuntimeError("Not Found answer option: %s" % answer)
+                raise p_exc.AnswerNotFound(self.q_items)
             getattr(self.options, answer).score = 1
             self.answer = ""
         else:

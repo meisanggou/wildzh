@@ -16,7 +16,8 @@
         "pages/exam/exam_info",
         "pages/exam/exam_usage",
         "pages/exam/exam_fb",
-        "pages/me/info"
+        "pages/me/info",
+        "pages/me/avatar"
     ],
     "window": {
         "backgroundTextStyle": "light",

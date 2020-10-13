@@ -232,5 +232,10 @@ Page({
         wx.navigateTo({
             url: "../exam/exam_info?examNo=" + this.data.examNo
         })
+    },
+    changeAvatar: function(){
+        wx.navigateTo({
+            url: "./avatar"
+        })
     }
 })

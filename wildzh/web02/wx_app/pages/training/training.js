@@ -168,7 +168,6 @@ Page({
             return [];
         }
         var items = [];
-        var examNo = this.data.examNo;
         var ll = nos_l.length;
         for (var i = 0; i < ll; i++) {
             var ll_item = nos_l[i];
