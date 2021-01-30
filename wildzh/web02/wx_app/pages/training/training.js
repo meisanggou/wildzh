@@ -5,8 +5,11 @@ var touchTime = 0;
 var touchStartX = 0; //触摸时的原点
 var touchStartY = 0;
 var touchInterval = null;
-var brushNum = 0;
 var brushList = new Array();
+var brushDetail = new Array();
+var STATE_WRONG = 'wrong';
+var STATE_RIGHT = 'right'
+var STATE_SKIP = 'skip'
 
 Page({
     data: {
@@ -125,6 +128,7 @@ Page({
     },
     onLoad: function (options) {
         brushList = [];
+        brushDetail = [];
         this.setData({
             examNo: app.globalData.defaultExamNo,
             examName: app.globalData.defaultExamName
@@ -456,7 +460,7 @@ Page({
         if (nowQuestion == null) {
             return false;
         }
-        this.addBrushNum(nowQuestion.question_no);
+        this.addBrushNum(nowQuestion.question_no, STATE_SKIP);
         var questionAnswer = new Array();
 
         for (var index in nowQuestion.options) {
@@ -488,13 +492,13 @@ Page({
         var choseIndex = parseInt(e.currentTarget.dataset.choseitem);
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
-        this.addBrushNum(nowQuestion.question_no);
+        
         for (var index in questionItems[nowQuestionIndex]["options"]) {
             nowQuestion["options"][index]["class"] = "noChose";
-
         }
         if (parseInt(nowQuestion["options"][choseIndex]["score"]) > 0) {
             nowQuestion["options"][choseIndex]["class"] = "chose";
+            this.addBrushNum(nowQuestion.question_no, STATE_RIGHT);
             // 自动进入下一题
             if (this.data.showAnswer == false) {
                 // 当前显示答案 不进入下一题
@@ -505,10 +509,11 @@ Page({
             }
         } else {
             nowQuestion["options"][choseIndex]["class"] = "errorChose";
+            // 记录错题
+            this.addBrushNum(nowQuestion.question_no, STATE_WRONG);
+            //that.recordWrong(that.data.examNo, [nowQuestion.question_no]);
             // 显示答案
             that.showAnswer();
-            // 记录错题
-            that.recordWrong(that.data.examNo, [nowQuestion.question_no]);
         }
         that.setData({
             nowQuestion: nowQuestion
@@ -582,6 +587,7 @@ Page({
         })
     },
     recordWrong: function (exam_no, wrong_question) {
+        // 待废弃
         wx.request2({
             url: '/exam/wrong/',
             method: "POST",
@@ -591,24 +597,29 @@ Page({
             }
         })
     },
-    addBrushNum: function (q_no) {
+    addBrushNum: function (q_no, state) {
         if (brushList.indexOf(q_no) >= 0) {
             return false;
         }
-        brushNum += 1;
         brushList.push(q_no);
+        brushDetail.push({'no': q_no, 'state': state});
         this.saveBrushNum();
     },
     saveBrushNum: function () {
-        if (brushNum <= 0) {
+        if (brushDetail.length <= 0) {
             return false;
         }
-        var _num = brushNum;
-        brushNum = 0;
+        var _num = brushDetail.length;
+        var questions = new Array();
+        while(brushDetail.length > 0){
+            questions.push(brushDetail.pop());
+        }
         var examNo = this.data.examNo;
+        brushDetail = new Array();
         var data = {
             'exam_no': examNo,
-            'num': _num
+            'num': _num,
+            'questions': questions
         }
         wx.request2({
             url: '/exam/usage?exam_no=' + examNo,
@@ -616,7 +627,7 @@ Page({
             data: data,
             success: res => {},
             fail: function () {
-                brushNum += _num;
+                brushDetail.concat(questions);
             }
         })
     },

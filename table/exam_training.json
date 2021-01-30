@@ -1,0 +1,74 @@
+[
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "用户编号",
+                "col_name": "user_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "测试编号",
+                "col_name": "exam_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "题目编号",
+                "col_name": "question_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "首次练习情况 0做对 1做错 2直接查看答案",
+                "col_name": "first_meet",
+                "col_type": "tinyint(4)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "第一次做题情况 是否做错 0没有做错 1做错",
+                "col_name": "first_miss",
+                "col_type": "bit(1)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "第一次做本题 时间",
+                "col_name": "first_time",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "做本题 次数",
+                "col_name": "num",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "做错 次数",
+                "col_name": "miss_num",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "直接查看答案 次数",
+                "col_name": "skip_num",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "上次联系 做错",
+                "col_name": "last_miss",
+                "col_type": "bit(1)",
+                "default_value": 0
+            },
+            {
+                "col_comment": "上次联系 做题时间",
+                "col_name": "last_time",
+                "col_type": "int(11)",
+                "default_value": 0
+            }
+        ],
+        "table_comment": "用户题目联系详情",
+        "table_name": "exam_training_detail"
+    }
+]

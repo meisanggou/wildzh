@@ -9,18 +9,25 @@ class CallbacksManager(object):
     _instance = None
 
     def __init__(self):
-        self.callbacks = {}
+        if not hasattr(self, 'callbacks'):
+            self.callbacks = collections.defaultdict(dict)
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is not None:
             cls._instance = object.__new__(cls)
         return cls._instance
 
+    def subscribe(self, callback, resource, event):
+        callback_list = self.callbacks[resource].setdefault(event, [])
+        callback_list.append(callback)
+
     def notify(self, resource, event, trigger, **kwargs):
-        pass
+        callbacks = self.callbacks[resource].get(event, [])
+        for callback in callbacks:
+            callback(resource, event, trigger, **kwargs)
 
     def clear(self):
-        pass
+        self.callbacks = collections.defaultdict(dict)
 
 
 _CALLBACK_MANAGER = None
@@ -37,10 +44,12 @@ def _get_callback_manager():
     return _CALLBACK_MANAGER
 
 
-# NOTE(boden): This method is deprecated in favor of publish() and will be
-# removed in Queens, but not deprecation message to reduce log flooding
 def notify(resource, event, trigger, **kwargs):
     _get_callback_manager().notify(resource, event, trigger, **kwargs)
+
+
+def subscribe(callback, resource, event):
+    _get_callback_manager().subscribe(callback, resource, event)
 
 
 def clear():

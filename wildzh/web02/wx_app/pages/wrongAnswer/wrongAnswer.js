@@ -366,6 +366,8 @@ Page({
         } else {
             nowQuestion["options"][choseIndex]["class"] = "errorChose";
         }
+        console.info(showRemove);
+        console.info(nowQuestion);
         that.setData({
             nowQuestion: nowQuestion,
             showRemove: showRemove

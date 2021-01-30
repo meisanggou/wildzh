@@ -205,6 +205,7 @@ Page({
                     });
                     wx.showToast({
                         title: '设置成功',
+                        duration: 2500
                     });
                 } else {
                     that.setData({
@@ -229,6 +230,7 @@ Page({
                 app.getOrSetCacheData2(lastUpdateUserKey, dt.get_timestamp2());
                 wx.showToast({
                     title: '更新成功',
+                    duration: 2000
                 });
                 that.setData({
                     nickName: userItem.nick_name
