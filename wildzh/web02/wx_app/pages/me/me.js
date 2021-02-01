@@ -18,9 +18,10 @@ Page({
         examTip: "未拥有当前题库所有操作权限",
         currentTip: null,
         brushNum: -1,
+        ranking: null,
         version: app.globalData.version
     },
-    onLoad: function(options) {
+    onLoad: function (options) {
         if (app.globalData.defaultExamNo != null) {
             this.setData({
                 examName: app.globalData.defaultExamName,
@@ -29,11 +30,11 @@ Page({
         }
         this.loadCacheUserInfo()
     },
-    onShow: function() {
+    onShow: function () {
         this.getExams();
         this.loadCacheUserInfo();
     },
-    loadCacheUserInfo: function(){
+    loadCacheUserInfo: function () {
         var currentUser = app.getOrSetCurrentUserData();
         if (currentUser != null) {
             if ("user_no" in currentUser) {
@@ -49,7 +50,7 @@ Page({
             }
         }
     },
-    getUserInfo: function(e) {
+    getUserInfo: function (e) {
         var that = this
         var userInfo = e.detail.userInfo
         var data = {
@@ -63,7 +64,7 @@ Page({
         this.updateUserInfoAction(data);
 
     },
-    updateUserInfoAction: function(data) {
+    updateUserInfoAction: function (data) {
         var that = this;
         wx.request2({
             url: '/user/info/',
@@ -83,17 +84,17 @@ Page({
         })
 
     },
-    updateNickNameClick: function() {
-        if(this.data.userNo == ""){
+    updateNickNameClick: function () {
+        if (this.data.userNo == "") {
             return false;
         }
         wx.navigateTo({
             url: "./info"
         })
         return;
-        
+
     },
-    getExams: function() {
+    getExams: function () {
         that = this;
         wx.request2({
             url: '/exam/info/',
@@ -126,14 +127,14 @@ Page({
                     examIndex: examIndex
                 });
                 that.getBrushNum();
-                if(examNo != 0 && allExams[examIndex].exam_role <= 3){
+                if (examNo != 0 && allExams[examIndex].exam_role <= 3) {
                     that.getTips();
                 }
                 wx.hideLoading();
             }
         })
     },
-    getBrushNum: function() {
+    getBrushNum: function () {
         var examNo = this.data.examNo;
         var examEndTime = null;
         var allExams = this.data.allExams;
@@ -154,7 +155,6 @@ Page({
                         examEndTime = dt.timestamp_2_date(end_time);
                     }
                 }
-
                 break;
             }
         }
@@ -181,10 +181,33 @@ Page({
                 that.setData({
                     brushNum: brushNum
                 });
+                that.getRanking(brushNum);
             }
         })
     },
-    getTips: function() {
+    getRanking: function (brushNum) {
+        if(brushNum <= 0){
+            return false;
+        }
+        var examNo = this.data.examNo;
+        var that = this;
+        wx.request2({
+            url: '/exam/usage/ranking?exam_no=' + examNo + '&num=' + brushNum,
+            method: 'GET',
+            success: res => {
+                if (res.data.status == false) {
+                    return false;
+                }
+                var resData = res.data.data;
+                var ranking = resData['ranking'];
+                that.setData({
+                    ranking: ranking
+                });
+            }
+        })
+
+    },
+    getTips: function () {
         var examNo = this.data.examNo;
         var examTip = '';
         var currentTip = null;
@@ -200,7 +223,7 @@ Page({
                     return false;
                 }
                 var resData = res.data.data;
-                if(resData.length <= 0){
+                if (resData.length <= 0) {
                     return;
                 }
                 currentTip = resData[0];
@@ -209,12 +232,12 @@ Page({
                     examTip: examTip,
                     currentTip: currentTip
                 })
-                
+
             }
         })
-        
+
     },
-    examChange: function(e) {
+    examChange: function (e) {
         var examIndex = e.detail.value;
         var currentExam = this.data.allExams[examIndex];
         this.setData({
@@ -224,16 +247,19 @@ Page({
         });
         app.setDefaultExam(currentExam);
         this.getBrushNum();
-        if(currentExam.exam_role <= 3){
+        if (currentExam.exam_role <= 3) {
             this.getTips();
         }
     },
-    lookExam: function() {
+    lookExam: function () {
         wx.navigateTo({
             url: "../exam/exam_info?examNo=" + this.data.examNo
         })
     },
-    changeAvatar: function(){
+    changeAvatar: function () {
+
+        return false;
+        // TODO 本次发版暂不支持更换头像
         wx.navigateTo({
             url: "./avatar"
         })

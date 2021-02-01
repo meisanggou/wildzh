@@ -783,9 +783,27 @@ def get_usage_state():
 @required_exam_no
 def query_usage():
     item = c_exam.get_one_usage_records(g.user_no, g.exam_no)
-    if (g.user_role & 2) != 2 and item['num'] < 100:
+    if (g.user_role & 2) != 2 and item['num'] < 10:
         item['num'] = -1
     return jsonify({'status': True, 'data': item})
+
+
+@exam_view.route('/usage/ranking', methods=['GET'])
+@login_required
+@required_exam_no
+def query_usage_ranking():
+    num = None
+    if 'num' in request.args:
+        try:
+            num = int(request.args['num'])
+        except ValueError:
+            pass
+    if num is None:
+        item = c_exam.get_one_usage_records(g.user_no, g.exam_no)
+        num = item['num']
+    ranking = c_exam.get_one_ranking(g.exam_no, num) + 1
+    v = {'ranking': ranking, 'num': num}
+    return jsonify({'status': True, 'data': v})
 
 
 @exam_view.route('/usage', methods=['POST'])

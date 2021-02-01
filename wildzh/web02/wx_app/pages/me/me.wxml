@@ -91,9 +91,15 @@
                             <view class="weui-label">本周做题</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <view class="weui-input">{{brushNum}}
+                            <view class="weui-input">
+                                <text>{{brushNum}}</text>
+                                <text wx:if="{{ ranking }}">（排名：{{ ranking }})</text>
                             </view>
                         </view>
+                        <!-- <view class="weui-cell__bd">
+                            <view class="weui-input">排名：10000
+                            </view>
+                        </view> -->
                     </view>
 
                     <view class="weui-cell weui-cell_input">

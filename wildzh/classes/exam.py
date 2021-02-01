@@ -582,6 +582,18 @@ class ExamUsage(object):
                     'exam_no': exam_no, 'user_no': user_no}
         return items[0]
 
+    def get_one_ranking(self, exam_no, num):
+        period_no = self.calc_period_no()
+        cols = ['count(*)']
+        where_value = {'period_no': period_no, 'exam_no': exam_no}
+        where_cond = ['num > %s']
+        where_cond_args = [num]
+        items = self.db.execute_select(
+            self.t_usage, cols=cols, where_value=where_value,
+            where_cond=where_cond, where_cond_args=where_cond_args)
+        return list(items[0].values())[0]
+
+
     def update_usage_records(self, exam_no, user_no, num=1):
         if num <= 0:
             return None
