@@ -619,7 +619,8 @@ class ExamUsage(object):
                                    where_value=where_value)
             update_value.update(where_value)
         # period_no == -1 记录总的做题数
-        self._update_usage_records(-1, exam_no, user_no, _num)
+        if period_no != -1:
+            self._update_usage_records(-1, exam_no, user_no, _num)
         return update_value
 
 
