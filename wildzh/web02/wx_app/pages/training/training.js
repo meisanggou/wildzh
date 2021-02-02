@@ -1,6 +1,6 @@
 var app = getApp();
 var that;
-var questionItems;
+var questionItems = [];
 var touchTime = 0;
 var touchStartX = 0; //触摸时的原点
 var touchStartY = 0;
@@ -32,7 +32,8 @@ Page({
         hiddenFeedback: true,
         fbTypes: ['题目错误', '答案错误', '解析错误', '其他'],
         fbTypeIndex: 1,
-        feedbackDesc: ""
+        feedbackDesc: "",
+        notFrame: true
     },
     getQuestionNos: function (options) {
         that = this;
@@ -152,6 +153,11 @@ Page({
                     return true;
                 }
             }
+            else if('wrong_question' in options){
+                this.reqWrongAnswer();
+            }
+            // this.enterWrongMode();
+            // return true;
             that.getQuestionNos(options);
         } else {
             wx.showModal({
@@ -699,6 +705,96 @@ Page({
         app.getOrSetExamCacheData(this.data.progressStorageKey, this.data.nowQuestionIndex);
 
     },
+    // 练习错题模式
+    enterWrongMode: function(){
+        this.setData({notFrame: false});
+        this.reqWrongAnswer();
+    },
+    reqWrongAnswer: function() {
+        that = this
+        var examNo = this.data.examNo;
+        if (examNo == null) {
+            return false;
+        }
+        var questionLen = questionItems.length;
+        var minWrongTime = 0;
+        if (questionLen <= 0) {
+            wx.showLoading({
+                title: '加载中...',
+            })
+        } else {
+            minWrongTime = questionItems[questionLen - 1].wrong_time;
+        }
+        wx.request2({
+            url: '/exam/wrong/?exam_no=' + examNo + "&min_wrong_time=" + minWrongTime,
+            methods: "GET",
+            success: function(res) {
+                if (res.data.status != true) {
+                    wx.hideLoading();
+                    wx.showModal({
+                        title: '无法访问题库',
+                        content: "题库已删除，或无权访问。确定进入【我的】更换题库",
+                        showCancel: false,
+                        success(res) {
+                            wx.switchTab({
+                                url: "/pages/me/me"
+                            })
+                        }
+                    })
+                    return false;
+                }
+                var addQuestionItems = res.data.data;
+                // 如果有新的错题，显示第一个，没有保持原来的显示
+                var showIndex = that.data.nowQuestionIndex;
+                var latestQuestionItems = questionItems;
+                if (addQuestionItems.length > 0) {
+                    // 按照错误时间排序 最新错题排到前面
+                    addQuestionItems.sort(function(a, b) {
+                        return a.wrong_time - b.wrong_time;
+                    })
+                    latestQuestionItems = addQuestionItems.concat(questionItems);
+                    showIndex = 0;
+                }
+                // 判定最新的试题是否在
+                questionItems = latestQuestionItems;
+                wx.hideLoading();
+                if (questionItems.length <= 0 && firstEnter) {
+                    wx.showModal({
+                        title: '无错题',
+                        content: "没有发现错题",
+                        showCancel: false,
+                        success(res) {
+                            // wx.navigateBack({
+                            //     delta: 1
+                            // })
+                        }
+                    })
+                    firstEnter = false;
+                    return false;
+                }
+                if (addQuestionItems.length > 0) {
+                    // 请求questionItems
+                    that.reqQuestion(0, true);
+                }
+            },
+            fail: function({
+                errMsg
+            }) {
+                wx.hideLoading();
+                wx.showModal({
+                    title: '页面请求失败',
+                    content: "无法连接远程主机获取错题信息，确定返回首页",
+                    showCancel: false,
+                    success(res) {
+                        wx.navigateBack({
+                            delta: 1
+                        })
+                    }
+                })
+            }
+        })
+    },
+    // 练习错题模式 结束
     onUnload: function () {
         console.info("un load")
         this.saveBrushNum();

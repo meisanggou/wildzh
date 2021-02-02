@@ -8,6 +8,7 @@ Page({
 
   data: {
     remote_host: app.globalData.remote_host,
+    examNo: null,
     questionList: [],
     nowQuestion: null,
     nowQuestionIndex: 0,
@@ -18,7 +19,7 @@ Page({
   },
 
 
-  onLoad: function(options) {
+  onLoad: function (options) {
     that = this;
     var index = parseInt(options.index);
     var exam_no = options.exam_no;
@@ -27,9 +28,10 @@ Page({
     console.info(test_id);
     wx.getStorage({
       key: test_id,
-      success: function(res) {
+      success: function (res) {
         var questionItems = res.data;
         that.setData({
+          examNo: exam_no,
           questionList: questionItems,
           nowQuestion: questionItems[index],
           nowQuestionIndex: index,
@@ -39,13 +41,13 @@ Page({
     });
   },
 
-  backHome: function() {
+  backHome: function () {
     wx.navigateBack({
       delta: 1
     })
   },
 
-  showAnswer: function() {
+  showAnswer: function () {
     var nowQuestionIndex = that.data.nowQuestionIndex;
     var nowQuestion = that.data.nowQuestion;
     var questionAnswer = new Array();
@@ -63,10 +65,10 @@ Page({
       showAnswer: true,
       questionAnswer: questionAnswer
     })
-
+    this.saveBrushNum();
   },
 
-  after1: function() {
+  after1: function () {
     var nowQuestionIndex = that.data.nowQuestionIndex;
     var totalQuestionNum = that.data.totalQuestionNum;
     var questionList = that.data.questionList;
@@ -80,7 +82,7 @@ Page({
     }
   },
 
-  before1: function() {
+  before1: function () {
     var nowQuestionIndex = that.data.nowQuestionIndex;
     var questionList = that.data.questionList;
     if (nowQuestionIndex != 0) {
@@ -92,7 +94,29 @@ Page({
       })
     }
   },
-  onShareAppMessage: function() {
+
+  saveBrushNum: function () {
+    var nowQuestion = this.data.nowQuestion;
+    if('displayed' in nowQuestion){
+      return false;
+    }
+    nowQuestion['displayed'] = true;
+    var questions = [{'no': nowQuestion.question_no, 'state': 'skip'}];
+    var examNo = this.data.examNo;
+    var data = {
+      'exam_no': examNo,
+      'num': questions.length,
+      'questions': questions
+    }
+    wx.request2({
+      url: '/exam/usage?exam_no=' + examNo,
+      method: 'POST',
+      data: data,
+      success: res => {},
+      fail: function () {}
+    })
+  },
+  onShareAppMessage: function () {
 
   },
   // 触摸开始事件

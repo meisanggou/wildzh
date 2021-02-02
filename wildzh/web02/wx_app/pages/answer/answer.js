@@ -161,6 +161,7 @@ Page({
                         var data = {"questionItems": questionItems};
                         if(that.data.nowQuestion == null && questionItems.length > 0){
                             data['nowQuestion'] = questionItems[0];
+                            data['nowQuestion']['displayed'] = true;
                             wx.hideLoading();
                         }
                         that.setData(data);
@@ -224,6 +225,7 @@ Page({
         } else {
             var interval = setInterval(function () {
                 clearInterval(interval)
+                questionItems[nextQuestionNumber]['displayed'] = true;
                 that.setData({
                     nowQuestionIndex: nextQuestionNumber,
                     nowQuestion: questionItems[nextQuestionNumber]
@@ -281,6 +283,7 @@ Page({
                 })
                 return false;
             }
+            questionItems[nowQuestionIndex]['displayed'] = true;
             that.setData({
                 nowQuestion: questionItems[nowQuestionIndex],
                 nowQuestionIndex: nowQuestionIndex
@@ -296,6 +299,7 @@ Page({
         var questionItems = that.data.questionItems;
         if (nowQuestionIndex > 0) {
             nowQuestionIndex--;
+            questionItems[nowQuestionIndex]['displayed'] = true;
             that.setData({
                 nowQuestion: questionItems[nowQuestionIndex],
                 nowQuestionIndex: nowQuestionIndex

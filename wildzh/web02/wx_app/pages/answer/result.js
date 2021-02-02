@@ -1,5 +1,8 @@
 var that;
 var app = getApp();
+var STATE_WRONG = 'wrong';
+var STATE_RIGHT = 'right'
+var STATE_SKIP = 'skip'
 Page({
     data: {
         score: 0,
@@ -31,17 +34,28 @@ Page({
                     var questionNum = res.data.length;
                     var score = 0;
                     var showNums = [];
-                    var wrong_question = [];
+                    // var wrong_question = [];
+                    var questions = [];
                     for (var i = 0; i < questionNum;) {
                         var lineNums = [];
                         for (var j = 0; j < 5 && i < questionNum; i++ , j++) {
+                            lineNums.push(i);
+                            if(!('displayed' in res.data[i])){
+                                continue;
+                            }
+                            if(!('right' in res.data[i])){
+                                questions.push({'no': res.data[i].question_no, 'state': STATE_SKIP})
+                                continue;
+                            }
                             if (res.data[i]["right"] == true) {
                                 score = score + 1;
+                                questions.push({'no': res.data[i].question_no, 'state': STATE_RIGHT})
                             }
                             else if (res.data[i]["right"] == false) {
-                                wrong_question.push(res.data[i]["question_no"]);
+                                questions.push({'no': res.data[i].question_no, 'state': STATE_WRONG})
+                                // wrong_question.push(res.data[i]["question_no"]);
                             }
-                            lineNums.push(i);
+                            
                         }
                         showNums.push(lineNums);
                     }
@@ -51,12 +65,12 @@ Page({
                         score: score,
                         totalScore: questionNum
                     })
-                    that.saveBrushNum(score + wrong_question.length);
-                    wx.request2({
-                        url: '/exam/wrong/',
-                        method: "POST",
-                        data: { "question_no": wrong_question, "exam_no": examNo }
-                    })
+                    that.saveBrushNum(questions);
+                    // wx.request2({
+                    //     url: '/exam/wrong/',
+                    //     method: "POST",
+                    //     data: { "question_no": wrong_question, "exam_no": examNo }
+                    // })
                 },
             })
         }
@@ -72,9 +86,13 @@ Page({
         })
     },
 
-    saveBrushNum: function (brushNum) {
+    saveBrushNum: function (questions) {
+        console.info(questions);
+        if(questions.length <= 0){
+            return false;
+        }
         var examNo = this.data.examNo;
-        var data = { 'exam_no': examNo, 'num': brushNum }
+        var data = { 'exam_no': examNo, 'num': questions.length, 'questions': questions }
         wx.request2({
             url: '/exam/usage?exam_no=' + examNo,
             method: 'POST',

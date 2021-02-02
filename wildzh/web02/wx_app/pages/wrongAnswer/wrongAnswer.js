@@ -5,9 +5,12 @@ var touchStartX = 0; //触摸时的原点
 var touchStartY = 0;
 var touchInterval = null;
 var questionItems = [];
-var brushNum = 0;
-var firstEnter = true;
 var brushList = new Array();
+var brushDetail = new Array();
+var STATE_WRONG = 'wrong';
+var STATE_RIGHT = 'right'
+var STATE_SKIP = 'skip'
+var firstEnter = true;
 Page({
     data: {
         remote_host: app.globalData.remote_host,
@@ -354,7 +357,6 @@ Page({
     choseItem: function(e) {
         var choseIndex = parseInt(e.currentTarget.dataset.choseitem);
         var nowQuestion = that.data.nowQuestion;
-        this.addBrushNum(nowQuestion.question_no);
         var nowQuestionIndex = that.data.nowQuestionIndex;
         var showRemove = false;
         for (var index in questionItems[nowQuestionIndex]["options"]) {
@@ -362,12 +364,13 @@ Page({
         }
         if (parseInt(nowQuestion["options"][choseIndex]["score"]) > 0) {
             nowQuestion["options"][choseIndex]["class"] = "chose";
+            this.addBrushNum(nowQuestion.question_no, STATE_RIGHT);
             showRemove = true;
         } else {
+            this.addBrushNum(nowQuestion.question_no, STATE_WRONG);
             nowQuestion["options"][choseIndex]["class"] = "errorChose";
         }
-        console.info(showRemove);
-        console.info(nowQuestion);
+
         that.setData({
             nowQuestion: nowQuestion,
             showRemove: showRemove
@@ -380,7 +383,7 @@ Page({
         if(nowQuestion == null){
             return false;
         }
-        this.addBrushNum(nowQuestion.question_no);
+        this.addBrushNum(nowQuestion.question_no, STATE_SKIP);
         var questionAnswer = new Array();
         for (var index in nowQuestion.options) {
             if (parseInt(nowQuestion.options[index]["score"]) > 0) {
@@ -397,30 +400,37 @@ Page({
             questionAnswer: questionAnswer
         })
     },
-    addBrushNum: function (q_no) {
+    addBrushNum: function (q_no, state) {
         if (brushList.indexOf(q_no) >= 0) {
             return false;
         }
-        brushNum += 1;
         brushList.push(q_no);
+        brushDetail.push({'no': q_no, 'state': state});
         this.saveBrushNum();
     },
     saveBrushNum: function () {
-        if (brushNum <= 0) {
+        if (brushDetail.length <= 0) {
             return false;
         }
-        var _num = brushNum;
-        brushNum = 0;
+        var _num = brushDetail.length;
+        var questions = new Array();
+        while(brushDetail.length > 0){
+            questions.push(brushDetail.pop());
+        }
         var examNo = this.data.examNo;
-        var data = { 'exam_no': examNo, 'num': _num }
+        brushDetail = new Array();
+        var data = {
+            'exam_no': examNo,
+            'num': _num,
+            'questions': questions
+        }
         wx.request2({
             url: '/exam/usage?exam_no=' + examNo,
             method: 'POST',
             data: data,
-            success: res => {
-            },
+            success: res => {},
             fail: function () {
-                brushNum += _num;
+                brushDetail.concat(questions);
             }
         })
     },

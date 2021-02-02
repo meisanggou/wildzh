@@ -6,38 +6,42 @@
 </view>
 
 <view wx:else class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
-<modal hidden="{{hiddenFeedback}}" title="问题反馈" confirm-text="反馈" cancel-text="取消" bindcancel="cancelFeedback" bindconfirm="confirmFeedback">
-            <view class="feedback-type">
+    <modal hidden="{{hiddenFeedback}}" title="问题反馈" confirm-text="反馈" cancel-text="取消" bindcancel="cancelFeedback"
+        bindconfirm="confirmFeedback">
+        <view class="feedback-type">
             <picker range="{{fbTypes}}" value="{{fbTypeIndex}}" class="fd-type-picker" bindchange="feedbackTypeChange">
                 <text class="fb-type-k">问题类型：</text>
                 <text class="fb-type-v">{{ fbTypes[fbTypeIndex] }}</text>
             </picker>
-            </view>
-            <textarea class="fb-desc" type='text' placeholder="" bindinput="feedbackDescInput" maxlength='100'  value="{{feedbackDesc}}"></textarea>
-        </modal>
-    <view class='pageContent'>
-        <view class='top'>
-            <view class="top-title">{{ examName }}</view>
-            <image wx:if="examNo && nowQuestion" bindtap="feedbackClick" class="icon" src="/images/feedback.png"></image>
         </view>
-        
-        <view class='middle' >
+        <textarea class="fb-desc" type='text' placeholder="" bindinput="feedbackDescInput" maxlength='100'
+            value="{{feedbackDesc}}"></textarea>
+    </modal>
+    <view class='pageContent'>
+        <view class='top' wx:if="{{ notFrame }}">
+            <view class="top-title">{{ examName }}</view>
+            <image wx:if="examNo && nowQuestion" bindtap="feedbackClick" class="icon" src="/images/feedback.png">
+            </image>
+        </view>
+
+        <view class='middle'>
             <!-- <view bindtap='before1' class='switch'>‹</view> -->
             <view wx:if="{{questionNum>1}}" bindtap='before10' class='switch'>‹‹</view>
-            <picker bindchange="skipAction" value="{{skipIndex}}" range="{{skipNums}}" >
+            <picker bindchange="skipAction" value="{{skipIndex}}" range="{{skipNums}}">
                 <view class='switchtext'>{{nowQuestionIndex + 1}}/{{questionNum}}</view>
             </picker>
 
             <view wx:if="{{questionNum>1}}" bindtap='after10' class='switch'>››</view>
             <!-- <view bindtap='after1' class='switch'>›</view> -->
-            
+
         </view>
 
         <view class='content'>
             <view>{{nowQuestionIndex + 1}}.
                 <block wx:for="{{nowQuestion.question_desc_rich}}">
                     <block wx:if="{{item.url}}">
-                        <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+                        <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
+                            src="{{remote_host}}{{item.url}}"></image>
                     </block>
                     <block wx:else>
                         <text>{{item}}</text>
@@ -49,13 +53,17 @@
                 </block>
             </view>
             <!-- <view></view> -->
-            <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}" src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
+            <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}"
+                src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
 
             <view class='questionOption'>
-                <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、
+                <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}"
+                    bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}"
+                    wx:key="desc">{{optionChar[idx]}}、
                     <block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item">
                         <block wx:if="{{desc_item.url}}">
-                            <image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;' src="{{remote_host}}{{desc_item.url}}"></image>
+                            <image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;'
+                                src="{{remote_host}}{{desc_item.url}}"></image>
                         </block>
                         <block wx:else>
                             {{desc_item}}
@@ -74,7 +82,8 @@
                 <view class='item'>
                     <block wx:for="{{questionAnswer}}">
                         <block wx:if="{{item.url}}">
-                            <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
+                            <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
+                                src="{{remote_host}}{{item.url}}"></image>
                         </block>
                         <block wx:else>
                             {{item}}
@@ -84,7 +93,9 @@
                 <scroll-view scroll-y="true" class='item'>解析：
                     <block wx:for="{{nowQuestion.answer_rich}}">
                         <block wx:if="{{item.url}}">
-                            <image mode='scaleToFill' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}" data-src="{{remote_host}}{{item.url}}" bindtap="previewImage"></image>
+                            <image mode='scaleToFill' style='height:{{item.height}}px;width:{{item.width}}px;'
+                                src="{{remote_host}}{{item.url}}" data-src="{{remote_host}}{{item.url}}"
+                                bindtap="previewImage"></image>
                         </block>
                         <block wx:else>
                             <text>{{item}}</text>
@@ -95,10 +106,22 @@
             </view>
         </view>
     </view>
-    <view class='bottom'>
+    <view class='bottom' wx:if="{{ notFrame }}">
         <view wx:if="{{questionNum>1}}" bindtap='before1' class='switch'>‹</view>
-        <view wx:if="{{!(showAnswer && nowQuestion.canUpdate) }}" class='afterQuestion switchtext' bindtap='showAnswer'>显示答案</view>
-        <view wx:if="{{showAnswer && nowQuestion.canUpdate}}" class='afterQuestion switchtext' bindtap='toUpdate'>修改</view>
+        <view wx:if="{{!(showAnswer && nowQuestion.canUpdate) }}" class='afterQuestion switchtext' bindtap='showAnswer'>
+            显示答案</view>
+        <view wx:if="{{showAnswer && nowQuestion.canUpdate}}" class='afterQuestion switchtext' bindtap='toUpdate'>修改
+        </view>
         <view wx:if="{{questionNum>1}}" bindtap='after1' class='switch'>›</view>
+    </view>
+    <view wx:else>
+        <view class='bottom' wx:if="{{showRemove}}">
+            <view class='bottomShow' bindtap='remove'>移除该题</view>
+            <view>|</view>
+            <view class='bottomShow' bindtap='showAnswer'>显示答案</view>
+        </view>
+        <view class='bottom' wx:else>
+            <view class='bottomShow' bindtap='showAnswer'>显示答案</view>
+        </view>
     </view>
 </view>

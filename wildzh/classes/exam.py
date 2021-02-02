@@ -593,11 +593,15 @@ class ExamUsage(object):
             where_cond=where_cond, where_cond_args=where_cond_args)
         return list(items[0].values())[0]
 
-
     def update_usage_records(self, exam_no, user_no, num=1):
         if num <= 0:
             return None
         period_no = self.calc_period_no()
+        return self._update_usage_records(period_no, exam_no, user_no, num)
+
+    def _update_usage_records(self, period_no, exam_no, user_no, num=1):
+        if num <= 0:
+            return None
         o_num = self.get_one_usage_records(user_no, exam_no)['num']
         num += o_num
         update_value = {'num': num, 'update_time': time.time()}
@@ -610,6 +614,8 @@ class ExamUsage(object):
             self.db.execute_update(self.t_usage, update_value=update_value,
                                    where_value=where_value)
             update_value.update(where_value)
+        # period_no == -1 记录总的做题数
+        self._update_usage_records(-1, exam_no, user_no, num)
         return update_value
 
 
