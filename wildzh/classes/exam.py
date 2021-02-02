@@ -576,6 +576,9 @@ class ExamUsage(object):
 
     def get_one_usage_records(self, user_no, exam_no):
         period_no = self.calc_period_no()
+        return self._get_one_usage_records(period_no, user_no, exam_no)
+
+    def _get_one_usage_records(self, period_no, user_no, exam_no):
         items = self.get_usage_records(exam_no, user_no, period_no)
         if len(items) != 1:
             return {'num': 0, 'update_time': None, 'period_no': period_no,
@@ -602,7 +605,7 @@ class ExamUsage(object):
     def _update_usage_records(self, period_no, exam_no, user_no, num=1):
         if num <= 0:
             return None
-        o_num = self.get_one_usage_records(user_no, exam_no)['num']
+        o_num = self._get_one_usage_records(period_no, user_no, exam_no)['num']
         num += o_num
         update_value = {'num': num, 'update_time': time.time()}
         where_value = dict(period_no=period_no, exam_no=exam_no,
