@@ -574,8 +574,9 @@ class ExamUsage(object):
         period_no = self.calc_period_no(query_time)
         return self.get_usage_records(exam_no, user_no, period_no)
 
-    def get_one_usage_records(self, user_no, exam_no):
-        period_no = self.calc_period_no()
+    def get_one_usage_records(self, user_no, exam_no, period_no=None):
+        if period_no is None:
+            period_no = self.calc_period_no()
         return self._get_one_usage_records(period_no, user_no, exam_no)
 
     def _get_one_usage_records(self, period_no, user_no, exam_no):
@@ -585,8 +586,9 @@ class ExamUsage(object):
                     'exam_no': exam_no, 'user_no': user_no}
         return items[0]
 
-    def get_one_ranking(self, exam_no, num):
-        period_no = self.calc_period_no()
+    def get_one_ranking(self, exam_no, num, period_no=None):
+        if period_no is None:
+            period_no = self.calc_period_no()
         cols = ['count(*)']
         where_value = {'period_no': period_no, 'exam_no': exam_no}
         where_cond = ['num > %s']

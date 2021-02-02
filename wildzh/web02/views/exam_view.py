@@ -782,7 +782,11 @@ def get_usage_state():
 @login_required
 @required_exam_no
 def query_usage():
-    item = c_exam.get_one_usage_records(g.user_no, g.exam_no)
+    if 'period_no' in request.args:
+        period_no = int(request.args['period_no'])
+    else:
+        period_no = None
+    item = c_exam.get_one_usage_records(g.user_no, g.exam_no, period_no)
     if (g.user_role & 2) != 2 and item['num'] < 10:
         item['num'] = -1
     return jsonify({'status': True, 'data': item})
@@ -799,9 +803,10 @@ def query_usage_ranking():
         except ValueError:
             pass
     if num is None:
-        item = c_exam.get_one_usage_records(g.user_no, g.exam_no)
+        item = c_exam.get_one_usage_records(g.user_no, g.exam_no,
+                                            period_no=-1)
         num = item['num']
-    ranking = c_exam.get_one_ranking(g.exam_no, num) + 1
+    ranking = c_exam.get_one_ranking(g.exam_no, num, -1) + 1
     v = {'ranking': ranking, 'num': num}
     return jsonify({'status': True, 'data': v})
 
