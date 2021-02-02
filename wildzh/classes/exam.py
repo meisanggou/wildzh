@@ -605,6 +605,7 @@ class ExamUsage(object):
     def _update_usage_records(self, period_no, exam_no, user_no, num=1):
         if num <= 0:
             return None
+        _num = num
         o_num = self._get_one_usage_records(period_no, user_no, exam_no)['num']
         num += o_num
         update_value = {'num': num, 'update_time': time.time()}
@@ -618,7 +619,7 @@ class ExamUsage(object):
                                    where_value=where_value)
             update_value.update(where_value)
         # period_no == -1 记录总的做题数
-        self._update_usage_records(-1, exam_no, user_no, num)
+        self._update_usage_records(-1, exam_no, user_no, _num)
         return update_value
 
 
