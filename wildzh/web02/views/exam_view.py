@@ -827,14 +827,18 @@ def query_usage_ranking():
 @required_exam_no
 def update_usage():
     data = request.json
+    right_num = 0
     if 'questions' in data:
         questions = data['questions']
         registry.notify(constants.R_QUESTION, constants.E_AFTER_UPDATE,
                         exam_view, questions=questions)
+        for q in questions:
+            if q['state'] == constants.T_STATE_RIGHT:
+                right_num += 1
         num = len(questions)
     else:
         num = data['num']
-    item = c_exam.update_usage_records(g.exam_no, g.user_no, num)
+    item = c_exam.update_usage_records(g.exam_no, g.user_no, num, right_num)
     return jsonify({'status': True, 'data': item})
 
 

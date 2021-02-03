@@ -539,7 +539,7 @@ class ExamUsage(object):
     def __init__(self):
         self.t_usage = "exam_usage_records"
         self.cols_usage = ['period_no', 'exam_no', 'user_no', 'num',
-                           'update_time']
+                           'right_num', 'update_time']
 
     @classmethod
     def calc_period_no(cls, t=None):
@@ -583,7 +583,7 @@ class ExamUsage(object):
         items = self.get_usage_records(exam_no, user_no, period_no)
         if len(items) != 1:
             return {'num': 0, 'update_time': None, 'period_no': period_no,
-                    'exam_no': exam_no, 'user_no': user_no}
+                    'exam_no': exam_no, 'user_no': user_no, 'right_num': 0}
         return items[0]
 
     def get_one_ranking(self, exam_no, num, period_no=None):
@@ -598,19 +598,26 @@ class ExamUsage(object):
             where_cond=where_cond, where_cond_args=where_cond_args)
         return list(items[0].values())[0]
 
-    def update_usage_records(self, exam_no, user_no, num=1):
+    def update_usage_records(self, exam_no, user_no, num=1, right_num=0):
         if num <= 0:
             return None
         period_no = self.calc_period_no()
-        return self._update_usage_records(period_no, exam_no, user_no, num)
+        return self._update_usage_records(period_no, exam_no, user_no, num,
+                                          right_num)
 
-    def _update_usage_records(self, period_no, exam_no, user_no, num=1):
+    def _update_usage_records(self, period_no, exam_no, user_no, num=1,
+                              right_num=0):
         if num <= 0:
             return None
         _num = num
-        o_num = self._get_one_usage_records(period_no, user_no, exam_no)['num']
+        _right_num = right_num
+        o_item = self._get_one_usage_records(period_no, user_no, exam_no)
+        o_num = o_item['num']
+        o_right_num = o_item['right_num']
         num += o_num
-        update_value = {'num': num, 'update_time': time.time()}
+        right_num += o_right_num
+        update_value = {'num': num, 'update_time': time.time(),
+                        'right_num': right_num}
         where_value = dict(period_no=period_no, exam_no=exam_no,
                            user_no=user_no)
         if o_num == 0:
@@ -622,7 +629,7 @@ class ExamUsage(object):
             update_value.update(where_value)
         # period_no == -1 记录总的做题数
         if period_no != -1:
-            self._update_usage_records(-1, exam_no, user_no, _num)
+            self._update_usage_records(-1, exam_no, user_no, _num, _right_num)
         return update_value
 
 
