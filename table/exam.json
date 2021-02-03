@@ -291,6 +291,12 @@
                 "col_type": "int(11)"
             },
             {
+                "col_comment": "做对的题目数量",
+                "col_name": "right_num",
+                "col_type": "int(11)",
+                "default_value": 0
+            },
+            {
                 "col_comment": "更新时间",
                 "col_name": "update_time",
                 "col_type": "int(11)"
