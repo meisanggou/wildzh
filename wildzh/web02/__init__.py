@@ -4,7 +4,7 @@
 import os
 import functools
 
-from flask import request, g, redirect, make_response
+from flask import request, g, redirect, make_response, jsonify
 from flask_login import current_user, LoginManager
 from flask_login.utils import login_url as make_login_url
 from flask_helper import Flask2
@@ -56,6 +56,12 @@ def create_app():
                  request.full_path,
                  request.headers.get('User-Agent'))
         return res
+
+    @one_web.errorhandler(Exception)
+    @one_web.errorhandler(500)
+    def handle_500(e):
+        LOG.exception(e)
+        return jsonify({'status': False, 'data': 'Internal error'})
 
     one_web.add_url_rule("/static00" + '/<path:filename>', endpoint='static00', view_func=one_web.send_static_file2,
                          defaults=dict(static_folder=os.path.join(os.path.split(os.path.dirname(__file__))[0], "static")))

@@ -555,7 +555,7 @@ class ExamUsage(object):
         where_value = dict(exam_no=exam_no)
         where_cond = []
         where_cond_args = []
-        if offset_num > 1:
+        if offset_num > 1 and period_no != -1:  # period_no=-1 代表所有
             where_cond.append('period_no<=%s')
             where_cond_args.append(period_no)
             where_cond.append('period_no>=%s')

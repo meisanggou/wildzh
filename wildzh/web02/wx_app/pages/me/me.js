@@ -170,7 +170,7 @@ Page({
         }
         that = this;
         wx.request2({
-            url: '/exam/usage?exam_no=' + examNo,
+            url: '/exam/usage?period_no=-1&exam_no=' + examNo,
             method: 'GET',
             success: res => {
                 if (res.data.status == false) {

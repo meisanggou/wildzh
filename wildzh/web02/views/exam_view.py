@@ -27,6 +27,7 @@ from wildzh.tools.parse_question import AnswerLocation, QuestionSet
 from wildzh.tools.read_xml import handle_docx_main_xml
 from wildzh.utils.async_pool import get_pool
 from wildzh.utils import constants
+from wildzh.utils import registry
 from wildzh.utils.log import getLogger
 from wildzh.web02.view import View2
 
@@ -188,6 +189,16 @@ def required_manager_exam(key='exam_no', **role_desc):
             return func(*args, **kwargs)
         return _func
     return _decorated_function
+
+"""
+监听和注册时间
+"""
+def handle_wrong_question(resource, event, trigger, questions):
+    for q_item in questions:
+        if q_item['state'] == constants.T_STATE_WRONG:
+            c_exam.new_exam_wrong(g.user_no, g.exam_no, q_item['no'])
+
+registry.subscribe(handle_wrong_question, constants.R_QUESTION, constants.E_AFTER_UPDATE)
 
 
 @exam_view.route("/", methods=["GET"])
@@ -818,9 +829,8 @@ def update_usage():
     data = request.json
     if 'questions' in data:
         questions = data['questions']
-        for q_item in questions:
-            if q_item['state'] == constants.T_STATE_WRONG:
-                c_exam.new_exam_wrong(g.user_no, g.exam_no, q_item['no'])
+        registry.notify(constants.R_QUESTION, constants.E_AFTER_UPDATE,
+                        exam_view, questions=questions)
         num = len(questions)
     else:
         num = data['num']

@@ -104,7 +104,7 @@ Page({
                     return false;
                 }
                 var addQuestionItems = res.data.data;
-                // 如果有新的错题，显示第一个，没有保持原来的显示
+                // 如果有新的错题，显示到最后，没有保持原来的显示
                 var showIndex = that.data.nowQuestionIndex;
                 var latestQuestionItems = questionItems;
                 if (addQuestionItems.length > 0) {
@@ -112,7 +112,7 @@ Page({
                     addQuestionItems.sort(function(a, b) {
                         return a.wrong_time - b.wrong_time;
                     })
-                    latestQuestionItems = addQuestionItems.concat(questionItems);
+                    latestQuestionItems = questionItems.concat(addQuestionItems);
                     showIndex = 0;
                 }
                 // 判定最新的试题是否在

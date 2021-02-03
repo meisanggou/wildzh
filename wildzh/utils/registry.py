@@ -13,7 +13,7 @@ class CallbacksManager(object):
             self.callbacks = collections.defaultdict(dict)
 
     def __new__(cls, *args, **kwargs):
-        if cls._instance is not None:
+        if cls._instance is None:
             cls._instance = object.__new__(cls)
         return cls._instance
 

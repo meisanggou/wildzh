@@ -21,3 +21,11 @@ T_STATE_RIGHT = 'right'
 T_STATE_WRONG = 'wrong'
 T_STATE_SKIP = 'skip'
 T_STATES = [T_STATE_RIGHT, T_STATE_WRONG, T_STATE_SKIP]
+
+
+# resource constants
+R_QUESTION = 'question'
+
+
+# resource event
+E_AFTER_UPDATE = 'after_update'

@@ -88,7 +88,7 @@
                     </view>
                     <view wx:if="{{brushNum >= 0}}" class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
-                            <view class="weui-label">本周做题</view>
+                            <view class="weui-label">刷题数</view>
                         </view>
                         <view class="weui-cell__bd">
                             <view class="weui-input">
