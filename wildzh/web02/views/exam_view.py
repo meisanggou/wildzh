@@ -191,9 +191,9 @@ def required_manager_exam(key='exam_no', **role_desc):
     return _decorated_function
 
 """
-监听和注册时间
+监听和注册事件
 """
-def handle_wrong_question(resource, event, trigger, questions):
+def handle_wrong_question(resource, event, trigger, questions, **kwargs):
     for q_item in questions:
         if q_item['state'] == constants.T_STATE_WRONG:
             c_exam.new_exam_wrong(g.user_no, g.exam_no, q_item['no'])
@@ -831,7 +831,8 @@ def update_usage():
     if 'questions' in data:
         questions = data['questions']
         registry.notify(constants.R_QUESTION, constants.E_AFTER_UPDATE,
-                        exam_view, questions=questions)
+                        exam_view, questions=questions, user_no=g.user_no,
+                        exam_no=g.exam_no)
         for q in questions:
             if q['state'] == constants.T_STATE_RIGHT:
                 right_num += 1

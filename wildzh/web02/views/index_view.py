@@ -1,8 +1,11 @@
 # !/usr/bin/env python
 # coding: utf-8
 from flask import jsonify, redirect
+from flask import g
+from flask import request
 from flask_helper.template import RenderTemplate
 
+from wildzh.utils.log import getLogger
 from wildzh.web02.view import View2
 
 __author__ = 'meisa'
@@ -11,6 +14,7 @@ menu_list = {"title": u"首页", "icon_class": "icon-home", "menu_id": "home", "
 rt = RenderTemplate()
 index_view = View2("index", __name__, url_prefix="/", menu_list=menu_list)
 index_view.register_jinja_global_env('menu_url', '/')
+LOG = getLogger()
 
 
 @index_view.route("/", methods=["GET"])
@@ -52,3 +56,12 @@ def get_menu_action():
     ]}
     menu = [m_xl, m_gx, m_jt]
     return jsonify({"status": True, "data": menu})
+
+
+@index_view.route('/version/wx', methods=['POST'])
+def report_wx_min_program_version():
+    data = request.json
+    version = data['version']
+    LOG.info('Receive %s report wx min_program version: %s', g.user_no,
+             version)
+    return jsonify({'status': True, 'data': data})
