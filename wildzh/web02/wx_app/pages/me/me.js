@@ -29,6 +29,7 @@ Page({
             })
         }
         this.loadCacheUserInfo()
+        this.reportVersion();
     },
     onShow: function () {
         this.getExams();
@@ -263,5 +264,21 @@ Page({
         wx.navigateTo({
             url: "./avatar"
         })
+    },
+    reportVersion: function(){
+        var key = 'version';
+        var cacheVersion = app.getOrSetCacheData2(key);
+        
+        if(cacheVersion != app.globalData.version){
+            var data = {'version': app.globalData.version};
+            wx.request2({
+                url: '/version/wx',
+                method: 'POST',
+                data: data,
+                success: res => {
+                    app.getOrSetCacheData2(key, app.globalData.version);
+                }
+            })
+        }
     }
 })

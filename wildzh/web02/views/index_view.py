@@ -62,6 +62,6 @@ def get_menu_action():
 def report_wx_min_program_version():
     data = request.json
     version = data['version']
-    LOG.info('Receive %s report wx min_program version: %s', g.user_no,
+    LOG.info('Receive user(user_no=%s) report wx min_program version: %s', g.user_no,
              version)
     return jsonify({'status': True, 'data': data})

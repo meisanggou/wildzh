@@ -32,8 +32,8 @@
                 "default_value": 0
             },
             {
-                "col_comment": "第一次做本题 时间",
-                "col_name": "first_time",
+                "col_comment": "第一次碰到本题 时间",
+                "col_name": "first_meet_time",
                 "col_type": "int(11)",
                 "default_value": 0
             },
@@ -69,7 +69,7 @@
             },
             {
                 "col_comment": "上次练习 做题时间",
-                "col_name": "last_time",
+                "col_name": "last_meet_time",
                 "col_type": "int(11)",
                 "default_value": 0
             },

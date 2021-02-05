@@ -86,12 +86,12 @@ class ExamTrainingDetail(object):
         values['last_meet'] = values['first_meet']
         values['last_miss'] = values['first_miss']
         values['last_meet_time'] = values['first_meet_time']
-        l = self.db.execute_insert(self.t, values=values)
+        l = self.db.execute_insert(self.t, kwargs=values)
         return l
 
     def add_detail(self, user_no, exam_no, question_no, state):
         items = self.select_items(user_no, exam_no, question_no=question_no)
-        if len(items) < 0:
+        if len(items) <= 0:
             return self.insert_item(user_no, exam_no, question_no, state)
         item = items[0]
         first_answer = item['num'] == item['skip_num']
