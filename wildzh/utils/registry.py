@@ -5,6 +5,16 @@ import collections
 import inspect
 
 
+def _get_id(callback):
+    # TODO
+    return callback.__name__
+    try:
+        parts = (callback.__module__, callback.__qualname__)
+    except AttributeError:
+        parts = (callback.__module__, callback.__name__)
+    return '-'.join(parts)
+
+
 class CallbacksManager(object):
     _instance = None
 
@@ -19,6 +29,10 @@ class CallbacksManager(object):
 
     def subscribe(self, callback, resource, event):
         callback_list = self.callbacks[resource].setdefault(event, [])
+        callback_id = _get_id(callback)
+        for ck in callback_list:
+            if callback_id == _get_id(ck):
+                return
         callback_list.append(callback)
 
     def notify(self, resource, event, trigger, **kwargs):

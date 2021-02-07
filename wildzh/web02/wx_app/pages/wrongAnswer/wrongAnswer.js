@@ -430,7 +430,7 @@ Page({
             data: data,
             success: res => {},
             fail: function () {
-                brushDetail.concat(questions);
+                brushDetail = brushDetail.concat(questions);
             }
         })
     },

@@ -9,14 +9,16 @@ __author__ = 'zhouhenglc'
 
 """
 tag
-从未对过 -- miss_num + skip_num = num
+首次遇到 -- 无信息
+还未对过 -- right_num = 0
 多次跳过 -- skip_num = num
 全部做对 -- skip_num = miss_num = 0
-从未错误 -- miss_num = 0 & num > 0
-最近做对 -- last_time < 1w & last_right
-最近做错 -- last_time < 1w & last_wrong
-连续错误 --
-最近全对 --
+从未错误 -- miss_num = 0
+最近做对 -- last_meet_time < 1w & last_meet = right
+最近做错 -- last_meet_time < 1w & last_meet = wrong
+连续错误 -- state_num >= 3 & last_miss = true
+最近全对 -- state_num >= 3 & last_miss = false
+易错题 -- miss_num >= 2 * right_num & right_num >= 1
 """
 
 class ExamTrainingDetail(object):
@@ -33,6 +35,7 @@ class ExamTrainingDetail(object):
     state_map = {constants.T_STATE_RIGHT: 0,
                  constants.T_STATE_WRONG: 1,
                  constants.T_STATE_SKIP: 2}
+    week_delta = 60 * 60 * 24 * 7
 
     def __init__(self, db=None, db_conf_path=None):
         if db is None:
@@ -127,5 +130,38 @@ class ExamTrainingDetail(object):
         l = self.db.execute_update(self.t, update_value=update_values, where_value=where_value)
         return l
 
-    def get_tag(self,q_detail):
-        pass
+    @classmethod
+    def get_tags(cls, q_detail):
+        tags = []
+        if not q_detail:
+            tags.append('首次遇到')
+            return tags
+        miss_num = q_detail['miss_num']
+        num = q_detail['num']
+        skip_num = q_detail['skip_num']
+        right_num = num - skip_num - miss_num
+        state_num = q_detail['state_num']
+        last_miss = q_detail['last_miss']
+        last_meet = q_detail['last_meet']
+        last_meet_time = q_detail['last_meet_time']
+        if miss_num == 0 and skip_num == 0:
+            tags.append('全部做对')
+        elif miss_num == 0:
+            tags.append('从未错误')
+        if skip_num == num:
+            tags.append('多次跳过')
+        elif right_num == 0:
+            tags.append('还未对过')
+        elif state_num >= 3:
+            if last_miss:
+                tags.append('连续错误')
+            else:
+                tags.append('最近全对')
+        if right_num >= 1 and miss_num >= 2 * right_num:
+            tags.append('易错题')
+        if last_meet_time - time.time() < cls.week_delta:
+            if last_meet == constants.T_STATE_RIGHT:
+                tags.append('最近做对')
+            elif last_meet == constants.T_STATE_WRONG:
+                tags.append('最近做错')
+        return tags
