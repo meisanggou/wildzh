@@ -47,6 +47,7 @@ def get_question_tag():
         item = items[0]
     else:
         item = None
-    tags = et_man.get_tags(item)
-    res_data = {'item': item, 'tags': tags}
+    # tags = et_man.get_tags(item)
+    # res_data = {'item': item, 'tags': tags}
+    res_data = {'item': item}
     return jsonify({'status': True, 'data': res_data})
