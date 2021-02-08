@@ -11,9 +11,9 @@ __author__ = 'zhouhenglc'
 tag
 首次遇到 -- 无信息
 还未对过 -- right_num = 0
-多次跳过 -- skip_num = num
+多次跳过 -- skip_num = num and skip_num >= 3
 全部做对 -- skip_num = miss_num = 0
-从未错误 -- miss_num = 0
+从未错误 -- miss_num = 0 and right_num > 0
 最近做对 -- last_meet_time < 1w & last_meet = right
 最近做错 -- last_meet_time < 1w & last_meet = wrong
 连续错误 -- state_num >= 3 & last_miss = true
@@ -146,9 +146,9 @@ class ExamTrainingDetail(object):
         last_meet_time = q_detail['last_meet_time']
         if miss_num == 0 and skip_num == 0:
             tags.append('全部做对')
-        elif miss_num == 0:
+        elif miss_num == 0 and right_num > 0:
             tags.append('从未错误')
-        if skip_num == num:
+        if skip_num == num and skip_num >= 3:
             tags.append('多次跳过')
         elif right_num == 0:
             tags.append('还未对过')

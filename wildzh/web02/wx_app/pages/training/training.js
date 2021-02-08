@@ -1,4 +1,5 @@
 var app = getApp();
+var dt = require("../common/datetime_tools.js");
 var that;
 var questionItems = [];
 var touchTime = 0;
@@ -10,6 +11,7 @@ var brushDetail = new Array();
 var STATE_WRONG = 'wrong';
 var STATE_RIGHT = 'right'
 var STATE_SKIP = 'skip'
+var week_delta = 60 * 60 * 24 * 7;
 
 Page({
     data: {
@@ -33,6 +35,7 @@ Page({
         fbTypes: ['题目错误', '答案错误', '解析错误', '其他'],
         fbTypeIndex: 1,
         feedbackDesc: "",
+        tags: [], // 题目标签
         notFrame: true
     },
     getQuestionNos: function (options) {
@@ -456,7 +459,8 @@ Page({
         this.setData({
             nowQuestion: nowQuestion,
             nowQuestionIndex: index,
-            showAnswer: false
+            showAnswer: false,
+            tags: []
         })
         this.setSkipNums(index + 1, questionItems.length);
         this.saveTrainingProcess();
@@ -704,6 +708,98 @@ Page({
         }
         app.getOrSetExamCacheData(this.data.progressStorageKey, this.data.nowQuestionIndex);
 
+    },
+    calcTags: function(item){
+        if(item == undefined){
+            return [];
+        }
+        if(item == null){
+            return ['首次遇到'];
+        }
+        var q_detail = item;
+        var tags = [];
+        var miss_num = q_detail['miss_num'];
+        var num = q_detail['num'];
+        var skip_num = q_detail['skip_num'];
+        var right_num = num - skip_num - miss_num;
+        var state_num = q_detail['state_num'];
+        var last_miss = q_detail['last_miss'];
+        var last_meet = q_detail['last_meet'];
+        var last_meet_time = q_detail['last_meet_time'];
+        if(miss_num == 0 && skip_num == 0){
+            tags.push('全部做对')
+        }
+        else if(miss_num == 0 && right_num > 0){
+            tags.push('从未错误')
+        }
+        if(skip_num == num && skip_num >= 3){
+            tags.push('多次跳过')
+        }
+        else if(right_num == 0){
+            tags.push('还未对过')
+        }
+        else if(state_num >= 3){
+            if(last_miss){
+                tags.push('连续错误')
+            }
+            else{
+                tags.push('最近全对')
+            }
+        }
+        if(right_num >= 1 && miss_num >= 2 * right_num){
+            tags.push('易错题');
+        }
+        if (last_meet_time - dt.get_timestamp2() < week_delta){
+            if(last_meet == STATE_RIGHT){
+                tags.push('最近做对');
+            }
+            else if(last_meet == STATE_WRONG){
+                tags.push('最近做错');
+            }
+        }
+        return tags
+        
+    },
+    getQuestionTag: function(){
+        var tags = [];
+        if (this.data.examNo == null || this.data.nowQuestion == null) {
+            this.setData({tags: tags});
+            return false;
+        }
+        if(this.data.showAnswer == true){
+            // 查看答案情况 保持原有
+            return true;
+        }
+
+        var nowQuestion = this.data.nowQuestion;
+        var examNo = this.data.examNo;
+        var that = this;
+        wx.request2({
+            url: '/exam/training/tags?exam_no=' + examNo + '&question_no=' + nowQuestion.question_no,
+            method: 'GET',
+            success: res => {
+                var res_data = res.data;
+                if(res_data.status != true){
+                    tags = [];
+                }
+                else if(! ('item' in res_data.data)){
+                    tags = [];
+                }
+                else{
+                    if('tags' in res_data.data){
+                        tags = res_data.data.tags;
+                    }
+                    else{
+                        tags = that.calcTags(res_data.data.item);
+                    }
+                    tags = that.calcTags(res_data.data.item);
+                }
+                that.setData({tags: tags});
+            },
+            fail: function () {
+                that.setData({tags: []});
+            }
+        })
     },
     // 练习错题模式
     enterWrongMode: function(){

@@ -37,7 +37,7 @@
         </view>
 
         <view class='content'>
-            <view>{{nowQuestionIndex + 1}}.
+            <view bindtap="getQuestionTag">{{nowQuestionIndex + 1}}.
                 <block wx:for="{{nowQuestion.question_desc_rich}}">
                     <block wx:if="{{item.url}}">
                         <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
@@ -51,11 +51,15 @@
                 <block wx:if="{{isShowSubject}}">
                     【{{nowQuestion.question_subject}}】
                 </block>
+                
             </view>
+
             <!-- <view></view> -->
             <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}"
                 src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
-
+            <view class="view-tag">
+                <text class="tag" wx:for="{{tags}}">{{item}}</text>
+            </view>
             <view class='questionOption'>
                 <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}"
                     bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}"
