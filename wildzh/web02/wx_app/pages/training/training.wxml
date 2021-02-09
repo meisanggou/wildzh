@@ -58,7 +58,7 @@
             <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}"
                 src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
             <view class="view-tag">
-                <text class="tag" wx:for="{{tags}}">{{item}}</text>
+                <text class="tag" wx:for="{{tags}}" wx:key="item">{{item}}</text>
             </view>
             <view class='questionOption'>
                 <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}"

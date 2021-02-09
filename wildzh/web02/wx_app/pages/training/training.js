@@ -710,9 +710,6 @@ Page({
 
     },
     calcTags: function(item){
-        if(item == undefined){
-            return [];
-        }
         if(item == null){
             return ['首次遇到'];
         }
@@ -792,7 +789,6 @@ Page({
                     else{
                         tags = that.calcTags(res_data.data.item);
                     }
-                    tags = that.calcTags(res_data.data.item);
                 }
                 that.setData({tags: tags});
             },
