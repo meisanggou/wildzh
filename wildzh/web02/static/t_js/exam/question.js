@@ -99,7 +99,7 @@ function add_question()
     msg += "答案：" + answer;
     swal({
             title: "是否" + btn_text,
-            text: msg,
+            text: '',//msg,
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: '#DD6B55',
