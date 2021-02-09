@@ -39,7 +39,6 @@ function entry_success(r_d){
 function add_question()
 {
     var btn = $(this);
-    var btn_text = btn.text();
     var r_data = new Object();
     r_data["question_no"] = parseInt(q_vm.current_question_no);
     var msg = "";
@@ -97,13 +96,20 @@ function add_question()
         return 3;
     }
     msg += "答案：" + answer;
+    var action = "";
+    if(q_vm.action == "new"){
+        action = '添加'
+    }
+    else{
+        action = '更新';
+    }
     swal({
-            title: "是否" + btn_text,
+            title: "是否" + action,
             text: '',//msg,
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: '#DD6B55',
-            confirmButtonText: btn_text,
+            confirmButtonText: action,
             cancelButtonText: "取消",
             closeOnConfirm: true,
             closeOnCancel: true
