@@ -79,7 +79,7 @@
 
 .statis-div {
     height: 100%;
-    width: 25%;
+    width: 33%;
 }
 .statis-div-v {
     font-size: 40rpx;
@@ -88,12 +88,14 @@
     width: 100%;
 }
 .statis-div-desc {
+    font-size: 30rpx;
+    color: gray;
     margin: 0 auto;
     width: 100%;
     line-height: 90rpx;
 }
 .statis-division {
-    width: 50rpx;
+    /* width: 50rpx; */
     text-align: center;
     margin-top: auto;
     margin-bottom: auto;

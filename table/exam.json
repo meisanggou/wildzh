@@ -18,11 +18,6 @@
                 "col_type": "varchar(2000)"
             },
             {
-                "col_comment": "结果评定类型",
-                "col_name": "eval_type",
-                "col_type": "tinyint(4)"
-            },
-            {
                 "col_comment": "测试扩展信息",
                 "col_name": "exam_extend",
                 "col_type": "text",

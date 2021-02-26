@@ -1,0 +1,6 @@
+# 2021-02-26 10:41
+select * from exam_usage_records where period_no<=55;
+
+# 2021-02-26 10:49
+update exam_usage_records as t1 INNER JOIN (select exam_no, user_no, sum(right_num) as right_num from exam_usage_records where period_no>=0 group by exam_no,user_no) as t2 on t1.exam_no=t2.exam_no and t1.user_no=t2.user_no and t1.period_no=-1 set t1.right_num=t2.right_num;
+
