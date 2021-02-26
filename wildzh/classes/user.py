@@ -38,7 +38,7 @@ class EncryptActor(object):
         """ 随机生成16位字符串
         @return: 16位字符串
         """
-        rule = string.letters + string.digits
+        rule = string.ascii_letters + string.digits
         c_list = random.sample(rule, 16)
         return "".join(c_list)
 
@@ -54,23 +54,23 @@ class EncryptActor(object):
             print(e)
             return ""
         try:
-            pad = ord(plain_text[-1])
+            pad = plain_text[-1]
             # 去掉补位字符串
             content = plain_text[16:-pad]
             xml_len = socket.ntohl(struct.unpack("I", content[: 4])[0])
-            xml_content = content[4: xml_len + 4]
-            from_app_id = content[xml_len + 4:]
+            xml_content = content[4: xml_len + 4].decode()
+            from_app_id = content[xml_len + 4:].decode()
         except Exception as e:
-            print(e.args)
+            print(e)
             return ""
         if from_app_id != self._id:
             return ""
         return xml_content
 
     def encrypt_msg(self, msg):
-        msg = unicode(msg)
+        msg = str(msg)
         # 16位随机字符串添加到明文开头
-        text = self.random_str() + struct.pack("I", socket.htonl(len(msg))) + msg + self._id
+        text = self.random_str() + (struct.pack("I", socket.htonl(len(msg)))).decode() + msg + self._id
         # 使用自定义的填充方式对明文进行补位填充
         text_length = len(text)
         # 计算需要填充的位数
@@ -80,14 +80,16 @@ class EncryptActor(object):
         # 获得补位所用的字符
         pad = chr(amount_to_pad)
         text += pad * amount_to_pad
+        text = text.encode('utf-8')
         # 加密
-        crypt_actor = AES.new(self.aes_key, AES.MODE_CBC, self.aes_key[:16])
+        aes_key = self.aes_key
+        crypt_actor = AES.new(aes_key, AES.MODE_CBC, aes_key[:16])
         try:
             cipher_text = crypt_actor.encrypt(text)
             # 使用BASE64对加密后的字符串进行编码
             return base64.b64encode(cipher_text)
         except Exception as e:
-            print(e.args)
+            print(e)
             return ""
 
 
@@ -324,12 +326,12 @@ if __name__ == "__main__":
         p = sys.argv[2]
     else:
         u = p = "admin"
-    r, item = um.new_user(u, password=p)
+    # r, item = um.new_user(u, password=p)
     # if r is False:
     #     print("update password")
     #     um.update_password(u, p)
-    # e = EncryptActor()
-    # s = e.encrypt_msg("this is a message")
-    # print(s)
-    # ds = e.decrypt_msg("F36QT3Zse4Zr9bSVAn9wjd9+LJDEc8w/GPTulTbGY/4CcUvRnm04+3n8hjsk4WlZKlU0MuaOb2qhUGr7A182pA==")
-    # print(ds)
+    e = EncryptActor('123456')
+    s = e.encrypt_msg("this is a message")
+    print(s)
+    ds = e.decrypt_msg(s)
+    print(ds)

@@ -2,14 +2,40 @@
 
 <view class="container">
     <view class="page-body">
-        <view wx:if="{{userAvatar}}" bindtap="changeAvatar">
+        <view wx:if="{{userAvatar}}" bindtap="changeAvatar" class="user-panel">
             <image class="avatar bottom30" mode="aspectFit" src="{{userAvatar}}"></image>
+            <view class="user-data">
+                <view class="user-data-name">{{nickName}}</view>
+                <view class="user-data-exam"><text>题库：</text>
+                    <picker bindchange="examChange" value="{{examIndex}}" range="{{allExams}}" range-key="exam_name">
+                        <text class="user-data-exam-text">{{examName}}</text>
+                    </picker>
+                </view>
+            </view>
         </view>
-        <view wx:else>
-            <image class="avatar" mode="aspectFit" src="/images/unregister.png"></image>
-            <text class="center">未登录</text>
-            <button bindgetuserinfo="getUserInfo" open-type="getUserInfo">授权登录
-            </button>
+        <view wx:else class="user-panel2">
+            <image class="avatar bottom30" mode="aspectFit" src="/images/unregister.png"></image>
+            <!-- <image class="avatar" mode="aspectFit" src="/images/unregister.png"></image> -->
+            <!-- <text class="center">未登录</text> -->
+            <view class="user-data">
+                <button bindgetuserinfo="getUserInfo" open-type="getUserInfo">授权登录 </button>
+            </view>
+        </view>
+        <view class="statis" wx:if="{{userAvatar}}">
+            <view class="statis-div">
+                <view class="statis-div-v">{{ ranking }}</view>
+                <view class="statis-div-desc">刷题排名</view>
+            </view>
+            <view class="statis-division">|</view>
+            <view class="statis-div">
+                <view class="statis-div-v">{{brushNum}}</view>
+                <view class="statis-div-desc">刷题数</view>
+            </view>
+            <view class="statis-division">|</view>
+            <view class="statis-div">
+                <view class="statis-div-v">{{accuracy}}</view>
+                <view class="statis-div-desc">正确率</view>
+            </view>
         </view>
         <form>
             <view class="page-section">
@@ -23,7 +49,8 @@
                         </view>
                         <view class="weui-cell__ft right-slip" wx:if="{{ userNo }}">
                             <!-- <view class="navigator-arrow"></view> -->
-                            <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="updateNickNameClick"></image>
+                            <image class="right-slip" mode="aspectFit" src="/images/right_slip.png"
+                                bindtap="updateNickNameClick"></image>
                         </view>
                     </view>
 
@@ -61,20 +88,22 @@
                         </view>
                     </view> -->
 
-                    <view class="weui-cell weui-cell_input">
+                    <view class="weui-cell weui-cell_input" wx:if="{{!userAvatar}}">
                         <view class="weui-cell__hd">
                             <view class="weui-label">题库</view>
                         </view>
                         <view class="weui-cell__bd">
                             <view class="weui-input">
-                                <picker bindchange="examChange" value="{{examIndex}}" range="{{allExams}}" range-key="exam_name">
+                                <picker bindchange="examChange" value="{{examIndex}}" range="{{allExams}}"
+                                    range-key="exam_name">
                                     <view class="weui-input">{{examName}}</view>
                                 </picker>
                             </view>
                         </view>
                         <view wx:if='{{examNo}}' class="weui-cell__ft right-slip">
                             <!-- <view class="navigator-arrow"></view> -->
-                            <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="lookExam"></image>
+                            <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="lookExam">
+                            </image>
                         </view>
                     </view>
                     <view wx:if="{{examEndTime}}" class="weui-cell weui-cell_input">
@@ -86,7 +115,7 @@
                             </view>
                         </view>
                     </view>
-                    <view wx:if="{{brushNum >= 0}}" class="weui-cell weui-cell_input">
+                    <view wx:if="{{brushNum >= 0 && !userAvatar}}" class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
                             <view class="weui-label">刷题数</view>
                         </view>

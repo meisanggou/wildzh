@@ -36,7 +36,7 @@ def handle_questions(resource, event, trigger, questions, **kwargs):
         et_man.add_detail(user_no, exam_no, q_item['no'], q_item['state'])
 
 registry.subscribe(handle_questions, constants.R_QUESTION, constants.E_AFTER_UPDATE)
-registry.subscribe(handle_questions, constants.R_QUESTION, constants.E_AFTER_UPDATE)
+
 
 @exam_training_view.route('/tags', methods=['GET'])
 @required_exam_no

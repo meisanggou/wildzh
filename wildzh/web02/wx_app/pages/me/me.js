@@ -17,8 +17,9 @@ Page({
         examEndTime: null,
         examTip: "未拥有当前题库所有操作权限",
         currentTip: null,
-        brushNum: -1,
-        ranking: null,
+        brushNum: 0,  // 刷题数
+        ranking: 0, // 排名
+        accuracy: '100%',
         version: app.globalData.version
     },
     onLoad: function (options) {
@@ -165,7 +166,7 @@ Page({
         })
         if (examNo == 0) {
             that.setData({
-                brushNum: -1
+                brushNum: 0
             });
             return false;
         }
@@ -179,8 +180,11 @@ Page({
                 }
                 var resData = res.data.data;
                 var brushNum = resData['num'];
+                var rightNum = resData['right_num'];
+                var accuracy = parseInt(rightNum * 100 / brushNum) + '%';
                 that.setData({
-                    brushNum: brushNum
+                    brushNum: brushNum,
+                    accuracy: accuracy
                 });
                 that.getRanking(brushNum);
             }
