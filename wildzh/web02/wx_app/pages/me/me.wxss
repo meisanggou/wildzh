@@ -47,6 +47,7 @@
 
 .user-data button {
     font-size: 40rpx;
+    border: none;
 } 
 .user-data-name{
     margin-left: 10rpx;

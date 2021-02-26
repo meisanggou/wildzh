@@ -798,8 +798,8 @@ def query_usage():
     else:
         period_no = None
     item = c_exam.get_one_usage_records(g.user_no, g.exam_no, period_no)
-    if (g.user_role & 2) != 2 and item['num'] < 10:
-        item['num'] = -1
+    # if (g.user_role & 2) != 2 and item['num'] < 10:
+    #     item['num'] = -1
     return jsonify({'status': True, 'data': item})
 
 
