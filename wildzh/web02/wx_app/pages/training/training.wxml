@@ -51,7 +51,7 @@
                 <block wx:if="{{isShowSubject}}">
                     【{{nowQuestion.question_subject}}】
                 </block>
-                
+
             </view>
 
             <!-- <view></view> -->
@@ -126,6 +126,28 @@
         </view>
         <view class='bottom' wx:else>
             <view class='bottomShow' bindtap='showAnswer'>显示答案</view>
+        </view>
+    </view>
+    <view wx:if="{{ showAD }}" class='ad-modal'>
+        <view class='ad'>
+            <view class="ad-content">
+                <block wx:for="{{richAD}}" wx:key="value">
+                    <block wx:if="{{item.url}}">
+                        <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
+                            src="{{remote_host}}{{item.url}}"></image>
+                    </block>
+                    <block wx:else>
+                        <text>{{item.value}}</text>
+                    </block>
+                </block>
+            </view>
+            <view class="ad-btn-view">
+                <view class="ad-btn">
+                    <checkbox value="7" checked="{{ false }}"/>
+                    不再提醒
+                </view>
+                <view class="ad-btn"> 我知道了</view>
+            </view>
         </view>
     </view>
 </view>

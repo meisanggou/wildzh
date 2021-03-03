@@ -1,0 +1,32 @@
+[
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "题库编号",
+                "col_name": "exam_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "推广描述信息",
+                "col_name": "ad_desc",
+                "col_type": "varchar(2000)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "允许的忽略间隔 小时数 0不允许忽略",
+                "col_name": "ignore_interval",
+                "col_type": "int(11)",
+                "default_value": 36
+            },
+            {
+                "col_comment": "是否推广",
+                "col_name": "enabled",
+                "col_type": "bit(1)",
+                "default_value": 0
+            }
+        ],
+        "table_comment": "记录题库 推广 信息",
+        "table_name": "exam_ad"
+    }
+]

@@ -1,0 +1,45 @@
+{% extends "base_a.html" %}
+
+{% block title %}推广信息管理{% endblock %}
+
+{% block js_content %}
+{{ 't_js/exam/ad.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+<div id="div_content">
+    <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
+        <div class="form-group apiContentLine">
+            <ul>
+                <li>
+                    <label>题库名称：</label>
+                    <select class="box-side width300" type="text" @change="select_exam" v-model="current_exam_index">
+                        <option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>
+                    </select>
+                </li>
+                <li>
+                    <label>推广信息：</label>
+                    <textarea class="box-side width500" v-model.trim="ad_desc" type="text">
+                    </textarea>
+                </li>
+                <li>
+                    <label>推广间隔：</label>
+                    <input type="text" class="box-side width100" v-model.number='ignore_interval'>
+                    <label>小时</label>
+                </li>
+                <li>
+                    <label>是否推广：</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="enabled" value="1" v-model.number='enabled'>推广
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="enabled" value="0" v-model.number='enabled'>不推广
+                    </label>
+                </li>
+
+            </ul>
+        </div>
+        <button class="btn btn-success btn-down api-newBtn" @click="update">更新</button>
+    </div>
+</div>
+{% endblock %}

@@ -36,7 +36,9 @@ Page({
         fbTypeIndex: 1,
         feedbackDesc: "",
         tags: [], // 题目标签
-        notFrame: true
+        notFrame: true,
+        showAD: false,  // 是否显示推广信息
+        richAD: [] 
     },
     getQuestionNos: function (options) {
         that = this;
@@ -175,6 +177,9 @@ Page({
             })
         }
 
+    },
+    onShow: function(){
+        this.getExamAD();
     },
     extractQuestionNos: function (nos_l) {
         if (typeof nos_l == "string" || nos_l == null) {
@@ -794,6 +799,29 @@ Page({
             },
             fail: function () {
                 that.setData({tags: []});
+            }
+        })
+    },
+    getExamAD: function(){
+        if (this.data.examNo == null){
+            return false;
+        }
+        //  TODO 读取缓存跳过
+        var that = this;
+        wx.request2({
+            url: '/exam/ad?exam_no=' + this.data.examNo,
+            success: function(ret){
+                var r_data = ret.data;
+                if(r_data.status){
+                    if(r_data.data.enabled == false){
+                        return;
+                    }
+                    that.setData({
+                        showAD: true,
+                        richAD: r_data.data.ad_desc
+                    })
+                }
+                
             }
         })
     },

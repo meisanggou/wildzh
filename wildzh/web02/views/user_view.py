@@ -18,9 +18,11 @@ url_prefix = "/user"
 rt = RenderTemplate("user")
 c_user = User(db_conf_path=db_conf_path, upload_folder=upload_folder)
 mp = MiniProgram(conf_path=min_program_conf, section=web_pro)
+menu_list = [
+    {"menu_id": "user", "index": -2, "url": "/password/", "title": u"个人中心", "icon_class": "icon-personal2"},
+    {"menu_id": "exit", "index": -1, "url": "/login/", "title": u"退出", "icon_class": "icon-exit"}]
 user_view = View2("user", __name__, url_prefix=url_prefix, auth_required=False,
-                        menu_list=[{"index": -2, "url": "/password/", "title": u"个人中心", "icon_class": "icon-personal2"},
-                                   {"index": -1, "url": "/login/", "title": u"退出", "icon_class": "icon-exit"}])
+                        menu_list=menu_list)
 user_view.add_handler(c_user)
 
 
