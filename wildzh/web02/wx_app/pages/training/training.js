@@ -38,7 +38,8 @@ Page({
         tags: [], // 题目标签
         notFrame: true,
         showAD: false,  // 是否显示推广信息
-        richAD: [] 
+        richAD: [] , // 推广信息
+        ignoreTip: "",
     },
     getQuestionNos: function (options) {
         that = this;
@@ -461,6 +462,28 @@ Page({
             that.reqQuestion(index, true);
             return;
         }
+        // 过度代码 TODO 下次发版后移除
+        function reset_rich_item(v){
+            if(typeof(v) == 'string'){
+                v = {'value': v, 'index': i};
+            }
+            else{
+                v['index'] = i;
+            }
+            return v;
+        }
+        for(var i=0;i<nowQuestion.question_desc_rich.length;i++){
+            nowQuestion.question_desc_rich[i] = reset_rich_item(nowQuestion.question_desc_rich[i])
+        }
+        for(var j=0;j<nowQuestion.options.length;j++){
+            for(var k=0;k<nowQuestion.options[j]['desc_rich'].length;k++){
+                nowQuestion.options[j]['desc_rich'][k] = reset_rich_item(nowQuestion.options[j]['desc_rich'][k]);
+            }
+        }
+        for(var i=0;i<nowQuestion.answer_rich.length;i++){
+            nowQuestion.answer_rich[i] = reset_rich_item(nowQuestion.answer_rich[i])
+        }
+        // 过度结束
         this.setData({
             nowQuestion: nowQuestion,
             nowQuestionIndex: index,
@@ -481,12 +504,12 @@ Page({
         for (var index in nowQuestion.options) {
             if (parseInt(nowQuestion.options[index]["score"]) > 0) {
                 var tmp_answer = new Array(app.globalData.optionChar[index], "、");
-                questionAnswer = questionAnswer.concat(tmp_answer);
+                questionAnswer = questionAnswer.concat({'value': tmp_answer, 'index': -1});
                 questionAnswer = questionAnswer.concat(nowQuestion.options[index]["desc_rich"]);
             }
         }
         if (questionAnswer.length == 0) {
-            questionAnswer[0] = "没有答案"
+            questionAnswer[0] = {'value': "没有答案", 'index': -1};
         }
         that.setData({
             showAnswer: true,
@@ -816,13 +839,23 @@ Page({
                     if(r_data.data.enabled == false){
                         return;
                     }
+                    var ignoreTip = "";
+                    if(r_data.data.ignore_interval > 0){
+                        ignoreTip = r_data.data.ignore_interval + "小时内不再提醒";
+                    }
                     that.setData({
                         showAD: true,
-                        richAD: r_data.data.ad_desc
+                        richAD: r_data.data.ad_desc_rich,
+                        ignoreTip: ignoreTip
                     })
                 }
                 
             }
+        })
+    },
+    knowAd: function(){
+        this.setData({
+            showAD: false,
         })
     },
     // 练习错题模式

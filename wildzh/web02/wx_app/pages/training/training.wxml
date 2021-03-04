@@ -38,13 +38,13 @@
 
         <view class='content'>
             <view bindtap="getQuestionTag">{{nowQuestionIndex + 1}}.
-                <block wx:for="{{nowQuestion.question_desc_rich}}">
+                <block wx:for="{{nowQuestion.question_desc_rich}}" wx:key="index">
                     <block wx:if="{{item.url}}">
                         <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
                             src="{{remote_host}}{{item.url}}"></image>
                     </block>
                     <block wx:else>
-                        <text>{{item}}</text>
+                        <text>{{item.value}}</text>
                     </block>
                 </block>
                 <text wx:if="{{nowQuestion.question_source}}">({{nowQuestion.question_source}})</text>
@@ -64,13 +64,13 @@
                 <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}"
                     bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}"
                     wx:key="desc">{{optionChar[idx]}}、
-                    <block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item">
+                    <block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item" wx:key="index">
                         <block wx:if="{{desc_item.url}}">
                             <image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;'
                                 src="{{remote_host}}{{desc_item.url}}"></image>
                         </block>
                         <block wx:else>
-                            {{desc_item}}
+                            {{desc_item.value}}
                         </block>
 
                     </block>
@@ -84,25 +84,25 @@
 
             <view wx:if="{{showAnswer}}">
                 <view class='item'>
-                    <block wx:for="{{questionAnswer}}">
+                    <block wx:for="{{questionAnswer}}"  wx:key="index">
                         <block wx:if="{{item.url}}">
                             <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
                                 src="{{remote_host}}{{item.url}}"></image>
                         </block>
                         <block wx:else>
-                            {{item}}
+                            {{item.value}}
                         </block>
                     </block>
                 </view>
                 <scroll-view scroll-y="true" class='item'>解析：
-                    <block wx:for="{{nowQuestion.answer_rich}}">
-                        <block wx:if="{{item.url}}">
+                    <block wx:for="{{nowQuestion.answer_rich}}" wx:key='index'>
+                        <block wx:if="{{item.url}}" >
                             <image mode='scaleToFill' style='height:{{item.height}}px;width:{{item.width}}px;'
                                 src="{{remote_host}}{{item.url}}" data-src="{{remote_host}}{{item.url}}"
                                 bindtap="previewImage"></image>
                         </block>
                         <block wx:else>
-                            <text>{{item}}</text>
+                            <text>{{item.value}}</text>
                         </block>
                     </block>
 
@@ -142,11 +142,11 @@
                 </block>
             </view>
             <view class="ad-btn-view">
-                <view class="ad-btn">
+                <view class="ad-btn" wx:if="{{ ignoreTip }}">
                     <checkbox value="7" checked="{{ false }}"/>
-                    不再提醒
+                    {{ ignoreTip }}
                 </view>
-                <view class="ad-btn"> 我知道了</view>
+                <view class="ad-btn" bindtap="knowAd"> 我知道了</view>
             </view>
         </view>
     </view>
