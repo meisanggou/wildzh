@@ -1,6 +1,6 @@
 {
   "navigationBarTitleText": "搜索题库",
   "usingComponents": {
-    "mp-searchbar": "../WebUI/searchbar/searchbar"
+    "mp-searchbar": "weui-miniprogram/searchbar/searchbar"
   }
 }

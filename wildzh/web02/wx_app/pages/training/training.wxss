@@ -230,13 +230,12 @@ page{
 }
 
 .ad-content{
-  margin: 0 auto;  /* 左右居中 */
-  margin-top: 30rpx;
-  /* padding-top: 15rpx;
-  padding-left: 15rpx;
-  padding-right: 15rpx; */
-  width: 95%;
-  height: 85%;
+  /* margin: 0 auto;  左右居中 */
+  width: 94%;
+  position: absolute;
+  left: 3%;
+  top: 30rpx;
+  bottom: 100rpx;
   border-style: solid;
   border-width: 3rpx;
   border-color: gray;
@@ -244,11 +243,21 @@ page{
 }
 
 .ad-btn-view{
-  margin-top: 5%;
+  position: absolute;
+  bottom: 0px;
+  right: 0rpx;
+  height: 100rpx;
+  line-height: 100rpx;
   display: flex;
-  float: right;
 }
 
 .ad-btn {
-  margin-right: 20rpx;
+  margin-right: 30rpx;
+}
+.ad-btn checkbox{
+  transform: scale(0.8,0.8);
+  width: 50rpx;
+}
+.mini-size {
+  font-size: small;
 }

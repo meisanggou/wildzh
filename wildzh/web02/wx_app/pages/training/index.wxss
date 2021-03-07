@@ -75,12 +75,12 @@
 }
 
 .button-color3{
-  background-color: #de3ef3;
+  background-color: #7E3D76;
   border-radius: 15rpx;
 }
 
 .button-color4{
-  background-color: #cbda05;
+  background-color: #737300;
   border-radius: 15rpx;
 }
 

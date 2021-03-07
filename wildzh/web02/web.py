@@ -3,7 +3,6 @@
 
 import os
 import sys
-
 from flask_helper.utils.registry import DataRegistry
 
 from wildzh.web02 import app

@@ -40,6 +40,8 @@ Page({
         showAD: false,  // 是否显示推广信息
         richAD: [] , // 推广信息
         ignoreTip: "",
+        ignoreInterval: 0, // 不再提醒的间隔 小时数
+        ignoreAd: false,  // 一定时间内不再提醒
     },
     getQuestionNos: function (options) {
         that = this;
@@ -503,7 +505,7 @@ Page({
 
         for (var index in nowQuestion.options) {
             if (parseInt(nowQuestion.options[index]["score"]) > 0) {
-                var tmp_answer = new Array(app.globalData.optionChar[index], "、");
+                var tmp_answer = app.globalData.optionChar[index] + "、";
                 questionAnswer = questionAnswer.concat({'value': tmp_answer, 'index': -1});
                 questionAnswer = questionAnswer.concat(nowQuestion.options[index]["desc_rich"]);
             }
@@ -585,7 +587,6 @@ Page({
     previewImage: function (event) {
         var src = event.currentTarget.dataset.src; //获取data-src
         //图片预览
-        console.info(src);
         wx.previewImage({
             current: src, // 当前显示图片的http链接
             urls: [src], // 需要预览的图片http链接列表
@@ -830,30 +831,62 @@ Page({
             return false;
         }
         //  TODO 读取缓存跳过
+        var now_time = dt.get_timestamp2();
+        var cache_key = 'ignore_ad_time';
+        var ignore_time = app.getOrSetExamCacheData(cache_key);
+        if(ignore_time > now_time){
+            return false;
+        }
         var that = this;
         wx.request2({
             url: '/exam/ad?exam_no=' + this.data.examNo,
             success: function(ret){
                 var r_data = ret.data;
-                if(r_data.status){
-                    if(r_data.data.enabled == false){
-                        return;
-                    }
-                    var ignoreTip = "";
-                    if(r_data.data.ignore_interval > 0){
+                if(!r_data.status){
+                    return false;
+                }
+                if(r_data.data.enabled == false){
+                    return false;
+                }
+                var ignoreTip = "";
+                
+                if(r_data.data.ignore_interval > 0){
+                    var days = Math.floor(r_data.data.ignore_interval / 24);
+                    if(days > 0){
+                        ignoreTip = days + "天内不再提醒";
+                    }else{
                         ignoreTip = r_data.data.ignore_interval + "小时内不再提醒";
                     }
-                    that.setData({
-                        showAD: true,
-                        richAD: r_data.data.ad_desc_rich,
-                        ignoreTip: ignoreTip
-                    })
                 }
+                that.setData({
+                    showAD: true,
+                    richAD: r_data.data.ad_desc_rich,
+                    ignoreTip: ignoreTip,
+                    ignoreInterval: r_data.data.ignore_interval
+                })
                 
             }
         })
     },
+    ignoreAction: function(e){
+        var ignoreAd = false;
+        for(let i=0, l = e.detail.value.length;i<l;++i){
+            if(e.detail.value[i] == 'ignore'){
+                ignoreAd = true;
+                break
+            }
+        }
+        this.setData({
+            ignoreAd: ignoreAd
+        })
+    },
     knowAd: function(){
+        if(this.data.ignoreAd){
+            var now_time = dt.get_timestamp2();
+            var cache_key = 'ignore_ad_time';
+            var ignore_time = now_time + this.data.ignoreInterval * 3600;
+            app.getOrSetExamCacheData(cache_key, ignore_time);
+        }
         this.setData({
             showAD: false,
         })

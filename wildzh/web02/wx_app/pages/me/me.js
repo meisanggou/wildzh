@@ -181,7 +181,10 @@ Page({
                 var resData = res.data.data;
                 var brushNum = resData['num'];
                 var rightNum = resData['right_num'];
-                var accuracy = parseInt(rightNum * 100 / brushNum) + '%';
+                var accuracy = '0%';
+                if(rightNum > 0){
+                    accuracy = parseInt(rightNum * 100 / brushNum) + '%';
+                }
                 that.setData({
                     brushNum: brushNum,
                     accuracy: accuracy

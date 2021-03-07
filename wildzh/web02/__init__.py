@@ -87,8 +87,8 @@ def create_app():
     env.variable_end_string = " }}"
 
     one_web.handle_30x()
-    one_web.cross_domain()
-    one_web.filter_user_agent(accept_agent)
+    # one_web.cross_domain()
+    one_web.filter_user_agent(accept_agent, ignore_paths=[".+\.jpeg", ])
     return one_web
 
 app = create_app()
