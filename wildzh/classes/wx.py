@@ -1,15 +1,37 @@
 # !/usr/bin/env python
 # coding: utf-8
-
-import os
-import datetime
+import binascii
 import configparser
+import datetime
+import hashlib
+import os
 import requests
-from functools import wraps
+
 
 __author__ = 'meisa'
 
 url = "https://api.weixin.qq.com/sns/jscode2session"
+
+
+class WxSign(object):
+    def __init__(self, token):
+        self.token = token
+
+    def get_sha_value(self, timestamp, nonce, encrypt=None):
+        temp_arr = [self.token, timestamp, nonce]
+        if encrypt is not None:
+            temp_arr.append(encrypt)
+        temp_arr.sort()
+        temp_str = "".join(temp_arr)
+        temp_sha1 = binascii.b2a_hex(hashlib.sha1(temp_str).digest())
+        return temp_sha1
+
+    def check_signature(self, signature, timestamp, nonce):
+        temp_sha1 = self.get_sha_value(timestamp, nonce)
+        if temp_sha1 == signature:
+            return True
+        else:
+            return False
 
 
 class MiniProgram(object):

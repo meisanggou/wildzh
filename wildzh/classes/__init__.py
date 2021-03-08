@@ -1,5 +1,6 @@
 # !/usr/bin/env python
 # coding: utf-8
+import time
 from mysqldb_rich.db2 import DB
 
 __author__ = 'meisa'
@@ -15,3 +16,7 @@ class DBObject(object):
         self.db = db
         self.t = self.table
         self.cols = self.columns
+
+    @property
+    def now_time(self):
+        return time.time()

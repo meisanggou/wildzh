@@ -1,0 +1,34 @@
+[
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "用户编号",
+                "col_name": "user_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "当前版本号",
+                "col_name": "version",
+                "col_type": "varchar(10)"
+            },
+            {
+                "col_comment": "最大版本号",
+                "col_name": "max_version",
+                "col_type": "varchar(10)"
+            },
+            {
+                "col_comment": "最小版本号",
+                "col_name": "min_version",
+                "col_type": "varchar(10)"
+            },
+            {
+                "col_comment": "最近更新时间",
+                "col_name": "last_modify",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "用户使用小程序版本记录",
+        "table_name": "version_mp"
+    }
+]
