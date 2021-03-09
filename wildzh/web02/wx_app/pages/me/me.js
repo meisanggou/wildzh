@@ -283,7 +283,9 @@ Page({
                 method: 'POST',
                 data: data,
                 success: res => {
-                    app.getOrSetCacheData2(key, app.globalData.version);
+                    if(res.data.status){
+                        app.getOrSetCacheData2(key, app.globalData.version);
+                    }
                 }
             })
         }

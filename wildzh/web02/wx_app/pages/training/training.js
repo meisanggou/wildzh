@@ -586,6 +586,7 @@ Page({
     },
     previewImage: function (event) {
         var src = event.currentTarget.dataset.src; //获取data-src
+        src += '?r=' + Math.random();
         //图片预览
         wx.previewImage({
             current: src, // 当前显示图片的http链接

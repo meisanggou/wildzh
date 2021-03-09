@@ -30,8 +30,10 @@ def index():
 def report_wx_min_program_version():
     data = request.json
     version = data['version']
+    r = False
     if g.user_no:
         VERSION_MAN.update_version(g.user_no, version)
+        r = True
     LOG.info('Receive user(user_no=%s) report wx min_program version: %s', g.user_no,
              version)
-    return jsonify({'status': True, 'data': data})
+    return jsonify({'status': r, 'data': data})
