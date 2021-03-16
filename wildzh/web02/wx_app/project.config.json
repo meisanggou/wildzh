@@ -35,7 +35,7 @@
         "useApiHostProcess": false
     },
     "compileType": "miniprogram",
-    "libVersion": "2.10.3",
+    "libVersion": "2.13.2",
     "appid": "wx8ea4e9ba27687c6e",
     "projectname": "%E5%88%B7%E9%A2%98",
     "isGameTourist": false,

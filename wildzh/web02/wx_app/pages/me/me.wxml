@@ -18,7 +18,8 @@
             <!-- <image class="avatar" mode="aspectFit" src="/images/unregister.png"></image> -->
             <!-- <text class="center">未登录</text> -->
             <view class="user-data">
-                <button bindgetuserinfo="getUserInfo" open-type="getUserInfo">授权登录 </button>
+                <button wx:if="{{useProfile}}" bindtap="getUserInfo2">授权登录</button>
+                <button wx:else  bindgetuserinfo="getUserInfo" open-type="getUserInfo">授权登录 </button>
             </view>
         </view>
         <view class="statis" wx:if="{{userAvatar}}">

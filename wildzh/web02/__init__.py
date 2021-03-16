@@ -4,6 +4,8 @@
 import os
 import functools
 
+from werkzeug.exceptions import HTTPException
+
 from flask import request, g, redirect, make_response, jsonify
 from flask_login import current_user, LoginManager
 from flask_login.utils import login_url as make_login_url
@@ -18,7 +20,7 @@ __author__ = 'zhouheng'
 
 
 login_manager = LoginManager()
-login_manager.session_protection = 'basic'
+login_manager.session_protection = 'strong'  # TODO 原来是basic 可行吗？
 LOG = getLogger()
 
 
@@ -58,8 +60,13 @@ def create_app():
         return res
 
     @one_web.errorhandler(Exception)
+    @one_web.errorhandler(HTTPException)
     @one_web.errorhandler(500)
     def handle_500(e):
+        if isinstance(e, HTTPException):
+            response = jsonify({'status': False, 'data': e.description})
+            response.status_code = e.code
+            return response
         LOG.exception(e)
         return jsonify({'status': False, 'data': 'Internal error'})
 
@@ -88,7 +95,7 @@ def create_app():
 
     one_web.handle_30x()
     # one_web.cross_domain()
-    ignore_paths=[".+\.jpeg", ".+\.png"]
+    ignore_paths = [".+\.jpeg", ".+\.png"]
     one_web.filter_user_agent(accept_agent, ignore_paths=ignore_paths)
     return one_web
 

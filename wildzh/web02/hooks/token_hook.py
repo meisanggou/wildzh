@@ -16,6 +16,7 @@ class TokenHook(FlaskHook):
     def __init__(self, app):
         FlaskHook.__init__(self, app)
         self.auth_header = 'X-OAuth-Token'
+        self.url_token_header = 'X-Url-Token'
 
     def before_request(self):
         login_manager = getattr(self.app, 'login_manager', None)
@@ -24,7 +25,12 @@ class TokenHook(FlaskHook):
             return
         auth_data = request.headers.get(self.auth_header)
         if auth_data is None:
-            return
+            key = request.headers.get(self.url_token_header)
+            if not key:
+                return
+            auth_data = request.args.get(key)
+            if not auth_data:
+                return
         v_r, data = registry.notify_callback('hook', 'verify_token', self,
                                              token=auth_data)
         if v_r is True:

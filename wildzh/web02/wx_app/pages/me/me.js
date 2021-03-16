@@ -20,7 +20,8 @@ Page({
         brushNum: 0,  // 刷题数
         ranking: 0, // 排名
         accuracy: '100%',
-        version: app.globalData.version
+        version: app.globalData.version,
+        useProfile: true
     },
     onLoad: function (options) {
         if (app.globalData.defaultExamNo != null) {
@@ -29,6 +30,10 @@ Page({
                 examNo: app.globalData.defaultExamNo
             })
         }
+        var useProfile = wx.canIUse('getUserProfile');
+        this.setData({
+            useProfile: useProfile
+        })
         this.loadCacheUserInfo()
         this.reportVersion();
     },
@@ -65,6 +70,25 @@ Page({
         })
         this.updateUserInfoAction(data);
 
+    },
+    getUserInfo2: function(){
+        var that = this;
+        wx.getUserProfile({
+            desc: '同步用户头像信息到小程序',
+            success: function(e){
+                console.info(e);
+                var userInfo = e.userInfo
+                var data = {
+                    "avatar_url": userInfo.avatarUrl,
+                    "nick_name": userInfo.nickName
+                }
+                wx.showLoading({
+                    title: '登录中...',
+                    mask: true
+                })
+                that.updateUserInfoAction(data);
+            }
+        })
     },
     updateUserInfoAction: function (data) {
         var that = this;
