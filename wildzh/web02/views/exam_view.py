@@ -3,6 +3,7 @@
 from collections import OrderedDict
 from functools import wraps
 import os
+import base64
 import re
 import time
 import tempfile
@@ -13,6 +14,7 @@ from flask import request, jsonify, g
 from flask_login import login_required
 from flask_helper.template import RenderTemplate
 from flask_helper.upload import support_upload2
+from flask_helper.utils import registry as f_registry
 
 from zh_config import db_conf_path, upload_folder, file_prefix_url
 from zh_config import min_program_conf, es_conf
@@ -190,6 +192,7 @@ def required_manager_exam(key='exam_no', **role_desc):
         return _func
     return _decorated_function
 
+
 """
 监听和注册事件
 """
@@ -198,7 +201,97 @@ def handle_wrong_question(resource, event, trigger, questions, **kwargs):
         if q_item['state'] == constants.T_STATE_WRONG:
             c_exam.new_exam_wrong(g.user_no, g.exam_no, q_item['no'])
 
-registry.subscribe(handle_wrong_question, constants.R_QUESTION, constants.E_AFTER_UPDATE)
+
+def share_token(resource, event, trigger, **kwargs):
+    """
+    sign = sign(<resource>|<exam_no>|<user_no>|<free_days>|<expiration time>)
+    others = [<free_days>, <expiration time>]
+    """
+    exam_no = kwargs['resource_id']
+    user_no = kwargs['user_no']
+    # step 1 判断题库是否可分享
+    if not exam_no:
+        return None
+    # step 2 判断用户是否有权限分享对应题库
+    # step 3 获取题库赠送天数
+    free_days = 7
+    # step 4 计算失效时间
+    valid_days = int(kwargs.get('valid_days', 7))
+    expiration_time =  int(time.time() + valid_days * 3600 * 24)
+    # step 5 组合明文文本
+    plain_s = '%s|%s|%s|%s|%s' % (resource, exam_no, user_no, free_days,
+                                  expiration_time)
+    # step 6 计算签名
+    share_key = kwargs.get('share_key', None)
+    if not share_key:
+        return None
+    sign = ''
+    # step 7 计算token
+    others = [str(x) for x in (free_days, expiration_time)]
+    data = {'free_days': free_days, 'expiration_time': expiration_time}
+    return {'sign': sign, 'data': data, 'others': others}
+
+
+def parsing_token(resource, event, trigger, **kwargs):
+    r = {'status': 'False', 'message': 'success'}
+    # step 1 获得参数
+    exam_no = kwargs.get('resource_id')
+    inviter_user_no = kwargs.get('inviter_user_no')
+    others = kwargs.get('others')
+    sign = kwargs.get('sign')
+    user_no = kwargs.get('user_no')
+    action = kwargs.get('action')
+    if len(others) != 2:
+        r['message'] = ''
+        return r
+    free_days, expiration_time = others
+    # step 1 组合校验文本
+    plain_s = '%s|%s|%s|%s|%s' % (resource, exam_no, inviter_user_no,
+                                  free_days, expiration_time)
+    # step 2 校验签名
+    share_key = kwargs.get('share_key', None)
+    if not share_key:
+        return None
+    verified_sign = ''
+    if verified_sign != sign:
+        r['message'] = '邀请码异常'
+        return r
+    # step 3 判定被邀请者是否符合条件
+    # items = c_exam.user_exams(user_no, exam_no, ensure_member=False)
+    # if items:
+    #     r['message'] = '不是题库的新用户'
+    #     return r
+    # step 实际授权 or 返回信息
+    if action == 'dry-run':
+        # 返回信息
+        u_items = c_user.verify_user_exist(user_no=inviter_user_no)
+        if not u_items:
+            r['message'] = '邀请者信息异常'
+            return r
+        e_items = c_exam.select_exam2(exam_no)
+        if not e_items:
+            r['message'] = '邀请题库信息异常'
+            return r
+        r['inviter'] = {'user_no': inviter_user_no, 'nick_name':
+            u_items[0]['nick_name']}
+        r['exam'] = {'exam_name': e_items[0].exam_name}
+    else:
+        # 实际授权
+        c_exam.increase_exam_member(user_no, exam_no, 0, free_days)
+        c_exam.increase_exam_member(inviter_user_no, exam_no, 0, free_days)
+    r['status'] = True
+    return r
+
+
+if not f_registry.DATA_REGISTRY.exist_in('registered', 'exam_view'):
+    # 只允许注册一次 防止重复注册
+    registry.subscribe(handle_wrong_question, constants.R_QUESTION,
+                       constants.E_AFTER_UPDATE)
+    registry.subscribe_callback(share_token, constants.R_EXAM,
+                                constants.E_GEN_TOKEN)
+    registry.subscribe_callback(parsing_token, constants.R_EXAM,
+                                constants.E_PARSING_TOKEN)
+    f_registry.DATA_REGISTRY.append('registered', 'exam_view')
 
 
 @exam_view.route("/", methods=["GET"])

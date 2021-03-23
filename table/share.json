@@ -1,0 +1,65 @@
+[
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "用户编号",
+                "col_name": "user_no",
+                "col_type": "int(11)"
+            },
+            {
+                "uni_key": true,
+                "col_comment": "邀请码",
+                "col_name": "share_key",
+                "col_type": "varchar(10)"
+            },
+            {
+                "col_comment": "最近更新时间",
+                "col_name": "last_modify",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "用户对应的分享密钥",
+        "table_name": "share_key"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "被邀请用户编号",
+                "col_name": "user_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "邀请资源",
+                "col_name": "resource",
+                "col_type": "varchar(50)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "邀请资源ID",
+                "col_name": "resource_id",
+                "col_type": "varchar(50)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "邀请者编号",
+                "col_name": "inviter",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "邀请token",
+                "col_name": "share_token",
+                "col_type": "varchar(200)"
+            },
+            {
+                "col_comment": "插入时间",
+                "col_name": "insert_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "分享邀请记录",
+        "table_name": "share_records"
+    }
+]

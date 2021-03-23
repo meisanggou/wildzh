@@ -1,19 +1,33 @@
 @import "../common/lib/weui.wxss";
 @import "../common/lib/lib_app.wxss";
 
+.button::after {
+    margin: 0;
+    border: none;
+    padding: 0;
+}
+
+.button {
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+    display: flex;
+    /* background-color: #fff; */
+}
+
 .border0 {
     border: none;
 }
 
-.user-panel{
+.user-panel {
     display: flex;
     align-items: center;
     /* background-color:wheat ; */
-    height: 350rpx;
+    height: 320rpx;
     padding-bottom: 90rpx;
 }
 
-.user-panel2{
+.user-panel2 {
     display: flex;
     align-items: center;
     /* background-color:wheat ; */
@@ -39,7 +53,8 @@
     /* margin-right: auto; */
     margin-top: 30rpx;
 }
-.user-data{
+
+.user-data {
     /* color: white; */
     margin-left: 20rpx;
     /* display: flex; */
@@ -48,11 +63,13 @@
 .user-data button {
     font-size: 40rpx;
     border: none;
-} 
-.user-data-name{
+}
+
+.user-data-name {
     margin-left: 10rpx;
     font-size: 40rpx;
 }
+
 .user-data-exam {
     display: flex;
     margin-top: 20rpx;
@@ -81,12 +98,14 @@
     height: 100%;
     width: 33%;
 }
+
 .statis-div-v {
     font-size: 40rpx;
     margin: 0 auto;
     line-height: 90rpx;
     width: 100%;
 }
+
 .statis-div-desc {
     font-size: 30rpx;
     color: gray;
@@ -94,6 +113,7 @@
     width: 100%;
     line-height: 90rpx;
 }
+
 .statis-division {
     /* width: 50rpx; */
     text-align: center;
@@ -109,6 +129,12 @@
     width: 50rpx;
     height: 50rpx;
     margin: 0 auto;
+}
+
+.right-slip2 {
+    width: 50rpx;
+    height: 50rpx;
+    margin-top: auto;
 }
 
 .navigator-arrow {

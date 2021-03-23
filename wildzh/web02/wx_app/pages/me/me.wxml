@@ -19,7 +19,7 @@
             <!-- <text class="center">未登录</text> -->
             <view class="user-data">
                 <button wx:if="{{useProfile}}" bindtap="getUserInfo2">授权登录</button>
-                <button wx:else  bindgetuserinfo="getUserInfo" open-type="getUserInfo">授权登录 </button>
+                <button wx:else bindgetuserinfo="getUserInfo" open-type="getUserInfo">授权登录 </button>
             </view>
         </view>
         <view class="statis" wx:if="{{userAvatar}}">
@@ -64,31 +64,6 @@
                             </view>
                         </view>
                     </view>
-
-                    <!-- <view class="weui-cell weui-cell_input">
-                        <view class="weui-cell__hd">
-                            <view class="weui-label">性别</view>
-                        </view>
-                        <view class="weui-cell__bd">
-                            <view class="weui-input">
-                                <open-data type="userGender" lang="zh_CN"></open-data>
-                            </view>
-                        </view>
-                    </view>
-
-                    <view class="weui-cell weui-cell_input">
-                        <view class="weui-cell__hd">
-                            <view class="weui-label">地区</view>
-                        </view>
-                        <view class="weui-cell__bd">
-                            <view class="weui-input">
-                                <open-data class="country" type="userCountry" lang="zh_CN"></open-data>
-                                <open-data class="province" type="userProvince" lang="zh_CN"></open-data>
-                                <open-data class="city" type="userCity" lang="zh_CN"></open-data>
-                            </view>
-                        </view>
-                    </view> -->
-
                     <view class="weui-cell weui-cell_input" wx:if="{{!userAvatar}}">
                         <view class="weui-cell__hd">
                             <view class="weui-label">题库</view>
@@ -131,12 +106,7 @@
                                 <text wx:if="{{ ranking }}">（排名：{{ ranking }})</text>
                             </view>
                         </view>
-                        <!-- <view class="weui-cell__bd">
-                            <view class="weui-input">排名：10000
-                            </view>
-                        </view> -->
                     </view>
-
                     <view class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
                             <view class="weui-label">版本</view>
@@ -146,7 +116,24 @@
                             </view>
                         </view>
                     </view>
-
+                </view>
+            </view>
+            <view class="page-section" wx-if="{{ shareToken }}">
+                <view class="weui-cells weui-cells_after-title">
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">邀请好友</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <view class="weui-input">随机得1-{{shareToken.free_days }}天会员</view>
+                        </view>
+                        <view class="weui-cell__ft right-slip">
+                            <button open-type="share" class="button weui-input">
+                                <image mode="aspectFit" class="right-slip" src="/images/right_slip.png">
+                                </image>
+                            </button>
+                        </view>
+                    </view>
                 </view>
             </view>
         </form>

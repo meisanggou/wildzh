@@ -2,6 +2,7 @@ var app = getApp();
 var dt = require("../common/datetime_tools.js");
 var that;
 var newNickName = '';
+var noExamName = '未选择';
 var lastUpdateUserKey = 'updateUserTime'
 
 Page({
@@ -12,7 +13,7 @@ Page({
         nickName: "",
         hiddenUnickName: true,
         allExams: [],
-        examName: "未选择",
+        examName: noExamName,
         examNo: 0,
         examEndTime: null,
         examTip: "未拥有当前题库所有操作权限",
@@ -21,9 +22,11 @@ Page({
         ranking: 0, // 排名
         accuracy: '100%',
         version: app.globalData.version,
-        useProfile: true
+        useProfile: true,
+        shareToken: ''
     },
     onLoad: function (options) {
+        this.getShareInfo();
         if (app.globalData.defaultExamNo != null) {
             this.setData({
                 examName: app.globalData.defaultExamName,
@@ -36,10 +39,23 @@ Page({
         })
         this.loadCacheUserInfo()
         this.reportVersion();
+        options['share_token'] = 'ZXhhbXwxNTg1Mzk2MzcxfDZ8fDcsMTYxNzA2MzQ1Mw=='
+        if('share_token' in options){
+            var st = options['share_token'];
+            this.receiveShare(st);
+        }
     },
     onShow: function () {
         this.getExams();
         this.loadCacheUserInfo();
+    },
+    onShareAppMessage: function(res){
+        var t = this.data.shareToken.token;
+        var title = '成功邀请朋友，朋友和您均可随机获得1-7天,题库：' + this.data.examName + ' 的会员';
+        return {
+            title: title,
+            path: '/pages/me?share_token=' + t
+          }
     },
     loadCacheUserInfo: function () {
         var currentUser = app.getOrSetCurrentUserData();
@@ -145,7 +161,8 @@ Page({
                 if (examNo == 0) {
                     examName = "未选择";
                 }
-
+                else{
+                }
                 that.setData({
                     allExams: allExams,
                     examName: examName,
@@ -157,6 +174,13 @@ Page({
                     that.getTips();
                 }
                 wx.hideLoading();
+                that.getShareInfo();
+            },
+            fail: res => {
+                that.getShareInfo();
+                that.setData({
+                    examTip: '网络连接错误，请检查网络'
+                })
             }
         })
     },
@@ -282,6 +306,7 @@ Page({
         if (currentExam.exam_role <= 3) {
             this.getTips();
         }
+        this.getShareInfo();
     },
     lookExam: function () {
         wx.navigateTo({
@@ -313,5 +338,46 @@ Page({
                 }
             })
         }
+    },
+    getShareInfo: function(){
+        wx.hideShareMenu();
+        this.setData({
+            shareToken: ''
+        })
+        var examName = this.data.examName;
+        var examNo = this.data.examNo;
+        if(examName == noExamName || examNo <= 0){
+            return false;
+        }
+        var data = {'resource': 'exam', 'resource_id': examNo};
+        wx.request2({
+          url: '/share/token',
+          method: 'POST',
+          data: data,
+          success: res => {
+              var r_data = res.data;
+              if(r_data.status != true){
+                  return false;
+              }
+              this.setData({
+                shareToken: r_data.data
+            })
+          }
+        })
+    },
+    receiveShare: function(token){
+        var data = {'action': 'dry-run', 'token': token}
+        wx.request2({
+            url: '/share/token/action',
+            method: 'POST',
+            data: data,
+            success: res => {
+                var r_data = res.data;
+                if(r_data.status != true){
+                    return false;
+                }
+                console.info(r_data)
+            }
+          })
     }
 })

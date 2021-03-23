@@ -476,11 +476,13 @@ class ExamMember(ExamMemberFlow):
                                        where_cond=where_cond)
         return items
 
-    def user_exams(self, user_no, exam_no=None):
+    def user_exams(self, user_no, exam_no=None, ensure_member=True):
         items = self._select_exam_member(user_no, exam_no)
         now_time = time.time()
-        items = [item for item in items
-                 if item['end_time'] is None or item['end_time'] >= now_time]
+        if ensure_member:
+            items = [item for item in items
+                     if item['end_time'] is None
+                     or item['end_time'] >= now_time]
         return items
 
     def exam_members(self, exam_no, max_role=None):
@@ -527,6 +529,17 @@ class ExamMember(ExamMemberFlow):
             if days > 0:
                 end_time = time.time() + days * self.DAY_SECONDS
         return self._update_exam_member(user_no, exam_no, authorizer, end_time)
+
+    def increase_exam_member(self, user_no, exam_no, authorizer, days):
+        items = self._select_exam_member(user_no, exam_no)
+        if items:
+            end_time = items[0]
+            n_end_time = end_time + self.DAY_SECONDS * days
+            self.update_exam_member(user_no, exam_no, authorizer,
+                                    end_time=n_end_time)
+        else:
+            self.insert_exam_member(user_no, exam_no, authorizer, days=days)
+        return self.user_exams(user_no, exam_no)[0]
 
     def insert_exam_owner(self, user_no, exam_no):
         return self._insert_exam_member(user_no, exam_no, 1, 0)

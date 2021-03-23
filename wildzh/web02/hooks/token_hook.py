@@ -4,7 +4,7 @@ from flask import g, request, session, make_response
 
 from flask_helper.flask_hook import FlaskHook
 
-from wildzh.web02 import registry
+from wildzh.utils import registry
 
 
 __author__ = 'zhouhenglc'

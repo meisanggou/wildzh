@@ -24,8 +24,11 @@ T_STATES = [T_STATE_RIGHT, T_STATE_WRONG, T_STATE_SKIP]
 
 
 # resource constants
+R_EXAM = 'exam'
 R_QUESTION = 'question'
 
 
 # resource event
 E_AFTER_UPDATE = 'after_update'
+E_GEN_TOKEN = 'gen_token'
+E_PARSING_TOKEN = 'parsing_token'

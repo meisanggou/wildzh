@@ -11,7 +11,7 @@ import time
 from mysqldb_rich.db2 import DB
 
 from wildzh.utils import constants
-from wildzh.web02 import registry
+from wildzh.utils import registry
 
 
 __author__ = 'zhouhenglc'

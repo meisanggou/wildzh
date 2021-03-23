@@ -185,7 +185,8 @@ class User(object):
 
     # 验证auth是否存在 包括 account tel alias wx_id
     def verify_user_exist(self, **kwargs):
-        cols = ["user_no", "user_name", "tel", "email", "wx_id", "role", "nick_name", "avatar_url"]
+        cols = ["user_no", "user_name", "tel", "email", "wx_id", "role",
+                "nick_name", "avatar_url"]
         if kwargs.pop("need_password", None) is not None:
             cols.append("password")
         db_items = self.db.execute_select(self.t, where_value=kwargs, cols=cols, package=True)
