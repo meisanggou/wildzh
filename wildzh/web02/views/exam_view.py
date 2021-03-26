@@ -213,7 +213,12 @@ def share_token(resource, event, trigger, **kwargs):
     if not exam_no:
         return None
     # step 2 判断用户是否有权限分享对应题库
-
+    u_items = c_exam.select_exam2(exam_no)
+    if not u_items:
+        return None
+    exam_item = u_items[0]
+    if not exam_item.is_private():
+        return None
     # step 3 获取题库赠送天数
     free_days = 7
     # step 4 计算失效时间

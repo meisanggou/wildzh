@@ -104,6 +104,9 @@ class ExamObject(object):
         self._d['openness_level'] = v
         self.open_mode = self._open_mode
 
+    def is_private(self):
+        return self.openness_level == ExamOpennessLevel.PRIVATE
+
     @property
     def open_mode(self):
         if not hasattr(self, '_open_mode'):
