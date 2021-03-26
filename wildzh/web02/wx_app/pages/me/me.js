@@ -38,7 +38,6 @@ Page({
         })
         this.loadCacheUserInfo()
         this.reportVersion();
-        options['share_token'] = 'ZXhhbXwxNTg1Mzk2MzcxfDZ8fDcsMTYxNzA2MzQ1Mw=='
         if ('share_token' in options) {
             var st = options['share_token'];
             this.receiveShare(st);

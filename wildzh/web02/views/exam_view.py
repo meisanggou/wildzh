@@ -213,6 +213,7 @@ def share_token(resource, event, trigger, **kwargs):
     if not exam_no:
         return None
     # step 2 判断用户是否有权限分享对应题库
+
     # step 3 获取题库赠送天数
     free_days = 7
     # step 4 计算失效时间
@@ -256,7 +257,8 @@ def parsing_token(resource, event, trigger, **kwargs):
     # step 2 校验签名
     share_key = kwargs.get('share_key', None)
     if not share_key:
-        return None
+        r['message'] = '邀请者账户异常无法获得签名'
+        return r
     verified_sign = ''
     if verified_sign != sign:
         r['message'] = '邀请码异常'
