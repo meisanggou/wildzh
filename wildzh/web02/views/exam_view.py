@@ -219,6 +219,7 @@ def share_token(resource, event, trigger, **kwargs):
     exam_item = u_items[0]
     if not exam_item.is_private():
         return None
+    # TODO 判断权限 暂时不判定
     # step 3 获取题库赠送天数
     free_days = 7
     # step 4 计算失效时间
@@ -382,7 +383,7 @@ def get_exam_info():
         if 'end_time' not in r_item:
             r_item['end_time'] = 0
         if r_item['exam_role'] < 10:
-            r_item['enable_share'] = True
+            r_item['enable_share'] = item.is_private()
         else:
             r_item['enable_share'] = False
         if r_item['exam_role'] <= min_role:
