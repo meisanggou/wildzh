@@ -18,15 +18,14 @@ Page({
         examEndTime: null,
         examTip: "未拥有当前题库所有操作权限",
         currentTip: null,
-        brushNum: 0,  // 刷题数
+        brushNum: 0, // 刷题数
         ranking: 0, // 排名
         accuracy: '100%',
         version: app.globalData.version,
         useProfile: true,
-        shareToken: ''
+        enableShare: false // 是否允许邀请好友
     },
     onLoad: function (options) {
-        this.getShareInfo();
         if (app.globalData.defaultExamNo != null) {
             this.setData({
                 examName: app.globalData.defaultExamName,
@@ -40,7 +39,7 @@ Page({
         this.loadCacheUserInfo()
         this.reportVersion();
         options['share_token'] = 'ZXhhbXwxNTg1Mzk2MzcxfDZ8fDcsMTYxNzA2MzQ1Mw=='
-        if('share_token' in options){
+        if ('share_token' in options) {
             var st = options['share_token'];
             this.receiveShare(st);
         }
@@ -48,14 +47,6 @@ Page({
     onShow: function () {
         this.getExams();
         this.loadCacheUserInfo();
-    },
-    onShareAppMessage: function(res){
-        var t = this.data.shareToken.token;
-        var title = '成功邀请朋友，朋友和您均可随机获得1-7天,题库：' + this.data.examName + ' 的会员';
-        return {
-            title: title,
-            path: '/pages/me?share_token=' + t
-          }
     },
     loadCacheUserInfo: function () {
         var currentUser = app.getOrSetCurrentUserData();
@@ -87,11 +78,11 @@ Page({
         this.updateUserInfoAction(data);
 
     },
-    getUserInfo2: function(){
+    getUserInfo2: function () {
         var that = this;
         wx.getUserProfile({
             desc: '同步用户头像信息到小程序',
-            success: function(e){
+            success: function (e) {
                 console.info(e);
                 var userInfo = e.userInfo
                 var data = {
@@ -144,40 +135,18 @@ Page({
             success: res => {
                 var allExams = [];
                 var resData = res.data.data;
-                var examNo = 0;
-                var examIndex = 0;
-                var examName = this.data.examName;
                 for (var index in resData) {
                     if (resData[index]["question_num"] > 0) {
-                        if (resData[index].exam_no == this.data.examNo) {
-                            examName = resData[index].exam_name;
-                            examNo = resData[index].exam_no;
-                            examIndex = index;
-                        }
-
                         allExams.push(resData[index]);
                     }
                 }
-                if (examNo == 0) {
-                    examName = "未选择";
-                }
-                else{
-                }
                 that.setData({
-                    allExams: allExams,
-                    examName: examName,
-                    examNo: examNo,
-                    examIndex: examIndex
+                    allExams: allExams
                 });
-                that.getBrushNum();
-                if (examNo != 0 && allExams[examIndex].exam_role <= 3) {
-                    that.getTips();
-                }
+                that.examChange();
                 wx.hideLoading();
-                that.getShareInfo();
             },
             fail: res => {
-                that.getShareInfo();
                 that.setData({
                     examTip: '网络连接错误，请检查网络'
                 })
@@ -230,7 +199,7 @@ Page({
                 var brushNum = resData['num'];
                 var rightNum = resData['right_num'];
                 var accuracy = '0%';
-                if(rightNum > 0){
+                if (rightNum > 0) {
                     accuracy = parseInt(rightNum * 100 / brushNum) + '%';
                 }
                 that.setData({
@@ -242,7 +211,7 @@ Page({
         })
     },
     getRanking: function (brushNum) {
-        if(brushNum <= 0){
+        if (brushNum <= 0) {
             return false;
         }
         var examNo = this.data.examNo;
@@ -294,19 +263,38 @@ Page({
 
     },
     examChange: function (e) {
-        var examIndex = e.detail.value;
-        var currentExam = this.data.allExams[examIndex];
+        var examIndex = -1;
+        var currentExam = {
+            'exam_no': 0,
+            'exam_name': noExamName,
+            'enable_share': false
+        };
+        if (e == null) {
+            var allExams = this.data.allExams;
+            for (let l = allExams.length, i = 0; i < l; i++) {
+                if (allExams[i].exam_no == this.data.examNo) {
+                    examIndex = i;
+                }
+            }
+        } else {
+            examIndex = e.detail.value;
+        }
+        if (examIndex >= 0) {
+            currentExam = this.data.allExams[examIndex];
+        }
         this.setData({
             examNo: currentExam.exam_no,
             examName: currentExam.exam_name,
+            enableShare: currentExam.enable_share,
             examIndex: examIndex
         });
-        app.setDefaultExam(currentExam);
-        this.getBrushNum();
-        if (currentExam.exam_role <= 3) {
-            this.getTips();
+        if (examIndex >= 0) {
+            app.setDefaultExam(currentExam);
+            this.getBrushNum();
+            if (currentExam.exam_role <= 3) {
+                this.getTips();
+            }
         }
-        this.getShareInfo();
     },
     lookExam: function () {
         wx.navigateTo({
@@ -321,63 +309,106 @@ Page({
             url: "./avatar"
         })
     },
-    reportVersion: function(){
+    reportVersion: function () {
         var key = 'version';
         var cacheVersion = app.getOrSetCacheData2(key);
-        
-        if(cacheVersion != app.globalData.version){
-            var data = {'version': app.globalData.version};
+
+        if (cacheVersion != app.globalData.version) {
+            var data = {
+                'version': app.globalData.version
+            };
             wx.request2({
                 url: '/version/wx',
                 method: 'POST',
                 data: data,
                 success: res => {
-                    if(res.data.status){
+                    if (res.data.status) {
                         app.getOrSetCacheData2(key, app.globalData.version);
                     }
                 }
             })
         }
     },
-    getShareInfo: function(){
-        wx.hideShareMenu();
-        this.setData({
-            shareToken: ''
-        })
-        var examName = this.data.examName;
-        var examNo = this.data.examNo;
-        if(examName == noExamName || examNo <= 0){
-            return false;
-        }
-        var data = {'resource': 'exam', 'resource_id': examNo};
-        wx.request2({
-          url: '/share/token',
-          method: 'POST',
-          data: data,
-          success: res => {
-              var r_data = res.data;
-              if(r_data.status != true){
-                  return false;
-              }
-              this.setData({
-                shareToken: r_data.data
-            })
-          }
+    toShare: function () {
+        wx.navigateTo({
+            url: "./share"
         })
     },
-    receiveShare: function(token){
-        var data = {'action': 'dry-run', 'token': token}
+    receiveShare: function (token) {
+        var data = {
+            'action': 'dry-run',
+            'token': token
+        }
+        var that = this;
         wx.request2({
             url: '/share/token/action',
             method: 'POST',
             data: data,
             success: res => {
                 var r_data = res.data;
-                if(r_data.status != true){
+                console.info(r_data)
+                if (r_data.status != true) {
+                    if(r_data.action == 'show'){
+                        wx.showModal({
+                            title: '邀请失败',
+                            content: r_data.data,
+                            showCancel: false,
+                            success(res){
+                            }
+                        })
+                    }
                     return false;
                 }
-                console.info(r_data)
+                var title = '接受 ' + r_data.data.inviter.nick_name + ' 的邀请';
+                var content = '成为题库 ' + r_data.data.exam.exam_name + ' 的成员';
+                wx.showModal({
+                    title: title,
+                    content: content,
+                    success(res){
+                        if(res.confirm){
+                            that.acceptShare(token);
+                        }
+                    }
+                })
             }
-          })
+        })
+    },
+    acceptShare: function (token) {
+        var data = {
+            'action': 'run',
+            'token': token
+        }
+        wx.request2({
+            url: '/share/token/action',
+            method: 'POST',
+            data: data,
+            success: res => {
+                var r_data = res.data;
+                if (r_data.status != true) {
+                    if(r_data.action == 'show'){
+                        wx.showModal({
+                            title: '邀请失败',
+                            content: r_data.data,
+                            showCancel: false,
+                            success(res){
+                            }
+                        })
+                    }
+                    return false;
+                }
+                wx.showModal({
+                    title: '接收邀请成功',
+                    content: '是否立刻切换到题库\r\n' + r_data.data.exam.exam_name,
+                    success(res){
+                        if(res.confirm){
+                            that.setData({
+                                examNo: r_data.data.exam.exam_no
+                            })
+                            that.getExams();
+                        }
+                    }
+                })
+            }
+        })
     }
 })

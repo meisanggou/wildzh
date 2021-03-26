@@ -533,10 +533,13 @@ class ExamMember(ExamMemberFlow):
     def increase_exam_member(self, user_no, exam_no, authorizer, days):
         items = self._select_exam_member(user_no, exam_no)
         if items:
-            end_time = items[0]
-            n_end_time = end_time + self.DAY_SECONDS * days
-            self.update_exam_member(user_no, exam_no, authorizer,
-                                    end_time=n_end_time)
+            end_time = items[0]['end_time']
+            if end_time is not None:
+                if end_time < time.time():
+                    end_time = time.time()
+                n_end_time = end_time + self.DAY_SECONDS * days
+                self.update_exam_member(user_no, exam_no, authorizer,
+                                        end_time=n_end_time)
         else:
             self.insert_exam_member(user_no, exam_no, authorizer, days=days)
         return self.user_exams(user_no, exam_no)[0]
@@ -869,11 +872,9 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                 "exam_extend", "exam_num", "question_num"]
         items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value, where_cond=where_cond)
         for item in items:
-            # item["exam_type"] = "tiku"
             if item["exam_extend"] is not None:
                 item['exam_extend'] = json.loads(item["exam_extend"])
                 item.update(item['exam_extend'])
-                # del item["exam_extend"]
         return items
 
     def select_exam2(self, exam_no):

@@ -130,7 +130,8 @@ class User(object):
             self.user_folder = None
 
     # 插入用户注册数据
-    def insert_user(self, user_name=None, password=None, tel=None, nick_name=None, email=None, wx_id=None, creator=None,
+    def insert_user(self, user_name=None, password=None, tel=None,
+                    nick_name=None, email=None, wx_id=None, creator=None,
                     role=1):
         add_time = int(time.time())
         if nick_name is not None:

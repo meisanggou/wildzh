@@ -118,21 +118,25 @@
                     </view>
                 </view>
             </view>
-            <view class="page-section" wx-if="{{ shareToken }}">
+            <view class="page-section" wx-if="{{ enableShare }}">
                 <view class="weui-cells weui-cells_after-title">
                     <view class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
                             <view class="weui-label">邀请好友</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <view class="weui-input">随机得1-{{shareToken.free_days }}天会员</view>
+                            <view class="weui-input"></view>
                         </view>
-                        <view class="weui-cell__ft right-slip">
+                        <view class="weui-cell__ft right-slip" bindtap="toShare">
+                            <image mode="aspectFit" class="right-slip" src="/images/right_slip.png">
+                            </image>
+                        </view>
+                        <!-- <view class="weui-cell__ft right-slip">
                             <button open-type="share" class="button weui-input">
                                 <image mode="aspectFit" class="right-slip" src="/images/right_slip.png">
                                 </image>
                             </button>
-                        </view>
+                        </view> -->
                     </view>
                 </view>
             </view>

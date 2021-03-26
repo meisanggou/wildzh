@@ -7,6 +7,7 @@ from flask import g
 from wildzh.utils import constants
 from wildzh.utils.log import getLogger
 from wildzh.utils import registry
+from wildzh.classes.share import ShareRecords
 from wildzh.classes.share import ShareKey
 from wildzh.web02.view import View2
 
@@ -19,7 +20,7 @@ url_prefix = "/share"
 share_view = View2("share", __name__, url_prefix=url_prefix,
                      auth_required=True)
 SHARE_KEY_MAN = ShareKey(db_conf_path=db_conf_path)
-
+SHARE_RECORDS_MAN = ShareRecords(db_conf_path=db_conf_path)
 
 
 @share_view.route('/token', methods=['POST'])
@@ -53,26 +54,38 @@ def parsing_share_token():
     data = g.request_data
     action = data['action']  # dry-run or run
     token = data['token']
+    res_data = {'status': False, 'action': 'show', 'data': ''}
     base64.b64decode(token.encode(constants.ENCODING))
     p_token = base64.b64decode(token.encode(constants.ENCODING)).decode(
         constants.ENCODING)
     items = p_token.split('|', 4)
+
     if len(items) != 5:
         LOG.warning('')
-        return {'status': False, 'data': '邀请码错误'}
+        res_data['data'] = '邀请码错误'
+        return res_data
+    # 是否已经接受过该邀请
+    r_items = SHARE_RECORDS_MAN.select(g.user_no, share_token=token)
+    if r_items:
+        res_data['action'] = 'ignore'
+        res_data['data'] = '已经接受该邀请'
+        return res_data
     resource, resource_id, i_user_no, sign, others = items
     share_key = SHARE_KEY_MAN.select(i_user_no)
     result = registry.notify_callback(
         resource, constants.E_PARSING_TOKEN, share_view,
         resource_id=resource_id, action=action, user_no=g.user_no,
-        share_key=share_key, inviter_user_no=int(i_user_no), sign=sign,
+        user_role=g.user_role, share_key=share_key,
+        inviter_user_no=int(i_user_no), sign=sign,
         others=others.split(','))
-    r_data = {'status': result['status']}
+    res_data['status'] = result['status']
     if result['status']:
-        r_data['data'] = result
+        res_data['data'] = result
         if action != 'dry-run':
             # 记录
-            SHARE_KEY_MAN
+            SHARE_RECORDS_MAN.create(g.user_no, resource, resource_id,
+                                     i_user_no, token, result.get('extend'))
     else:
-        r_data['data'] = result['message']
-    return r_data
+        res_data['action'] = result.get('action', 'show')
+        res_data['data'] = result['message']
+    return res_data

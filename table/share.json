@@ -54,6 +54,11 @@
                 "col_type": "varchar(200)"
             },
             {
+                "col_comment": "扩展信息",
+                "col_name": "extend",
+                "col_type": "varchar(300)"
+            },
+            {
                 "col_comment": "插入时间",
                 "col_name": "insert_time",
                 "col_type": "int(11)"

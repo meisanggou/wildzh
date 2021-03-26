@@ -233,18 +233,23 @@ def share_token(resource, event, trigger, **kwargs):
 
 
 def parsing_token(resource, event, trigger, **kwargs):
-    r = {'status': 'False', 'message': 'success'}
+    r = {'status': False, 'message': 'success'}
     # step 1 获得参数
     exam_no = kwargs.get('resource_id')
     inviter_user_no = kwargs.get('inviter_user_no')
     others = kwargs.get('others')
     sign = kwargs.get('sign')
     user_no = kwargs.get('user_no')
+    user_role = kwargs.get('user_role')
     action = kwargs.get('action')
     if len(others) != 2:
         r['message'] = ''
         return r
-    free_days, expiration_time = others
+    # step 0 不能邀请自己
+    if user_no == inviter_user_no:
+        r['message'] = '不能邀请自己'
+        return r
+    free_days, expiration_time = [int(x) for x in others]
     # step 1 组合校验文本
     plain_s = '%s|%s|%s|%s|%s' % (resource, exam_no, inviter_user_no,
                                   free_days, expiration_time)
@@ -257,28 +262,36 @@ def parsing_token(resource, event, trigger, **kwargs):
         r['message'] = '邀请码异常'
         return r
     # step 3 判定被邀请者是否符合条件
-    # items = c_exam.user_exams(user_no, exam_no, ensure_member=False)
-    # if items:
-    #     r['message'] = '不是题库的新用户'
-    #     return r
+    if (user_role & 2) != 2:
+        items = c_exam.user_exams(user_no, exam_no, ensure_member=False)
+        if items:
+            r['message'] = '不是题库的新用户'
+            return r
+    # TODO 判定被授权者是否已有高权限
+
     # step 实际授权 or 返回信息
+    u_items = c_user.verify_user_exist(user_no=inviter_user_no)
+    if not u_items:
+        r['message'] = '邀请者信息异常'
+        return r
+    # 返回信息
+    e_items = c_exam.select_exam2(exam_no)
+    if not e_items:
+        r['message'] = '邀请题库信息异常'
+        return r
+    r['exam'] = {'exam_name': e_items[0].exam_name, 'exam_no': e_items[0].exam_no}
     if action == 'dry-run':
-        # 返回信息
-        u_items = c_user.verify_user_exist(user_no=inviter_user_no)
-        if not u_items:
-            r['message'] = '邀请者信息异常'
-            return r
-        e_items = c_exam.select_exam2(exam_no)
-        if not e_items:
-            r['message'] = '邀请题库信息异常'
-            return r
         r['inviter'] = {'user_no': inviter_user_no, 'nick_name':
             u_items[0]['nick_name']}
-        r['exam'] = {'exam_name': e_items[0].exam_name}
     else:
         # 实际授权
-        c_exam.increase_exam_member(user_no, exam_no, 0, free_days)
-        c_exam.increase_exam_member(inviter_user_no, exam_no, 0, free_days)
+        extend = {}
+        um = c_exam.increase_exam_member(user_no, exam_no, 0, free_days)
+        i_um = c_exam.increase_exam_member(inviter_user_no, exam_no, 0,
+                                           free_days)
+        extend['user'] = {'end_time': um['end_time']}
+        extend['inviter'] = {'end_time': i_um['end_time']}
+        r['extend'] = extend
     r['status'] = True
     return r
 
@@ -348,6 +361,7 @@ def get_exam_info():
         item = items[i]
         r_item = item.to_dict()
         exam_no = item.exam_no
+        r_item['enable_share'] = True
         if int(item.adder) == g.user_no:
             r_item['exam_role'] = 1
             r_item['end_time'] = None
@@ -360,6 +374,10 @@ def get_exam_info():
             r_item['exam_role'] = item.exam_role
         if 'end_time' not in r_item:
             r_item['end_time'] = 0
+        if r_item['exam_role'] < 10:
+            r_item['enable_share'] = True
+        else:
+            r_item['enable_share'] = False
         if r_item['exam_role'] <= min_role:
             r_items.append(r_item)
 

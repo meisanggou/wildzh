@@ -40,4 +40,22 @@ class ShareKey(DBObject):
 class ShareRecords(DBObject):
     table = 'share_records'
     columns = ['user_no', 'resource', 'resource_id', 'inviter', 'share_token',
-               'insert_time']
+               'extend', 'insert_time']
+
+    def create(self, user_no, resource, resource_id, inviter, share_token, extend):
+        data = dict(user_no=user_no, resource=resource,
+                    resource_id=resource_id, inviter=inviter,
+                    share_token=share_token, extend=extend,
+                    insert_time=self.now_time)
+        l = self.db.execute_insert(self.t, kwargs=data)
+        return l
+
+    def select(self, user_no, share_token=None):
+        where_value = dict(user_no=user_no)
+        if share_token is not None:
+            where_value['share_token'] = share_token
+        items = self.db.execute_select(self.t, where_value=where_value,
+                                       cols=self.cols)
+        if len(items) > 0:
+            return items[0]
+        return None
