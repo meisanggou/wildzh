@@ -212,13 +212,14 @@ def share_token(resource, event, trigger, **kwargs):
     # step 1 判断题库是否可分享
     if not exam_no:
         return None
-    # step 2 判断用户是否有权限分享对应题库
     u_items = c_exam.select_exam2(exam_no)
     if not u_items:
         return None
     exam_item = u_items[0]
     if not exam_item.is_private():
         return None
+    # step 2 判断用户是否有权限分享对应题库
+
     # TODO 判断权限 暂时不判定
     # step 3 获取题库赠送天数
     free_days = 7
@@ -235,7 +236,8 @@ def share_token(resource, event, trigger, **kwargs):
     sign = ''
     # step 7 计算token
     others = [str(x) for x in (free_days, expiration_time)]
-    data = {'free_days': free_days, 'expiration_time': expiration_time}
+    data = {'free_days': free_days, 'expiration_time': expiration_time,
+            'image_url': '/static01/t_images/share.png'}
     return {'sign': sign, 'data': data, 'others': others}
 
 
@@ -250,7 +252,7 @@ def parsing_token(resource, event, trigger, **kwargs):
     user_role = kwargs.get('user_role')
     action = kwargs.get('action')
     if len(others) != 2:
-        r['message'] = ''
+        r['message'] = '邀请码数据异常'
         return r
     # step 0 不能邀请自己
     if user_no == inviter_user_no:
@@ -267,14 +269,13 @@ def parsing_token(resource, event, trigger, **kwargs):
         return r
     verified_sign = ''
     if verified_sign != sign:
-        r['message'] = '邀请码异常'
+        r['message'] = '邀请码签名异常'
         return r
     # step 3 判定被邀请者是否符合条件
-    if (user_role & 2) != 2:
-        items = c_exam.user_exams(user_no, exam_no, ensure_member=False)
-        if items:
-            r['message'] = '不是题库的新用户'
-            return r
+    items = c_exam.user_exams(user_no, exam_no, ensure_member=False)
+    if items:
+        r['message'] = '不是题库的新用户'
+        return r
     # TODO 判定被授权者是否已有高权限
 
     # step 实际授权 or 返回信息
@@ -293,12 +294,13 @@ def parsing_token(resource, event, trigger, **kwargs):
             u_items[0]['nick_name']}
     else:
         # 实际授权
-        extend = {}
+        extend = {'free_days': free_days}
         um = c_exam.increase_exam_member(user_no, exam_no, 0, free_days)
-        i_um = c_exam.increase_exam_member(inviter_user_no, exam_no, 0,
-                                           free_days)
         extend['user'] = {'end_time': um['end_time']}
-        extend['inviter'] = {'end_time': i_um['end_time']}
+        if (user_role & 2) != 2:
+            i_um = c_exam.increase_exam_member(inviter_user_no, exam_no, 0,
+                                               free_days)
+            extend['inviter'] = {'end_time': i_um['end_time']}
         r['extend'] = extend
     r['status'] = True
     return r
