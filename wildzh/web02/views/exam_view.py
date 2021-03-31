@@ -30,6 +30,7 @@ from wildzh.tools.read_xml import handle_docx_main_xml
 from wildzh.utils.async_pool import get_pool
 from wildzh.utils import constants
 from wildzh.utils import registry
+from wildzh.utils import text
 from wildzh.utils.log import getLogger
 from wildzh.web02.view import View2
 
@@ -223,6 +224,8 @@ def share_token(resource, event, trigger, **kwargs):
     # TODO 判断权限 暂时不判定
     # step 3 获取题库赠送天数
     free_days = 7
+    tips_s = text.load_text('share') % {'days': free_days}
+    tips = text.convert_to_list(tips_s)
     # step 4 计算失效时间
     valid_days = int(kwargs.get('valid_days', 7))
     expiration_time =  int(time.time() + valid_days * 3600 * 24)
@@ -237,7 +240,7 @@ def share_token(resource, event, trigger, **kwargs):
     # step 7 计算token
     others = [str(x) for x in (free_days, expiration_time)]
     data = {'free_days': free_days, 'expiration_time': expiration_time,
-            'image_url': '/static01/t_images/share.png'}
+            'image_url': '/static01/t_images/share.png', 'tips': tips}
     return {'sign': sign, 'data': data, 'others': others}
 
 
