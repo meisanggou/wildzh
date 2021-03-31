@@ -34,4 +34,6 @@ def convert_to_list(text):
             items = []
         else:
             items.append(line)
+    if title:
+        sections.append({'title': title, 'items': items})
     return sections
