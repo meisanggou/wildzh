@@ -61,14 +61,17 @@ def parsing_share_token():
     items = p_token.split('|', 4)
 
     if len(items) != 5:
-        LOG.warning('')
         res_data['data'] = '邀请码错误'
+        LOG.warning('Share fail, token is %s, message: %s', token,
+                    res_data['data'])
         return res_data
     # 是否已经接受过该邀请
     r_items = SHARE_RECORDS_MAN.select(g.user_no, share_token=token)
     if r_items:
         res_data['action'] = 'ignore'
         res_data['data'] = '已经接受该邀请'
+        LOG.warning('Share fail, token is %s, message: %s', token,
+                    res_data['data'])
         return res_data
     resource, resource_id, i_user_no, sign, others = items
     share_key = SHARE_KEY_MAN.select(i_user_no)
@@ -87,5 +90,7 @@ def parsing_share_token():
                                      i_user_no, token, result.get('extend'))
     else:
         res_data['action'] = result.get('action', 'show')
+        LOG.warning('Share fail, token is %s, message: %s', token,
+                    result['message'])
         res_data['data'] = result['message']
     return res_data
