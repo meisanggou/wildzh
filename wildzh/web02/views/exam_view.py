@@ -223,7 +223,7 @@ def share_token(resource, event, trigger, **kwargs):
 
     # TODO 判断权限 暂时不判定
     # step 3 获取题库赠送天数
-    free_days = 7
+    free_days = 3
     tips_s = text.load_text('share') % {'days': free_days}
     tips = text.convert_to_list(tips_s)
     # step 4 计算失效时间
@@ -378,11 +378,12 @@ def get_exam_info():
         if int(item.adder) == g.user_no:
             r_item['exam_role'] = 1
             r_item['end_time'] = None
-        elif exam_no in u_exams:
-            r_item.update(u_exams[exam_no])
         elif (g.user_role & 2) == 2:
             r_item['exam_role'] = 0  # 内部用户全部返回
             r_item['end_time'] = None
+        elif exam_no in u_exams:
+            r_item.update(u_exams[exam_no])
+
         else:
             r_item['exam_role'] = item.exam_role
         if 'end_time' not in r_item:

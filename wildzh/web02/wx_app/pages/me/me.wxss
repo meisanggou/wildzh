@@ -85,6 +85,11 @@
     background-color: white;
 }
 
+.jifen-pan {
+    text-align: center;
+    width: 200rpx;
+}
+
 .statis {
     display: flex;
     margin-top: -90rpx;

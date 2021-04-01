@@ -12,6 +12,10 @@
                     </picker>
                 </view>
             </view>
+            <!-- <view class="jifen-pan">
+                <view>0</view>
+                <view>积分</view>
+            </view> -->
         </view>
         <view wx:else class="user-panel2">
             <image class="avatar bottom30" mode="aspectFit" src="/images/unregister.png"></image>
