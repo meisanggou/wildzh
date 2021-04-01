@@ -774,7 +774,7 @@ def query2_question_items():
             res_data['message'] = ce_item.search_tip
         return {'status': True, 'data': res_data}
     item = c_exam.get_one_usage_records(g.user_no, exam_no)
-    if ce_role >= 5 and item['num'] < 100:
+    if ce_role >= 5 and item['num'] < 10:
         res_data['message'] = '当前做题较少，暂无法使用！'
         return {'status': True, 'data': res_data}
     if ce_item.search_tip:
