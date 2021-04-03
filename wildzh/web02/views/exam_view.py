@@ -174,7 +174,7 @@ def required_manager_exam(key='exam_no', **role_desc):
             if (g.user_role & 2) == 2:
                 exam_role = 0
             else:
-                exist_items = c_exam.select_exam(exam_no)
+                exist_items = c_exam.select_exam(exam_no, offline=True)
                 if len(exist_items) <= 0:
                     return jsonify({"status": False, "data": 'exam %s not '
                                                              'exist' % exam_no})
@@ -367,7 +367,10 @@ def get_exam_info():
     min_role = 25
     if 'is_admin' in request.args:
         min_role = 3
-    items = c_exam.select_exam2(g.exam_no)
+    offline = False
+    if g.is_admin and 'offline' in request.args:
+        offline = True
+    items = c_exam.select_exam2(g.exam_no, offline=offline, user_no=g.user_no)
     r_items = []
     u_exams = c_exam.select_user_exams(g.user_no)
     for i in range(len(items) - 1, -1, -1):
@@ -378,7 +381,7 @@ def get_exam_info():
         if int(item.adder) == g.user_no:
             r_item['exam_role'] = 1
             r_item['end_time'] = None
-        elif (g.user_role & 2) == 2:
+        elif g.is_admin:
             r_item['exam_role'] = 0  # 内部用户全部返回
             r_item['end_time'] = None
         elif exam_no in u_exams:
@@ -402,7 +405,7 @@ def get_exam_info():
 
 
 @exam_view.route("/info/", methods=["PUT"])
-@login_required
+@required_manager_exam()
 def update_exam():
     data = g.request_data
     exam_no = data["exam_no"]
@@ -417,7 +420,7 @@ def update_exam():
 
 
 @exam_view.route("/info/", methods=["DELETE"])
-@login_required
+@required_manager_exam()
 def delete_exam():
     exam_no = g.request_data["exam_no"]
     l = c_exam.delete_exam(exam_no)
@@ -434,6 +437,7 @@ def get_exam_tips():
         data.append({'tip_type': 'feedback', 'items': f_items,
                      'tip': '有待处理的用户反馈'})
     return {'status': True, 'data': data}
+
 
 def sync_one_question(exam_no, q_item, update=False):
     doc_id = '%s_%s' % (exam_no, q_item['question_no'])
@@ -485,10 +489,8 @@ def entry_questions():
 
 @exam_view.route("/questions/", methods=["PUT"])
 @login_required
-@required_exam_no
+@required_manager_exam()
 def update_question():
-    if g.exam_role > 3:
-        return jsonify({'status': False, 'data': 'forbidden'})
     data = g.request_data
     extra_data = dict()
     question_no = data["question_no"]
@@ -635,19 +637,21 @@ def get_exam_sources():
 
 @exam_view.route("/online/", methods=["POST"])
 @login_required
+@required_manager_exam()
 def online_exam():
     exam_no = g.request_data["exam_no"]
-    items = c_exam.select_exam(exam_no)
+    items = c_exam.select_exam(exam_no, offline=True)
     if len(items) != 1:
-        return jsonify({"status": False, "data": "测试不存在"})
+        return jsonify({"status": False, "data": "题库不存在"})
     if items[0]["status"] & 3 != 3:
-        return jsonify({"status": False, "data": "测试状态未达到不可上线"})
+        return jsonify({"status": False, "data": "题库状态未达到不可上线"})
     c_exam.online_exam(exam_no)
     return jsonify({"status": True, "data": "success"})
 
 
 @exam_view.route("/online/", methods=["DELETE"])
 @login_required
+@required_manager_exam()
 def offline_exam():
     exam_no = g.request_data["exam_no"]
     c_exam.offline_exam(exam_no)
@@ -690,6 +694,7 @@ def upload_question_page():
 
 @exam_view.route("/question/file", methods=["POST"])
 @login_required
+@required_manager_exam()
 def upload_question_file():
     r = dict()
     for key in request.files:
@@ -745,6 +750,7 @@ def search_question_page():
 
 @exam_view.route("/query", methods=["POST"])
 @login_required
+@required_manager_exam()
 def query_question_items():
     data = request.json
     exam_no = data['exam_no']

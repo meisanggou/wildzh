@@ -12,10 +12,6 @@
                     </picker>
                 </view>
             </view>
-            <!-- <view class="jifen-pan">
-                <view>0</view>
-                <view>积分</view>
-            </view> -->
         </view>
         <view wx:else class="user-panel2">
             <image class="avatar bottom30" mode="aspectFit" src="/images/unregister.png"></image>
@@ -62,6 +58,15 @@
                     <view class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
                             <view class="weui-label">编号</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <view class="weui-input">{{userNo}}
+                            </view>
+                        </view>
+                    </view>
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">积分</view>
                         </view>
                         <view class="weui-cell__bd">
                             <view class="weui-input">{{userNo}}

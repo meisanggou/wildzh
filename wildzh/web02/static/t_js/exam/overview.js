@@ -20,7 +20,7 @@ function explain_status(s) {
 
 function init_info(data) {
     if (data == null) {
-        var info_url = $("#info_url").val();
+        var info_url = $("#info_url").val() + '?offline=true';
         my_async_request2(info_url, "GET", null, init_info);
         return 0;
     }

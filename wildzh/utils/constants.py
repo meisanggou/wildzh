@@ -9,6 +9,9 @@ TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 ENCODING = 'utf-8'
 
 
+# exam status
+STATUS_OFFLINE = 128
+
 # token error
 TOKEN_BAD_FORMAT = 'token_bad_format'  # login again
 TOKEN_EXPIRED = 'token_expired'  # try refresh

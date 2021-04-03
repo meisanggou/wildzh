@@ -9,8 +9,8 @@ import string
 import uuid
 
 from mysqldb_rich.db2 import DB
-
 from wildzh.classes.exam_feedback import ExamQuestionFeedback
+from wildzh.utils import constants
 
 __author__ = 'meisa'
 
@@ -41,7 +41,7 @@ __author__ = 'meisa'
 4代表已录入结果
 8 16 32
 64代表已上线 对题库管理员以外的人员开放访问
-128代表已下线
+128代表已下线  创建者 或者 题库管理员指定特定参数可查看
 0代表已删除
 """
 
@@ -866,22 +866,28 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
         l = self._update_question(exam_no, question_no, **kwargs)
         return l
 
-    def select_exam(self, exam_no):
+    def select_exam(self, exam_no, offline, user_no=None):
         where_value = dict()
         where_cond = ["status<>0"]
         if exam_no is not None:
             where_value["exam_no"] = exam_no
         cols = ["exam_no", "exam_name", "exam_desc", "adder", "status",
                 "exam_extend", "exam_num", "question_num"]
-        items = self.db.execute_select(self.t_info, cols=cols, where_value=where_value, where_cond=where_cond)
+        items = self.db.execute_select(self.t_info, cols=cols,
+                                       where_value=where_value,
+                                       where_cond=where_cond)
         for item in items:
             if item["exam_extend"] is not None:
                 item['exam_extend'] = json.loads(item["exam_extend"])
                 item.update(item['exam_extend'])
+        if not offline:
+            items = [item for item in items
+                     if item['status'] & constants.STATUS_OFFLINE == 0
+                     or user_no == int(item['adder'])]
         return items
 
-    def select_exam2(self, exam_no):
-        items = self.select_exam(exam_no)
+    def select_exam2(self, exam_no, offline=False, user_no=None):
+        items = self.select_exam(exam_no, offline=offline, user_no=user_no)
         return [ExamObject(**item) for item in items]
 
     def _select_questions(self, **kwargs):
@@ -1029,11 +1035,13 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
         return items
 
     def online_exam(self, exam_no):
+        self._update_status(exam_no, sub_status=constants.STATUS_OFFLINE)
         l = self._update_status(exam_no, add_status=64)
         return l
 
     def offline_exam(self, exam_no):
-        l = self._update_status(exam_no, sub_status=64)
+        self._update_status(exam_no, sub_status=64)
+        l = self._update_status(exam_no, add_status=constants.STATUS_OFFLINE)
         return l
 
     def delete_exam(self, exam_no):
