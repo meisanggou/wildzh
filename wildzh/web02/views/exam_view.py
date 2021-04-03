@@ -3,7 +3,6 @@
 from collections import OrderedDict
 from functools import wraps
 import os
-import base64
 import re
 import time
 import tempfile
@@ -137,7 +136,7 @@ def required_exam_no(f):
             return jsonify({"status": False, "data": "Bad Request. "
                                                      "Exam no exist"})
         exam_item = exist_items[0]
-        if(g.user_role & 2) == 2:
+        if g.is_admin:
             g.exam_role = 0
         else:
             if int(exam_item.adder) == g.user_no:
@@ -171,7 +170,7 @@ def required_manager_exam(key='exam_no', **role_desc):
             if key not in data:
                 return jsonify({'status': False, 'data': 'need key %s' % key})
             exam_no = data[key]
-            if (g.user_role & 2) == 2:
+            if g.is_admin:
                 exam_role = 0
             else:
                 exist_items = c_exam.select_exam(exam_no, offline=True)
@@ -837,16 +836,16 @@ def new_member():
     exam_no = data['exam_no']
     allow_update = data.get('allow_update', False)
     end_time = data.get('end_time', None)
-    if (g.user_role & 2) != 2:
-        exist_items = c_exam.select_exam(exam_no)
+    if not g.is_admin:
+        exist_items = c_exam.select_exam2(exam_no)
         if len(exist_items) <= 0:
-            return jsonify({"status": False, "data": 'forbidden'})
-        if int(exist_items[0]['adder']) != g.user_no:
+            return jsonify({"status": False, "data": 'forbidden 0'})
+        if int(exist_items[0].adder) != g.user_no:
             e_items = c_exam.user_exams(g.user_no, exam_no)
             if len(e_items) <= 0:
-                return jsonify({"status": False, "data": 'forbidden'})
+                return jsonify({"status": False, "data": 'forbidden 1'})
             if e_items[0]['exam_role'] > 2:
-                return jsonify({"status": False, "data": 'forbidden'})
+                return jsonify({"status": False, "data": 'forbidden 2'})
     member_no = data['member_no']
     items = c_exam.user_exams(member_no, exam_no)
     if len(items) > 0:
