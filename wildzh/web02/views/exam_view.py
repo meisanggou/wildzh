@@ -131,7 +131,7 @@ def required_exam_no(f):
         if g.exam_no is None:
             return jsonify({"status": False, "data": "Bad Request. exam_no"
                                                      " not in request"})
-        exist_items = c_exam.select_exam2(g.exam_no)
+        exist_items = c_exam.select_exam2(g.exam_no, offline=True)
         if len(exist_items) <= 0:
             return jsonify({"status": False, "data": "Bad Request. "
                                                      "Exam no exist"})

@@ -1,0 +1,204 @@
+[
+  {
+    "table_cols": [
+      {
+        "pri_key": true, 
+        "col_comment": "扣费流水号",
+        "col_name": "serial_no",
+        "col_type": "bigint(20)"
+      },
+      {
+        "col_comment": "账单编号 引自jy_billing主键",
+        "col_name": "billing_no",
+        "col_type": "bigint(20)"
+      },
+      {
+        "col_comment": "扣费金额",
+        "col_name": "amount",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "扣费时间，时间戳",
+        "col_name": "pay_time",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "支付方式，1代表余额支付2代表代金券支付3代表系统打折代为支付4代表微信即刻支付5代表赠送余额支付",
+        "col_name": "pay_type",
+        "col_type": "tinyint(4)"
+      },
+      {
+        "col_comment": "备注信息，余额支付可无备注 代金券支付至少备注代金券号码 系统打折代为支付至少备注打折卡信息 第三方支付平台即刻支付至少备注支付平台返回信息",
+        "col_name": "remark",
+        "col_type": "varchar(200)",
+        "allow_null": true
+      }
+    ],
+    "table_comment": "账单扣费信息(只允许读写操作)",
+    "table_name": "billing_fee"
+  },
+  {
+    "table_cols": [
+      {
+        "pri_key": true,
+        "col_comment": "时间戳 * 1000 00 + 随即码4位 - 基础时间",
+        "col_name": "billing_no",
+        "col_type": "bigint(20)"
+      },
+      {
+        "col_comment": "晶云系统账户名",
+        "col_name": "account",
+        "col_type": "varchar(20)"
+      },
+      {
+        "col_comment": "账单产生项目的编号",
+        "col_name": "billing_project",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "消费量 次数或者秒数",
+        "col_name": "consumption",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "账单产生类型1代表即付，购买产品立刻付费；2代表即时，用户使用产品根据使用频率或者使用量使用完后台及时付费；3代表定期，用户账户占用的资源定时扣费",
+        "col_name": "billing_type",
+        "col_type": "tinyint(4)"
+      },
+      {
+        "default_value": "b'0'",
+        "col_comment": "0代表未支付1代表已支付",
+        "col_name": "status",
+        "col_type": "bit(1)"
+      },
+      {
+        "col_comment": "账单的详细信息",
+        "col_name": "detail",
+        "col_type": "varchar(200)"
+      },
+      {
+        "col_comment": "账单的备注信息",
+        "col_name": "remark",
+        "col_type": "varchar(200)"
+      },
+      {
+        "col_comment": "账单产生ip",
+        "col_name": "ip",
+        "col_type": "bigint(20)"
+      }
+    ],
+    "table_comment": "消费账单信息队列(只允许读写操作和更新status)",
+    "table_name": "jy_billing"
+  },
+  {
+    "table_cols": [
+      {
+        "pri_key": true,
+        "col_comment": "晶云系统账户名",
+        "col_name": "account",
+        "col_type": "varchar(20)"
+      },
+      {
+        "pri_key": true,
+        "col_comment": "参照jy_billing billing_no",
+        "col_name": "billing_no",
+        "col_type": "bigint(20)"
+      },
+      {
+        "col_comment": "账单添加时间",
+        "col_name": "add_time",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "收费项目编号",
+        "col_name": "billing_project",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "收费项目的名称",
+        "col_name": "project_name",
+        "col_type": "varchar(30)"
+      },
+      {
+        "col_comment": "账单金额 1元用100表示",
+        "col_name": "amount",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "账单产生类型即付，购买产品立刻付费；即时，用户使用产品根据使用频率或者使用量使用完后台及时付费；定期，用户账户占用的资源定时扣费",
+        "col_name": "billing_type",
+        "col_type": "varchar(20)"
+      },
+      {
+        "col_comment": "消费量|单价|账单的详细信息",
+        "col_name": "detail",
+        "col_type": "varchar(250)"
+      },
+      {
+        "col_comment": "账单的备注信息",
+        "col_name": "remark",
+        "col_type": "varchar(200)"
+      },
+      {
+        "default_value": "0",
+        "col_comment": "账单状态0代表未支付 1代表已支付 2[暂不使用]",
+        "col_name": "status",
+        "col_type": "tinyint(4)"
+      },
+      {
+        "default_value": "b'0'",
+        "col_comment": "0代表未删除1代表已删除",
+        "col_name": "is_delete",
+        "col_type": "bit(1)"
+      },
+      {
+        "col_comment": "付费流水号（billing_fee中serial_no）中间|分割",
+        "col_name": "pay_info",
+        "col_type": "varchar(100)",
+        "allow_null": true
+      }
+    ],
+    "table_comment": "用户消费账单信息(只允许读写操作和更新is_delete)",
+    "table_name": "user_billing"
+  },
+  {
+    "table_cols": [
+      {
+        "pri_key": true,
+        "col_comment": "账户编号",
+        "col_name": "user_no",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "剩余可用金额",
+        "col_name": "balance",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "消费总金额",
+        "col_name": "expenses",
+        "col_type": "int(11)"
+      },
+      {
+        "default_value": "0",
+        "col_comment": "信用额度",
+        "col_name": "credit_line",
+        "col_type": "int(11)"
+      },
+      {
+        "default_value": "0",
+        "col_comment": "通过系统获得的余额",
+        "col_name": "sys_balance",
+        "col_type": "int(11) unsigned"
+      },
+      {
+        "default_value": "0",
+        "col_comment": "消费的 通过系统获得的 总金额",
+        "col_name": "sys_expenses",
+        "col_type": "int(11)"
+      }
+    ],
+    "table_comment": "用户的余额和消费",
+    "table_name": "user_cash"
+  }
+]
