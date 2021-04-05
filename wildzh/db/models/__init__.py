@@ -15,6 +15,11 @@ class _Base(object):
             lower_name = lower_name[:-5]
         return lower_name + 's'
 
+    def save(self, session):
+        with session.begin(subtransactions=True):
+            session.add(self)
+            session.flush()
+
     def to_dict(self):
         columns = list(dict(object_mapper(self).columns).keys())
         return {c: getattr(self, c) for c in columns}

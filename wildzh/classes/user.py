@@ -133,7 +133,7 @@ class User(object):
             self.user_folder = None
 
     # 插入用户注册数据
-    def insert_user(self, user_name=None, password=None, tel=None,
+    def insert_user(self, session, user_name=None, password=None, tel=None,
                     nick_name=None, email=None, wx_id=None, creator=None,
                     role=1):
         add_time = int(time.time())
@@ -141,12 +141,13 @@ class User(object):
             nick_name = base64.b64encode(nick_name)
         else:
             nick_name = ''
-        kwargs = dict(user_name=user_name, password=password, tel=tel, nick_name=nick_name, email=email, wx_id=wx_id,
+        kwargs = dict(user_name=user_name, password=password, tel=tel,
+                      nick_name=nick_name, email=email, wx_id=wx_id,
                       creator=creator, add_time=add_time, role=role)
+        u_o = self.model(**kwargs)
         if password is not None:
-            kwargs["password"] = generate_password_hash(self._md5_hash_password(user_name, password))
-        l = self.db.execute_insert(self.t, kwargs=kwargs, ignore=True)
-        return l
+            u_o.password = generate_password_hash(self._md5_hash_password(user_name, password))
+        u_o.save(session)
 
     def update_password(self, user_name, new_password):
         en_password = generate_password_hash(self._md5_hash_password(user_name, new_password))
@@ -207,7 +208,7 @@ class User(object):
 
     # 验证auth是否存在 包括 account tel alias wx_id
     def verify_user_exist(self, *args, **kwargs):
-        if args and False:
+        if args:
             return self.verify_user_exist2(args[0], **kwargs)
         cols = ["user_no", "user_name", "tel", "email", "wx_id", "role",
                 "nick_name", "avatar_url"]
@@ -223,18 +224,20 @@ class User(object):
                 print(e)
         return db_items
 
-    def new_user(self, user_name, password=None, nick_name=None, creator=None, role=1):
+    def new_user(self, session, user_name, password=None, nick_name=None,
+                 creator=None, role=1):
         items = self.verify_user_exist(user_name=user_name)
         if len(items) > 0:
             return False, u"用户名已存在"
         if nick_name is None:
             nick_name = user_name
-        self.insert_user(user_name, password, nick_name=nick_name, creator=creator, role=role)
+        self.insert_user(session, user_name, password, nick_name=nick_name,
+                         creator=creator, role=role)
         return True, dict(user_name=user_name)
 
-    def new_wx_user(self, wx_id):
-        self.insert_user(wx_id=wx_id)
-        items = self.verify_user_exist(wx_id=wx_id)
+    def new_wx_user(self, session, wx_id):
+        self.insert_user(session, wx_id=wx_id)
+        items = self.verify_user_exist(session, wx_id=wx_id)
         if len(items) <= 0:
             return None
         return items[0]

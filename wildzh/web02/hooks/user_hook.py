@@ -25,5 +25,6 @@ class UserHook(FlaskHook):
             g.user_no = None
 
     def after_request(self, response):
+        g.session.commit()
         g.session.close()
         return response

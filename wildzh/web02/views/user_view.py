@@ -100,8 +100,9 @@ def wx_login_action():
         return jsonify({"status": False, "data": data})
     items = c_user.verify_user_exist(g.session, wx_id=data["openid"])
     if len(items) <= 0:
-        LOG.info('someone login from wx, user not exist, new user %s', data["openid"])
-        item = c_user.new_wx_user(data["openid"])
+        LOG.info('someone login from wx, user not exist, new user %s',
+                 data["openid"])
+        item = c_user.new_wx_user(g.session, data["openid"])
         c_user.generate_user_qr(item["user_no"])
     else:
         item = items[0]
