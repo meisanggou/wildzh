@@ -17,6 +17,7 @@ from mysqldb_rich.db2 import DB
 
 from Crypto.Cipher import AES
 from wildzh.function import generate_qr
+from wildzh.db.models.user import UserModel
 
 __author__ = 'meisa'
 
@@ -95,6 +96,7 @@ class EncryptActor(object):
 
 class User(object):
     _salt_password = "msg_zh2018"
+    model = UserModel
 
     @staticmethod
     def _md5_hash(s):
@@ -114,7 +116,8 @@ class User(object):
         if db_password is None:
             return False  # 密码为空 无限期禁止登录
         if len(password) <= 20:
-            if check_password_hash(db_password, User._md5_hash_password(user_name, password)) is True:
+            if check_password_hash(db_password, User._md5_hash_password(
+                    user_name, password)) is True:
                 return True
         return False
 
@@ -184,8 +187,29 @@ class User(object):
                                         where_is_none=where_is_none)
         return result
 
+    def verify_user_exist2(self, session, **kwargs):
+        need_password = kwargs.pop('need_password', False)
+        q = session.query(self.model).filter_by(**kwargs)
+        print(q)
+        db_items = []
+        for u_item in q:
+            try:
+                item = u_item.to_dict()
+                item['nick_name'] = base64.b64decode(item['nick_name'])
+                if isinstance(item['nick_name'], bytes):
+                    item['nick_name'] = item['nick_name'].decode('utf-8')
+                if not need_password:
+                    del item['password']
+                db_items.append(item)
+            except Exception as e:
+                print(e)
+                raise e
+        return db_items
+
     # 验证auth是否存在 包括 account tel alias wx_id
-    def verify_user_exist(self, **kwargs):
+    def verify_user_exist(self, *args, **kwargs):
+        if args:
+            return self.verify_user_exist2(args[0], **kwargs)
         cols = ["user_no", "user_name", "tel", "email", "wx_id", "role",
                 "nick_name", "avatar_url"]
         if kwargs.pop("need_password", None) is not None:
@@ -216,7 +240,8 @@ class User(object):
             return None
         return items[0]
 
-    def user_confirm(self, password, user_no=None, user_name=None, email=None, tel=None, user=None):
+    def user_confirm(self, session, password, user_no=None, user_name=None,
+                     email=None, tel=None, user=None):
         if user_no is not None:
             where_value = dict(user_no=user_no)
         elif user_name is not None:
@@ -237,15 +262,15 @@ class User(object):
         else:
             return -3, None
         where_value["need_password"] = True
-        db_items = self.verify_user_exist(**where_value)
+        db_items = self.verify_user_exist(session, **where_value)
         if len(db_items) <= 0:
             return -2, None
         user_item = db_items[0]
-        account = user_item["user_name"]
-        db_password = user_item["password"]
-        if self._password_check(password, db_password, account) is False:
+        user_name = user_item['user_name']
+        db_password = user_item['password']
+        if self._password_check(password, db_password, user_name) is False:
             return -1, None
-        del user_item["password"]
+        del user_item['password']
         return 0, user_item
 
     def generate_user_qr(self, user_no):

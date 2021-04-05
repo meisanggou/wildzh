@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r /tmp/requirement.txt -i https://mirrors.aliyun
     ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 ENV WILDPATH /opt/wildzh
+ENV ETCPATH $WILDPATH/etc
 ENV PYTHONPATH $WILDPATH
 ENV LISTENPORT 2402
 WORKDIR $WILDPATH

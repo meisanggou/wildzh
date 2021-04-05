@@ -1,9 +1,14 @@
 # !/usr/bin/env python
 # coding: utf-8
-from flask_login import current_user, LoginManager, login_required
+from contextlib import contextmanager
+from flask import g
+from flask import has_app_context
+from flask_login import login_required
 
 from flask_helper.utils.registry import DataRegistry
 from flask_helper.view import View
+
+from wildzh.db import session
 
 __author__ = 'zhouhenglc'
 
@@ -56,6 +61,22 @@ def add_menu(url_prefix, menu_list):
             del cache[e_item['menu_id']]
 
 
+class Context(object):
+
+    def __init__(self):
+        self._session = None
+
+    @property
+    def session(self):
+        return self._session
+
+    @session.setter
+    def session(self, s):
+        if has_app_context():
+            g.session = s
+        self._session = s
+
+
 class View2(View):
 
     def __init__(self, name, import_name, **kwargs):
@@ -70,6 +91,14 @@ class View2(View):
                 pass
         if menu_list:
             add_menu(url_prefix, menu_list)
+
+    @classmethod
+    @contextmanager
+    def view_context_func(cls):
+        with session.use_session() as _session:
+            context = Context()
+            context.session = _session
+            yield context
 
     def add_handler(self, handler_obj, name=None):
         if not name:

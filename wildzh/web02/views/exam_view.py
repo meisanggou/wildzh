@@ -281,7 +281,7 @@ def parsing_token(resource, event, trigger, **kwargs):
     # TODO 判定被授权者是否已有高权限
 
     # step 实际授权 or 返回信息
-    u_items = c_user.verify_user_exist(user_no=inviter_user_no)
+    u_items = c_user.verify_user_exist(g.session, user_no=inviter_user_no)
     if not u_items:
         r['message'] = '邀请者信息异常'
         return r
@@ -1038,7 +1038,7 @@ def get_question_feedback():
 def notify_feedback(data):
     exam_no = data['exam_no']
     # 获得题库名称
-    e_items = c_exam.select_exam(exam_no)
+    e_items = c_exam.select_exam(exam_no, offline=True)
     if len(e_items) <= 0:
         return
     e_item = e_items[0]
@@ -1048,7 +1048,7 @@ def notify_feedback(data):
     admin_nos = [u["user_no"] for u in admin_members]
     wx_ids = []
     for user_no in admin_nos:
-        user_items = c_user.verify_user_exist(user_no=user_no)
+        user_items = c_user.verify_user_exist(g.session, user_no=user_no)
         for u_item in user_items:
             if u_item['wx_id']:
                 wx_ids.append(u_item['wx_id'])
