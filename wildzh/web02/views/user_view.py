@@ -232,3 +232,9 @@ def get_multi_nickname():
     data = request.json
     items = c_user.get_multi_nick_name(user_list=data['user_list'])
     return jsonify({'status': True, 'data': items})
+
+
+@user_view.route('/ping', methods=['POST'])
+@login_required
+def user_ping():
+    return {'status': True, 'data': 'success'}
