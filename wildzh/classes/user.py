@@ -190,7 +190,6 @@ class User(object):
     def verify_user_exist2(self, session, **kwargs):
         need_password = kwargs.pop('need_password', False)
         q = session.query(self.model).filter_by(**kwargs)
-        print(q)
         db_items = []
         for u_item in q:
             try:
@@ -208,7 +207,7 @@ class User(object):
 
     # 验证auth是否存在 包括 account tel alias wx_id
     def verify_user_exist(self, *args, **kwargs):
-        if args:
+        if args and False:
             return self.verify_user_exist2(args[0], **kwargs)
         cols = ["user_no", "user_name", "tel", "email", "wx_id", "role",
                 "nick_name", "avatar_url"]
