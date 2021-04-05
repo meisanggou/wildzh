@@ -42,7 +42,8 @@ Page({
 
     },
     onShow: function () {
-        this.refreshExam(false);
+        wx.user_ping(this.refreshExam);
+        // this.refreshExam(false);
     },
     refreshExam(force) {
         var examNo = app.globalData.defaultExamNo;

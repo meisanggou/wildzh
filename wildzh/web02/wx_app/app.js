@@ -94,6 +94,17 @@ App({
             // }
             return wx.request(req)
         }
+        wx.user_ping = function(callback){
+            wx.request2({
+              url: '/user/ping',
+              success: function(res){
+                  callback(res);
+              },
+              fail: function(res){
+                  callback(res);
+              }
+            })
+        }
         this.getDefaultExam();
         return true;
         // 登录
