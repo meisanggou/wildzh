@@ -136,7 +136,6 @@ App({
     },
     getDefaultExam: function () {
         var currentExam = wx.getStorageSync(exam_storage_key);
-        console.info(currentExam);
         if (currentExam != null && currentExam != undefined) {
             this.globalData.defaultExamNo = currentExam["exam_no"];
             this.globalData.defaultExamName = currentExam["exam_name"];

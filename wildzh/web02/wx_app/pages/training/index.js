@@ -42,8 +42,22 @@ Page({
 
     },
     onShow: function () {
-        wx.user_ping(this.refreshExam);
-        // this.refreshExam(false);
+        var that = this;
+        wx.user_ping(function(res){
+            if(!('data' in res)){
+                that.setData({
+                    errorMsg: '网络连接异常，请检查网络！'
+                })
+                return;
+            }
+            if(res.data.status != true){
+                that.setData({
+                    errorMsg: res.data.data
+                })
+                return;
+            }
+            that.refreshExam(false);
+        });
     },
     refreshExam(force) {
         var examNo = app.globalData.defaultExamNo;

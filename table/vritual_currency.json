@@ -38,5 +38,46 @@
         ],
         "table_comment": "用户的余额和消费",
         "table_name": "vc_user_detail"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "账户编号",
+                "col_name": "user_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "剩余可用金额",
+                "col_name": "balance",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "消费总金额",
+                "col_name": "expenses",
+                "col_type": "int(11)"
+            },
+            {
+                "default_value": "0",
+                "col_comment": "信用额度",
+                "col_name": "credit_line",
+                "col_type": "int(11)"
+            },
+            {
+                "default_value": "0",
+                "col_comment": "通过系统获得的余额",
+                "col_name": "sys_balance",
+                "col_type": "int(11) unsigned"
+            },
+            {
+                "default_value": "0",
+                "col_comment": "消费的 通过系统获得的 总金额",
+                "col_name": "sys_expenses",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "vc赠送活动限制",
+        "table_name": "vc_user_detail"
     }
 ]

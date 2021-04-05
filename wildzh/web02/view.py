@@ -73,7 +73,7 @@ class Context(object):
     @session.setter
     def session(self, s):
         if has_app_context():
-            g.session2 = s
+            g.session = s
         self._session = s
 
 
