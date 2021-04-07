@@ -52,8 +52,9 @@ def create_app():
             except Exception as e:
                 print(e)
         res.headers["Server"] = "Wild Server"
-        LOG.info('receive request: [%s][%s][%s] full_path:%s user-agent:%s',
-                 res.status_code, request.method,
+        LOG.info('receive request: [%s][%s][%s][%s] full_path:%s '
+                 'user-agent:%s', res.status_code, request.method,
+                 getattr(g, 'remote_addr', None),
                  getattr(g, 'user_no', None),
                  request.full_path,
                  request.headers.get('User-Agent'))
@@ -94,6 +95,7 @@ def create_app():
     env.variable_end_string = " }}"
 
     one_web.handle_30x()
+    one_web.real_ip()
     # one_web.cross_domain()
     ignore_paths = [".+\.jpeg", ".+\.png"]
     one_web.filter_user_agent(accept_agent, ignore_paths=ignore_paths)

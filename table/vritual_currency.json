@@ -43,41 +43,106 @@
         "table_cols": [
             {
                 "pri_key": true,
+                "col_comment": "赠送活动类型",
+                "col_name": "give_type",
+                "col_type": "varchar(20)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "活动参与标识 标识参与该活动的身份，例如是user_no,或者user_no+日期",
+                "col_name": "give_id",
+                "col_type": "varchar(100)"
+            },
+            {
+                "col_comment": "已参与频次",
+                "col_name": "freq",
+                "col_type": "int(11)",
+                "default_value": 1
+            },
+            {
+                "col_comment": "上次参与标识 对于每次参与，需要上次有比较时可记录该字段",
+                "col_name": "last_id",
+                "col_type": "varchar(50)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "首次参与时间",
+                "col_name": "first_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "vc赠送活动参与频次",
+        "table_name": "vc_give_frequency"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
                 "col_comment": "账户编号",
                 "col_name": "user_no",
                 "col_type": "int(11)"
             },
             {
                 "pri_key": true,
-                "col_comment": "剩余可用金额",
-                "col_name": "balance",
+                "col_comment": "参照jy_billing billing_no",
+                "col_name": "billing_no",
+                "col_type": "bigint(20)"
+            },
+            {
+                "col_comment": "账单添加时间",
+                "col_name": "add_time",
                 "col_type": "int(11)"
             },
             {
-                "col_comment": "消费总金额",
-                "col_name": "expenses",
+                "col_comment": "收费项目编号",
+                "col_name": "billing_project",
                 "col_type": "int(11)"
+            },
+            {
+                "col_comment": "收费项目的名称",
+                "col_name": "project_name",
+                "col_type": "varchar(30)"
+            },
+            {
+                "col_comment": "账单金额 1元用100表示",
+                "col_name": "amount",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "账单产生类型即付，购买产品立刻付费；即时，用户使用产品根据使用频率或者使用量使用完后台及时付费；定期，用户账户占用的资源定时扣费",
+                "col_name": "billing_type",
+                "col_type": "varchar(20)"
+            },
+            {
+                "col_comment": "消费量|单价|账单的详细信息",
+                "col_name": "detail",
+                "col_type": "varchar(250)"
+            },
+            {
+                "col_comment": "账单的备注信息",
+                "col_name": "remark",
+                "col_type": "varchar(200)"
             },
             {
                 "default_value": "0",
-                "col_comment": "信用额度",
-                "col_name": "credit_line",
-                "col_type": "int(11)"
+                "col_comment": "账单状态0代表未支付 1代表已支付 2[暂不使用]",
+                "col_name": "status",
+                "col_type": "tinyint(4)"
             },
             {
-                "default_value": "0",
-                "col_comment": "通过系统获得的余额",
-                "col_name": "sys_balance",
-                "col_type": "int(11) unsigned"
+                "default_value": "b'0'",
+                "col_comment": "0代表未删除1代表已删除",
+                "col_name": "is_delete",
+                "col_type": "bit(1)"
             },
             {
-                "default_value": "0",
-                "col_comment": "消费的 通过系统获得的 总金额",
-                "col_name": "sys_expenses",
-                "col_type": "int(11)"
+                "col_comment": "付费流水号（billing_fee中serial_no）中间|分割",
+                "col_name": "pay_info",
+                "col_type": "varchar(100)",
+                "allow_null": true
             }
         ],
-        "table_comment": "vc赠送活动限制",
-        "table_name": "vc_user_detail"
+        "table_comment": "用户消费账单信息(只允许读写操作和更新is_delete)",
+        "table_name": "vc_billing"
     }
 ]
