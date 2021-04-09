@@ -8,11 +8,13 @@
                 "col_type": "int(11)"
             },
             {
+                "default_value": "0",
                 "col_comment": "剩余可用金额",
                 "col_name": "balance",
                 "col_type": "int(11)"
             },
             {
+                "default_value": "0",
                 "col_comment": "消费总金额",
                 "col_name": "expenses",
                 "col_type": "int(11)"
@@ -34,10 +36,15 @@
                 "col_comment": "消费的 通过系统获得的 总金额",
                 "col_name": "sys_expenses",
                 "col_type": "int(11)"
+            },
+            {
+                "col_comment": "更新时间",
+                "col_name": "update_time",
+                "col_type": "int(11)"
             }
         ],
-        "table_comment": "用户的余额和消费",
-        "table_name": "vc_user_detail"
+        "table_comment": "用户的余额和消费状态",
+        "table_name": "vc_user_status"
     },
     {
         "table_cols": [
@@ -84,7 +91,7 @@
             },
             {
                 "pri_key": true,
-                "col_comment": "参照jy_billing billing_no",
+                "col_comment": "账单编号",
                 "col_name": "billing_no",
                 "col_type": "bigint(20)"
             },
@@ -104,14 +111,9 @@
                 "col_type": "varchar(30)"
             },
             {
-                "col_comment": "账单金额 1元用100表示",
+                "col_comment": "账单金额 1元用100表示，充值为正值 消费为负值",
                 "col_name": "amount",
                 "col_type": "int(11)"
-            },
-            {
-                "col_comment": "账单产生类型即付，购买产品立刻付费；即时，用户使用产品根据使用频率或者使用量使用完后台及时付费；定期，用户账户占用的资源定时扣费",
-                "col_name": "billing_type",
-                "col_type": "varchar(20)"
             },
             {
                 "col_comment": "消费量|单价|账单的详细信息",
@@ -134,15 +136,9 @@
                 "col_comment": "0代表未删除1代表已删除",
                 "col_name": "is_delete",
                 "col_type": "bit(1)"
-            },
-            {
-                "col_comment": "付费流水号（billing_fee中serial_no）中间|分割",
-                "col_name": "pay_info",
-                "col_type": "varchar(100)",
-                "allow_null": true
             }
         ],
         "table_comment": "用户消费账单信息(只允许读写操作和更新is_delete)",
-        "table_name": "vc_billing"
+        "table_name": "vc_user_billing"
     }
 ]

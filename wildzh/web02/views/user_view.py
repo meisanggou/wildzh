@@ -130,7 +130,7 @@ def password_action():
     new_password = request.form["new_password"]
     if confirm_password != new_password:
         return u"两次输入密码不一致"
-    code, item = c_user.user_confirm(old_password, user=user)
+    code, item = c_user.user_confirm(g.session, old_password, user=user)
     if code != 0:
         return u"密码不正确"
     user_name = item["user_name"]

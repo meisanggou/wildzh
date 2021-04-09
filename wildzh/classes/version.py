@@ -1,14 +1,14 @@
 # !/usr/bin/env python
 # coding: utf-8
-from wildzh.classes import DBObject
+from wildzh.classes import BaseObject
+
+from wildzh.db.models.version import VersionMPModel
 
 __author__ = 'zhouhenglc'
 
 
-class MPVersion(DBObject):
-    table = 'version_mp'
-    columns = ['user_no', 'version', 'max_version', 'min_version',
-               'last_modify']
+class VersionMP(BaseObject):
+    model = VersionMPModel
 
     @classmethod
     def cmp_version(cls, version1, version2):
@@ -25,37 +25,19 @@ class MPVersion(DBObject):
             return -1
         return 0
 
-    def insert(self, user_no, version):
-        data = dict(user_no=user_no, version=version,
-                    max_version=version, min_version=version,
-                    last_modify=self.now_time)
-        l = self.db.execute_insert(self.t, kwargs=data)
-        return l
-
-    def select(self, user_no):
-        where_value = dict(user_no=user_no)
-        items = self.db.execute_select(self.t, where_value=where_value,
-                                       cols=self.cols)
-        if len(items) > 0:
-            return items[0]
-        return None
-
-    def _update(self, user_no, **kwargs):
-        where_value = dict(user_no=user_no)
-        kwargs['last_modify'] = self.now_time
-        l = self.db.execute_update(self.t, where_value=where_value,
-                                   update_value=kwargs)
-        kwargs.update(where_value)
-        return kwargs
-
-    def update_version(self, user_no, version):
-        item = self.select(user_no=user_no)
-        if item:
-            version_obj = item
-            version_obj['version'] = version
-            if self.cmp_version(version, version_obj['max_version']) > 0:
-                version_obj['max_version'] = version
-            if self.cmp_version(version_obj['min_version'], version) > 0:
-                version_obj['min_version'] = version
-            return self._update(**version_obj)
-        return self.insert(user_no, version)
+    def update_version(self, session, user_no, version):
+        items = self.get_all(session, user_no=user_no)
+        if items:
+            version_obj = items[0]
+            if version_obj.version == version:
+                return version_obj
+            version_obj.version = version
+            if self.cmp_version(version, version_obj.max_version) > 0:
+                version_obj.max_version = version
+            if self.cmp_version(version_obj.min_version, version) > 0:
+                version_obj.min_version = version
+            version_obj.last_modify = self.now_time
+            return version_obj
+        kwargs = {'version': version, 'min_version': version,
+                  'max_version': version, 'last_modify': self.now_time}
+        return self.create(session, user_no=user_no, **kwargs)

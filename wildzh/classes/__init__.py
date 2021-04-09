@@ -6,6 +6,22 @@ from mysqldb_rich.db2 import DB
 __author__ = 'meisa'
 
 
+class BaseObject(object):
+    model = None
+
+    @property
+    def now_time(self):
+        return time.time()
+
+    def create(self, session, **kwargs):
+        obj = self.model(**kwargs)
+        obj.save(session)
+        return obj
+
+    def get_all(self, session, **kwargs):
+        return session.query(self.model).filter_by(**kwargs).all()
+
+
 class DBObject(object):
     table = None
     columns = []

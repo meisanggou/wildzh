@@ -4,8 +4,44 @@ var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 remote_host = "https://wild.gene.ac"
 
-// remote_host = "http://127.0.0.1:2400"
+remote_host = "http://127.0.0.1:2400"
 
+function getOrSetCacheData(key, value = null) {
+    // 同步存储数据
+    var g_key = "wildzh_cache_" + key;
+    if (value == null || value == undefined) {
+        value = wx.getStorageSync(g_key);
+        if (value == "" || value == undefined) {
+            value = null;
+        }
+        return value;
+    }
+    wx.setStorageSync(g_key, value);
+    return value
+}
+
+function getOrSetCacheData2(key, value) {
+    // 异步存储数据
+    var g_key = "wildzh_cache_" + key;
+    if (value == null || value == undefined) {
+        value = wx.getStorageSync(g_key);
+        if (value == "" || value == undefined) {
+            value = null;
+        }
+        return value;
+    }
+    wx.setStorage({
+        key: g_key,
+        data: value
+    });
+    return value
+}
+
+function getOrSetCacheVersion (value){
+    var key = 'version';
+    var cacheVersion = getOrSetCacheData2(key, value);
+    return cacheVersion;
+}
 
 App({
     onLaunch: function () {
@@ -52,6 +88,13 @@ App({
             req.header['X-Device-Screen-Width'] = screenData.width;
             req.header['X-VMP-Version'] = version;
             req.header['X-REQ-API'] = 'v1';
+            var cacheVersion = getOrSetCacheVersion();
+            var newVersion = false;
+            if(cacheVersion != version){
+                req.header['X-VMP-Version-N'] = version;
+                console.info('new version')
+                newVersion = true
+            }
             if (req.url[0] == "/") {
                 req.url = wx.remote_host + req.url
             }
@@ -62,6 +105,10 @@ App({
             if ("success" in req) {
                 var origin_success = req.success
                 req.success = function (res) {
+                    if(newVersion){
+                        getOrSetCacheVersion(version);
+                    }
+                    getOrSetCacheVersion
                     if (res.statusCode != 302 && res.statusCode != 401) {
                         origin_success(res);
                     } else if (retry < 3) {
@@ -141,33 +188,8 @@ App({
             this.globalData.defaultExamName = currentExam["exam_name"];
         }
     },
-    getOrSetCacheData: function (key, value = null) {
-        var g_key = "wildzh_cache_" + key;
-        if (value == null) {
-            value = wx.getStorageSync(g_key);
-            if (value == "" || value == undefined) {
-                value = null;
-            }
-            return value;
-        }
-        wx.setStorageSync(g_key, value);
-        return value
-    },
-    getOrSetCacheData2: function (key, value = null) {
-        var g_key = "wildzh_cache_" + key;
-        if (value == null) {
-            value = wx.getStorageSync(g_key);
-            if (value == "" || value == undefined) {
-                value = null;
-            }
-            return value;
-        }
-        wx.setStorage({
-            key: g_key,
-            data: value
-        });
-        return value
-    },
+    getOrSetCacheData: getOrSetCacheData,
+    getOrSetCacheData2: getOrSetCacheData2,
     getOrSetCurrentUserData: function (value = null) {
         return this.getOrSetCacheData(this.globalData.userInfoStorageKey, value);
     },

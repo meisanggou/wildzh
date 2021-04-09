@@ -6,7 +6,7 @@ from flask import request
 from flask_helper.template import RenderTemplate
 
 from wildzh.utils.log import getLogger
-from wildzh.classes.version import MPVersion
+from wildzh.classes.version import VersionMP
 from wildzh.web02.view import View2
 
 from zh_config import db_conf_path
@@ -18,7 +18,7 @@ rt = RenderTemplate()
 index_view = View2("index", __name__, url_prefix="/", menu_list=menu_list)
 index_view.register_jinja_global_env('menu_url', '/')
 LOG = getLogger()
-VERSION_MAN = MPVersion(db_conf_path=db_conf_path)
+VERSION_MAN = VersionMP()
 
 
 @index_view.route("/", methods=["GET"])
@@ -32,8 +32,8 @@ def report_wx_min_program_version():
     version = data['version']
     r = False
     if g.user_no:
-        VERSION_MAN.update_version(g.user_no, version)
+        VERSION_MAN.update_version(g.session, g.user_no, version)
         r = True
-    LOG.info('Receive user(user_no=%s) report wx min_program version: %s', g.user_no,
-             version)
+    LOG.info('Receive user(user_no=%s) report wx min_program version: %s',
+             g.user_no, version)
     return jsonify({'status': r, 'data': data})
