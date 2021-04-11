@@ -488,7 +488,7 @@ def entry_questions():
 
 @exam_view.route("/questions/", methods=["PUT"])
 @login_required
-@required_manager_exam()
+@required_manager_exam(param_location='args')
 def update_question():
     data = g.request_data
     extra_data = dict()

@@ -9,7 +9,6 @@ from wildzh.utils.log import getLogger
 from wildzh.classes.version import VersionMP
 from wildzh.web02.view import View2
 
-from zh_config import db_conf_path
 
 __author__ = 'meisa'
 
