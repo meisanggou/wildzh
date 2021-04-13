@@ -64,12 +64,12 @@
                             </view>
                         </view>
                     </view>
-                    <view class="weui-cell weui-cell_input">
+                    <view class="weui-cell weui-cell_input" wx:if="{{ vcBalance != null }}">
                         <view class="weui-cell__hd">
                             <view class="weui-label">积分</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <view class="weui-input">{{userNo}}
+                            <view class="weui-input">{{vcBalance}}
                             </view>
                         </view>
                     </view>

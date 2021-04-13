@@ -21,6 +21,7 @@ Page({
         brushNum: 0, // 刷题数
         ranking: 0, // 排名
         accuracy: '100%',
+        vcBalance: null, // 积分余额
         version: app.globalData.version,
         useProfile: true,
         enableShare: false // 是否允许邀请好友
@@ -37,7 +38,7 @@ Page({
             useProfile: useProfile
         })
         this.loadCacheUserInfo()
-        this.reportVersion();
+        this.getVCstatus();
         if ('share_token' in options) {
             var st = options['share_token'];
             this.receiveShare(st);
@@ -308,25 +309,42 @@ Page({
             url: "./avatar"
         })
     },
-    reportVersion: function () {
-        var key = 'version';
-        var cacheVersion = app.getOrSetCacheData2(key);
-
-        if (cacheVersion != app.globalData.version) {
-            var data = {
-                'version': app.globalData.version
-            };
-            wx.request2({
-                url: '/version/wx',
-                method: 'POST',
-                data: data,
-                success: res => {
-                    if (res.data.status) {
-                        app.getOrSetCacheData2(key, app.globalData.version);
-                    }
+    getVCstatus: function () {
+        var that = this;
+        wx.request2({
+            url: '/vc/status',
+            method: 'GET',
+            success: res => {
+                var pk = res.data;
+                if (pk.status != true) {
+                    return;
                 }
-            })
+                var data = pk.data;
+                var vcBalance = data.balance + data.sys_balance;
+                that.setData({
+                    vcBalance: vcBalance
+                })
+            }
+        })
+        this.actionVCGive();
+    },
+    actionVCGive(action) {
+        if(action == null){
+            action = 'check';
         }
+        var data = {'give_type': 'browse_ad', 'action': action}
+        wx.request2({
+            url: '/vc/give',
+            method: 'POST',
+            data: data,
+            success: res => {
+                var pk = res.data;
+                if (pk.status != true) {
+                    return;
+                }
+                console.info(pk);
+            }
+        })
     },
     toShare: function () {
         wx.navigateTo({
@@ -347,13 +365,12 @@ Page({
                 var r_data = res.data;
                 console.info(r_data)
                 if (r_data.status != true) {
-                    if(r_data.action == 'show'){
+                    if (r_data.action == 'show') {
                         wx.showModal({
                             title: '邀请失败',
                             content: r_data.data,
                             showCancel: false,
-                            success(res){
-                            }
+                            success(res) {}
                         })
                     }
                     return false;
@@ -363,8 +380,8 @@ Page({
                 wx.showModal({
                     title: title,
                     content: content,
-                    success(res){
-                        if(res.confirm){
+                    success(res) {
+                        if (res.confirm) {
                             that.acceptShare(token);
                         }
                     }
@@ -384,13 +401,12 @@ Page({
             success: res => {
                 var r_data = res.data;
                 if (r_data.status != true) {
-                    if(r_data.action == 'show'){
+                    if (r_data.action == 'show') {
                         wx.showModal({
                             title: '邀请失败',
                             content: r_data.data,
                             showCancel: false,
-                            success(res){
-                            }
+                            success(res) {}
                         })
                     }
                     return false;
@@ -398,8 +414,8 @@ Page({
                 wx.showModal({
                     title: '接收邀请成功',
                     content: '是否立刻切换到题库\r\n' + r_data.data.exam.exam_name,
-                    success(res){
-                        if(res.confirm){
+                    success(res) {
+                        if (res.confirm) {
                             that.setData({
                                 examNo: r_data.data.exam.exam_no
                             })

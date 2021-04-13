@@ -21,3 +21,16 @@ class VCUserStatus(BaseObject):
         else:
             instance = exists[0]
         return instance.to_dict()
+
+
+class VCGiveFreq(BaseObject):
+    model = vc_model.VCGiveFreqModel
+
+    def get(self, session, give_type, give_id):
+        exists = self.get_all(session, give_type=give_type, give_id=give_id)
+        if exists:
+            return exists[0]
+        obj = self.model(give_type=give_type, give_id=give_id, freq=0,
+                         first_time=self.now_time)
+        obj.save(session)
+        return obj
