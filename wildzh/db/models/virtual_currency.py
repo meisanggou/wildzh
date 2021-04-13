@@ -34,4 +34,13 @@ class VCUserBillingModel(Base):
 
     __table_name = 'vc_user_billing'
 
-
+    user_no = sqlalchemy.Column(sqlalchemy.INT(), primary_key=True)
+    billing_no = sqlalchemy.Column(sqlalchemy.BIGINT(), primary_key=True)
+    add_time = sqlalchemy.Column(sqlalchemy.INT())
+    billing_project = sqlalchemy.Column(sqlalchemy.INT())
+    project_name = sqlalchemy.Column(sqlalchemy.VARCHAR(30))
+    amount = sqlalchemy.Column(sqlalchemy.INT())
+    detail = sqlalchemy.Column(sqlalchemy.VARCHAR(30), comment="")
+    remark = sqlalchemy.Column(sqlalchemy.VARCHAR(200), comment="")
+    status = sqlalchemy.Column(sqlalchemy.SMALLINT())
+    is_delete = sqlalchemy.Column(sqlalchemy.BOOLEAN())

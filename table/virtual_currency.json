@@ -103,7 +103,7 @@
             {
                 "col_comment": "收费项目编号",
                 "col_name": "billing_project",
-                "col_type": "int(11)"
+                "col_type": "varchar(20)"
             },
             {
                 "col_comment": "收费项目的名称",
@@ -121,7 +121,7 @@
                 "col_type": "varchar(250)"
             },
             {
-                "col_comment": "账单的备注信息",
+                "col_comment": "账单的备注信息 一般不对用户展示",
                 "col_name": "remark",
                 "col_type": "varchar(200)"
             },
