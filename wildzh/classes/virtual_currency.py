@@ -16,12 +16,16 @@ class VCUserStatus(BaseObject):
         kwargs = {'user_no': user_no, 'update_time': self.now_time}
         return super().create(session, **kwargs)
 
-    def get(self, session, user_no):
+    def get_obj(self, session, user_no):
         exists = self.get_all(session, user_no=user_no)
         if not exists:
             instance = self.new(session, user_no)
         else:
             instance = exists[0]
+        return instance
+
+    def get(self, session, user_no):
+        instance = self.get_obj(session, user_no)
         return instance.to_dict()
 
 
@@ -51,8 +55,8 @@ class VCUserBilling(BaseObject):
                amount, detail, remark, status):
         billing_no = self.gen_no(user_no)
         add_time = self.now_time
-        kwargs = {'billing_no': billing_no, 'add_time': add_time,
-                  'billing_project': billing_project,
+        kwargs = {'user_no': user_no, 'billing_no': billing_no,
+                  'add_time': add_time, 'billing_project': billing_project,
                   'project_name': project_name, 'amount': amount,
                   'detail': detail, 'remark': remark, 'status': status}
-        return self.create(session, kwargs)
+        return self.create(session, **kwargs)

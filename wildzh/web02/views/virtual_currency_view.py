@@ -38,7 +38,7 @@ def func_browse_ad_check(user_no, gf_obj, **kwargs):
     next_enable = max_freq - gf_obj.freq > 1
     cr = {'next_enable': next_enable, 'last_id': last_id,
           'give_vc_count': give_vc_count, 'billing_project': 'browse_ad',
-          'project_name': '', 'detail': '', 'remark': ''}
+          'project_name': '看广告得积分', 'detail': '', 'remark': ''}
     return cr
 
 
@@ -73,9 +73,11 @@ def give_event():
         return {'status': False, 'data': 'participation limit exceeded'}
     if action == 'run':
         ub_obj = VC_UB_MAN.new(g.session, g.user_no, cr['billing_project'],
-                               cr['billing_name'], cr['give_vc_count'], cr['detail'],
+                               cr['project_name'], cr['give_vc_count'], cr['detail'],
                                cr['remark'], 0)
-        vc_obj = VC_MAN.get(g.session, g.user_no)
+        vc_obj = VC_MAN.get_obj(g.session, g.user_no)
         vc_obj.sys_balance = vc_obj.sys_balance + cr['give_vc_count']
         ub_obj.status = 1
+        gf_obj.freq += 1
+        gf_obj.last_id = cr['last_id']
     return {'status': True, 'data': cr}

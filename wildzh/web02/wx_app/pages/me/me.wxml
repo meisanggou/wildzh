@@ -127,9 +127,9 @@
                     </view>
                 </view>
             </view>
-            <view class="page-section" wx-if="{{ enableShare }}">
-                <view class="weui-cells weui-cells_after-title">
-                    <view class="weui-cell weui-cell_input">
+            <view class="page-section" >
+                <view class="weui-cells weui-cells_after-title" >
+                    <view class="weui-cell weui-cell_input" wx-if="{{ enableShare }}">
                         <view class="weui-cell__hd">
                             <view class="weui-label">邀请好友</view>
                         </view>
@@ -147,12 +147,21 @@
                             </button>
                         </view> -->
                     </view>
+                    <view class="weui-cell weui-cell_input" wx-if="{{ enableLookAD }}">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">看广告</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <view class="weui-input">得积分</view>
+                        </view>
+                        <view class="weui-cell__ft right-slip" bindtap="toLookAD">
+                            <image mode="aspectFit" class="right-slip" src="/images/right_slip.png">
+                            </image>
+                        </view>
+                    </view>
                 </view>
             </view>
         </form>
         <view wx:if="{{examTip}}" class="bottom-tip" bindtap="lookExam">{{examTip}}</view>
-        <!-- <modal hidden="{{hiddenUnickName}}" title="请输入新的昵称" confirm-text="提交" cancel-text="取消" bindcancel="cancelUnickName" bindconfirm="confirmUnickName">
-            <input type='text' placeholder="新的昵称" value="{{nickName}}" bindblur='nickNameChange' bindinput='nickNameChange' maxlength='10' auto-focus/>
-        </modal> -->
     </view>
 </view>

@@ -4,6 +4,8 @@ var that;
 var newNickName = '';
 var noExamName = '未选择';
 var lastUpdateUserKey = 'updateUserTime'
+let videoAd = null;
+let adUnitId = 'adunit-2b19f83a1d666b74';
 
 Page({
     data: {
@@ -24,7 +26,8 @@ Page({
         vcBalance: null, // 积分余额
         version: app.globalData.version,
         useProfile: true,
-        enableShare: false // 是否允许邀请好友
+        enableShare: false, // 是否允许邀请好友
+        enableLookAD: false // 是否允许看广告得积分
     },
     onLoad: function (options) {
         if (app.globalData.defaultExamNo != null) {
@@ -39,6 +42,7 @@ Page({
         })
         this.loadCacheUserInfo()
         this.getVCstatus();
+        this.initAD();
         if ('share_token' in options) {
             var st = options['share_token'];
             this.receiveShare(st);
@@ -328,11 +332,16 @@ Page({
         })
         this.actionVCGive();
     },
-    actionVCGive(action) {
-        if(action == null){
+    actionVCGive: function (action) {
+        var that = this;
+        if (action == null) {
             action = 'check';
         }
-        var data = {'give_type': 'browse_ad', 'action': action}
+        var data = {
+            'give_type': 'browse_ad',
+            'adUnitId': adUnitId,
+            'action': action
+        }
         wx.request2({
             url: '/vc/give',
             method: 'POST',
@@ -342,9 +351,44 @@ Page({
                 if (pk.status != true) {
                     return;
                 }
-                console.info(pk);
+                that.setData({
+                    enableLookAD: true
+                })
             }
         })
+    },
+    initAD: function () {
+        var that = this;
+        if (wx.createRewardedVideoAd) {
+            videoAd = wx.createRewardedVideoAd({
+                adUnitId: adUnitId
+            })
+            videoAd.onLoad(() => {
+                console.log('onLoad event emit')
+            })
+            videoAd.onError((err) => {
+                console.log('onError event emit', err)
+            })
+            videoAd.onClose((res) => {
+                if(res.isEnded){
+                    that.actionVCGive('run');
+                }
+                console.log('onClose event emit', res)
+            })
+        }
+
+    },
+    toLookAD: function () {
+        if (videoAd) {
+            videoAd.show().catch(() => {
+                // 失败重试
+                videoAd.load()
+                    .then(() => videoAd.show())
+                    .catch(err => {
+                        console.log('激励视频 广告显示失败')
+                    })
+            })
+        }
     },
     toShare: function () {
         wx.navigateTo({
