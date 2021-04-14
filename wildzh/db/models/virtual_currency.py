@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 import sqlalchemy
+from sqlalchemy.orm import relationship
 from wildzh.db.models import Base
 
 __author__ = 'zhouhenglc'
@@ -24,7 +25,8 @@ class VCGiveFreqModel(Base):
     __tablename__ = 'vc_give_frequency'
 
     give_type = sqlalchemy.Column(sqlalchemy.VARCHAR(20), primary_key=True)
-    give_id = sqlalchemy.Column(sqlalchemy.VARCHAR(100), default="")
+    give_id = sqlalchemy.Column(sqlalchemy.VARCHAR(100), default="",
+                                primary_key=True)
     freq = sqlalchemy.Column(sqlalchemy.INT(), default=1)
     last_id = sqlalchemy.Column(sqlalchemy.VARCHAR(50), default="")
     first_time = sqlalchemy.Column(sqlalchemy.INT())

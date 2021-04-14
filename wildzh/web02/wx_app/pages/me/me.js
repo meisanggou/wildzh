@@ -41,7 +41,7 @@ Page({
             useProfile: useProfile
         })
         this.loadCacheUserInfo()
-        this.getVCstatus();
+
         this.initAD();
         if ('share_token' in options) {
             var st = options['share_token'];
@@ -49,8 +49,12 @@ Page({
         }
     },
     onShow: function () {
+        this.setData({
+            examTip: ''
+        })
         this.getExams();
         this.loadCacheUserInfo();
+        this.getVCstatus();
     },
     loadCacheUserInfo: function () {
         var currentUser = app.getOrSetCurrentUserData();
@@ -299,6 +303,11 @@ Page({
                 this.getTips();
             }
         }
+        else{
+            this.setData({
+                examTip: "请选择题库！"
+            })
+        }
     },
     lookExam: function () {
         wx.navigateTo({
@@ -349,10 +358,28 @@ Page({
             success: res => {
                 var pk = res.data;
                 if (pk.status != true) {
+                    that.setData({
+                        enableLookAD: false
+                    })
                     return;
                 }
+                if (action != 'run') {
+                    that.setData({
+                        enableLookAD: true
+                    })
+                }
+                else{
+                    var vcBalance = pk.data.vc.sys_balance + pk.data.vc.balance;
+                    var enableLookAD = pk.data.cr.next_enable;
+                    that.setData({
+                        vcBalance: vcBalance,
+                        enableLookAD: enableLookAD
+                    })
+                }
+            },
+            fail: res => {
                 that.setData({
-                    enableLookAD: true
+                    enableLookAD: false
                 })
             }
         })
@@ -370,7 +397,7 @@ Page({
                 console.log('onError event emit', err)
             })
             videoAd.onClose((res) => {
-                if(res.isEnded){
+                if (res.isEnded) {
                     that.actionVCGive('run');
                 }
                 console.log('onClose event emit', res)

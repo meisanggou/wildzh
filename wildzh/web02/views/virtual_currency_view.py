@@ -2,8 +2,11 @@
 # coding: utf-8
 from flask import g
 from flask_helper.utils.registry import DATA_REGISTRY
+from wildzh.utils import constants
 import wildzh.utils.datetime_helper as dt_helper
 from wildzh.utils.log import getLogger
+from wildzh.utils.registry import notify_callback
+from wildzh.utils.registry import subscribe_callback
 
 from wildzh.classes.virtual_currency import VCGiveFreq
 from wildzh.classes.virtual_currency import VCUserBilling
@@ -30,7 +33,7 @@ def func_browse_ad_id(user_no, **kwargs):
 
 
 def func_browse_ad_check(user_no, gf_obj, **kwargs):
-    max_freq = 2
+    max_freq = 4
     give_vc_count = 5
     last_id = None
     if gf_obj.freq >= max_freq:
@@ -42,11 +45,22 @@ def func_browse_ad_check(user_no, gf_obj, **kwargs):
     return cr
 
 
+def new_billing(resource, event, trigger, session, user_no, billing_project,
+                project_name, vc_count, detail, remark):
+    ub_obj = VC_UB_MAN.new(session, user_no, billing_project,
+                           project_name, vc_count, detail, remark, 0)
+    vc_obj = VC_MAN.get_obj(session, user_no)
+    vc_obj.sys_balance = vc_obj.sys_balance + vc_count
+    ub_obj.status = 1
+    return ub_obj, vc_obj
+
+
 if not DATA_REGISTRY.exist_in('registered', 'vc_view'):
     reg_gives = DATA_REGISTRY.set_default(reg_key, {})
     reg_gives['browse_ad'] = {'id_func': func_browse_ad_id,
                               'check_func': func_browse_ad_check}
 
+    subscribe_callback(new_billing, constants.R_VC, constants.E_NEW_BILLING)
     DATA_REGISTRY.append('registered', 'vc_view')
 
 
@@ -71,13 +85,16 @@ def give_event():
     cr = check_func(g.user_no, gf_obj)
     if not cr:
         return {'status': False, 'data': 'participation limit exceeded'}
+    data = {'cr': cr}
     if action == 'run':
-        ub_obj = VC_UB_MAN.new(g.session, g.user_no, cr['billing_project'],
-                               cr['project_name'], cr['give_vc_count'], cr['detail'],
-                               cr['remark'], 0)
-        vc_obj = VC_MAN.get_obj(g.session, g.user_no)
-        vc_obj.sys_balance = vc_obj.sys_balance + cr['give_vc_count']
-        ub_obj.status = 1
+        ub_obj, vc_obj = notify_callback(
+            constants.R_VC, constants.E_NEW_BILLING, vc_view,
+            session=g.session, user_no=g.user_no,
+            billing_project=cr['billing_project'],
+            project_name=cr['project_name'],
+            vc_count=cr['give_vc_count'], detail=cr['detail'],
+            remark=cr['remark'])
         gf_obj.freq += 1
         gf_obj.last_id = cr['last_id']
-    return {'status': True, 'data': cr}
+        data['vc'] = vc_obj.to_dict()
+    return {'status': True, 'data': data}

@@ -29,9 +29,16 @@ T_STATES = [T_STATE_RIGHT, T_STATE_WRONG, T_STATE_SKIP]
 # resource constants
 R_EXAM = 'exam'
 R_QUESTION = 'question'
+R_VC = 'virtual_currency'
 
 
 # resource event
 E_AFTER_UPDATE = 'after_update'
 E_GEN_TOKEN = 'gen_token'
 E_PARSING_TOKEN = 'parsing_token'
+E_NEW_BILLING = 'new_billing'
+
+
+# vc billing
+VB_FB = 'feedback_exam'
+VB_FB_NAME = '题库问题反馈得积分'

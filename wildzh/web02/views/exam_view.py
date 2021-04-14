@@ -1092,6 +1092,14 @@ def handle_question_feedback():
     state = data['state']
     items = c_exam.update_question_feedback(g.exam_no, user_no, question_no,
                                             result=result, state=state)
+    if state == 4 and items > 0:  # 有效意见
+        remark = 'exam:%s,question_no:%s' % (g.exam_no, question_no)
+        kwargs = {'session': g.session, 'user_no': user_no,
+                  'billing_project': constants.VB_FB,
+                  'project_name': constants.VB_FB_NAME,
+                  'vc_count': 10, 'detail': '',  'remark': remark}
+        registry.notify_callback(constants.R_VC, constants.E_NEW_BILLING,
+                                 exam_view, **kwargs)
     return {'status': True, 'data': 'success'}
 
 
