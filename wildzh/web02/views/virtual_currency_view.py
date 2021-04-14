@@ -33,7 +33,7 @@ def func_browse_ad_id(user_no, **kwargs):
 
 
 def func_browse_ad_check(user_no, gf_obj, **kwargs):
-    max_freq = 4
+    max_freq = 2
     give_vc_count = 5
     last_id = None
     if gf_obj.freq >= max_freq:
