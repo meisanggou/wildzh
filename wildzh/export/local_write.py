@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 
+from functools import cmp_to_key
 import re
 import os
 import shutil
@@ -48,8 +49,8 @@ class Counter(object):
 
 
 def string_length(s):
-    if isinstance(s, str):
-        s = s.decode("utf-8")
+    # if isinstance(s, str):
+    #     s = s.decode("utf-8")
     all_ch = re.findall(u"[\u4E00-\u9FA5]+", s)
     plus_len = 0
     for item in all_ch:
@@ -107,7 +108,7 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
         title = select_modes[current_sm]
         answer_blocks.append({'title': title,
                               'questions': current_questions})
-    single_selected.sort(cmp=_question_sort)
+    single_selected.sort(key=cmp_to_key(_question_sort))
 
     #  数据处理
     question_no = 1
@@ -166,7 +167,7 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
     if single_selected:
         b_title = '%s、%s（共%s题）' % (cn_num[0], select_modes[1],
                                    len(single_selected))
-        single_block = {'title':  b_title.decode('utf-8'), 'questions': single_selected}
+        single_block = {'title':  b_title, 'questions': single_selected}
         block_index += 1
     else:
         single_block = None
@@ -175,8 +176,8 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
         b_title = '%s、%s（共%s题）' % (cn_num[block_index], q_block["title"],
                                    len(q_block["questions"]))
         block_index += 1
-        q_block['title'] = b_title.decode('utf-8')
-        q_block["questions"].sort(cmp=_question_sort)
+        q_block['title'] = b_title
+        q_block["questions"].sort(key=cmp_to_key(_question_sort))
         for q_item in q_block["questions"]:
             q_item["this_question_no"] = question_no
             multi_question_desc = [[]]

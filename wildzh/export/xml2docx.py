@@ -10,7 +10,7 @@ __author__ = 'zhouhenglc'
 def write_zip(target_dir, target_files=None):
     abs_target_dir = os.path.abspath(target_dir)
     all_files = []
-    q = Queue.Queue()
+    q = queue.Queue()
     if target_files is None:
         q.put(abs_target_dir)
     else:

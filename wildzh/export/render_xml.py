@@ -3,7 +3,7 @@
 import jinja2
 import os
 import re
-
+from wildzh.utils import constants
 from wildzh.export.xml2docx import directory_to_docx
 
 __author__ = 'zhouhenglc'
@@ -74,18 +74,18 @@ def write_xml(filename, demo_dir, **kwargs):
     env.filters["get_num"] = get_num
     env.filters["get_menu_name"] = get_menu_name
     env.filters['convert_run_xml'] = convert_run_xml
-    template_str = open(doc_demo2).read().decode("utf-8")
+    template_str = open(doc_demo2, encoding=constants.ENCODING).read()
     t = env.from_string(template_str)
     r = t.render(**kwargs)
 
-    with open(doc_file, "w") as w:
-        w.write(r.encode("utf-8"))
+    with open(doc_file, "w", encoding=constants.ENCODING) as w:
+        w.write(r)
     if medias:
-        m_ts = open(rels_demo).read().decode('utf-8')
+        m_ts = open(rels_demo, encoding=constants.ENCODING).read()
         mt = env.from_string(m_ts)
         mr = mt.render(medias=medias)
-        with open(rels_file, 'w') as wm:
-            wm.write(mr.encode('utf-8'))
+        with open(rels_file, 'w', encoding=constants.ENCODING) as wm:
+            wm.write(mr)
 
     directory_to_docx(filename, demo_dir)
     # clear file
