@@ -361,6 +361,14 @@ Page({
                     that.setData({
                         enableLookAD: false
                     })
+                    if(action == 'run'){
+                        wx.showModal({
+                            title: '获得积分失败',
+                            content: pk.data,
+                            showCancel: false,
+                            success(res) {}
+                        })
+                    }
                     return;
                 }
                 if (action != 'run') {
@@ -375,6 +383,12 @@ Page({
                         vcBalance: vcBalance,
                         enableLookAD: enableLookAD
                     })
+                    var msg = '获得' + pk.data.cr.give_vc_count + '积分';
+                    wx.showToast({
+                        title: msg,
+                        icon: "none",
+                        duration: 3000
+                    });
                 }
             },
             fail: res => {
@@ -403,6 +417,7 @@ Page({
                 console.log('onClose event emit', res)
             })
         }
+        
 
     },
     toLookAD: function () {
@@ -412,9 +427,20 @@ Page({
                 videoAd.load()
                     .then(() => videoAd.show())
                     .catch(err => {
-                        console.log('激励视频 广告显示失败')
+                        wx.showToast({
+                            title: "广告加载失败，可能已达观看限制，请稍后重试！",
+                            icon: "none",
+                            duration: 3000
+                        });
                     })
             })
+        }
+        else{
+            wx.showToast({
+                title: "广告加载失败，可能已达观看限制，请稍后重试！",
+                icon: "none",
+                duration: 3000
+            });
         }
     },
     toShare: function () {

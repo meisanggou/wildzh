@@ -1017,7 +1017,7 @@ def export_question_to_word():
         return {'status': False, 'data': 'Not Found'}
     items = c_exam.get_questions_by_strategy(g.exam_no, strategy_id)
     items = handle_questions(items, False)
-    write_docx('Test', False, items, G_SELECT_MODE, upload_folder)
+    write_docx('Test3', False, items, G_SELECT_MODE, upload_folder)
     return {'status': True, 'data': strategies[0]}
 
 

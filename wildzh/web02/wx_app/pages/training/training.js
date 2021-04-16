@@ -37,11 +37,11 @@ Page({
         feedbackDesc: "",
         tags: [], // 题目标签
         notFrame: true,
-        showAD: false,  // 是否显示推广信息
-        richAD: [] , // 推广信息
+        showAD: false, // 是否显示推广信息
+        richAD: [], // 推广信息
         ignoreTip: "",
         ignoreInterval: 0, // 不再提醒的间隔 小时数
-        ignoreAd: false,  // 一定时间内不再提醒
+        ignoreAd: false, // 一定时间内不再提醒
     },
     getQuestionNos: function (options) {
         that = this;
@@ -143,7 +143,7 @@ Page({
             examName: app.globalData.defaultExamName
         });
         that = this;
-
+        this.startSecurityMonitor();
         if (that.data.examNo != null) {
             var questionNo = null;
             if ('question_no' in options) {
@@ -160,8 +160,7 @@ Page({
                     this.reqQuestion(0, true);
                     return true;
                 }
-            }
-            else if('wrong_question' in options){
+            } else if ('wrong_question' in options) {
                 this.reqWrongAnswer();
             }
             // this.enterWrongMode();
@@ -181,7 +180,7 @@ Page({
         }
 
     },
-    onShow: function(){
+    onShow: function () {
         this.getExamAD();
     },
     extractQuestionNos: function (nos_l) {
@@ -249,6 +248,7 @@ Page({
             success: res => {
                 wx.hideLoading();
                 if (res.data.status != true) {
+                    // TODO show
                     return;
                 }
                 var canUpdate = false;
@@ -465,24 +465,26 @@ Page({
             return;
         }
         // 过度代码 TODO 下次发版后移除
-        function reset_rich_item(v){
-            if(typeof(v) == 'string'){
-                v = {'value': v, 'index': i};
-            }
-            else{
+        function reset_rich_item(v) {
+            if (typeof (v) == 'string') {
+                v = {
+                    'value': v,
+                    'index': i
+                };
+            } else {
                 v['index'] = i;
             }
             return v;
         }
-        for(var i=0;i<nowQuestion.question_desc_rich.length;i++){
+        for (var i = 0; i < nowQuestion.question_desc_rich.length; i++) {
             nowQuestion.question_desc_rich[i] = reset_rich_item(nowQuestion.question_desc_rich[i])
         }
-        for(var j=0;j<nowQuestion.options.length;j++){
-            for(var k=0;k<nowQuestion.options[j]['desc_rich'].length;k++){
+        for (var j = 0; j < nowQuestion.options.length; j++) {
+            for (var k = 0; k < nowQuestion.options[j]['desc_rich'].length; k++) {
                 nowQuestion.options[j]['desc_rich'][k] = reset_rich_item(nowQuestion.options[j]['desc_rich'][k]);
             }
         }
-        for(var i=0;i<nowQuestion.answer_rich.length;i++){
+        for (var i = 0; i < nowQuestion.answer_rich.length; i++) {
             nowQuestion.answer_rich[i] = reset_rich_item(nowQuestion.answer_rich[i])
         }
         // 过度结束
@@ -506,12 +508,18 @@ Page({
         for (var index in nowQuestion.options) {
             if (parseInt(nowQuestion.options[index]["score"]) > 0) {
                 var tmp_answer = app.globalData.optionChar[index] + "、";
-                questionAnswer = questionAnswer.concat({'value': tmp_answer, 'index': -1});
+                questionAnswer = questionAnswer.concat({
+                    'value': tmp_answer,
+                    'index': -1
+                });
                 questionAnswer = questionAnswer.concat(nowQuestion.options[index]["desc_rich"]);
             }
         }
         if (questionAnswer.length == 0) {
-            questionAnswer[0] = {'value': "没有答案", 'index': -1};
+            questionAnswer[0] = {
+                'value': "没有答案",
+                'index': -1
+            };
         }
         that.setData({
             showAnswer: true,
@@ -532,7 +540,7 @@ Page({
         var choseIndex = parseInt(e.currentTarget.dataset.choseitem);
         var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
-        
+
         for (var index in questionItems[nowQuestionIndex]["options"]) {
             nowQuestion["options"][index]["class"] = "noChose";
         }
@@ -551,7 +559,6 @@ Page({
             nowQuestion["options"][choseIndex]["class"] = "errorChose";
             // 记录错题
             this.addBrushNum(nowQuestion.question_no, STATE_WRONG);
-            //that.recordWrong(that.data.examNo, [nowQuestion.question_no]);
             // 显示答案
             that.showAnswer();
         }
@@ -626,23 +633,15 @@ Page({
             }
         })
     },
-    recordWrong: function (exam_no, wrong_question) {
-        // 待废弃
-        wx.request2({
-            url: '/exam/wrong/',
-            method: "POST",
-            data: {
-                "question_no": wrong_question,
-                "exam_no": exam_no
-            }
-        })
-    },
     addBrushNum: function (q_no, state) {
         if (brushList.indexOf(q_no) >= 0) {
             return false;
         }
         brushList.push(q_no);
-        brushDetail.push({'no': q_no, 'state': state});
+        brushDetail.push({
+            'no': q_no,
+            'state': state
+        });
         this.saveBrushNum();
     },
     saveBrushNum: function () {
@@ -651,7 +650,7 @@ Page({
         }
         var _num = brushDetail.length;
         var questions = new Array();
-        while(brushDetail.length > 0){
+        while (brushDetail.length > 0) {
             questions.push(brushDetail.pop());
         }
         var examNo = this.data.examNo;
@@ -739,8 +738,8 @@ Page({
         app.getOrSetExamCacheData(this.data.progressStorageKey, this.data.nowQuestionIndex);
 
     },
-    calcTags: function(item){
-        if(item == null){
+    calcTags: function (item) {
+        if (item == null) {
             return ['首次遇到'];
         }
         var q_detail = item;
@@ -753,47 +752,44 @@ Page({
         var last_miss = q_detail['last_miss'];
         var last_meet = q_detail['last_meet'];
         var last_meet_time = q_detail['last_meet_time'];
-        if(miss_num == 0 && skip_num == 0){
+        if (miss_num == 0 && skip_num == 0) {
             tags.push('全部做对')
-        }
-        else if(miss_num == 0 && right_num > 0){
+        } else if (miss_num == 0 && right_num > 0) {
             tags.push('从未错误')
         }
-        if(skip_num == num && skip_num >= 3){
+        if (skip_num == num && skip_num >= 3) {
             tags.push('多次跳过')
-        }
-        else if(right_num == 0){
+        } else if (right_num == 0) {
             tags.push('还未对过')
-        }
-        else if(state_num >= 3){
-            if(last_miss){
+        } else if (state_num >= 3) {
+            if (last_miss) {
                 tags.push('连续错误')
-            }
-            else{
+            } else {
                 tags.push('最近全对')
             }
         }
-        if(right_num >= 1 && miss_num >= 2 * right_num){
+        if (right_num >= 1 && miss_num >= 2 * right_num) {
             tags.push('易错题');
         }
-        if (last_meet_time - dt.get_timestamp2() < week_delta){
-            if(last_meet == STATE_RIGHT){
+        if (last_meet_time - dt.get_timestamp2() < week_delta) {
+            if (last_meet == STATE_RIGHT) {
                 tags.push('最近做对');
-            }
-            else if(last_meet == STATE_WRONG){
+            } else if (last_meet == STATE_WRONG) {
                 tags.push('最近做错');
             }
         }
         return tags
-        
+
     },
-    getQuestionTag: function(){
+    getQuestionTag: function () {
         var tags = [];
         if (this.data.examNo == null || this.data.nowQuestion == null) {
-            this.setData({tags: tags});
+            this.setData({
+                tags: tags
+            });
             return false;
         }
-        if(this.data.showAnswer == true){
+        if (this.data.showAnswer == true) {
             // 查看答案情况 保持原有
             return true;
         }
@@ -806,56 +802,56 @@ Page({
             method: 'GET',
             success: res => {
                 var res_data = res.data;
-                if(res_data.status != true){
+                if (res_data.status != true) {
                     tags = [];
-                }
-                else if(! ('item' in res_data.data)){
+                } else if (!('item' in res_data.data)) {
                     tags = [];
-                }
-                else{
-                    if('tags' in res_data.data){
+                } else {
+                    if ('tags' in res_data.data) {
                         tags = res_data.data.tags;
-                    }
-                    else{
+                    } else {
                         tags = that.calcTags(res_data.data.item);
                     }
                 }
-                that.setData({tags: tags});
+                that.setData({
+                    tags: tags
+                });
             },
             fail: function () {
-                that.setData({tags: []});
+                that.setData({
+                    tags: []
+                });
             }
         })
     },
-    getExamAD: function(){
-        if (this.data.examNo == null){
+    getExamAD: function () {
+        if (this.data.examNo == null) {
             return false;
         }
-        //  TODO 读取缓存跳过
         var now_time = dt.get_timestamp2();
         var cache_key = 'ignore_ad_time';
         var ignore_time = app.getOrSetExamCacheData(cache_key);
-        if(ignore_time > now_time){
+        if (ignore_time > now_time) {
             return false;
         }
         var that = this;
         wx.request2({
             url: '/exam/ad?exam_no=' + this.data.examNo,
-            success: function(ret){
+            success: function (ret) {
                 var r_data = ret.data;
-                if(!r_data.status){
+                if (!r_data.status) {
                     return false;
                 }
-                if(r_data.data.enabled == false){
+                if (r_data.data.enabled == false) {
                     return false;
                 }
                 var ignoreTip = "";
-                
-                if(r_data.data.ignore_interval > 0){
+
+                if (r_data.data.ignore_interval > 0) {
                     var days = Math.floor(r_data.data.ignore_interval / 24);
-                    if(days > 0){
+                    if (days > 0) {
                         ignoreTip = days + "天内不再提醒";
-                    }else{
+                    } else {
                         ignoreTip = r_data.data.ignore_interval + "小时内不再提醒";
                     }
                 }
@@ -865,14 +861,14 @@ Page({
                     ignoreTip: ignoreTip,
                     ignoreInterval: r_data.data.ignore_interval
                 })
-                
+
             }
         })
     },
-    ignoreAction: function(e){
+    ignoreAction: function (e) {
         var ignoreAd = false;
-        for(let i=0, l = e.detail.value.length;i<l;++i){
-            if(e.detail.value[i] == 'ignore'){
+        for (let i = 0, l = e.detail.value.length; i < l; ++i) {
+            if (e.detail.value[i] == 'ignore') {
                 ignoreAd = true;
                 break
             }
@@ -881,8 +877,8 @@ Page({
             ignoreAd: ignoreAd
         })
     },
-    knowAd: function(){
-        if(this.data.ignoreAd){
+    knowAd: function () {
+        if (this.data.ignoreAd) {
             var now_time = dt.get_timestamp2();
             var cache_key = 'ignore_ad_time';
             var ignore_time = now_time + this.data.ignoreInterval * 3600;
@@ -893,11 +889,13 @@ Page({
         })
     },
     // 练习错题模式
-    enterWrongMode: function(){
-        this.setData({notFrame: false});
+    enterWrongMode: function () {
+        this.setData({
+            notFrame: false
+        });
         this.reqWrongAnswer();
     },
-    reqWrongAnswer: function() {
+    reqWrongAnswer: function () {
         that = this
         var examNo = this.data.examNo;
         if (examNo == null) {
@@ -915,7 +913,7 @@ Page({
         wx.request2({
             url: '/exam/wrong/?exam_no=' + examNo + "&min_wrong_time=" + minWrongTime,
             methods: "GET",
-            success: function(res) {
+            success: function (res) {
                 if (res.data.status != true) {
                     wx.hideLoading();
                     wx.showModal({
@@ -936,7 +934,7 @@ Page({
                 var latestQuestionItems = questionItems;
                 if (addQuestionItems.length > 0) {
                     // 按照错误时间排序 最新错题排到前面
-                    addQuestionItems.sort(function(a, b) {
+                    addQuestionItems.sort(function (a, b) {
                         return a.wrong_time - b.wrong_time;
                     })
                     latestQuestionItems = addQuestionItems.concat(questionItems);
@@ -964,7 +962,7 @@ Page({
                     that.reqQuestion(0, true);
                 }
             },
-            fail: function({
+            fail: function ({
                 errMsg
             }) {
                 wx.hideLoading();
@@ -982,6 +980,65 @@ Page({
         })
     },
     // 练习错题模式 结束
+    // 安全防护检测记录开始
+    startSecurityMonitor: function () {
+        var that = this;
+        var cacheNumKey = 'capture_screen_num' 
+        wx.onUserCaptureScreen((res) => {
+            var _cacheNum = app.getOrSetCacheData(cacheNumKey);
+            if (_cacheNum == null) {
+                _cacheNum = 0
+            }
+            _cacheNum = _cacheNum + 1;
+            that.recordCaptureScreen(cacheNumKey, _cacheNum);
+        })
+        // 进入检查
+        var cacheNum = app.getOrSetCacheData(cacheNumKey);
+        if(cacheNum != null && cacheNum >= 1 || true){
+            this.recordCaptureScreen(cacheNumKey, cacheNum);
+        }
+    },
+    recordCaptureScreen: function (cacheNumKey, num) {
+        var data = {
+            'times': num,
+            'path': 'training/training'
+        };
+        function _error(num){
+            app.getOrSetCacheData(cacheNumKey, num);
+            if (num > 3) {
+                wx.showModal({
+                    title: '网络异常',
+                    content: "当前网络异常【S-CS】，返回上一级",
+                    showCancel: false,
+                    success(res) {
+                        wx.navigateBack({
+                            delta: 1,
+                        })
+                    }
+                })
+            }
+        }
+        wx.request2({
+            url: '/security/capture/screen',
+            method: 'POST',
+            data: data,
+            success: res => {
+                if(res.statusCode == 200){
+                    app.getOrSetCacheData(cacheNumKey, 0);
+                }
+                else{
+                    _error(num);
+                }
+            },
+            fail: function () {
+                _error(num);
+            }
+        })
+        wx.showToast({
+            title: '发现截屏',
+        })
+    },
+    // 安全防护检测记录结束
     onUnload: function () {
         console.info("un load")
         this.saveBrushNum();
@@ -998,7 +1055,7 @@ Page({
     },
     // 触摸结束事件
     touchEnd: function (e) {
-        if(this.data.questionNum <= 1){
+        if (this.data.questionNum <= 1) {
             return false
         }
         var touchEndX = e.changedTouches[0].pageX;

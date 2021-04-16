@@ -42,3 +42,9 @@ E_NEW_BILLING = 'new_billing'
 # vc billing
 VB_FB = 'feedback_exam'
 VB_FB_NAME = '题库问题反馈得积分'
+
+
+# security handle action
+SE_ACTION_NORMAL = 'normal'
+SE_ACTION_WARN = 'warn'
+SE_ACTION_EXIT = 'exit'
