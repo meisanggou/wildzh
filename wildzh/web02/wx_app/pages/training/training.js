@@ -252,6 +252,12 @@ Page({
                     // TODO show
                     return;
                 }
+                if('se' in res.data){
+                    var r = SE.showSecurityMesg(res.data.se.action, res.data.se.message);
+                    if(r){
+                        return false;
+                    }
+                }
                 var canUpdate = false;
                 if ('exam' in res.data) {
                     var exam_item = res.data.exam;

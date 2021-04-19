@@ -21,7 +21,7 @@ def security_firewall(resource, event, trigger, session, user_no, **kwargs):
     obj = SE_SC_MAN.get(session, user_no)
     if obj.num > 10:
         action = constants.SE_ACTION_EXIT
-        message = ''
+        message = '最近截屏次数过多，当前禁止使用，请稍后重试!'
         se = {'action': action, 'message': message}
         return se
     return None
@@ -43,12 +43,12 @@ def capture_screen():
         obj.num += times
     if obj.num <= 5:
         action = constants.SE_ACTION_NORMAL
-        message = '截屏将影响您的正常使用'
+        message = ''
     elif obj.num <= 10:
         action = constants.SE_ACTION_WARN
-        message = '最近截屏次数过多，当前禁止使用，请稍后重试'
+        message = '截屏将影响您的正常使用'
     else:
         action = constants.SE_ACTION_EXIT
-        message = ''
+        message = '最近截屏次数过多，当前禁止使用，请稍后重试'
     se = {'action': action, 'message': message}
     return {'status': True, 'data': '', 'se': se}

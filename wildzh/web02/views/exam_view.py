@@ -585,6 +585,13 @@ def get_exam_questions():
     use_time = time.time() - start_time
     exam_item = g.current_exam.to_dict()
     exam_item['exam_role'] = g.exam_role
+    # 安全防火墙
+    se = registry.notify_callback(constants.R_SE, constants.E_SE_FIREWALL,
+                                  exam_view, session=g.session,
+                                  user_no=g.user_no)
+    if se:
+        return {"status": True, "data": [], 'use_time': use_time,
+                    'exam': exam_item, 'se': se}
     return jsonify({"status": True, "data": items, 'use_time': use_time,
                     'exam': exam_item})
 
