@@ -1,4 +1,5 @@
 var app = getApp();
+var SE = require("../common/security.js");
 var that;
 var touchTime = 0;
 var touchStartX = 0; //触摸时的原点
@@ -189,6 +190,12 @@ Page({
                 wx.hideLoading();
                 if (res.data.status == false) {
                     return;
+                }
+                if('se' in res.data){
+                    var r = SE.showSecurityMesg(res.data.se.action, res.data.se.message);
+                    if(r){
+                        return false;
+                    }
                 }
                 var newItems = res.data.data;
                 for (var i = endIndex - 1; i >= startIndex; i--) {
