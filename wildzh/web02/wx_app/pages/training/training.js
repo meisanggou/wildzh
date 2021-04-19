@@ -1,5 +1,6 @@
 var app = getApp();
 var dt = require("../common/datetime_tools.js");
+var SE = require("../common/security.js");
 var that;
 var questionItems = [];
 var touchTime = 0;
@@ -143,7 +144,7 @@ Page({
             examName: app.globalData.defaultExamName
         });
         that = this;
-        this.startSecurityMonitor();
+        SE.startSecurityMonitor();
         if (that.data.examNo != null) {
             var questionNo = null;
             if ('question_no' in options) {
@@ -980,65 +981,6 @@ Page({
         })
     },
     // 练习错题模式 结束
-    // 安全防护检测记录开始
-    startSecurityMonitor: function () {
-        var that = this;
-        var cacheNumKey = 'capture_screen_num' 
-        wx.onUserCaptureScreen((res) => {
-            var _cacheNum = app.getOrSetCacheData(cacheNumKey);
-            if (_cacheNum == null) {
-                _cacheNum = 0
-            }
-            _cacheNum = _cacheNum + 1;
-            that.recordCaptureScreen(cacheNumKey, _cacheNum);
-        })
-        // 进入检查
-        var cacheNum = app.getOrSetCacheData(cacheNumKey);
-        if(cacheNum != null && cacheNum >= 1 || true){
-            this.recordCaptureScreen(cacheNumKey, cacheNum);
-        }
-    },
-    recordCaptureScreen: function (cacheNumKey, num) {
-        var data = {
-            'times': num,
-            'path': 'training/training'
-        };
-        function _error(num){
-            app.getOrSetCacheData(cacheNumKey, num);
-            if (num > 3) {
-                wx.showModal({
-                    title: '网络异常',
-                    content: "当前网络异常【S-CS】，返回上一级",
-                    showCancel: false,
-                    success(res) {
-                        wx.navigateBack({
-                            delta: 1,
-                        })
-                    }
-                })
-            }
-        }
-        wx.request2({
-            url: '/security/capture/screen',
-            method: 'POST',
-            data: data,
-            success: res => {
-                if(res.statusCode == 200){
-                    app.getOrSetCacheData(cacheNumKey, 0);
-                }
-                else{
-                    _error(num);
-                }
-            },
-            fail: function () {
-                _error(num);
-            }
-        })
-        wx.showToast({
-            title: '发现截屏',
-        })
-    },
-    // 安全防护检测记录结束
     onUnload: function () {
         console.info("un load")
         this.saveBrushNum();

@@ -3,14 +3,8 @@
         "table_cols": [
             {
                 "pri_key": true,
-                "col_comment": "时期编号，按照一个星期为一个周期，进行统计",
+                "col_comment": "时期编号，一天为一个周期，进行统计",
                 "col_name": "period_no",
-                "col_type": "int(11)"
-            },
-            {
-                "pri_key": true,
-                "col_comment": "测试编号",
-                "col_name": "exam_no",
                 "col_type": "int(11)"
             },
             {
@@ -20,15 +14,9 @@
                 "col_type": "int(11)"
             },
             {
-                "col_comment": "练习题目数量",
+                "col_comment": "截屏次数",
                 "col_name": "num",
                 "col_type": "int(11)"
-            },
-            {
-                "col_comment": "做对的题目数量",
-                "col_name": "right_num",
-                "col_type": "int(11)",
-                "default_value": 0
             },
             {
                 "col_comment": "更新时间",
@@ -36,7 +24,7 @@
                 "col_type": "int(11)"
             }
         ],
-        "table_comment": "一个周期内做题数目",
-        "table_name": "security_"
+        "table_comment": "一个天内截屏次数",
+        "table_name": "security_capture_screen"
     }
 ]

@@ -30,6 +30,7 @@ T_STATES = [T_STATE_RIGHT, T_STATE_WRONG, T_STATE_SKIP]
 R_EXAM = 'exam'
 R_QUESTION = 'question'
 R_VC = 'virtual_currency'
+R_SE = 'security'
 
 
 # resource event
@@ -37,6 +38,7 @@ E_AFTER_UPDATE = 'after_update'
 E_GEN_TOKEN = 'gen_token'
 E_PARSING_TOKEN = 'parsing_token'
 E_NEW_BILLING = 'new_billing'
+E_SE_FIREWALL = 'security_firewall'
 
 
 # vc billing

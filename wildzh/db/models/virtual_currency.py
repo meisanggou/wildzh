@@ -1,7 +1,6 @@
 # !/usr/bin/env python
 # coding: utf-8
 import sqlalchemy
-from sqlalchemy.orm import relationship
 from wildzh.db.models import Base
 
 __author__ = 'zhouhenglc'
