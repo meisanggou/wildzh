@@ -700,7 +700,7 @@ def upload_question_page():
 
 @exam_view.route("/question/file", methods=["POST"])
 @login_required
-@required_manager_exam()
+# @required_manager_exam()
 def upload_question_file():
     r = dict()
     for key in request.files:
