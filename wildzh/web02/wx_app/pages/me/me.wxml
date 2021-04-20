@@ -152,7 +152,7 @@
                             <view class="weui-label">看广告</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <view class="weui-input">得积分</view>
+                            <view class="weui-input">{{ ADTip }}</view>
                         </view>
                         <view class="weui-cell__ft right-slip" bindtap="toLookAD">
                             <image mode="aspectFit" class="right-slip" src="/images/right_slip.png">

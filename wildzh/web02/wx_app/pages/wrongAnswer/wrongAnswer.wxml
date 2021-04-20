@@ -1,5 +1,5 @@
 <view class="centTip" wx:if="{{questionNum <= 0}}">
-	无错题
+	{{ centTip }}
 </view>
 <view wx:else class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
 	<!-- <view class='toptitle'>

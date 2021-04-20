@@ -19,6 +19,7 @@ Page({
         examNo: null,
         examName: "",
         questionNum: -1,
+        centTip: '无错题',
         nowQuestionIndex: 0,
         questionAnswer: "",
         nowQuestion: null,
@@ -125,9 +126,6 @@ Page({
                         content: "没有发现错题",
                         showCancel: false,
                         success(res) {
-                            // wx.navigateBack({
-                            //     delta: 1
-                            // })
                         }
                     })
                     firstEnter = false;
@@ -144,12 +142,9 @@ Page({
                 wx.hideLoading();
                 wx.showModal({
                     title: '页面请求失败',
-                    content: "无法连接远程主机获取错题信息，确定返回首页",
+                    content: "无法连接远程主机获取错题信息",
                     showCancel: false,
                     success(res) {
-                        wx.navigateBack({
-                            delta: 1
-                        })
                     }
                 })
             }
@@ -192,10 +187,12 @@ Page({
                     return;
                 }
                 if('se' in res.data){
-                    var r = SE.showSecurityMesg(res.data.se.action, res.data.se.message);
-                    if(r){
-                        return false;
+                    if(res.data.se.action == 'exit'){
+                        that.setData({
+                            centTip: res.data.se.message
+                        })
                     }
+                    return false;
                 }
                 var newItems = res.data.data;
                 for (var i = endIndex - 1; i >= startIndex; i--) {

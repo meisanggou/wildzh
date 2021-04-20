@@ -33,15 +33,16 @@ def func_browse_ad_id(user_no, **kwargs):
 
 
 def func_browse_ad_check(user_no, gf_obj, **kwargs):
-    max_freq = 0
-    give_vc_count = 5
+    max_freq = 2
+    give_vc_count = 1
     last_id = None
     if gf_obj.freq >= max_freq:
         return None
     next_enable = max_freq - gf_obj.freq > 1
     cr = {'next_enable': next_enable, 'last_id': last_id,
           'give_vc_count': give_vc_count, 'billing_project': 'browse_ad',
-          'project_name': '看广告得积分', 'detail': '', 'remark': ''}
+          'project_name': '看广告得积分', 'detail': '', 'remark': '',
+          'tip': '得1积分'}
     return cr
 
 

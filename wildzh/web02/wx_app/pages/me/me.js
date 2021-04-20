@@ -27,7 +27,8 @@ Page({
         version: app.globalData.version,
         useProfile: true,
         enableShare: false, // 是否允许邀请好友
-        enableLookAD: false // 是否允许看广告得积分
+        enableLookAD: false, // 是否允许看广告得积分
+        ADTip: '得积分' // 广告提示语
     },
     onLoad: function (options) {
         if (app.globalData.defaultExamNo != null) {
@@ -372,9 +373,11 @@ Page({
                     return;
                 }
                 if (action != 'run') {
-                    that.setData({
-                        enableLookAD: true
-                    })
+                    var nData = {'enableLookAD': true};
+                    if('tip' in pk.data.cr){
+                        nData['ADTip'] = pk.data.cr.tip;
+                    }
+                    that.setData(nData)
                 }
                 else{
                     var vcBalance = pk.data.vc.sys_balance + pk.data.vc.balance;
