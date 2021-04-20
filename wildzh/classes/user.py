@@ -6,6 +6,7 @@ import re
 import time
 import base64
 import hashlib
+from pymysql.err import IntegrityError
 import socket
 import string
 import random
@@ -129,8 +130,11 @@ class User(object):
             self.user_folder = os.path.join(upload_folder, "user")
             if os.path.exists(self.user_folder) is False:
                 os.makedirs(self.user_folder)
+            # TODO 统一成变量
+            self.avatar_path_prefix = '/user/avatar'
         else:
             self.user_folder = None
+            self.avatar_path_prefix = None
 
     # 插入用户注册数据
     def insert_user(self, session, user_name=None, password=None, tel=None,
@@ -146,7 +150,8 @@ class User(object):
                       creator=creator, add_time=add_time, role=role)
         u_o = self.model(**kwargs)
         if password is not None:
-            u_o.password = generate_password_hash(self._md5_hash_password(user_name, password))
+            u_o.password = generate_password_hash(self._md5_hash_password(
+                user_name, password))
         u_o.save(session)
 
     def update_password(self, user_name, new_password):
@@ -193,8 +198,14 @@ class User(object):
         q = session.query(self.model).filter_by(**kwargs)
         db_items = []
         for u_item in q:
+            item = u_item.to_dict()
+            if self.user_folder and self.avatar_path_prefix:
+                avatar_file_path = os.path.join(
+                    self.user_folder, '%s_avatar.png' % item['user_no'])
+                if os.path.exists(avatar_file_path):
+                    item['avatar_url'] = '%s/%s_avatar.png' % (
+                        self.avatar_path_prefix, item['user_no'])
             try:
-                item = u_item.to_dict()
                 item['nick_name'] = base64.b64decode(item['nick_name'])
                 if isinstance(item['nick_name'], bytes):
                     item['nick_name'] = item['nick_name'].decode('utf-8')
@@ -236,7 +247,10 @@ class User(object):
         return True, dict(user_name=user_name)
 
     def new_wx_user(self, session, wx_id):
-        self.insert_user(session, wx_id=wx_id)
+        try:
+            self.insert_user(session, wx_id=wx_id)
+        except IntegrityError as ie:
+            pass
         items = self.verify_user_exist(session, wx_id=wx_id)
         if len(items) <= 0:
             return None
@@ -304,7 +318,8 @@ class User(object):
     def get_multi_nick_name(self, user_list):
         cols = ["user_no", "nick_name", "avatar_url"]
         user_list = set(user_list)
-        items = self.db.execute_multi_select(self.t, where_value=dict(user_no=user_list), cols=cols)
+        items = self.db.execute_multi_select(self.t, where_value=dict(
+            user_no=user_list), cols=cols)
         for u_item in items:
             try:
                 u_item["nick_name"] = base64.b64decode(u_item["nick_name"])

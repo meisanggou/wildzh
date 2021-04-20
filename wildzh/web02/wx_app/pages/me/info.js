@@ -29,6 +29,7 @@ Page({
     data: {
         userName: null,
         nickName: '',
+        avatarUrl: '/images/unregister.png',
         showTopTips: false,
         rules: [{
                 'name': 'user_name',
@@ -82,7 +83,25 @@ Page({
         this.getUserData();
 
     },
-
+    getUserInfo2: function () {
+        var that = this;
+        wx.getUserProfile({
+            desc: '同步用户头像信息到小程序',
+            success: function (e) {
+                console.info(e);
+                var userInfo = e.userInfo
+                var data = {
+                    "avatar_url": userInfo.avatarUrl,
+                    "nick_name": userInfo.nickName
+                }
+                wx.showLoading({
+                    title: '更新中...',
+                    mask: true
+                })
+                that.updateUserInfoAction(data);
+            }
+        })
+    },
     /**
      * 生命周期函数--监听页面初次渲染完成
      */
@@ -103,10 +122,12 @@ Page({
             method: 'GET',
             success: res => {
                 var userData = res.data.data[0];
+                app.getOrSetCurrentUserData(userData);
                 that.setData({
                     userName: userData['user_name'],
                     [`formData.user_name`]: userData['user_name'],
                     nickName: userData['nick_name'],
+                    avatarUrl: userData['avatar_url'],
                     [`n_form_data.nick_name`]: userData['nick_name']
                 });
                 wx.hideLoading();
@@ -233,7 +254,8 @@ Page({
                     duration: 2000
                 });
                 that.setData({
-                    nickName: userItem.nick_name
+                    nickName: userItem.nick_name,
+                    avatarUrl: userItem.avatar_url
                 })
             }
         })

@@ -3,3 +3,13 @@
 .btn-view {
     margin-top: 28rpx;
 }
+
+.avatar {
+    display: flex;
+    width: 160rpx;
+    height: 160rpx;
+    /* margin-left: 20rpx; */
+    border-radius: 80rpx;
+    /* margin-right: auto; */
+    /* margin-top: 30rpx; */
+}

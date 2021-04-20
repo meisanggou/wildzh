@@ -1,7 +1,8 @@
 var remote_host = "https://meisanggou.vicp.net"
-var version = "6.6.6";
+var version = "6.6.7";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
+var reqRandom = 100;  // 用于某些资源防止缓存，加到请求参数中
 remote_host = "https://wild.gene.ac"
 
 // remote_host = "http://127.0.0.1:2400"
@@ -37,10 +38,47 @@ function getOrSetCacheData2(key, value) {
     return value
 }
 
-function getOrSetCacheVersion (value){
+function getOrSetCurrentUserData(value = null) {
+    var userInfoStorageKey = "current_user";
+    if (value && value.avatar_url) {
+        reqRandom = reqRandom + 1;
+        if (value.avatar_url.substr(0, 1) == "/") {
+            value.avatar_url = remote_host + value.avatar_url + '?r=' + reqRandom;
+        }
+    }
+    return getOrSetCacheData(userInfoStorageKey, value);
+}
+
+function getOrSetCacheVersion(value) {
     var key = 'version';
     var cacheVersion = getOrSetCacheData2(key, value);
     return cacheVersion;
+}
+
+function mp_login(callback) {
+    wx.login({
+        success: res => {
+            wx.request({
+                url: remote_host + '/user/login/wx/',
+                method: "POST",
+                data: {
+                    "code": res.code
+                },
+                success: res => {
+                    if (res.statusCode == 200 && res.data.status == true) {
+                        console.info("auto wx login success")
+                        var userData = res.data.data;
+                        getOrSetCurrentUserData(userData)
+                        wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
+                        if (callback) {
+                            callback();
+                        }
+                    }
+                }
+            })
+            // 发送 res.code 到后台换取 openId, sessionKey, unionId
+        }
+    })
 }
 
 App({
@@ -52,25 +90,7 @@ App({
         wx.removeStorage({
             key: wx.session_storage_key,
         })
-        wx.login({
-            success: res => {
-                wx.request({
-                    url: wx.remote_host + '/user/login/wx/',
-                    method: "POST",
-                    data: {
-                        "code": res.code
-                    },
-                    success: res => {
-                        if (res.statusCode == 200 && res.data.status == true) {
-                            console.info("auto wx login success")
-                            that.getOrSetCurrentUserData(res.data.data)
-                            wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
-                        }
-                    }
-                })
-                // 发送 res.code 到后台换取 openId, sessionKey, unionId
-            }
-        })
+        mp_login();
 
         wx.request2 = function (req) {
             var screenData = that.getScreenInfo();
@@ -90,7 +110,7 @@ App({
             req.header['X-REQ-API'] = 'v1';
             var cacheVersion = getOrSetCacheVersion();
             var newVersion = false;
-            if(cacheVersion != version){
+            if (cacheVersion != version) {
                 req.header['X-VMP-Version-N'] = version;
                 console.info('new version')
                 newVersion = true
@@ -105,34 +125,17 @@ App({
             if ("success" in req) {
                 var origin_success = req.success
                 req.success = function (res) {
-                    if(newVersion){
+                    if (newVersion) {
                         getOrSetCacheVersion(version);
                     }
-                    getOrSetCacheVersion
                     if (res.statusCode != 302 && res.statusCode != 401) {
                         origin_success(res);
                     } else if (retry < 3) {
-                        wx.login({
-                            success: res => {
-                                wx.request({
-                                    url: wx.remote_host + '/user/login/wx/',
-                                    method: "POST",
-                                    data: {
-                                        "code": res.code
-                                    },
-                                    success: res => {
-                                        if (res.statusCode == 200 && res.data.status == true) {
-                                            console.info("auto wx login success")
-                                            that.getOrSetCurrentUserData(res.data.data)
-                                            wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
-                                            req.retry = retry + 1;
-                                            wx.request2(req)
-                                        }
-                                    }
-                                })
-                                // 发送 res.code 到后台换取 openId, sessionKey, unionId
-                            }
+                        mp_login(function () {
+                            req.retry = retry + 1;
+                            wx.request2(req)
                         })
+
                     }
                 }
             }
@@ -141,40 +144,19 @@ App({
             // }
             return wx.request(req)
         }
-        wx.user_ping = function(callback){
+        wx.user_ping = function (callback) {
             wx.request2({
-              url: '/user/ping',
-              success: function(res){
-                  callback(res);
-              },
-              fail: function(res){
-                  callback(res);
-              }
+                url: '/user/ping',
+                success: function (res) {
+                    callback(res);
+                },
+                fail: function (res) {
+                    callback(res);
+                }
             })
         }
         this.getDefaultExam();
         return true;
-        // 登录
-        wx.login({
-            success: res => {
-                wx.request({
-                    url: wx.remote_host + '/user/login/wx/',
-                    method: "POST",
-                    data: {
-                        "code": res.code
-                    },
-                    success: res => {
-                        console.info("App Wx Login Success")
-                        that.getOrSetCurrentUserData(res.data.data)
-                        wx.setStorageSync(wx.session_storage_key, res.header["Set-Cookie"])
-                    }
-                })
-                // 发送 res.code 到后台换取 openId, sessionKey, unionId
-            }
-
-
-        })
-        this.getScreenInfo(false);
     },
     setDefaultExam: function (examItem) {
         this.globalData.defaultExamNo = examItem["exam_no"];
@@ -190,9 +172,7 @@ App({
     },
     getOrSetCacheData: getOrSetCacheData,
     getOrSetCacheData2: getOrSetCacheData2,
-    getOrSetCurrentUserData: function (value = null) {
-        return this.getOrSetCacheData(this.globalData.userInfoStorageKey, value);
-    },
+    getOrSetCurrentUserData: getOrSetCurrentUserData,
     getOrSetExamCacheData: function (key, value = null) {
         if (this.globalData.defaultExamNo == null) {
             return null;
@@ -232,7 +212,6 @@ App({
         allTestIdKey: "wildzh_testids",
         testIdPrefix: "wildzh_test_",
         sessionStorageKey: session_storage_key,
-        userInfoStorageKey: "current_user",
         myProjectStorageKey: "wildzh_my_projects",
         studyProcessKey: "wildzh_study_process", //待废弃
         examStorageKey: exam_storage_key,

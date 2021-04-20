@@ -238,3 +238,10 @@ def get_multi_nickname():
 @login_required
 def user_ping():
     return {'status': True, 'data': 'success'}
+
+
+@user_view.route('/avatar/<avatar_id>.png', methods=['GET'])
+def get_user_avatar(avatar_id):
+    user_folder = c_user.user_folder
+    file_name = '%s.png' % avatar_id
+    return send_from_directory(user_folder, file_name)
