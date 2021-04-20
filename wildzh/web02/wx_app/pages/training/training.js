@@ -244,7 +244,7 @@ Page({
             nos += "," + questionItems[i].question_no;
         }
         wx.request2({
-            url: '/exam/questions/?exam_no=' + exam_no + "&nos=" + nos,
+            url: '/exam/questions/?fmt_version=2&exam_no=' + exam_no + "&nos=" + nos,
             method: 'GET',
             success: res => {
                 wx.hideLoading();
@@ -471,29 +471,16 @@ Page({
             that.reqQuestion(index, true);
             return;
         }
-        // 过度代码 TODO 下次发版后移除
-        function reset_rich_item(v) {
-            if (typeof (v) == 'string') {
-                v = {
-                    'value': v,
-                    'index': i
-                };
-            } else {
-                v['index'] = i;
-            }
-            return v;
-        }
         for (var i = 0; i < nowQuestion.question_desc_rich.length; i++) {
-            nowQuestion.question_desc_rich[i] = reset_rich_item(nowQuestion.question_desc_rich[i])
+            nowQuestion.question_desc_rich[i] = nowQuestion.question_desc_rich[i];
         }
         for (var j = 0; j < nowQuestion.options.length; j++) {
             for (var k = 0; k < nowQuestion.options[j]['desc_rich'].length; k++) {
-                nowQuestion.options[j]['desc_rich'][k] = reset_rich_item(nowQuestion.options[j]['desc_rich'][k]);
+                nowQuestion.options[j]['desc_rich'][k] = nowQuestion.options[j]['desc_rich'][k];
             }
         }
         for (var i = 0; i < nowQuestion.answer_rich.length; i++) {
-            nowQuestion.answer_rich[i] = reset_rich_item(nowQuestion.answer_rich[i])
-        }
+            nowQuestion.answer_rich[i] = nowQuestion.answer_rich[i]        }
         // 过度结束
         this.setData({
             nowQuestion: nowQuestion,

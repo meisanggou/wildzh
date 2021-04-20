@@ -2,8 +2,8 @@
 
 <view class="container">
     <view class="page-body">
-        <view wx:if="{{userAvatar}}" bindtap="changeAvatar" class="user-panel">
-            <image class="avatar bottom30" mode="aspectFit" src="{{userAvatar}}"></image>
+        <view wx:if="{{userAvatar}}" class="user-panel">
+            <image bindtap="updateNickNameClick"  class="avatar bottom30" mode="aspectFit" src="{{userAvatar}}"></image>
             <view class="user-data">
                 <view class="user-data-name">{{nickName}}</view>
                 <view class="user-data-exam"><text>题库：</text>

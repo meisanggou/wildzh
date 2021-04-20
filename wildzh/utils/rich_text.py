@@ -17,7 +17,8 @@ def separate_image(text, max_width=None):
         if len(prefix_s) > 0:
             text_groups.append({'value': prefix_s, 'index': index})
             index += 1
-        o_item = dict(value=item, url=items[1], width=float(items[2]), height=float(items[3]))
+        o_item = dict(value=item, url=items[1], width=float(items[2]),
+                      height=float(items[3]))
         if max_width and max_width < o_item["width"]:
             o_item["height"] = o_item["height"] * max_width / o_item["width"]
             o_item["width"] = max_width

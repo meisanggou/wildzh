@@ -199,6 +199,7 @@ class User(object):
         db_items = []
         for u_item in q:
             item = u_item.to_dict()
+            # TODO 微信小程序版本>=6.6.7时 取消注释
             # if self.user_folder and self.avatar_path_prefix:
             #     avatar_file_path = os.path.join(
             #         self.user_folder, '%s_avatar.png' % item['user_no'])

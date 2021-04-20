@@ -199,15 +199,15 @@ Page({
 
                 }
             } else {
-                if(this.data.nickName == this.data.n_form_data['nick_name']){
-                    that.setData({
-                        error: '昵称未发生改变'
-                    })
-                    return false;
-                }
+                // if(this.data.nickName == this.data.n_form_data['nick_name']){
+                //     that.setData({
+                //         error: '昵称未发生改变'
+                //     })
+                //     return false;
+                // }
                 
-                var data = this.data.n_form_data;
-                this.updateUserInfoAction(data);
+                // var data = this.data.n_form_data;
+                this.getUserInfo2();
             }
         })
     },

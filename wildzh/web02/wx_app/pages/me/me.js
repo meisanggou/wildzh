@@ -315,14 +315,6 @@ Page({
             url: "../exam/exam_info?examNo=" + this.data.examNo
         })
     },
-    changeAvatar: function () {
-
-        return false;
-        // TODO 本次发版暂不支持更换头像
-        wx.navigateTo({
-            url: "./avatar"
-        })
-    },
     getVCstatus: function () {
         var that = this;
         wx.request2({

@@ -1,7 +1,6 @@
 {
     "pages": [
         "pages/training/index",
-        "pages/training/training_home",
         "pages/me/me",
         "pages/exam/exam_member",
         "pages/training/training",
@@ -16,7 +15,6 @@
         "pages/exam/exam_usage",
         "pages/exam/exam_fb",
         "pages/me/info",
-        "pages/me/avatar",
         "pages/me/share"
     ],
     "window": {

@@ -29,6 +29,7 @@ from wildzh.tools.read_xml import handle_docx_main_xml
 from wildzh.utils.async_pool import get_pool
 from wildzh.utils import constants
 from wildzh.utils import registry
+from wildzh.utils import rich_text
 from wildzh.utils import text
 from wildzh.utils.log import getLogger
 from wildzh.web02.view import View2
@@ -77,8 +78,9 @@ ASYNC_POOL = get_pool()
 G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题"]
 
 
-def separate_image(text, max_width=None):
-
+def separate_image(text, max_width=None, new_fmt=False):
+    if new_fmt:
+        return rich_text.separate_image(text, max_width)
     text_groups = []
     s_l = re.findall(r"(\[\[([/\w.]+?):([\d.]+?):([\d.]+?)\]\])", text)
     last_point = 0
@@ -504,13 +506,14 @@ def update_question():
     return jsonify({"status": True, "data": dict(action=request.method, data=data)})
 
 
-def handle_questions(q_items, no_rich=False):
+def handle_questions(q_items, no_rich=False, fmt_version=1):
     if g.user_no is None:
         for item in q_items:
             options = item["options"]
             new_options = map(lambda x: {'desc': x["desc"]}, options)
             item["options"] = new_options
     # 按照用户对 题库的权限 再处理 题目
+    new_fmt = fmt_version > 1
     exam_item = g.current_exam
     if g.exam_role > 10:
         for item in q_items:
@@ -534,13 +537,15 @@ def handle_questions(q_items, no_rich=False):
             max_width = int(request.headers["X-Device-Screen-Width"]) * 0.95
         for item in q_items:
             question_desc_rich = separate_image(item["question_desc"],
-                                                max_width)
+                                                max_width, new_fmt=new_fmt)
             del item['question_desc']
             item["question_desc_rich"] = question_desc_rich
             for option in item["options"]:
-                option["desc_rich"] = separate_image(option["desc"])
+                option["desc_rich"] = separate_image(option["desc"],
+                                                     new_fmt=new_fmt)
                 del option["desc"]
-            item["answer_rich"] = separate_image(item["answer"], max_width)
+            item["answer_rich"] = separate_image(item["answer"],
+                                                 max_width, new_fmt=new_fmt)
             del item['answer']
     return q_items
 
@@ -557,6 +562,7 @@ def get_exam_questions():
     select_mode = int(request.args.get("select_mode", -1))
     question_subject = request.args.get("question_subject", None)
     no_rich = request.args.get("no_rich", False)
+    fmt_version = int(request.args.get('fmt_version', 1))
     exclude_nos = request.args.get("exclude_nos", "")
     if nos is not None:
         q_nos = list(filter(lambda x: len(x) > 0, re.split("\D", nos)))
@@ -581,7 +587,7 @@ def get_exam_questions():
             desc = True
         items = c_exam.select_questions(g.exam_no, start_no=start_no, num=int(num), desc=desc)
 
-    items = handle_questions(items, no_rich)
+    items = handle_questions(items, no_rich, fmt_version)
     use_time = time.time() - start_time
     exam_item = g.current_exam.to_dict()
     exam_item['exam_role'] = g.exam_role

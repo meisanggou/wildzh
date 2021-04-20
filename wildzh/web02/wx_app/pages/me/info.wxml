@@ -36,7 +36,7 @@
 			
 		</mp-form>
 		<view class="weui-btn-area btn-view">
-			<button class="weui-btn" type="primary" bindtap="getUserInfo2">使用微信</button>
+			<button class="weui-btn" type="primary" bindtap="submitNickNameForm">使用微信</button>
 			<!-- <button class="weui-btn" type="primary" bindtap="submitNickNameForm">确定</button> -->
 		</view>
 	</view>
