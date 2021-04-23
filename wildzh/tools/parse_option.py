@@ -140,7 +140,7 @@ class ParseOptions(object):
         kp = dict()
         for i in range(0, len_nl, 2):
             if nl[i] not in self.option_prefix:
-                return False, u"选项KEY不正确 理论上不应该出现的"
+                return False, u"选项KEY [%s] 不正确 理论上不应该出现的,或者有的选项没有值" % nl[i]
             kp[nl[i]] = nl[i + 1]
         miss_options = []
         # 判断每个选项A B C D是否存在

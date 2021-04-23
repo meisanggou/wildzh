@@ -37,29 +37,7 @@
         </view>
 
         <view class='content'>
-            <view bindtap="getQuestionTag">{{nowQuestionIndex + 1}}.
-                <block wx:for="{{nowQuestion.question_desc_rich}}" wx:key="index">
-                    <block wx:if="{{item.url}}">
-                        <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
-                            src="{{remote_host}}{{item.url}}"></image>
-                    </block>
-                    <block wx:else>
-                        <text>{{item.value}}</text>
-                    </block>
-                </block>
-                <text wx:if="{{nowQuestion.question_source}}">({{nowQuestion.question_source}})</text>
-                <block wx:if="{{isShowSubject}}">
-                    【{{nowQuestion.question_subject}}】
-                </block>
-
-            </view>
-
-            <!-- <view></view> -->
-            <image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url}}"
-                src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
-            <view class="view-tag">
-                <text class="tag" wx:for="{{tags}}" wx:key="item">{{item}}</text>
-            </view>
+            <mp-question nowQuestion="{{ nowQuestion}}" examNo="{{ examNo}}"></mp-question>
             <view class='questionOption'>
                 <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}"
                     bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}"

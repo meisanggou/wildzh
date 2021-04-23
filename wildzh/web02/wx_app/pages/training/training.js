@@ -482,6 +482,7 @@ Page({
         for (var i = 0; i < nowQuestion.answer_rich.length; i++) {
             nowQuestion.answer_rich[i] = nowQuestion.answer_rich[i]        }
         // 过度结束
+        nowQuestion.index = index;
         this.setData({
             nowQuestion: nowQuestion,
             nowQuestionIndex: index,

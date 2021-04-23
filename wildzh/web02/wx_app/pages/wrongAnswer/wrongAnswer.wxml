@@ -18,53 +18,58 @@
 
 		<view class='content'>
 			<view class='title'>【{{nowQuestionIndex + 1}}】
-				<block wx:for="{{nowQuestion.question_desc_rich}}">
-					<block wx:if="{{item.url}}">
-						<image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
-					</block>
-					<block wx:else>
-						<text>{{item}}</text>
-					</block>
-				</block>
+				<block wx:for="{{nowQuestion.question_desc_rich}}" wx:key="index">
+                    <block wx:if="{{item.url}}">
+                        <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
+                            src="{{remote_host}}{{item.url}}"></image>
+                    </block>
+                    <block wx:else>
+                        <text>{{item.value}}</text>
+                    </block>
+                </block>
 			</view>
 
 		</view>
 
 		<view class='options'>
 			<view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}" bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、
-				<block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item">
-					<block wx:if="{{desc_item.url}}">
-						<image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;' src="{{remote_host}}{{desc_item.url}}"></image>
-					</block>
-					<block wx:else>
-						{{desc_item}}
-					</block>
+				<block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item" wx:key="index">
+                        <block wx:if="{{desc_item.url}}">
+                            <image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;'
+                                src="{{remote_host}}{{desc_item.url}}"></image>
+                        </block>
+                        <block wx:else>
+                            {{desc_item.value}}
+                        </block>
 
-				</block>
+                    </block>
 			</view>
 		</view>
 
 		<view wx:if="{{showAnswer}}" class='answer'>
 			<view class='answerTitle'>答案</view>
 			<view class='item'>
-				<block wx:for="{{questionAnswer}}">
-					<block wx:if="{{item.url}}">
-						<image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}"></image>
-					</block>
-					<block wx:else>
-						{{item}}
-					</block>
-				</block>
+				<block wx:for="{{questionAnswer}}" wx:key="index">
+                        <block wx:if="{{item.url}}">
+                            <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
+                                src="{{remote_host}}{{item.url}}"></image>
+                        </block>
+                        <block wx:else>
+                            {{item.value}}
+                        </block>
+                    </block>
 			</view>
 			<scroll-view scroll-y="true" class='item'>解析：
-				<block wx:for="{{nowQuestion.answer_rich}}">
-					<block wx:if="{{item.url}}">
-						<image mode='scaleToFill' style='height:{{item.height}}px;width:{{item.width}}px;' src="{{remote_host}}{{item.url}}" data-src="{{remote_host}}{{item.url}}" bindtap="previewImage"></image>
-					</block>
-					<block wx:else>
-						<text>{{item}}</text>
-					</block>
-				</block>
+				<block wx:for="{{nowQuestion.answer_rich}}" wx:key='index'>
+                        <block wx:if="{{item.url}}">
+                            <image mode='scaleToFill' style='height:{{item.height}}px;width:{{item.width}}px;'
+                                src="{{remote_host}}{{item.url}}" data-src="{{remote_host}}{{item.url}}"
+                                bindtap="previewImage"></image>
+                        </block>
+                        <block wx:else>
+                            <text>{{item.value}}</text>
+                        </block>
+                    </block>
 			</scroll-view>
 		</view>
 	</view>

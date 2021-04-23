@@ -717,7 +717,10 @@ def upload_question_file():
         extension = filename.rsplit(".", 1)[-1].lower()
         if extension != 'docx':
             continue
-        save_name = "wildzh_%s.%s" % (uuid.uuid4().hex, extension)
+        if key == 'q_file':
+            save_name = "wildzh_%s.%s" % (uuid.uuid4().hex, extension)
+        else:
+            save_name = "wildzh_%s答案.%s" % (uuid.uuid4().hex, extension)
         save_path = os.path.join(tempfile.gettempdir(), save_name)
         LOG.info('save upload file %s to %s', key, save_path)
         file_item.save(save_path)
@@ -726,8 +729,12 @@ def upload_question_file():
         return jsonify({"status": False, "data": '请上传题目文件'})
     docx_path = r['q_file']
     LOG.info('import file %s', docx_path)
+    if 'answer_file'in r:
+        al = AnswerLocation.file()
+    else:
+        al = AnswerLocation.embedded()
     s_kwargs = dict(dry_run=True, set_mode=False,
-                    answer_location=AnswerLocation.embedded())
+                    answer_location=al)
     q_set = QuestionSet(**s_kwargs)
 
     with DocxObject(docx_path, exit_delete=True) as do:

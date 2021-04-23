@@ -399,11 +399,12 @@ if __name__ == "__main__":
     upload_dir = r'D:\Project\word\app\upload'
     items = os.listdir(upload_dir)
     d_path = os.path.join(upload_dir, items[0])
+    d_path = os.path.join(upload_dir, '2020年经济学真题.docx')
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
     s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
                     question_subject=1, # 0-微观经济学 1-宏观经济学 2-政治经济学
-                    answer_location=AnswerLocation.embedded(),
+                    answer_location=AnswerLocation.file(),
                     set_keys=keys)
     # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
     # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置

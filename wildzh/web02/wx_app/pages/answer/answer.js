@@ -129,7 +129,7 @@ Page({
                         exclude_nos += "," + _item['question_no'];
                     }
                 }
-                var url = '/exam/questions/?exam_no=' + that.data.examNo + "&num=" + item["num"];
+                var url = '/exam/questions/?fmt_version=2&exam_no=' + that.data.examNo + "&num=" + item["num"];
                 if(exclude_nos != ""){
                     url += "&exclude_nos=" + exclude_nos;
                 }

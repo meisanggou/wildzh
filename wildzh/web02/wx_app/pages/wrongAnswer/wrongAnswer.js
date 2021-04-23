@@ -179,7 +179,7 @@ Page({
             nos += "," + questionItems[i].question_no;
         }
         wx.request2({
-            url: '/exam/questions/?exam_no=' + exam_no + "&nos=" + nos,
+            url: '/exam/questions/?fmt_version=2&exam_no=' + exam_no + "&nos=" + nos,
             method: 'GET',
             success: res => {
                 wx.hideLoading();
@@ -391,13 +391,19 @@ Page({
         var questionAnswer = new Array();
         for (var index in nowQuestion.options) {
             if (parseInt(nowQuestion.options[index]["score"]) > 0) {
-                var tmp_answer = new Array(app.globalData.optionChar[index], "、");
-                questionAnswer = questionAnswer.concat(tmp_answer);
+                var tmp_answer = app.globalData.optionChar[index] + "、";
+                questionAnswer = questionAnswer.concat({
+                    'value': tmp_answer,
+                    'index': -1
+                });
                 questionAnswer = questionAnswer.concat(nowQuestion.options[index]["desc_rich"]);
             }
         }
         if (questionAnswer.length == 0) {
-            questionAnswer[0] = "没有答案"
+            questionAnswer[0] = {
+                'value': "没有答案",
+                'index': -1
+            };
         }
         that.setData({
             showAnswer: true,

@@ -41,6 +41,7 @@ Page({
         this.setData({
             useProfile: useProfile
         })
+
         this.loadCacheUserInfo()
 
         this.initAD();
