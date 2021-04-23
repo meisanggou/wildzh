@@ -43,6 +43,9 @@ class AnswerLocation(object):
     def is_file(cls, value):
         return value is cls.file()
 
+    def __str__(self):
+        return self.value
+
 
 class QuestionType(object):
     Choice = "Choice"
@@ -82,8 +85,6 @@ class Question(object):
     def desc(self, value):
         _value = value.strip()
         if not _value:
-            import pdb
-            pdb.set_trace()
             raise RuntimeError("Desc length must gt 0")
         self._desc = _value
 

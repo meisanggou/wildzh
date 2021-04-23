@@ -25,6 +25,7 @@ from wildzh.export.local_write import write_docx
 from wildzh.tools.docx.object import DocxObject
 from wildzh.tools.parse_exception import ParseException
 from wildzh.tools.parse_question import AnswerLocation, QuestionSet
+from wildzh.tools.read_xml import handle_answers_docx_main_xml
 from wildzh.tools.read_xml import handle_docx_main_xml
 from wildzh.utils.async_pool import get_pool
 from wildzh.utils import constants
@@ -743,15 +744,29 @@ def upload_question_file():
         try:
             handle_docx_main_xml(do, ".", u"、", u"．", ':',
                                  questions_set=q_set)
-            q_set.ensure_has_answer()
         except ParseException as pe:
             error_msg = pe.msg
             error_question = pe.q_items
-        q_list = []
-        for q_item in q_set:
-            q_list.append(q_item.to_dict())
-        data = {'q_list': q_list, 'error_question': error_question,
-                'error_msg': error_msg}
+    if not error_question and 'answer_file'in r:
+        answer_file = r['answer_file']
+        with DocxObject(answer_file) as ado:
+            answers_dict = handle_answers_docx_main_xml(ado, q_set)
+            for q_item in q_set:
+                # 判定是否包含答案
+                answer_obj = answers_dict.find_answer(q_item)
+                if not answer_obj:
+                    continue
+                q_item.set_answer(answer_obj)
+    q_list = []
+    for q_item in q_set:
+        q_list.append(q_item.to_dict())
+    try:
+        q_set.ensure_has_answer()
+    except ParseException as pe:
+        error_msg = pe.msg
+        error_question = pe.q_items
+    data = {'q_list': q_list, 'error_question': error_question,
+            'error_msg': error_msg}
     return jsonify({"status": True, "data": data})
 
 
