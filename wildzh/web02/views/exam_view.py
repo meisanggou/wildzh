@@ -512,7 +512,7 @@ def handle_questions(q_items, no_rich=False, fmt_version=1):
         for item in q_items:
             options = item["options"]
             new_options = map(lambda x: {'desc': x["desc"]}, options)
-            item["options"] = new_options
+            item["options"] = list(new_options)
     # 按照用户对 题库的权限 再处理 题目
     new_fmt = fmt_version > 1
     exam_item = g.current_exam
@@ -1040,7 +1040,7 @@ def delete_exam_strategy(strategy_id):
 
 
 @exam_view.route('/export/word', methods=['POST', 'GET'])
-@login_required
+# @login_required
 @required_exam_no
 def export_question_to_word():
     # http://127.0.0.1:2400/exam/export/word?exam_no=1585396371&strategy_id=a1af47f5ec3d4829b143ec348c5f3479
@@ -1053,6 +1053,10 @@ def export_question_to_word():
     items = c_exam.get_questions_by_strategy(g.exam_no, strategy_id)
     items = handle_questions(items, False)
     write_docx('Test3', False, items, G_SELECT_MODE, upload_folder)
+    if 'file' in request.args:
+        from flask import send_file
+        # pandoc b.docx -o b.pdf --pdf-engine=xelatex -V mainfont=SimSun
+        return send_file('b.docx')
     return {'status': True, 'data': strategies[0]}
 
 

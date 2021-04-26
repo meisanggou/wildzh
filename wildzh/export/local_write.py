@@ -36,7 +36,7 @@ class Counter(object):
         cls._instances[name] = o
         return o
 
-    def __init__(self, name, index=0):
+    def __init__(self, name, index=10):
         self.name = name
         self._index = index
 
@@ -61,6 +61,8 @@ def string_length(s):
 def download_file(path, upload_folder, save_dir, name):
     src = path.replace('/file', upload_folder)
     save_path = os.path.join(save_dir, name)
+    print(save_path)
+    # return save_path
     shutil.copy(src, save_path)
     return save_path
 
@@ -74,8 +76,6 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
             a_i = _indexs.index(a['question_subject'])
             b_i = _indexs.index(b['question_subject'])
         except Exception:
-            # print(a)
-            # print(b)
             return 0
         return a_i - b_i
 
@@ -113,7 +113,7 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
     #  数据处理
     question_no = 1
     rid_c = Counter('rid')
-    rid_p = 'rIdm'
+    rid_p = 'rId'
     medias = []
 
     def _handle_rich_desc(rd_item):
@@ -131,7 +131,7 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
     for s_item in single_selected:
         for _r_item in s_item['question_desc_rich']:
             _handle_rich_desc(_r_item)
-
+        s_item['question_desc_rich'].insert(0, '%s.' % question_no)
         s_item["this_question_no"] = question_no
         question_no += 1
         max_score = -100
@@ -148,6 +148,7 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
 
                 else:
                     o_len += string_length(dr_item)
+            item['desc_rich'].insert(0, '%s.' % OPTION_MAPPING[index])
             item['desc_rich'].extend(_ll)
             if o_len > max_option_len:
                 max_option_len = o_len
@@ -180,7 +181,7 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
         q_block["questions"].sort(key=cmp_to_key(_question_sort))
         for q_item in q_block["questions"]:
             q_item["this_question_no"] = question_no
-            multi_question_desc = [[]]
+            multi_question_desc = [['%s.' % question_no]]
             for _r_item in q_item['question_desc_rich']:
                 _handle_rich_desc(_r_item)
                 if not isinstance(_r_item, dict):
@@ -193,7 +194,7 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
 
             multi_answer_rich = [[]]
             for _r_item in q_item['answer_rich']:
-                _handle_rich_desc(_r_item)
+                # _handle_rich_desc(_r_item)
                 if not isinstance(_r_item, dict):
                     _items = _r_item.split('\n')
                     multi_answer_rich[-1].append(_items[0])
@@ -217,24 +218,15 @@ def write_docx(exam_name, show_answer, question_items, select_modes, upload_fold
     # copy
     temp_dir = tempfile.gettempdir()
     demo_dir = os.path.join(temp_dir, '_wildzh_%s' % uuid.uuid4().hex)
-    src_dir = os.path.join(abs_dir, 'demo2')
+    src_dir = os.path.join(abs_dir, 'demo3')
     shutil.copytree(src_dir, demo_dir)
     print(demo_dir)
     media_dir = os.path.join(demo_dir, 'word', 'media')
     q_data = receive_data(question_items, select_modes, media_dir, upload_folder)
-    write_xml('a.docx', demo_dir, exam_name=exam_name,
+    write_xml('b.docx', demo_dir, exam_name=exam_name,
               show_answer=show_answer, **q_data)
     return temp_dir
 
 
 if __name__ == "__main__":
-    # q_data['single_selected'] = []
-    # q_data['answer_blocks'] = []
-    for num in cn_num[:1]:
-        media_dir = 'demo2/word/media'
-        q_data = receive_data('1570447137', media_dir)
-        name = ('自测题' + num).decode('utf-8')
-        write_xml(u'%s_答案.docx' % name, 'demo2', exam_name=name, show_answer=True,
-                  **q_data)
-        write_xml('%s.docx' % name, 'demo2', exam_name=name, **q_data)
-    print(QuestionCache().length)
+    write_docx('Test2', False, [], [], '.')
