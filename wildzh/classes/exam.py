@@ -662,7 +662,9 @@ class QuestionSources(object):
     def select_sources(self, exam_no):
         where_value = {'exam_no': exam_no}
         items = self.db.execute_select(self.t, cols=self.cols,
-                                       where_value=where_value)
+                                       where_value=where_value,
+                                       order_by=['update_time'],
+                                       order_desc=True)
         return items
 
     def insert_source(self, exam_no, question_source):

@@ -1,0 +1,35 @@
+[
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "测试编号",
+                "col_name": "exam_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "策略的编号",
+                "col_name": "strategy_id",
+                "col_type": "char(32)"
+            },
+            {
+                "col_comment": "策略名称",
+                "col_name": "strategy_name",
+                "col_type": "varchar(32)"
+            },
+            {
+                "col_comment": "策略组成 一个数组",
+                "col_name": "strategy_items",
+                "col_type": "varchar(200)"
+            },
+            {
+                "col_comment": "更新时间",
+                "col_name": "update_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "智能组卷策略",
+        "table_name": "exam_gen_strategy"
+    }
+]

@@ -99,3 +99,9 @@ def give_event():
         gf_obj.last_id = cr['last_id']
         data['vc'] = vc_obj.to_dict()
     return {'status': True, 'data': data}
+
+
+@vc_view.route('/give/goods', methods=['GET'])
+def goods_items():
+    DATA_REGISTRY.get(constants.DR_KEY_VC_GOODS, [])
+    return {}

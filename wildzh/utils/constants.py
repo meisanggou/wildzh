@@ -50,3 +50,8 @@ VB_FB_NAME = '题库问题反馈得积分'
 SE_ACTION_NORMAL = 'normal'
 SE_ACTION_WARN = 'warn'
 SE_ACTION_EXIT = 'exit'
+
+
+# DATA_REGISTRY keys
+DR_KEY_VC_GOODS = 'vc_goods'
+
