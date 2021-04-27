@@ -536,6 +536,7 @@ def handle_questions(q_items, no_rich=False, fmt_version=1):
         max_width = None
         if "X-Device-Screen-Width" in request.headers:
             max_width = int(request.headers["X-Device-Screen-Width"]) * 0.95
+
         for item in q_items:
             question_desc_rich = separate_image(item["question_desc"],
                                                 max_width, new_fmt=new_fmt)
@@ -1052,10 +1053,11 @@ def export_question_to_word():
         return {'status': False, 'data': 'Not Found'}
     items = c_exam.get_questions_by_strategy(g.exam_no, strategy_id)
     items = handle_questions(items, False)
-    write_docx('Test3', False, items, G_SELECT_MODE, upload_folder)
+    write_docx('Test3', True, items, G_SELECT_MODE, upload_folder)
     if 'file' in request.args:
         from flask import send_file
         # pandoc b.docx -o b.pdf --pdf-engine=xelatex -V mainfont=SimSun
+        # libreoffice-writer soffice --headless --convert-to pdf:writer_pdf_Export b.docx
         return send_file('b.docx')
     return {'status': True, 'data': strategies[0]}
 

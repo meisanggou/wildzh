@@ -170,8 +170,24 @@
               {% for m_desc in m_items %}
                 {{ m_desc | convert_run_xml }}
               {% endfor %}
-            </w:p>
+          </w:p>
         {% endfor %} {# 结束循环q_item.multi_question_desc #}
+        {% if show_answer %}
+        {% for ar_item in q_item.multi_answer_rich %}
+        <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9" w:rsidP="008C419A">
+          <w:pPr>
+            <w:ind w:left="0" w:hangingChars="0" w:hanging="0"/>
+            <w:rPr>
+              <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
+              <w:sz w:val="24"/>
+            </w:rPr>
+          </w:pPr>
+          {% for ar_desc in ar_item %}
+            {{ ar_desc | convert_run_xml }}
+          {% endfor %} {# 结束循环ar_item #}
+        </w:p>
+        {% endfor %}{# 结束循环q_item.multi_answer_rich #}
+        {% endif %} {# 结束if show_answer #}
         {% endfor %} {# 结束循环q_block.questions #}
         {% endfor %} {# 结束循环answer_blocks #}
         <w:p w:rsidR="00350324" w:rsidRPr="00550B8B" w:rsidRDefault="00350324">

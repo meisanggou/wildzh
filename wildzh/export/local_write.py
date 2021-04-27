@@ -67,7 +67,8 @@ def download_file(path, upload_folder, save_dir, name):
     return save_path
 
 
-def receive_data(question_items, select_modes, media_dir, upload_folder):
+def receive_data(question_items, select_modes, media_dir, upload_folder,
+                 show_answer=False):
     def _question_sort(a, b):
         # 按照政治经济学，微观经济学，宏观经济学排序
         # 3 1 2
@@ -145,7 +146,6 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
                 if isinstance(dr_item, dict):
                     o_len += dr_item['width'] / 10
                     _handle_rich_desc(dr_item)
-
                 else:
                     o_len += string_length(dr_item)
             item['desc_rich'].insert(0, '%s.' % OPTION_MAPPING[index])
@@ -193,15 +193,16 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
                     multi_question_desc[-1].append(_r_item)
 
             multi_answer_rich = [[]]
-            for _r_item in q_item['answer_rich']:
-                # _handle_rich_desc(_r_item)
-                if not isinstance(_r_item, dict):
-                    _items = _r_item.split('\n')
-                    multi_answer_rich[-1].append(_items[0])
-                    for _sub_item in _items[1:]:
-                        multi_answer_rich.append([_sub_item])
-                else:
-                    multi_answer_rich[-1].append(_r_item)
+            if show_answer:
+                for _r_item in q_item['answer_rich']:
+                    _handle_rich_desc(_r_item)
+                    if not isinstance(_r_item, dict):
+                        _items = _r_item.split('\n')
+                        multi_answer_rich[-1].append(_items[0])
+                        for _sub_item in _items[1:]:
+                            multi_answer_rich.append([_sub_item])
+                    else:
+                        multi_answer_rich[-1].append(_r_item)
             q_item['multi_answer_rich'] = multi_answer_rich
             q_item["multi_question_desc"] = multi_question_desc
 
@@ -214,7 +215,8 @@ def receive_data(question_items, select_modes, media_dir, upload_folder):
     return r
 
 
-def write_docx(exam_name, show_answer, question_items, select_modes, upload_folder):
+def write_docx(exam_name, show_answer, question_items, select_modes,
+               upload_folder):
     # copy
     temp_dir = tempfile.gettempdir()
     demo_dir = os.path.join(temp_dir, '_wildzh_%s' % uuid.uuid4().hex)
@@ -222,7 +224,8 @@ def write_docx(exam_name, show_answer, question_items, select_modes, upload_fold
     shutil.copytree(src_dir, demo_dir)
     print(demo_dir)
     media_dir = os.path.join(demo_dir, 'word', 'media')
-    q_data = receive_data(question_items, select_modes, media_dir, upload_folder)
+    q_data = receive_data(question_items, select_modes, media_dir,
+                          upload_folder, show_answer)
     write_xml('b.docx', demo_dir, exam_name=exam_name,
               show_answer=show_answer, **q_data)
     return temp_dir

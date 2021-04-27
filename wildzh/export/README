@@ -1,0 +1,2 @@
+1、如果有新的图片类型需要在[Content_Types].xml里加入
+例如：<Default Extension="jpeg" ContentType="image/jpeg"/>
