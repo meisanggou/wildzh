@@ -1053,7 +1053,8 @@ def export_question_to_word():
         return {'status': False, 'data': 'Not Found'}
     items = c_exam.get_questions_by_strategy(g.exam_no, strategy_id)
     items = handle_questions(items, False)
-    write_docx('Test3', True, items, G_SELECT_MODE, upload_folder)
+    write_docx(strategies[0]['strategy_name'], True, items, G_SELECT_MODE,
+               upload_folder)
     if 'file' in request.args:
         from flask import send_file
         # pandoc b.docx -o b.pdf --pdf-engine=xelatex -V mainfont=SimSun

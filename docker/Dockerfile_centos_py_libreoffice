@@ -1,0 +1,12 @@
+from centos
+MAINTAINER meisanggou
+
+RUN rm -rf /etc/yum.repos.d/*.repo && \
+    curl -o /etc/yum.repos.d/CentOS-Base.repo https://repo.huaweicloud.com/repository/conf/CentOS-8-reg.repo && \
+    dnf install -y python38 libreoffice-writer && \
+    dnf clean all && rm -rf /var/char/dnf
+
+ADD chinese /usr/share/fonts/
+RUN fc-cache
+
+ADD Dockerfile /root/centos_py_libreoffice
