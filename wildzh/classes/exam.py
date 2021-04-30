@@ -1131,16 +1131,26 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
 class ExamInfo(BaseObject):
     model = exam_models.ExamInfoModel
 
-    def get_online(self, session):
-        items = self.get_all(session)
+    def get_online(self, session, exam_no=None):
+        kwargs = {}
+        if exam_no:
+            kwargs['exam_no'] = exam_no
+        items = self.get_all(session, **kwargs)
         n_items = [item for item in items
                    if item.status & constants.STATUS_ONLINE != 0]
         return n_items
 
-    def get_private(self, session):
-        items = self.get_online(session)
+    def get_private(self, session, exam_no=None):
+        items = self.get_online(session, exam_no=exam_no)
         items = [item for item in items if item.is_private()]
         return items
+
+
+class ExamMemberFlow2(BaseObject):
+    model = exam_models.ExamMemberFlowModel
+
+    def get_flows(self, session, user_no, exam_no):
+        return self.get_all(session, user_no=user_no, exam_no=exam_no)
 
 
 if __name__ == "__main__":

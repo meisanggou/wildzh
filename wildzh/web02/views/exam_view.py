@@ -19,7 +19,9 @@ from zh_config import db_conf_path, upload_folder, file_prefix_url
 from zh_config import min_program_conf, es_conf
 from wildzh.classes.exam import Exam, ExamObject, StrategyObject
 from wildzh.classes.exam import ExamInfo
+from wildzh.classes.exam import ExamMemberFlow2
 from wildzh.classes.exam_es import ExamEs
+from wildzh.classes import goods as goods_op
 from wildzh.classes.user import User
 from wildzh.classes.wx import MiniProgram
 from wildzh.export.local_write import write_docx
@@ -73,6 +75,7 @@ exam_view = View2("exam", __name__, url_prefix=url_prefix,
 
 c_exam = Exam(db_conf_path)
 EXAM_MAN = ExamInfo()
+EXAM_MF_MAN = ExamMemberFlow2()
 c_user = User(db_conf_path=db_conf_path, upload_folder=upload_folder)
 c_exam_es = ExamEs(es_conf)
 min_pro = MiniProgram(conf_path=min_program_conf, section='01')
@@ -312,30 +315,34 @@ def parsing_token(resource, event, trigger, **kwargs):
     r['status'] = True
     return r
 
-
-def exam_goods(session, user_no):
-    goods = []
-    exam_items = EXAM_MAN.get_private(session)
-    for exam_item in exam_items:
-        sub_gs = [
+EXAM_GOODS_SUB = [
             {'sub_title': '7天普通会员',
              'vc_count': 7,
+             'days': 7,
              'attention': '新成员专享',
              'sub_id': '7-new_mem',
              'has_condition': True},
             {'sub_title': '15天普通会员',
              'vc_count': 15,
+             'days': 15,
              'attention': '首次兑换专享',
              'sub_id': '15-first_exchange',
              'has_condition': True},
             {'sub_title': '7天普通会员',
-             'vc_count': 100,
+             'vc_count': 1,
+             'days': 7,
              'sub_id': '7'},
             {'sub_title': '30天普通会员',
              'vc_count': 300,
+             'days': 30,
              'sub_id': '30'},
         ]
-        for sg in sub_gs:
+def exam_goods(session, user_no):
+    goods = []
+    exam_items = EXAM_MAN.get_private(session)
+    for exam_item in exam_items:
+        for _sg in EXAM_GOODS_SUB:
+            sg = dict(_sg)
             sg['title'] = exam_item.exam_name
             sg['good_type'] = 'exam'
             sg['good_id'] = '%s-%s' % (exam_item.exam_no, sg['sub_id'])
@@ -343,14 +350,52 @@ def exam_goods(session, user_no):
     return goods
 
 
-def exam_good_required(good_type, good_id):
+def exam_good_required(session, user_no, good_type, good_id):
     if good_type != constants.GOOD_TYPE_EXAM:
-        return False
-    return True
+        return goods_op.GoodConditionResult(enable=False)
+    items = good_id.split('-', 2)
+    if len(items) <= 2:
+        # TODO write log
+        print(items)
+        return goods_op.GoodConditionResult(enable=True)
+    exam_no, days, cond = items
+    if cond == 'new_mem':
+        items = EXAM_MF_MAN.get_flows(session, user_no=user_no,
+                                      exam_no=exam_no)
+        if items:
+            return goods_op.GoodConditionResult(enable=False)
+    else:
+        nc = goods_op.GoodVCCond(
+            max_num=0, good_type=constants.GOOD_TYPE_EXAM, good_id=good_id)
+        return goods_op.GoodConditionResult(enable=True, next_condition=nc)
+    return goods_op.GoodConditionResult(enable=True)
 
 
-def exam_goods_exchange():
-    pass
+def exam_goods_exchange(session, user_no, good_type, good_id):
+    # TODO 需要再次校验资格
+    if good_type != constants.GOOD_TYPE_EXAM:
+        return goods_op.GoodConditionResult(enable=False)
+    exam_no, sub_id = good_id.split('-', 1)
+    for sub in EXAM_GOODS_SUB:
+        if sub['sub_id'] == sub_id:
+            days = sub['days']
+            exam_items = EXAM_MAN.get_private(session, exam_no)
+            if not exam_items:
+                return goods_op.GoodExchangeResult(result=False,
+                                                   message='题库暂时无法兑换，请重试')
+            c_exam.increase_exam_member(user_no, exam_no, 0, days)
+            detail = '%s-%s' % (exam_items[0].exam_name, sub['sub_title'])
+            if 'attention' in sub:
+                detail += '-%s' % sub['attention']
+            remark = 'exam_no:%s,days:%s' % (exam_no, days)
+            vc_count = sub['vc_count']
+            return goods_op.GoodExchangeResult(
+                result=True, message='兑换成功', vc_count=vc_count,
+                billing_project=constants.VC_EC_EM,
+                project_name=constants.VC_EC_EM_NAME,
+                detail=detail,
+                remark=remark)
+    return goods_op.GoodExchangeResult(result=False, message='商品不存在，请重试')
 
 
 if not f_registry.DATA_REGISTRY.exist_in('registered', 'exam_view'):

@@ -18,6 +18,24 @@ class VCUserStatusModel(Base):
     sys_expenses = sqlalchemy.Column(sqlalchemy.INT(), default=0)
     update_time = sqlalchemy.Column(sqlalchemy.INT())
 
+    @property
+    def my_balance(self):
+        return self.balance + self.sys_balance
+
+    def consume(self, count):
+        left_count = count
+        if self.sys_balance > 0:
+            if self.sys_balance < count:
+                left_count = count - self.sys_balance
+                self.sys_balance = 0
+                self.sys_expenses += self.sys_balance
+            else:
+                left_count = 0
+                self.sys_balance -= count
+                self.sys_expenses += count
+        self.balance -= left_count
+        self.expenses += left_count
+
 
 class VCGiveFreqModel(Base):
 

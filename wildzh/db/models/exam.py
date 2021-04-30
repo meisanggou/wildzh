@@ -19,9 +19,9 @@ class ExamInfoModel(Base):
 
     exam_no = sqlalchemy.Column(sqlalchemy.INT(), primary_key=True)
     exam_name = sqlalchemy.Column(sqlalchemy.CHAR(50))
-    exam_desc = sqlalchemy.Column(sqlalchemy.CHAR(2000), default=0)
-    exam_extend = sqlalchemy.Column(sqlalchemy.TEXT(), default=0)
-    status = sqlalchemy.Column(sqlalchemy.INT(), default=0)
+    exam_desc = sqlalchemy.Column(sqlalchemy.CHAR(2000))
+    exam_extend = sqlalchemy.Column(sqlalchemy.TEXT())
+    status = sqlalchemy.Column(sqlalchemy.INT())
     exam_num = sqlalchemy.Column(sqlalchemy.INT(), default=0)
     adder = sqlalchemy.Column(sqlalchemy.CHAR(30))
     question_num = sqlalchemy.Column(sqlalchemy.INT())
@@ -46,3 +46,14 @@ class ExamInfoModel(Base):
 
     def is_private(self):
         return self.openness_level == ExamOpennessLevel.PRIVATE
+
+
+class ExamMemberFlowModel(Base):
+    __tablename__ = 'exam_member_flow'
+
+    user_no = sqlalchemy.Column(sqlalchemy.INT(), primary_key=True)
+    exam_no = sqlalchemy.Column(sqlalchemy.INT(), primary_key=True)
+    update_time = sqlalchemy.Column(sqlalchemy.INT(), primary_key=True)
+    exam_role = sqlalchemy.Column(sqlalchemy.INT())
+    authorizer = sqlalchemy.Column(sqlalchemy.INT())
+    end_time = sqlalchemy.Column(sqlalchemy.INT())

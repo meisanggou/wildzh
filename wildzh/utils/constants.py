@@ -45,6 +45,8 @@ E_SE_FIREWALL = 'security_firewall'
 # vc billing
 VB_FB = 'feedback_exam'
 VB_FB_NAME = '题库问题反馈得积分'
+VC_EC_EM = 'vc_exchange_exam_mem'
+VC_EC_EM_NAME = '积分换题库会员'
 
 
 # security handle action

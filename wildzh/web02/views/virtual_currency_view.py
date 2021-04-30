@@ -12,6 +12,7 @@ from wildzh.utils.registry import subscribe_callback
 from wildzh.classes.virtual_currency import VCGiveFreq
 from wildzh.classes.virtual_currency import VCUserBilling
 from wildzh.classes.virtual_currency import VCUserStatus
+from wildzh.web02 import exception
 from wildzh.web02.view import View2
 
 __author__ = 'zhouhenglc'
@@ -35,7 +36,7 @@ def func_browse_ad_id(user_no, **kwargs):
 
 def func_browse_ad_check(user_no, gf_obj, **kwargs):
     max_freq = 2
-    give_vc_count = 1
+    give_vc_count = 10
     last_id = None
     if gf_obj.freq >= max_freq:
         return None
@@ -43,7 +44,7 @@ def func_browse_ad_check(user_no, gf_obj, **kwargs):
     cr = {'next_enable': next_enable, 'last_id': last_id,
           'give_vc_count': give_vc_count, 'billing_project': 'browse_ad',
           'project_name': '看广告得积分', 'detail': '', 'remark': '',
-          'tip': '得1积分'}
+          'tip': '得10积分'}
     return cr
 
 
@@ -52,7 +53,10 @@ def new_billing(resource, event, trigger, session, user_no, billing_project,
     ub_obj = VC_UB_MAN.new(session, user_no, billing_project,
                            project_name, vc_count, detail, remark, 0)
     vc_obj = VC_MAN.get_obj(session, user_no)
-    vc_obj.sys_balance = vc_obj.sys_balance + vc_count
+    if vc_count < 0:
+        vc_obj.consume(0 - vc_count)
+    else:
+        vc_obj.sys_balance = vc_obj.sys_balance + vc_count
     ub_obj.status = 1
     return ub_obj, vc_obj
 
@@ -108,6 +112,7 @@ def goods_items():
     goods = []
     for resp_er in goods_res:
         _goods = resp_er['items'](g.session, g.user_no)
+        print(_goods)
         for good in _goods:
             if 'has_condition' in good:
                 good['enable'] = False
@@ -119,6 +124,7 @@ def goods_items():
     data = {'goods': goods}
     return {'status': True, 'data': data}
 
+
 @vc_view.route('/goods/required', methods=['GET'])
 def good_required():
     args = request.args
@@ -129,6 +135,38 @@ def good_required():
     for resp_er in goods_res:
         if resp_er['good_type'] == good_type:
             req_func = resp_er['required']
-            v = req_func(good_type, good_id)
+            con_r = req_func(g.session, g.user_no, good_type, good_id)
+            if con_r.enable is False:
+                break
+            if not con_r.next_condition:
+                v = con_r.enable
+            else:
+                VC_UB_MAN.get_all(g.session, user_no=g.user_no)
     data = {'good_type': good_type, 'good_id': good_id, 'enable': v}
     return {'status': True, 'data': data}
+
+
+@vc_view.route('/goods/exchange', methods=['POST'])
+def good_exchange():
+    data = g.request_data
+    good_type = data['good_type']
+    good_id = data['good_id']
+    goods_res = DATA_REGISTRY.get(constants.DR_KEY_VC_GOODS, [])
+    for resp_er in goods_res:
+        if resp_er['good_type'] == good_type:
+            ec_func = resp_er['exchange']
+            ec_r = ec_func(g.session, g.user_no, good_type, good_id)
+            if ec_r.result is False:
+                raise exception.BadRequest(description=ec_r.message)
+            ub_obj, vc_obj = notify_callback(
+                constants.R_VC, constants.E_NEW_BILLING, vc_view,
+                session=g.session, user_no=g.user_no,
+                billing_project=ec_r.billing_project,
+                project_name=ec_r.project_name,
+                vc_count=0 - ec_r.vc_count, detail=ec_r.detail,
+                remark=ec_r.remark)
+            if vc_obj.my_balance < 0:
+                raise exception.BadRequest(description='积分不足')
+            data = {'vc': vc_obj.to_dict(), 'message': '兑换成功'}
+            return {'status': True, 'data': data}
+    raise exception.BadRequest(description='商品不存在，请稍后重试')
