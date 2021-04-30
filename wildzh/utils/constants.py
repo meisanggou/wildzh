@@ -55,3 +55,7 @@ SE_ACTION_EXIT = 'exit'
 
 # DATA_REGISTRY keys
 DR_KEY_VC_GOODS = 'vc_goods'
+
+
+# goods type
+GOOD_TYPE_EXAM = 'exam'

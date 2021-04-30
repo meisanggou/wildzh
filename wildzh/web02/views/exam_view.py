@@ -321,11 +321,13 @@ def exam_goods(session, user_no):
             {'sub_title': '7天普通会员',
              'vc_count': 7,
              'attention': '新成员专享',
-             'sub_id': '7-new_mem'},
+             'sub_id': '7-new_mem',
+             'has_condition': True},
             {'sub_title': '15天普通会员',
              'vc_count': 15,
              'attention': '首次兑换专享',
-             'sub_id': '15-first_exchange'},
+             'sub_id': '15-first_exchange',
+             'has_condition': True},
             {'sub_title': '7天普通会员',
              'vc_count': 100,
              'sub_id': '7'},
@@ -340,7 +342,14 @@ def exam_goods(session, user_no):
             goods.append(sg)
     return goods
 
-def exchange_exam_goods():
+
+def exam_good_required(good_type, good_id):
+    if good_type != constants.GOOD_TYPE_EXAM:
+        return False
+    return True
+
+
+def exam_goods_exchange():
     pass
 
 
@@ -352,7 +361,9 @@ if not f_registry.DATA_REGISTRY.exist_in('registered', 'exam_view'):
                                 constants.E_GEN_TOKEN)
     registry.subscribe_callback(parsing_token, constants.R_EXAM,
                                 constants.E_PARSING_TOKEN)
-    f_registry.DATA_REGISTRY.append(constants.DR_KEY_VC_GOODS, exam_goods)
+    goods_response = {'items': exam_goods, 'required': exam_good_required,
+                      'exchange': exam_goods_exchange, 'good_type': 'exam'}
+    f_registry.DATA_REGISTRY.append(constants.DR_KEY_VC_GOODS, goods_response)
     f_registry.DATA_REGISTRY.append('registered', 'exam_view')
 
 

@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 from flask import g
+from flask import request
 from flask_helper.utils.registry import DATA_REGISTRY
 from wildzh.utils import constants
 import wildzh.utils.datetime_helper as dt_helper
@@ -103,9 +104,31 @@ def give_event():
 
 @vc_view.route('/goods', methods=['GET'])
 def goods_items():
-    funcs = DATA_REGISTRY.get(constants.DR_KEY_VC_GOODS, [])
+    goods_res = DATA_REGISTRY.get(constants.DR_KEY_VC_GOODS, [])
     goods = []
-    for func in funcs:
-        goods.extend(func(g.session, g.user_no))
+    for resp_er in goods_res:
+        _goods = resp_er['items'](g.session, g.user_no)
+        for good in _goods:
+            if 'has_condition' in good:
+                good['enable'] = False
+                del good['has_condition']
+            else:
+                good['enable'] = True
+            good['good_type'] = resp_er['good_type']
+            goods.append(good)
     data = {'goods': goods}
+    return {'status': True, 'data': data}
+
+@vc_view.route('/goods/required', methods=['GET'])
+def good_required():
+    args = request.args
+    good_type = args['good_type']
+    good_id = args['good_id']
+    goods_res = DATA_REGISTRY.get(constants.DR_KEY_VC_GOODS, [])
+    v = False
+    for resp_er in goods_res:
+        if resp_er['good_type'] == good_type:
+            req_func = resp_er['required']
+            v = req_func(good_type, good_id)
+    data = {'good_type': good_type, 'good_id': good_id, 'enable': v}
     return {'status': True, 'data': data}

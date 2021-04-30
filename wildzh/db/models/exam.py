@@ -30,7 +30,6 @@ class ExamInfoModel(Base):
     def _extend(self):
         if not hasattr(self, '__extend'):
             if self.exam_extend:
-                print(self.exam_extend)
                 self.__extend = json.loads(self.exam_extend)
             else:
                 self.__extend = self.exam_extend
