@@ -18,6 +18,7 @@ from flask_helper.utils import registry as f_registry
 from zh_config import db_conf_path, upload_folder, file_prefix_url
 from zh_config import min_program_conf, es_conf
 from wildzh.classes.exam import Exam, ExamObject, StrategyObject
+from wildzh.classes.exam import ExamInfo
 from wildzh.classes.exam_es import ExamEs
 from wildzh.classes.user import User
 from wildzh.classes.wx import MiniProgram
@@ -71,6 +72,7 @@ exam_view = View2("exam", __name__, url_prefix=url_prefix,
                   auth_required=False, menu_list=menu_list)
 
 c_exam = Exam(db_conf_path)
+EXAM_MAN = ExamInfo()
 c_user = User(db_conf_path=db_conf_path, upload_folder=upload_folder)
 c_exam_es = ExamEs(es_conf)
 min_pro = MiniProgram(conf_path=min_program_conf, section='01')
@@ -311,6 +313,37 @@ def parsing_token(resource, event, trigger, **kwargs):
     return r
 
 
+def exam_goods(session, user_no):
+    goods = []
+    exam_items = EXAM_MAN.get_private(session)
+    for exam_item in exam_items:
+        sub_gs = [
+            {'sub_title': '7天普通会员',
+             'vc_count': 7,
+             'attention': '新成员专享',
+             'sub_id': '7-new_mem'},
+            {'sub_title': '15天普通会员',
+             'vc_count': 15,
+             'attention': '首次兑换专享',
+             'sub_id': '15-first_exchange'},
+            {'sub_title': '7天普通会员',
+             'vc_count': 100,
+             'sub_id': '7'},
+            {'sub_title': '30天普通会员',
+             'vc_count': 300,
+             'sub_id': '30'},
+        ]
+        for sg in sub_gs:
+            sg['title'] = exam_item.exam_name
+            sg['good_type'] = 'exam'
+            sg['good_id'] = '%s-%s' % (exam_item.exam_no, sg['sub_id'])
+            goods.append(sg)
+    return goods
+
+def exchange_exam_goods():
+    pass
+
+
 if not f_registry.DATA_REGISTRY.exist_in('registered', 'exam_view'):
     # 只允许注册一次 防止重复注册
     registry.subscribe(handle_wrong_question, constants.R_QUESTION,
@@ -319,6 +352,7 @@ if not f_registry.DATA_REGISTRY.exist_in('registered', 'exam_view'):
                                 constants.E_GEN_TOKEN)
     registry.subscribe_callback(parsing_token, constants.R_EXAM,
                                 constants.E_PARSING_TOKEN)
+    f_registry.DATA_REGISTRY.append(constants.DR_KEY_VC_GOODS, exam_goods)
     f_registry.DATA_REGISTRY.append('registered', 'exam_view')
 
 

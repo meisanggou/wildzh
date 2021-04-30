@@ -15,7 +15,8 @@
         "pages/exam/exam_usage",
         "pages/exam/exam_fb",
         "pages/me/info",
-        "pages/me/share"
+        "pages/me/share",
+        "pages/vc/goods"
     ],
     "window": {
         "backgroundTextStyle": "light",

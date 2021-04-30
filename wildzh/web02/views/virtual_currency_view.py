@@ -101,7 +101,11 @@ def give_event():
     return {'status': True, 'data': data}
 
 
-@vc_view.route('/give/goods', methods=['GET'])
+@vc_view.route('/goods', methods=['GET'])
 def goods_items():
-    DATA_REGISTRY.get(constants.DR_KEY_VC_GOODS, [])
-    return {}
+    funcs = DATA_REGISTRY.get(constants.DR_KEY_VC_GOODS, [])
+    goods = []
+    for func in funcs:
+        goods.extend(func(g.session, g.user_no))
+    data = {'goods': goods}
+    return {'status': True, 'data': data}

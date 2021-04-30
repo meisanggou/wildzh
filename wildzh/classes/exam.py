@@ -9,7 +9,9 @@ import string
 import uuid
 
 from mysqldb_rich.db2 import DB
+from wildzh.classes import BaseObject
 from wildzh.classes.exam_feedback import ExamQuestionFeedback
+from wildzh.db.models import exam as exam_models
 from wildzh.utils import constants
 
 __author__ = 'meisa'
@@ -1124,6 +1126,21 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                 else:
                     exam_role = e_items[0]['exam_role']
         return exam_item, exam_role
+
+
+class ExamInfo(BaseObject):
+    model = exam_models.ExamInfoModel
+
+    def get_online(self, session):
+        items = self.get_all(session)
+        n_items = [item for item in items
+                   if item.status & constants.STATUS_ONLINE != 0]
+        return n_items
+
+    def get_private(self, session):
+        items = self.get_online(session)
+        items = [item for item in items if item.is_private()]
+        return items
 
 
 if __name__ == "__main__":

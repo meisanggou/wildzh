@@ -10,6 +10,7 @@ ENCODING = 'utf-8'
 
 
 # exam status
+STATUS_ONLINE = 64
 STATUS_OFFLINE = 128
 
 # token error
@@ -54,4 +55,3 @@ SE_ACTION_EXIT = 'exit'
 
 # DATA_REGISTRY keys
 DR_KEY_VC_GOODS = 'vc_goods'
-
