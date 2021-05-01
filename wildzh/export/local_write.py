@@ -230,4 +230,4 @@ def write_docx(save_path, exam_name, show_answer, question_items, select_modes,
 
 
 if __name__ == "__main__":
-    write_docx('Test2', False, [], [], '.')
+    write_docx('b.docx', 'Test2', False, [], [], '.')

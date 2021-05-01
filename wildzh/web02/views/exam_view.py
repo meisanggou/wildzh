@@ -351,7 +351,7 @@ def exam_goods(session, user_no):
     return goods
 
 
-def exam_good_required(session, user_no, good_type, good_id):
+def exam_good_condition(session, user_no, good_type, good_id):
     if good_type != constants.GOOD_TYPE_EXAM:
         return goods_op.GoodConditionResult(enable=False)
     items = good_id.split('-', 2)
@@ -367,7 +367,8 @@ def exam_good_required(session, user_no, good_type, good_id):
             return goods_op.GoodConditionResult(enable=False)
     else:
         nc = goods_op.GoodVCCond(
-            max_num=0, good_type=constants.GOOD_TYPE_EXAM, good_id=good_id)
+            max_num=0, good_type=constants.GOOD_TYPE_EXAM, good_id=good_id,
+            billing_project=constants.VC_EC_EM)
         return goods_op.GoodConditionResult(enable=True, next_condition=nc)
     return goods_op.GoodConditionResult(enable=True)
 
@@ -388,7 +389,8 @@ def exam_goods_exchange(session, user_no, good_type, good_id):
             detail = '%s-%s' % (exam_items[0].exam_name, sub['sub_title'])
             if 'attention' in sub:
                 detail += '-%s' % sub['attention']
-            remark = 'exam_no:%s,days:%s' % (exam_no, days)
+            remark = 'good_type:%s,good_id:%s,exam_no:%s,days:%s' \
+                     % (good_type, good_id, exam_no, days)
             vc_count = sub['vc_count']
             return goods_op.GoodExchangeResult(
                 result=True, message='兑换成功', vc_count=vc_count,
@@ -407,7 +409,7 @@ if not f_registry.DATA_REGISTRY.exist_in('registered', 'exam_view'):
                                 constants.E_GEN_TOKEN)
     registry.subscribe_callback(parsing_token, constants.R_EXAM,
                                 constants.E_PARSING_TOKEN)
-    goods_response = {'items': exam_goods, 'required': exam_good_required,
+    goods_response = {'items': exam_goods, 'condition': exam_good_condition,
                       'exchange': exam_goods_exchange, 'good_type': 'exam'}
     f_registry.DATA_REGISTRY.append(constants.DR_KEY_VC_GOODS, goods_response)
     f_registry.DATA_REGISTRY.append('registered', 'exam_view')

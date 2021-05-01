@@ -14,10 +14,12 @@ class GoodConditionResult(object):
 
 class GoodVCCond(object):
 
-    def __init__(self, max_num=None, good_type=None, good_id=None):
+    def __init__(self, max_num=None, good_type=None, good_id=None,
+                 billing_project=None):
         self.max_num = max_num
         self.good_type = good_type
         self.good_id = good_id
+        self.billing_project = billing_project
 
 
 class GoodExchangeResult(object):

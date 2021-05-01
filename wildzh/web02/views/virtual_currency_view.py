@@ -134,14 +134,18 @@ def good_required():
     v = False
     for resp_er in goods_res:
         if resp_er['good_type'] == good_type:
-            req_func = resp_er['required']
+            req_func = resp_er['condition']
             con_r = req_func(g.session, g.user_no, good_type, good_id)
             if con_r.enable is False:
                 break
             if not con_r.next_condition:
                 v = con_r.enable
             else:
-                VC_UB_MAN.get_all(g.session, user_no=g.user_no)
+                vcb_items = VC_UB_MAN.get_all(
+                    g.session, user_no=g.user_no,
+                    billing_project=con_r.next_condition.billing_project)
+                if len(vcb_items) < con_r.max_num:
+                    v = True
     data = {'good_type': good_type, 'good_id': good_id, 'enable': v}
     return {'status': True, 'data': data}
 
