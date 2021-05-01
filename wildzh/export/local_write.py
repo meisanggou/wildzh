@@ -61,8 +61,6 @@ def string_length(s):
 def download_file(path, upload_folder, save_dir, name):
     src = path.replace('/file', upload_folder)
     save_path = os.path.join(save_dir, name)
-    print(save_path)
-    # return save_path
     shutil.copy(src, save_path)
     return save_path
 
@@ -222,8 +220,8 @@ def write_docx(save_path, exam_name, show_answer, question_items, select_modes,
     demo_dir = os.path.join(temp_dir, '_wildzh_%s' % uuid.uuid4().hex)
     src_dir = os.path.join(abs_dir, 'demo3')
     shutil.copytree(src_dir, demo_dir)
-    print(demo_dir)
     media_dir = os.path.join(demo_dir, 'word', 'media')
+    os.mkdir(media_dir)
     q_data = receive_data(question_items, select_modes, media_dir,
                           upload_folder, show_answer)
     write_xml(save_path, demo_dir, exam_name=exam_name,
