@@ -317,6 +317,11 @@ def parsing_token(resource, event, trigger, **kwargs):
     return r
 
 EXAM_GOODS_SUB = [
+            {'sub_title': '纸质版学习材料',
+             'vc_count': 10000,
+             'days': 0,
+             'attention': '请勿兑换，联系管理员',
+             'sub_id': '0-page'},
             {'sub_title': '7天普通会员',
              'vc_count': 7,
              'days': 7,
