@@ -1147,15 +1147,16 @@ def export_question_to_word():
     items = c_exam.get_questions_by_strategy(g.exam_no, strategy_id)
     items = handle_questions(items, False)
     name = strategies[0]['strategy_name']
-    save_path = os.path.join(tempfile.gettempdir(), 'wild_export_%s.docx' % uuid.uuid4().hex)
-    write_docx(save_path, name, True, items, G_SELECT_MODE,
+    r_name = 'wild_export_%s.zip' % uuid.uuid4().hex
+    save_path = os.path.join(tempfile.gettempdir(), r_name)
+    write_docx(save_path, name, None, items, G_SELECT_MODE,
                upload_folder)
     if 'file' in request.args:
         # pandoc b.docx -o b.pdf --pdf-engine=xelatex -V mainfont=SimSun
         # libreoffice-writer soffice --headless --convert-to pdf:writer_pdf_Export b.docx
         g.download_file = save_path
         return send_file(save_path, as_attachment=True,
-                         attachment_filename='%s.docx' % name)
+                         attachment_filename='%s.zip' % name)
     return {'status': True, 'data': strategies[0]}
 
 

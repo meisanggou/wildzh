@@ -7,6 +7,7 @@ import os
 import shutil
 import tempfile
 import uuid
+import zipfile
 
 from wildzh.export.render_xml import write_xml
 
@@ -224,9 +225,28 @@ def write_docx(save_path, exam_name, show_answer, question_items, select_modes,
     os.mkdir(media_dir)
     q_data = receive_data(question_items, select_modes, media_dir,
                           upload_folder, show_answer)
-    write_xml(save_path, demo_dir, exam_name=exam_name,
-              show_answer=show_answer, **q_data)
-    return temp_dir
+    if show_answer is None:
+        _id = uuid.uuid4().hex
+        r_name = '_wildzh_%s.docx' % _id
+        ra_name = '_wildzh_%s_answer.docx' % _id
+        f_path = os.path.join(temp_dir, r_name)
+        fa_path = os.path.join(temp_dir, ra_name)
+        write_xml(f_path, demo_dir, exam_name=exam_name,
+                  show_answer=False, **q_data)
+        write_xml(fa_path, demo_dir, exam_name=exam_name,
+                  show_answer=True, **q_data)
+        zip_write = zipfile.ZipFile(save_path, "w")
+        zip_write.write(f_path, '%s.docx' % exam_name)
+        zip_write.write(fa_path, '%s（带答案）.docx' % exam_name)
+        zip_write.close()
+        os.remove(f_path)
+        os.remove(fa_path)
+    else:
+        write_xml(save_path, demo_dir, exam_name=exam_name,
+                  show_answer=show_answer, **q_data)
+
+    shutil.rmtree(demo_dir)
+    return save_path
 
 
 if __name__ == "__main__":
