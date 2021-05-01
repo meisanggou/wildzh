@@ -215,7 +215,7 @@ def receive_data(question_items, select_modes, media_dir, upload_folder,
     return r
 
 
-def write_docx(exam_name, show_answer, question_items, select_modes,
+def write_docx(save_path, exam_name, show_answer, question_items, select_modes,
                upload_folder):
     # copy
     temp_dir = tempfile.gettempdir()
@@ -226,7 +226,7 @@ def write_docx(exam_name, show_answer, question_items, select_modes,
     media_dir = os.path.join(demo_dir, 'word', 'media')
     q_data = receive_data(question_items, select_modes, media_dir,
                           upload_folder, show_answer)
-    write_xml('b.docx', demo_dir, exam_name=exam_name,
+    write_xml(save_path, demo_dir, exam_name=exam_name,
               show_answer=show_answer, **q_data)
     return temp_dir
 

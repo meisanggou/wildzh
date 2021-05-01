@@ -134,8 +134,65 @@
                 </w:p>
             {% endfor %}
         {% endif %}
-
+        {# 判断是否应该显示答案 #}
+          {% if show_answer %}
+             <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9" w:rsidP="008C419A">
+                <w:pPr>
+                  <w:ind w:left="0" w:hangingChars="0" w:hanging="0"/>
+                  <w:rPr>
+                    <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
+                    <w:sz w:val="24"/>
+                  </w:rPr>
+                </w:pPr>
+                <w:bookmarkStart w:id="0" w:name="_GoBack"/>
+                <w:r>
+                  <w:rPr>
+                    <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
+                    <w:sz w:val="24"/>
+                  </w:rPr>
+                  <w:t>答案：{{ item.right_option }}</w:t>
+                </w:r>
+              </w:p>
+              <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9" w:rsidP="008C419A">
+                  <w:pPr>
+                    <w:ind w:left="0" w:hangingChars="0" w:hanging="0"/>
+                    <w:rPr>
+                      <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
+                      <w:sz w:val="24"/>
+                    </w:rPr>
+                  </w:pPr>
+                  <w:bookmarkStart w:id="0" w:name="_GoBack"/>
+                  <w:r>
+                    <w:rPr>
+                      <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
+                      <w:sz w:val="24"/>
+                    </w:rPr>
+                    <w:t>解析：{{ item.answer }}</w:t>
+                  </w:r>
+                  {% for ar_desc in item.answer_rich %}
+                    {{ ar_desc | convert_run_xml }}
+                  {% endfor %}
+                </w:p>
+                <w:p w:rsidR="00635EE5" w:rsidRDefault="002B64C9" w:rsidP="008C419A">
+                  <w:pPr>
+                    <w:ind w:left="0" w:hangingChars="0" w:hanging="0"/>
+                    <w:rPr>
+                      <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
+                      <w:sz w:val="24"/>
+                    </w:rPr>
+                  </w:pPr>
+                  <w:bookmarkStart w:id="0" w:name="_GoBack"/>
+                  <w:r>
+                    <w:rPr>
+                      <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
+                      <w:sz w:val="24"/>
+                    </w:rPr>
+                    <w:t></w:t>
+                  </w:r>
+                </w:p>
+          {% endif %}
         {% endfor %} {# 结束循环single_block.questions #}
+
         {% for q_block in answer_blocks %}
         <w:p w:rsidR="00550B8B" w:rsidRDefault="00550B8B" w:rsidP="00550B8B">
             <w:pPr>

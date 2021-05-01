@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 import uuid
 
 from flask import request, jsonify, g
+from flask import send_file
 from flask_login import login_required
 from flask_helper.template import RenderTemplate
 from flask_helper.upload import support_upload2
@@ -1143,13 +1144,16 @@ def export_question_to_word():
         return {'status': False, 'data': 'Not Found'}
     items = c_exam.get_questions_by_strategy(g.exam_no, strategy_id)
     items = handle_questions(items, False)
-    write_docx(strategies[0]['strategy_name'], True, items, G_SELECT_MODE,
+    name = strategies[0]['strategy_name']
+    save_path = os.path.join(tempfile.gettempdir(), 'wild_export_%s.docx' % uuid.uuid4().hex)
+    write_docx(save_path, name, True, items, G_SELECT_MODE,
                upload_folder)
     if 'file' in request.args:
-        from flask import send_file
         # pandoc b.docx -o b.pdf --pdf-engine=xelatex -V mainfont=SimSun
         # libreoffice-writer soffice --headless --convert-to pdf:writer_pdf_Export b.docx
-        return send_file('b.docx')
+        g.download_file = save_path
+        return send_file(save_path, as_attachment=True,
+                         attachment_filename='%s.docx' % name)
     return {'status': True, 'data': strategies[0]}
 
 

@@ -125,7 +125,6 @@ $(function () {
                 my_async_request2(strategy_url, 'PUT', data, function(res_data){
                         popup_show("操作成功");
                         if(index == -1){
-                            console.info(res_data);
                             that.strategies.push(res_data);
                             that.current_strategy_index = that.strategies.length - 1;
                             that.select_strategy();
@@ -135,6 +134,11 @@ $(function () {
                         }
                     }
                )
+            },
+            export_strategy: function () {
+                var url = '/exam/export/word?file=true&exam_no=' + this.current_exam['exam_no'] +'&strategy_id=' + this.strategy_id;
+                url += '&t=' + get_timestamp2() ;
+                window.open(url);
             },
             remove_strategy: function(){
                 var that = this;

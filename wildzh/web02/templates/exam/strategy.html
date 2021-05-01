@@ -51,6 +51,7 @@
             </ul>
         </div>
         <button class="btn btn-success btn-down api-newBtn" @click="update">更新</button>
+        <button v-if="strategy_id" class="btn btn-success btn-down api-newBtn" @click="export_strategy">导出试题</button>
         <button v-if="strategy_id" class="btn btn-warning btn-down api-newBtn" @click="remove_strategy">删除</button>
     </div>
 </div>
