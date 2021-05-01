@@ -144,7 +144,7 @@ def good_required():
                 vcb_items = VC_UB_MAN.get_all(
                     g.session, user_no=g.user_no,
                     billing_project=con_r.next_condition.billing_project)
-                if len(vcb_items) < con_r.max_num:
+                if len(vcb_items) <= con_r.next_condition.max_num:
                     v = True
     data = {'good_type': good_type, 'good_id': good_id, 'enable': v}
     return {'status': True, 'data': data}

@@ -16,7 +16,7 @@ class GoodVCCond(object):
 
     def __init__(self, max_num=None, good_type=None, good_id=None,
                  billing_project=None):
-        self.max_num = max_num
+        self.max_num = max_num  # 当前允许的 最大数量
         self.good_type = good_type
         self.good_id = good_id
         self.billing_project = billing_project
