@@ -150,6 +150,7 @@ def good_required():
 @vc_view.route('/goods/exchange', methods=['POST'])
 def good_exchange():
     data = g.request_data
+    LOG.info('[Important][GoodsExchange]user_no:%s, data:%s', g.user_no, data)
     good_type = data['good_type']
     good_id = data['good_id']
     goods_res = DATA_REGISTRY.get(constants.DR_KEY_VC_GOODS, [])

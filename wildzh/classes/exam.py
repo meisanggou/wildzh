@@ -968,6 +968,14 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
 
     def select_random_questions(self, exam_no, num, select_mode=None,
                                 question_subject=None, exclude_nos=""):
+        """
+        :param exam_no:
+        :param num: 如果num小于0获取全部
+        :param select_mode:
+        :param question_subject:
+        :param exclude_nos:
+        :return:
+        """
         m_items = self.select_question_no(exam_no, select_mode, None, question_subject)
         exclude_set = set([int(x) for x in re.split('\D', exclude_nos)
                            if x != ''])
@@ -975,12 +983,13 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
         m_nos_len = len(m_nos)
         if m_nos_len <= 0:
             return []
-        if num > m_nos_len:
+        if num > m_nos_len or num < 0:
             return self.select_multi_question(exam_no, m_nos)
         q_nos = random.sample(m_nos, num)
         return self.select_multi_question(exam_no, q_nos)
 
-    def get_questions_by_strategy(self, exam_no, strategy_id, question_subject=None):
+    def get_questions_by_strategy(self, exam_no, strategy_id,
+                                  question_subject=None):
         strategies = self.get_strategy(exam_no, strategy_id)
         if len(strategies) <= 0:
             return []
@@ -991,6 +1000,16 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                                                 item['value'],
                                                 question_subject)
             questions.extend(_qts)
+        return questions
+
+    def get_questions_by_strategy_items(self, exam_no, strategy_items):
+        questions = []
+        for item in strategy_items:
+            question_subjects = item.get('question_subjects', [None])
+            for qs in question_subjects:
+                _qts = self.select_random_questions(exam_no, item['num'],
+                                                    item['value'], qs)
+                questions.extend(_qts)
         return questions
 
     def select_multi_question(self, exam_no, q_nos):

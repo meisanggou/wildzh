@@ -1141,7 +1141,7 @@ def delete_exam_strategy(strategy_id):
 
 
 @exam_view.route('/export/word', methods=['POST', 'GET'])
-# @login_required
+@login_required
 @required_exam_no
 def export_question_to_word():
     # http://127.0.0.1:2400/exam/export/word?exam_no=1585396371&strategy_id=a1af47f5ec3d4829b143ec348c5f3479
@@ -1151,6 +1151,8 @@ def export_question_to_word():
                                      strategy_id=strategy_id)
     if len(strategies) != 1:
         return {'status': False, 'data': 'Not Found'}
+    strategy_items = [{"value": 3, "num": -1, 'question_subjects': [0, 1]},
+                      {"value": 5, "num": -1, 'question_subjects': [0, 1]}]
     items = c_exam.get_questions_by_strategy(g.exam_no, strategy_id)
     items = handle_questions(items, False)
     name = strategies[0]['strategy_name']
@@ -1166,6 +1168,22 @@ def export_question_to_word():
                          attachment_filename='%s.zip' % name)
     return {'status': True, 'data': strategies[0]}
 
+
+@exam_view.route('/export/word/admin', methods=['GET'])
+@login_required
+@required_exam_no
+def export_question_to_word_admin():
+    strategy_items = [{"value": 3, "num": -1, 'question_subjects': [0, 1]},
+                      {"value": 5, "num": -1, 'question_subjects': [0, 1]}]
+    items = c_exam.get_questions_by_strategy_items(g.exam_no, strategy_items)
+    items = handle_questions(items, False)
+    name = '简答+论述'
+    r_name = 'wild_export_%s.zip' % uuid.uuid4().hex
+    save_path = os.path.join(tempfile.gettempdir(), r_name)
+    write_docx(save_path, name, None, items, G_SELECT_MODE,
+               upload_folder)
+    return send_file(save_path, as_attachment=True,
+                     attachment_filename='%s.zip' % name)
 
 @exam_view.route('/question/feedback', methods=['GET'])
 @login_required
