@@ -20,7 +20,7 @@
     {{ 't_js/my_requests.js' | make_static_html2 | safe }}
     {{ 't_js/url_tool.js' | make_static_html2 | safe }}
     {{ 't_js/handler_data.js' | make_static_html2 | safe }}
-    {{ 't_js/add_node.js' | make_static_html2 | safe }}
+    <!--{{ 't_js/add_node.js' | make_static_html2 | safe }}-->
     {{ 't_js/datetime_tools.js' | make_static_html2 | safe }}
     <!-- Sweet Alert 弹窗 -->
     {{ 't_css/sweetalert.css' | make_static_html | safe }}
@@ -30,13 +30,6 @@
     {% block js_content %} {% endblock %}
 </head>
 <body>
-{#<script>#}
-{#    !(function (c, b, d, a) {#}
-{#        c[a] || (c[a] = {});#}
-{#        c[a].config = {pid: "c0xrg@2acaac8410204fe"};#}
-{#        with (b)with (body)with (insertBefore(createElement("script"), firstChild))setAttribute("crossorigin", "", src = d)#}
-{#    })(window, document, "https://retcode.alicdn.com/retcode/bl.js", "__bl");#}
-{#</script>#}
 <div class="container font16">
     {% if g.user_no %}
         <input id="current_user_name" value="{{ g.user_no }}" style="display: none">

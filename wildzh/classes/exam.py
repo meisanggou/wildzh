@@ -696,6 +696,9 @@ class ExamGenStrategy(object):
                                        where_value=where_value)
         for item in items:
             item['strategy_items'] = json.loads(item['strategy_items'])
+            for si_item in item['strategy_items']:
+                if 'qss' not in si_item:
+                    si_item['qss'] = []
         return items
 
     def insert_strategy(self, exam_no, strategy_items, strategy_name=''):

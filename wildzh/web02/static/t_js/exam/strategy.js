@@ -23,6 +23,7 @@ function init_info(data){
 $(function () {
     var exam_no = UrlArgsValue(location.href, "exam_no");
     var strategy_url = $("#strategy_url").val();
+    var info_url = $("#info_url").val();
     if(exam_no != null) {
         exam_no = parseInt(exam_no);
     }
@@ -33,6 +34,7 @@ $(function () {
             current_exam_index: -1,
             current_exam: {question_num: 0, exam_no: exam_no},
             select_modes: [],
+            subjects: [],
             strategies: [],
             current_strategy_index: -1,
             strategy_id: null,
@@ -43,6 +45,7 @@ $(function () {
             select_exam: function () {
                 this.current_exam = this.all_exams[this.current_exam_index];
                 this.select_modes = this.current_exam["select_modes"];
+                this.subjects = this.current_exam["subjects"];
                 if("strategies" in this.current_exam){
                     var strategies = this.current_exam['strategies'];
                     //if(strategies.length <= 0){
@@ -86,12 +89,16 @@ $(function () {
                 if(position == -1){
                     position = this.strategy_pattern.length;
                 }
-                console.info(position);
-                this.strategy_pattern.splice(position, 0, {'value': -1, 'num': ''});
-                //this.strategy_pattern.push({'value': -1, 'num': ''});
+                this.strategy_pattern.splice(position, 0, {'value': -1, 'num': '', 'qss': []});
             },
             remove_mode: function(index){
                 this.strategy_pattern.splice(index, 1);
+            },
+            add_project: function(index){
+                this.strategy_pattern[index].qss.push({'value': -1, 'num': ''});
+            },
+            remove_project: function(index, qs_index){
+                this.strategy_pattern[index].qss.splice(qs_index, 1);
             },
             update: function(){
                 if(this.strategy_pattern.length <= 0){
@@ -113,7 +120,7 @@ $(function () {
                         popup_show(error_tip);
                         return false;
                     }
-                    strategy_items.push({'value': sp_item.value, 'num': num});
+                    strategy_items.push({'value': sp_item.value, 'num': num, 'qss': []});
                 }
                 var data = {'strategy_items': strategy_items, 'exam_no': this.current_exam['exam_no']};
                 if(this.strategy_id != null){

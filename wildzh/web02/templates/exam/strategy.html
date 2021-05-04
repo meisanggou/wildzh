@@ -28,6 +28,15 @@
                     <input type="text" class="box-side width150" v-model='strategy_name'>
                 </li>
                 <li>
+                    <label>公开策略：</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="enabled" value="1" v-model.number='enabled'>公开
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="enabled" value="0" v-model.number='enabled'>不公开
+                    </label>
+                </li>
+                <li>
                     <label>智能组卷：</label>
                     <button class="btn btn-success" v-if="strategy_pattern.length<10" @click="add_mode(-1)">增加题型</button>
                 </li>
@@ -41,8 +50,17 @@
                             </select>
                             <label>题目数：</label>
                             <input type="text" class="box-side width100" v-model.number='sub_item.num'>
+                            <a href='javascript:void(0)' @click="add_project(index)" class="left5">增加科目</a>
                             <a href='javascript:void(0)' @click="remove_mode(index)" class="left5">移除</a>
                             <a href='javascript:void(0)' @click="add_mode(index+1)" class="left5">增加题型</a>
+                        </li>
+                        <li v-for="(qs_item, qs_index) in sub_item.qss">
+                            <label class="left5">科目：</label>
+                            <select class="box-side width100" type="text"v-model="qs_item.value">
+                                <option v-for="(sj_item,sj_index) in subjects" v-if="sj_item.enable" :value="sj_index">{{sj_item["name"]}}</option>
+                            </select>
+                            <input type="text" class="box-side width100" v-model.number='qs_item.num'>
+                            <a href='javascript:void(0)' @click="remove_project(index, qs_index)" class="left5">移除</a>
                         </li>
                     </div>
                 </div>
@@ -50,9 +68,9 @@
 
             </ul>
         </div>
-        <button class="btn btn-success btn-down api-newBtn" @click="update">更新</button>
-        <button v-if="strategy_id" class="btn btn-success btn-down api-newBtn" @click="export_strategy">导出试题</button>
-        <button v-if="strategy_id" class="btn btn-warning btn-down api-newBtn" @click="remove_strategy">删除</button>
+        <button class="btn btn-success btn-down" @click="update">更新</button>
+        <button v-if="strategy_id" class="btn btn-success btn-down " @click="export_strategy">导出试题</button>
+        <button v-if="strategy_id" class="btn btn-warning btn-down " @click="remove_strategy">删除</button>
     </div>
 </div>
 {% endblock %}
