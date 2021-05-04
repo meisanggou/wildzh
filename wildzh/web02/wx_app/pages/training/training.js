@@ -531,16 +531,10 @@ Page({
             url: "../questions/question?select_mode=-1&question_no=" + question_no
         })
     },
-    choseItem: function (e) {
-        var choseIndex = parseInt(e.currentTarget.dataset.choseitem);
+    choseOption: function(e){
+        var choseRight = e.detail.choseRight;
         var nowQuestion = that.data.nowQuestion;
-        var nowQuestionIndex = that.data.nowQuestionIndex;
-
-        for (var index in questionItems[nowQuestionIndex]["options"]) {
-            nowQuestion["options"][index]["class"] = "noChose";
-        }
-        if (parseInt(nowQuestion["options"][choseIndex]["score"]) > 0) {
-            nowQuestion["options"][choseIndex]["class"] = "chose";
+        if (choseRight) {
             this.addBrushNum(nowQuestion.question_no, STATE_RIGHT);
             // 自动进入下一题
             if (this.data.showAnswer == false) {
@@ -551,15 +545,12 @@ Page({
                 }, 1000)
             }
         } else {
-            nowQuestion["options"][choseIndex]["class"] = "errorChose";
             // 记录错题
             this.addBrushNum(nowQuestion.question_no, STATE_WRONG);
             // 显示答案
             that.showAnswer();
         }
-        that.setData({
-            nowQuestion: nowQuestion
-        })
+
     },
     updateAnswerOption: function (event) {
         var selected = event.detail.value;

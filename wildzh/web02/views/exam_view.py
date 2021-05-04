@@ -321,19 +321,21 @@ EXAM_GOODS_SUB = [
              'vc_count': 10000,
              'days': 0,
              'attention': '请勿直接兑换，联系管理员',
-             'sub_id': '0-page'},
+             'sub_id': '0-page',
+             'available': 'disable',
+             'disable_msg': '线下产品'},
             {'sub_title': '7天普通会员',
              'vc_count': 7,
              'days': 7,
              'attention': '新成员专享',
              'sub_id': '7-new_mem',
-             'has_condition': True},
+             'available': 'conditional'},
             {'sub_title': '15天普通会员',
              'vc_count': 15,
              'days': 15,
              'attention': '首次兑换专享',
              'sub_id': '15-first_exchange',
-             'has_condition': True},
+             'available': 'conditional'},
             {'sub_title': '7天普通会员',
              'vc_count': 1,
              'days': 7,
@@ -358,30 +360,30 @@ def exam_goods(session, user_no):
 
 def exam_good_condition(session, user_no, good_type, good_id):
     if good_type != constants.GOOD_TYPE_EXAM:
-        return goods_op.GoodConditionResult(enable=False)
+        return goods_op.GoodConditionResult(available='disable')
     items = good_id.split('-', 2)
     if len(items) <= 2:
         # TODO write log
         print(items)
-        return goods_op.GoodConditionResult(enable=True)
+        return goods_op.GoodConditionResult(available='enable')
     exam_no, days, cond = items
     if cond == 'new_mem':
         items = EXAM_MF_MAN.get_flows(session, user_no=user_no,
                                       exam_no=exam_no)
         if items:
-            return goods_op.GoodConditionResult(enable=False)
+            return goods_op.GoodConditionResult(available='disable')
     else:
         nc = goods_op.GoodVCCond(
             max_num=0, good_type=constants.GOOD_TYPE_EXAM, good_id=good_id,
             billing_project=constants.VC_EC_EM)
-        return goods_op.GoodConditionResult(enable=True, next_condition=nc)
-    return goods_op.GoodConditionResult(enable=True)
+        return goods_op.GoodConditionResult(available='enable', next_condition=nc)
+    return goods_op.GoodConditionResult(available='enable')
 
 
 def exam_goods_exchange(session, user_no, good_type, good_id):
     # TODO 需要再次校验资格
     if good_type != constants.GOOD_TYPE_EXAM:
-        return goods_op.GoodConditionResult(enable=False)
+        return goods_op.GoodConditionResult(available='disable')
     exam_no, sub_id = good_id.split('-', 1)
     for sub in EXAM_GOODS_SUB:
         if sub['sub_id'] == sub_id:

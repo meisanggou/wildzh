@@ -37,25 +37,7 @@
         </view>
 
         <view class='content'>
-            <mp-question nowQuestion="{{ nowQuestion}}" examNo="{{ examNo}}"></mp-question>
-            <view class='questionOption'>
-                <view class="{{nowQuestion.options[idx].class? nowQuestion.options[idx].class:'noChose'}}"
-                    bindtap='choseItem' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}"
-                    wx:key="desc">{{optionChar[idx]}}、
-                    <block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item" wx:key="index">
-                        <block wx:if="{{desc_item.url}}">
-                            <image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;'
-                                src="{{remote_host}}{{desc_item.url}}"></image>
-                        </block>
-                        <block wx:else>
-                            {{desc_item.value}}
-                        </block>
-
-                    </block>
-
-                </view>
-            </view>
-
+            <mp-question nowQuestion="{{ nowQuestion}}" examNo="{{ examNo}}" showAnswer="{{ showAnswer }}" bindchoseOption="choseOption"></mp-question>
             <!-- <view class='line'>
                 <view class='showAnswer' bindtap='showAnswer'>显示答案</view>
             </view> -->

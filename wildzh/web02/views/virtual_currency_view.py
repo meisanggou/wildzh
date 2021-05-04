@@ -114,39 +114,36 @@ def goods_items():
         _goods = resp_er['items'](g.session, g.user_no)
         print(_goods)
         for good in _goods:
-            if 'has_condition' in good:
-                good['enable'] = False
-                del good['has_condition']
-            else:
-                good['enable'] = True
+            if 'available' not in good:
+                good['available'] = 'enable'
             good['good_type'] = resp_er['good_type']
             goods.append(good)
     data = {'goods': goods}
     return {'status': True, 'data': data}
 
 
-@vc_view.route('/goods/required', methods=['GET'])
+@vc_view.route('/goods/condition', methods=['GET'])
 def good_required():
     args = request.args
     good_type = args['good_type']
     good_id = args['good_id']
     goods_res = DATA_REGISTRY.get(constants.DR_KEY_VC_GOODS, [])
-    v = False
+    v = 'disable'
     for resp_er in goods_res:
         if resp_er['good_type'] == good_type:
             req_func = resp_er['condition']
             con_r = req_func(g.session, g.user_no, good_type, good_id)
-            if con_r.enable is False:
+            if con_r.available == 'disable':
                 break
             if not con_r.next_condition:
-                v = con_r.enable
+                v = con_r.available
             else:
                 vcb_items = VC_UB_MAN.get_all(
                     g.session, user_no=g.user_no,
                     billing_project=con_r.next_condition.billing_project)
                 if len(vcb_items) <= con_r.next_condition.max_num:
-                    v = True
-    data = {'good_type': good_type, 'good_id': good_id, 'enable': v}
+                    v = 'enable'
+    data = {'good_type': good_type, 'good_id': good_id, 'available': v}
     return {'status': True, 'data': data}
 
 

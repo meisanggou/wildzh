@@ -7,8 +7,8 @@ __author__ = 'zhouhenglc'
 
 class GoodConditionResult(object):
 
-    def __init__(self, enable, next_condition=None):
-        self.enable = enable
+    def __init__(self, available, next_condition=None):
+        self.available = available
         self.next_condition = next_condition
 
 
