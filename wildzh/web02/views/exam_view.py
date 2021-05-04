@@ -318,10 +318,24 @@ def parsing_token(resource, event, trigger, **kwargs):
 
 EXAM_GOODS_SUB = [
             {'sub_title': '纸质版学习材料',
+             'vc_count': 0,
+             'days': 0,
+             'attention': '请联系管理员购买',
+             'sub_id': '0-page',
+             'available': 'disable',
+             'disable_msg': '线下产品'},
+            {'sub_title': '纸质版名词解释',
              'vc_count': 10000,
              'days': 0,
-             'attention': '请勿直接兑换，联系管理员',
-             'sub_id': '0-page',
+             'attention': '请联系管理员购买',
+             'sub_id': '0-page-mcjs',
+             'available': 'disable',
+             'disable_msg': '线下产品'},
+            {'sub_title': '纸质版简答论述',
+             'vc_count': 10000,
+             'days': 0,
+             'attention': '请联系管理员购买',
+             'sub_id': '0-page-jdls',
              'available': 'disable',
              'disable_msg': '线下产品'},
             {'sub_title': '7天普通会员',
@@ -381,12 +395,18 @@ def exam_good_condition(session, user_no, good_type, good_id):
 
 
 def exam_goods_exchange(session, user_no, good_type, good_id):
-    # TODO 需要再次校验资格
     if good_type != constants.GOOD_TYPE_EXAM:
-        return goods_op.GoodConditionResult(available='disable')
+        return goods_op.GoodExchangeResult(result=False,
+                                           message='商品异常，无法兑换')
     exam_no, sub_id = good_id.split('-', 1)
     for sub in EXAM_GOODS_SUB:
         if sub['sub_id'] == sub_id:
+            if sub['available'] == 'disable':
+                return goods_op.GoodExchangeResult(
+                    result=False, message=sub.get('disable_msg', '无法兑换'))
+            elif sub['available'] == 'conditional':
+                pass
+                # TODO 需要再次校验资格
             days = sub['days']
             exam_items = EXAM_MAN.get_private(session, exam_no)
             if not exam_items:

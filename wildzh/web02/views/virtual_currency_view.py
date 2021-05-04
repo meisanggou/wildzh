@@ -112,7 +112,6 @@ def goods_items():
     goods = []
     for resp_er in goods_res:
         _goods = resp_er['items'](g.session, g.user_no)
-        print(_goods)
         for good in _goods:
             if 'available' not in good:
                 good['available'] = 'enable'
