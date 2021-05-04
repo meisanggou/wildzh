@@ -405,7 +405,7 @@ def exam_goods_exchange(session, user_no, good_type, good_id):
             if available == 'disable':
                 return goods_op.GoodExchangeResult(
                     result=False, message=sub.get('disable_msg', '无法兑换'))
-            elif sub['available'] == 'conditional':
+            elif available == 'conditional':
                 pass
                 # TODO 需要再次校验资格
             days = sub['days']
