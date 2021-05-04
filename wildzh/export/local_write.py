@@ -70,8 +70,8 @@ def receive_data(question_items, select_modes, media_dir, upload_folder,
                  show_answer=False):
     def _question_sort(a, b):
         # 按照政治经济学，微观经济学，宏观经济学排序
-        # 3 1 2
-        _indexs = [3, 1, 2, 0]
+        # 2 0 1
+        _indexs = [2, 0, 1]
         try:
             a_i = _indexs.index(a['question_subject'])
             b_i = _indexs.index(b['question_subject'])
