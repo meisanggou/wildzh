@@ -66,8 +66,7 @@ def download_file(path, upload_folder, save_dir, name):
     return save_path
 
 
-def receive_data(question_items, select_modes, media_dir, upload_folder,
-                 show_answer=False):
+def receive_data(question_items, select_modes):
     def _question_sort(a, b):
         # 按照政治经济学，微观经济学，宏观经济学排序
         # 2 0 1
@@ -115,8 +114,9 @@ def receive_data(question_items, select_modes, media_dir, upload_folder,
     rid_c = Counter('rid')
     rid_p = 'rId'
     medias = []
+    answer_medias = []
 
-    def _handle_rich_desc(rd_item):
+    def _handle_rich_desc(rd_item, is_answer=False):
         if isinstance(rd_item, dict):
             rid = "%s%s" % (rid_p, rid_c.value)
             rd_item['rid'] = rid
@@ -125,9 +125,12 @@ def receive_data(question_items, select_modes, media_dir, upload_folder,
             rd_item['r_index'] = rid_c.value
             r_name = '%s.%s' % (rid, rd_item['url'].rsplit('.', 1)[-1])
             rd_item['name'] = r_name
-            download_file(rd_item['url'], upload_folder, media_dir, r_name)
             rid_c.plus()
-            medias.append({'rid': rid, 'name': r_name})
+            m_item = {'rid': rid, 'name': r_name, 'url': rd_item['url']}
+            if is_answer:
+                answer_medias.append(m_item)
+            else:
+                medias.append(m_item)
     for s_item in single_selected:
         for _r_item in s_item['question_desc_rich']:
             _handle_rich_desc(_r_item)
@@ -192,16 +195,15 @@ def receive_data(question_items, select_modes, media_dir, upload_folder,
                     multi_question_desc[-1].append(_r_item)
 
             multi_answer_rich = [[]]
-            if show_answer:
-                for _r_item in q_item['answer_rich']:
-                    _handle_rich_desc(_r_item)
-                    if not isinstance(_r_item, dict):
-                        _items = _r_item.split('\n')
-                        multi_answer_rich[-1].append(_items[0])
-                        for _sub_item in _items[1:]:
-                            multi_answer_rich.append([_sub_item])
-                    else:
-                        multi_answer_rich[-1].append(_r_item)
+            for _r_item in q_item['answer_rich']:
+                _handle_rich_desc(_r_item, is_answer=True)
+                if not isinstance(_r_item, dict):
+                    _items = _r_item.split('\n')
+                    multi_answer_rich[-1].append(_items[0])
+                    for _sub_item in _items[1:]:
+                        multi_answer_rich.append([_sub_item])
+                else:
+                    multi_answer_rich[-1].append(_r_item)
             q_item['multi_answer_rich'] = multi_answer_rich
             q_item["multi_question_desc"] = multi_question_desc
 
@@ -210,7 +212,7 @@ def receive_data(question_items, select_modes, media_dir, upload_folder,
     r = {'single_block': single_block,
          'answer_blocks': answer_blocks,
          'option_mapping': OPTION_MAPPING,
-         'medias': medias}
+         'medias': medias, 'answer_medias': answer_medias}
     return r
 
 
@@ -223,8 +225,11 @@ def write_docx(save_path, exam_name, show_answer, question_items, select_modes,
     shutil.copytree(src_dir, demo_dir)
     media_dir = os.path.join(demo_dir, 'word', 'media')
     os.mkdir(media_dir)
-    q_data = receive_data(question_items, select_modes, media_dir,
-                          upload_folder, show_answer)
+    q_data = receive_data(question_items, select_modes)
+    medias = q_data['medias']
+    answer_medias = q_data['answer_medias']
+    for m in medias:
+        download_file(m['url'], upload_folder, media_dir, m['name'])
     if show_answer is None:
         _id = uuid.uuid4().hex
         r_name = '_wildzh_%s.docx' % _id
@@ -233,6 +238,9 @@ def write_docx(save_path, exam_name, show_answer, question_items, select_modes,
         fa_path = os.path.join(temp_dir, ra_name)
         write_xml(f_path, demo_dir, exam_name=exam_name,
                   show_answer=False, **q_data)
+
+        for m in answer_medias:
+            download_file(m['url'], upload_folder, media_dir, m['name'])
         write_xml(fa_path, demo_dir, exam_name=exam_name,
                   show_answer=True, **q_data)
         zip_write = zipfile.ZipFile(save_path, "w")
@@ -241,6 +249,11 @@ def write_docx(save_path, exam_name, show_answer, question_items, select_modes,
         zip_write.close()
         os.remove(f_path)
         os.remove(fa_path)
+    elif show_answer:
+        for m in answer_medias:
+            download_file(m['url'], upload_folder, media_dir, m['name'])
+        write_xml(save_path, demo_dir, exam_name=exam_name,
+                  show_answer=True, **q_data)
     else:
         write_xml(save_path, demo_dir, exam_name=exam_name,
                   show_answer=show_answer, **q_data)
