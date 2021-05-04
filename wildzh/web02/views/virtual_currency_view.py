@@ -44,7 +44,7 @@ def func_browse_ad_check(user_no, gf_obj, **kwargs):
     cr = {'next_enable': next_enable, 'last_id': last_id,
           'give_vc_count': give_vc_count, 'billing_project': 'browse_ad',
           'project_name': '看广告得积分', 'detail': '', 'remark': '',
-          'tip': '得1积分'}
+          'tip': '得积分换会员'}
     return cr
 
 
