@@ -1,5 +1,5 @@
 var remote_host = "https://meisanggou.vicp.net"
-var version = "6.7.6";
+var version = "6.7.7";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 var reqRandom = 100; // 用于某些资源防止缓存，加到请求参数中

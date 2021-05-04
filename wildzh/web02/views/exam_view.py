@@ -401,7 +401,8 @@ def exam_goods_exchange(session, user_no, good_type, good_id):
     exam_no, sub_id = good_id.split('-', 1)
     for sub in EXAM_GOODS_SUB:
         if sub['sub_id'] == sub_id:
-            if sub['available'] == 'disable':
+            available = sub.get('available', 'enable')
+            if available == 'disable':
                 return goods_op.GoodExchangeResult(
                     result=False, message=sub.get('disable_msg', '无法兑换'))
             elif sub['available'] == 'conditional':
