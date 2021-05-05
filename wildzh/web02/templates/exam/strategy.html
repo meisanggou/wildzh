@@ -48,7 +48,7 @@
                             <select class="box-side width100" type="text"v-model="sub_item.value">
                                 <option v-for="(mod_item,index) in select_modes" v-if="mod_item.enable" :value="index">{{mod_item["name"]}}</option>
                             </select>
-                            <label>题目数：</label>
+                            <label class="left5">题目数：</label>
                             <input type="text" class="box-side width100" v-model.number='sub_item.num'>
                             <a href='javascript:void(0)' @click="add_project(index)" class="left5">增加科目</a>
                             <a href='javascript:void(0)' @click="remove_mode(index)" class="left5">移除</a>
@@ -59,7 +59,10 @@
                             <select class="box-side width100" type="text"v-model="qs_item.value">
                                 <option v-for="(sj_item,sj_index) in subjects" v-if="sj_item.enable" :value="sj_index">{{sj_item["name"]}}</option>
                             </select>
-                            <input type="text" class="box-side width100" v-model.number='qs_item.num'>
+                            <label class="left5">题目数范围：</label>
+                            <input type="text" class="box-side width100" v-model.number='qs_item.min_num'>
+                            <label> - </label>
+                            <input type="text" class="box-side width100" v-model.number='qs_item.max_num'>
                             <a href='javascript:void(0)' @click="remove_project(index, qs_index)" class="left5">移除</a>
                         </li>
                     </div>

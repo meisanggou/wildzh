@@ -351,7 +351,7 @@ EXAM_GOODS_SUB = [
              'sub_id': '15-first_exchange',
              'available': 'conditional'},
             {'sub_title': '7天普通会员',
-             'vc_count': 1,
+             'vc_count': 100,
              'days': 7,
              'sub_id': '7'},
             {'sub_title': '30天普通会员',

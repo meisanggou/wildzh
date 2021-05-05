@@ -95,7 +95,7 @@ $(function () {
                 this.strategy_pattern.splice(index, 1);
             },
             add_project: function(index){
-                this.strategy_pattern[index].qss.push({'value': -1, 'num': ''});
+                this.strategy_pattern[index].qss.push({'value': -1, 'min_num': '', 'max_num': ''});
             },
             remove_project: function(index, qs_index){
                 this.strategy_pattern[index].qss.splice(qs_index, 1);
@@ -120,7 +120,22 @@ $(function () {
                         popup_show(error_tip);
                         return false;
                     }
-                    strategy_items.push({'value': sp_item.value, 'num': num, 'qss': []});
+                    var qss = sp_item.qss;
+                    for(var j= 0,l=qss.length;j<l;j++){
+                        var qs_item = qss[j];
+                        if(qs_item.value < 0){
+                            error_tip += " 未选择科目";
+                            popup_show(error_tip);
+                            return false;
+                        }
+                        var qs_min_num = parseInt(qs_item.min_num);
+                        if(isNaN(qs_min_num) || qs_min_num < 0 || qs_min_num > 100){
+                            error_tip += " 题目数需要大于0，小于等于100";
+                            popup_show(error_tip);
+                            return false;
+                        }
+                    }
+                    strategy_items.push({'value': sp_item.value, 'num': num, 'qss': qss});
                 }
                 var data = {'strategy_items': strategy_items, 'exam_no': this.current_exam['exam_no']};
                 if(this.strategy_id != null){
