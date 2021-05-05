@@ -7,7 +7,13 @@ Page({
      */
     data: {
         examNo: null,
-        validOpinion: ['有效意见', '无效意见'],
+        validOpinion: [
+            {'desc': '有效-普通反馈', 'state': 4, 'level': 'low'}, 
+            {'desc': '有效-中等反馈', 'state': 4, 'level': 'mid'}, 
+            {'desc': '有效-重要反馈', 'state': 4, 'level': 'high'}, 
+            {'desc': '无效反馈', 'state': 3}
+        ],
+        feedbackDesc: "",
         pickerIndex: 0,
         detailIndex: -1,
         feedbacks: [],
@@ -215,13 +221,13 @@ Page({
         });
         var currentIndex = this.data.detailIndex;
         var currentFeedback = this.data.feedbacks[this.data.detailIndex];
-        console.info(currentFeedback);
-        var state = 4;
-        if(this.data.pickerIndex == 1){
-            state = 3;
-        }
-        var data = {'result': this.data.feedbackDesc, 'state': state, 'question_no': currentFeedback.question_no, 'user_no': currentFeedback.user_no, 'exam_no': this.data.examNo};
+        var data = this.data.validOpinion[this.data.pickerIndex];
+        data['result'] = this.data.feedbackDesc;
+        data['question_no'] = currentFeedback.question_no;
+        data['user_no'] = currentFeedback.user_no;
+        data['exam_no'] = this.data.examNo;
 
+        console.info(data);
         var that = this;
         wx.request2({
             url: '/exam/question/feedback?exam_no=' + this.data.examNo,

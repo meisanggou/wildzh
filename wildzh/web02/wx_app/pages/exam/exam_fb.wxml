@@ -28,9 +28,9 @@
     </block>
     <modal hidden="{{hiddenModal}}" title="反馈处理" confirm-text="提交" cancel-text="取消" bindcancel="cancelFeedback" bindconfirm="confirmFeedback">
             <view class="feedback-type">
-            <picker range="{{validOpinion}}" value="{{pickerIndex}}" class="fd-type-picker" bindchange="feedbackPickerChange">
+            <picker range="{{validOpinion}}" value="{{pickerIndex}}" class="fd-type-picker" bindchange="feedbackPickerChange" range-key="desc">
                 <text class="fb-type-k">处理结果：</text>
-                <text class="fb-type-v">{{ validOpinion[pickerIndex] }}</text>
+                <text class="fb-type-v">{{ validOpinion[pickerIndex].desc }}</text>
             </picker>
             </view>
             <textarea class="fb-desc" type='text' placeholder="" bindinput="feedbackDescInput" maxlength='100'  value="{{feedbackDesc}}"></textarea>
