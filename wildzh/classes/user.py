@@ -235,6 +235,11 @@ class User(object):
                 print(e)
         return db_items
 
+    def get_admin_user(self, session):
+        items = self.verify_user_exist2(session)
+        items = [item for item in items if item['role'] & 2 == 2]
+        return items
+
     def new_user(self, session, user_name, password=None, nick_name=None,
                  creator=None, role=1):
         items = self.verify_user_exist(user_name=user_name)

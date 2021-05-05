@@ -26,6 +26,7 @@ from wildzh.classes import goods as goods_op
 from wildzh.classes.user import User
 from wildzh.classes.wx import MiniProgram
 from wildzh.classes.objects.exam_obj import StrategyObject
+from wildzh.db.session import use_session
 from wildzh.export.local_write import write_docx
 from wildzh.tools.docx.object import DocxObject
 from wildzh.tools.parse_exception import ParseException
@@ -1228,6 +1229,7 @@ def get_question_feedback():
 
 
 def notify_feedback(data):
+    print('--------------------------------------------------')
     exam_no = data['exam_no']
     # 获得题库名称
     e_items = c_exam.select_exam(exam_no, offline=True)
@@ -1235,7 +1237,7 @@ def notify_feedback(data):
         return
     e_item = e_items[0]
     exam_name = e_item['exam_name']
-    # 查询管理员
+    # 查询 题库管理员
     admin_members = c_exam.exam_admin_members(exam_no)
     admin_nos = [u["user_no"] for u in admin_members]
     wx_ids = []
@@ -1246,6 +1248,11 @@ def notify_feedback(data):
                 wx_ids.append(u_item['wx_id'])
     if len(data['description']) <= 0:
         data['description'] = '<用户未填写>'
+    if not wx_ids:
+        # 查询 系统管理员
+        with use_session() as session:
+            admin_users = c_user.get_admin_user(session)
+            wx_ids = [x['wx_id'] for x in admin_users if x['wx_id']]
     for wx_id in wx_ids:
         res = min_pro.send_fb_message(wx_id, exam_no, exam_name,
                                       data['fb_type'],
