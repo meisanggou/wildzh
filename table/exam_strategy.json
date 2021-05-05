@@ -19,6 +19,12 @@
                 "col_type": "varchar(32)"
             },
             {
+                "col_comment": "是否是内部策略",
+                "col_name": "internal",
+                "col_type": "bit(1)",
+                "default_value": 0
+            },
+            {
                 "col_comment": "策略组成 一个数组",
                 "col_name": "strategy_items",
                 "col_type": "varchar(200)"

@@ -39,6 +39,7 @@ $(function () {
             current_strategy_index: -1,
             strategy_id: null,
             strategy_name: "",
+            internal: 0,
             strategy_pattern: []
         },
         methods: {
@@ -74,11 +75,13 @@ $(function () {
                     this.strategy_pattern = [];
                     this.strategy_id = null;
                     this.strategy_name = "";
+                    this.internal = 0;
                 }
                 else {
                     this.strategy_pattern = this.strategies[index]["strategy_items"];
                     this.strategy_id = this.strategies[index]['strategy_id'];
                     this.strategy_name = this.strategies[index]['strategy_name'];
+                    this.internal = this.strategies[index]['internal'];
                 }
             },
             add_mode: function (position) {
@@ -121,19 +124,38 @@ $(function () {
                         return false;
                     }
                     var qss = sp_item.qss;
+                    var sum_min = 0;
                     for(var j= 0,l=qss.length;j<l;j++){
+                        var sub_error_tip = error_tip + " **" + (j + 1);
                         var qs_item = qss[j];
                         if(qs_item.value < 0){
-                            error_tip += " 未选择科目";
-                            popup_show(error_tip);
+                            sub_error_tip += " 未选择科目";
+                            popup_show(sub_error_tip, 5000);
                             return false;
                         }
                         var qs_min_num = parseInt(qs_item.min_num);
-                        if(isNaN(qs_min_num) || qs_min_num < 0 || qs_min_num > 100){
-                            error_tip += " 题目数需要大于0，小于等于100";
-                            popup_show(error_tip);
+                        if(isNaN(qs_min_num) || qs_min_num < 0 || qs_min_num > num){
+                            sub_error_tip += " 题目数最小值 需要大于0，小于等于" + num;
+                            popup_show(sub_error_tip, 5000);
                             return false;
                         }
+                        var qs_max_num = parseInt(qs_item.max_num);
+                        if(isNaN(qs_max_num) || qs_max_num < 0 || qs_max_num > num){
+                            sub_error_tip += " 题目数最大值 需要大于0，小于等于" + num;
+                            popup_show(sub_error_tip, 5000);
+                            return false;
+                        }
+                        if(qs_min_num > qs_max_num){
+                            sub_error_tip += " 最小值不能大于最大值";
+                            popup_show(sub_error_tip, 5000);
+                            return false;
+                        }
+                        sum_min += qs_min_num;
+                    }
+                    if(sum_min > num){
+                        error_tip += " 所有科目的最小值的和 " + sum_min +  " 不能大于 该题型总题数" + num;
+                        popup_show(error_tip, 5000);
+                        return false;
                     }
                     strategy_items.push({'value': sp_item.value, 'num': num, 'qss': qss});
                 }
@@ -142,6 +164,7 @@ $(function () {
                     data['strategy_id'] = this.strategy_id;
                 }
                 data['strategy_name'] = this.strategy_name;
+                data['internal'] = this.internal;
                 var index = this.current_strategy_index;
                 var that = this;
                 my_async_request2(strategy_url, 'PUT', data, function(res_data){

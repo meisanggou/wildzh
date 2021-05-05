@@ -18,13 +18,14 @@ from flask_helper.utils import registry as f_registry
 
 from zh_config import db_conf_path, upload_folder, file_prefix_url
 from zh_config import min_program_conf, es_conf
-from wildzh.classes.exam import Exam, ExamObject, StrategyObject
+from wildzh.classes.exam import Exam, ExamObject
 from wildzh.classes.exam import ExamInfo
 from wildzh.classes.exam import ExamMemberFlow2
 from wildzh.classes.exam_es import ExamEs
 from wildzh.classes import goods as goods_op
 from wildzh.classes.user import User
 from wildzh.classes.wx import MiniProgram
+from wildzh.classes.objects.exam_obj import StrategyObject
 from wildzh.export.local_write import write_docx
 from wildzh.tools.docx.object import DocxObject
 from wildzh.tools.parse_exception import ParseException

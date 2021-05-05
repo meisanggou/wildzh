@@ -117,6 +117,10 @@ ul, ol, li {
     padding-left: 5px;
 }
 
+.left15 {
+    padding-left: 15px;
+}
+
 /*登陆页 start*/
 .form-signin {
     margin: 0 auto;

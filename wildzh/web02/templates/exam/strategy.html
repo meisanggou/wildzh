@@ -30,10 +30,10 @@
                 <li>
                     <label>公开策略：</label>
                     <label class="radio-inline">
-                        <input type="radio" name="enabled" value="1" v-model.number='enabled'>公开
+                        <input type="radio" name="internal" value="0" v-model.number='internal'>公开
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="enabled" value="0" v-model.number='enabled'>不公开
+                        <input type="radio" name="internal" value="1" v-model.number='internal'>不公开
                     </label>
                 </li>
                 <li>
@@ -55,6 +55,7 @@
                             <a href='javascript:void(0)' @click="add_mode(index+1)" class="left5">增加题型</a>
                         </li>
                         <li v-for="(qs_item, qs_index) in sub_item.qss">
+                            <strong class="left15">**{{qs_index+1}}</strong>
                             <label class="left5">科目：</label>
                             <select class="box-side width100" type="text"v-model="qs_item.value">
                                 <option v-for="(sj_item,sj_index) in subjects" v-if="sj_item.enable" :value="sj_index">{{sj_item["name"]}}</option>
