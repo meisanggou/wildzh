@@ -116,13 +116,13 @@
 						<view class="th ">到期时间</view>
 					</view>
 					<block wx:for="{{members}}" wx:key='user_no'>
-						<view class="tr bg-g" wx:if="{{index % 2 == 0}}" data-index="{{index}}" bindtap="showDetail">
+						<view class="tr bg-g" wx:if="{{index % 2 == 0}}" data-index="{{index}}" >
 							<view class="td">{{item.user_no}}</view>
 							<view class="td">{{nickNames[index].nick_name}}</view>
 							<view class="td">{{item.memberRole}}</view>
 							<view class="td">{{item.memberEndTime}}</view>
 						</view>
-						<view class="tr bg-f" wx:else data-index="{{index}}" bindtap="showDetail">
+						<view class="tr bg-f" wx:else data-index="{{index}}" >
 							<view class="td">{{item.user_no}}</view>
 							<view class="td">{{nickNames[index].nick_name}}</view>
 							<view class="td">{{item.memberRole}}</view>

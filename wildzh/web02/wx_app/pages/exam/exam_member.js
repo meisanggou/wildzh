@@ -133,8 +133,13 @@ Page({
     setEndTime() {
         var selectDayIndex = this.data.selectDayIndex;
         var days = this.data.gDays[selectDayIndex]['value'];
+        var currentMember = this.data.currentMember;
         var now_t = dt.get_timestamp2();
-        var v_t = days * 24 * 3600 + now_t;
+        var nowEnd =  currentMember.end_time;
+        if(nowEnd < now_t){
+            nowEnd = now_t;
+        }
+        var v_t = days * 24 * 3600 + nowEnd;
         var v_s = dt.timestamp_2_datetime(v_t);
         this.setData({
             endTime: v_s
@@ -213,7 +218,8 @@ Page({
                         currentMember = {
                             'memberRole': '无权限',
                             'memberEndTime': '-',
-                            'exam_role': -1
+                            'exam_role': -1,
+                            'end_time': 0
                         };
                     } else {
                         if (currentMember.exam_role == 5) {
@@ -317,7 +323,6 @@ Page({
                     if('普通用户' in sumItems){
                         sumItemsList[1]['value'] = sumItems['普通用户'];
                     }
-                    console.info(sumItems);
                     that.setData({
                         members: mItems,
                         sumItems: sumItemsList
