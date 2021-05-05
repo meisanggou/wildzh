@@ -62,7 +62,7 @@ $(function () {
                 }
                 else{
                     var that = this;
-                    var url = strategy_url + '/' + this.current_exam['exam_no'];
+                    var url = strategy_url + '/' + this.current_exam['exam_no'] + '?internal=';
                     my_request(url, 'GET', null, function(data){
                         that.current_exam['strategies'] =  data['data']['strategies'];
                         that.select_exam();
@@ -89,6 +89,10 @@ $(function () {
                     popup_show("请先选择题库");
                     return false;
                 }
+                if(this.strategy_pattern.length >= 8){
+                    popup_show("最多添加8组题型");
+                    return false;
+                }
                 if(position == -1){
                     position = this.strategy_pattern.length;
                 }
@@ -98,6 +102,10 @@ $(function () {
                 this.strategy_pattern.splice(index, 1);
             },
             add_project: function(index){
+                if(this.strategy_pattern[index].qss.length >= 5){
+                    popup_show("最多添加5组 科目");
+                    return false;
+                }
                 this.strategy_pattern[index].qss.push({'value': -1, 'min_num': '', 'max_num': ''});
             },
             remove_project: function(index, qs_index){

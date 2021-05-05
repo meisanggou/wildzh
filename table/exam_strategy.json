@@ -27,7 +27,7 @@
             {
                 "col_comment": "策略组成 一个数组",
                 "col_name": "strategy_items",
-                "col_type": "varchar(200)"
+                "col_type": "varchar(500)"
             },
             {
                 "col_comment": "更新时间",

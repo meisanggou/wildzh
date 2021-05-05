@@ -348,7 +348,7 @@ EXAM_GOODS_SUB = [
             {'sub_title': '15天普通会员',
              'vc_count': 15,
              'days': 15,
-             'attention': '首次兑换专享',
+             'attention': '首次积分兑换专享',
              'sub_id': '15-first_exchange',
              'available': 'conditional'},
             {'sub_title': '7天普通会员',
@@ -1134,7 +1134,11 @@ def update_usage():
 @exam_view.route('/strategy/<int:exam_no>', methods=['GET'])
 @login_required
 def get_exam_strategy(exam_no):
-    items = c_exam.get_strategy(exam_no=exam_no)
+    internal = 0  # 默认获取公开的
+    if 'internal' in request.args:
+        internal = None
+    items = c_exam.strategy.get_strategy(g.session, exam_no=exam_no,
+                                         internal=internal)
     data = {'exam_no': exam_no, 'strategies': items}
     return jsonify({'status': True, 'data': data})
 
@@ -1148,9 +1152,11 @@ def set_exam_strategy():
     if not strategy_o:
         return jsonify({'status': False, 'data': ''})
     if strategy_o.id:
-        res_data = c_exam.update_strategy(g.exam_no, **strategy_o.to_dict())
+        res_data = c_exam.strategy.update_strategy(g.session, g.exam_no,
+                                                   **strategy_o.to_dict())
     else:
-        res_data = c_exam.new_strategy(g.exam_no, **strategy_o.to_dict())
+        res_data = c_exam.strategy.new_strategy(g.session, g.exam_no,
+                                                **strategy_o.to_dict())
     return jsonify({'status': True, 'data': res_data})
 
 

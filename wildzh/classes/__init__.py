@@ -21,6 +21,16 @@ class BaseObject(object):
     def get_all(self, session, **kwargs):
         return session.query(self.model).filter_by(**kwargs).all()
 
+    def update(self, session, where_value, **kwargs):
+        kwargs['internal'] = 1 if kwargs['internal'] else 0
+        print(kwargs)
+        print(where_value)
+        return session.query(self.model).filter_by(**where_value).update(
+            kwargs)
+
+    def delete(self, session, **kwargs):
+        return session.query(self.model).filter_by(**kwargs).delete()
+
 
 class DBObject(object):
     table = None

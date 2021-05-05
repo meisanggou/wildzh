@@ -2,6 +2,7 @@
 # coding: utf-8
 import json
 import sqlalchemy
+from sqlalchemy.dialects.mysql import BIT
 from wildzh.db.models import Base
 
 __author__ = 'zhouhenglc'
@@ -57,3 +58,14 @@ class ExamMemberFlowModel(Base):
     exam_role = sqlalchemy.Column(sqlalchemy.INT())
     authorizer = sqlalchemy.Column(sqlalchemy.INT())
     end_time = sqlalchemy.Column(sqlalchemy.INT())
+
+
+class ExamGenStrategyModel(Base):
+
+    __tablename__ =  'exam_gen_strategy'
+    exam_no = sqlalchemy.Column(sqlalchemy.INT(), primary_key=True)
+    strategy_id = sqlalchemy.Column(sqlalchemy.INT(), primary_key=True)
+    strategy_name = sqlalchemy.Column(sqlalchemy.VARCHAR(32))
+    strategy_items = sqlalchemy.Column(sqlalchemy.VARCHAR(500))
+    internal = sqlalchemy.Column(BIT())
+    update_time = sqlalchemy.Column(sqlalchemy.INT())

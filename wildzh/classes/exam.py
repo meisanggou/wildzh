@@ -591,57 +591,59 @@ class QuestionSources(object):
         return data
 
 
-class ExamGenStrategy(object):
+class ExamGenStrategy(BaseObject):
+    model = exam_models.ExamGenStrategyModel
 
-    def __init__(self, db):
-        self.db = db
-        self.cols = ['exam_no', 'strategy_id', 'strategy_name',
-                     'strategy_items', 'internal', 'update_time']
-        self.t = 'exam_gen_strategy'
-
-    def select_strategy(self, exam_no, strategy_id=None):
+    def get_strategy(self, session, exam_no, strategy_id=None, internal=0):
         where_value = {'exam_no': exam_no}
         if strategy_id:
             where_value['strategy_id'] = strategy_id
-        items = self.db.execute_select(self.t, cols=self.cols,
-                                       where_value=where_value)
-        for item in items:
+        if internal is not None:
+            where_value['internal'] = internal
+        items = self.get_all(session, **where_value)
+        d_items = []
+        for _item in items:
+            item = _item.to_dict()
             item['strategy_items'] = json.loads(item['strategy_items'])
             for si_item in item['strategy_items']:
                 if 'qss' not in si_item:
                     si_item['qss'] = []
-        return items
+            d_items.append(item)
+        return d_items
 
-    def insert_strategy(self, exam_no, strategy_items, strategy_name=''):
-        u_time = time.time()
+    def new_strategy(self, session, exam_no, strategy_items,
+                        strategy_name='', internal=0):
+        u_time = self.now_time
         strategy_id = uuid.uuid4().hex
+        if strategy_items:
+            strategy_items = json.dumps(strategy_items)
         data = {'exam_no': exam_no, 'strategy_id': strategy_id,
                 'strategy_name': strategy_name,
-                'strategy_items': strategy_items, 'update_time': u_time}
-        self.db.execute_insert(self.t, kwargs=data)
+                'strategy_items': strategy_items,
+                'internal': internal,
+                'update_time': u_time}
+        self.create(session, **data)
         if data['strategy_items']:
             data['strategy_items'] = json.loads(data['strategy_items'])
         return data
 
-    def update_strategy(self, exam_no, strategy_id, strategy_name=None,
-                        strategy_items=None, internal=None):
-        u_time = time.time()
+    def update_strategy(self, session, exam_no, strategy_id,
+                        strategy_name=None, strategy_items=None,
+                        internal=None):
+        u_time = self.now_time
         where_value = dict(strategy_id=strategy_id, exam_no=exam_no)
         data = {'update_time': u_time}
         if strategy_name:
             data['strategy_name'] = strategy_name
         if strategy_items:
-            data['strategy_items'] = strategy_items
+            data['strategy_items'] = json.dumps(strategy_items)
         if internal is not None:
             data['internal'] = internal
-        l = self.db.execute_update(self.t, update_value=data,
-                                   where_value=where_value)
-        return l
+        return self.update(session, where_value, **data)
 
-    def delete_strategy(self, exam_no, strategy_id):
+    def delete_strategy(self, session, exam_no, strategy_id):
         where_value = dict(exam_no=exam_no, strategy_id=strategy_id)
-        l = self.db.execute_delete(self.t, where_value=where_value)
-        return l
+        return self.delete(session, **where_value)
 
 
 class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
@@ -659,12 +661,8 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                        'question_source_no', "inside_mark", "answer_pic_url",
                        'question_chapter', 'state']
         self.qs_man = QuestionSources(self.db)
-        self.gs_man = ExamGenStrategy(self.db)
         self.qf_man = ExamQuestionFeedback(self.db)
-        self.get_strategy = self.gs_man.select_strategy
-        self.new_strategy = self.gs_man.insert_strategy
-        self.update_strategy = self.gs_man.update_strategy
-        self.delete_strategy = self.gs_man.delete_strategy
+        self.strategy = ExamGenStrategy()
         self.new_question_feedback = self.qf_man.new_or_update_feedback
         self.get_question_feedback = self.qf_man.select_question_feedback
         self.update_question_feedback = self.qf_man.update_question_feedback
