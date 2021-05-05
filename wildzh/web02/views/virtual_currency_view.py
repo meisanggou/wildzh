@@ -58,6 +58,8 @@ def new_billing(resource, event, trigger, session, user_no, billing_project,
     else:
         vc_obj.sys_balance = vc_obj.sys_balance + vc_count
     ub_obj.status = 1
+    ub_obj.sys_balance = vc_obj.sys_balance
+    ub_obj.balance = vc_obj.balance
     return ub_obj, vc_obj
 
 

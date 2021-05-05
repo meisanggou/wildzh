@@ -62,4 +62,6 @@ class VCUserBillingModel(Base):
     detail = sqlalchemy.Column(sqlalchemy.VARCHAR(30), comment="")
     remark = sqlalchemy.Column(sqlalchemy.VARCHAR(200), comment="")
     status = sqlalchemy.Column(sqlalchemy.SMALLINT())
+    balance = sqlalchemy.Column(sqlalchemy.INT())
+    sys_balance = sqlalchemy.Column(sqlalchemy.INT())
     is_delete = sqlalchemy.Column(sqlalchemy.BOOLEAN(), default=False)

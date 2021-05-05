@@ -132,6 +132,18 @@
                 "col_type": "tinyint(4)"
             },
             {
+                "default_value": "0",
+                "col_comment": "剩余可用金额",
+                "col_name": "balance",
+                "col_type": "int(11)"
+            },
+            {
+                "default_value": "0",
+                "col_comment": "通过系统获得的余额",
+                "col_name": "sys_balance",
+                "col_type": "int(11) unsigned"
+            },
+            {
                 "default_value": "b'0'",
                 "col_comment": "0代表未删除1代表已删除",
                 "col_name": "is_delete",
