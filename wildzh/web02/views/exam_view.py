@@ -1229,7 +1229,6 @@ def get_question_feedback():
 
 
 def notify_feedback(data):
-    print('--------------------------------------------------')
     exam_no = data['exam_no']
     # 获得题库名称
     e_items = c_exam.select_exam(exam_no, offline=True)
@@ -1253,6 +1252,7 @@ def notify_feedback(data):
         with use_session() as session:
             admin_users = c_user.get_admin_user(session)
             wx_ids = [x['wx_id'] for x in admin_users if x['wx_id']]
+    LOG.info('notify feedback to %s', wx_ids)
     for wx_id in wx_ids:
         res = min_pro.send_fb_message(wx_id, exam_no, exam_name,
                                       data['fb_type'],
