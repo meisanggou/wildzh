@@ -1236,20 +1236,20 @@ def notify_feedback(data):
         return
     e_item = e_items[0]
     exam_name = e_item['exam_name']
+    if len(data['description']) <= 0:
+        data['description'] = '<用户未填写>'
     # 查询 题库管理员
     admin_members = c_exam.exam_admin_members(exam_no)
     admin_nos = [u["user_no"] for u in admin_members]
     wx_ids = []
-    for user_no in admin_nos:
-        user_items = c_user.verify_user_exist(g.session, user_no=user_no)
-        for u_item in user_items:
-            if u_item['wx_id']:
-                wx_ids.append(u_item['wx_id'])
-    if len(data['description']) <= 0:
-        data['description'] = '<用户未填写>'
-    if not wx_ids:
+    with use_session() as session:
+        for user_no in admin_nos:
+            user_items = c_user.verify_user_exist2(session, user_no=user_no)
+            for u_item in user_items:
+                if u_item['wx_id']:
+                    wx_ids.append(u_item['wx_id'])
+        if not wx_ids:
         # 查询 系统管理员
-        with use_session() as session:
             admin_users = c_user.get_admin_user(session)
             wx_ids = [x['wx_id'] for x in admin_users if x['wx_id']]
     LOG.info('notify feedback to %s', wx_ids)
