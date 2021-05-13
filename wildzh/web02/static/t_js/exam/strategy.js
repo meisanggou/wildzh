@@ -189,7 +189,7 @@ $(function () {
                )
             },
             export_strategy: function () {
-                var url = '/exam/export/word?file=true&exam_no=' + this.current_exam['exam_no'] +'&strategy_id=' + this.strategy_id;
+                var url = '/exam/export/word?answer=alone&file=true&exam_no=' + this.current_exam['exam_no'] +'&strategy_id=' + this.strategy_id;
                 url += '&t=' + get_timestamp2() ;
                 window.open(url);
             },

@@ -1176,25 +1176,29 @@ def export_question_to_word():
     # http://127.0.0.1:2400/exam/export/word?exam_no=1585396371&strategy_id=a1af47f5ec3d4829b143ec348c5f3479
     data = request.json or request.args
     strategy_id = data['strategy_id']
-    strategies = c_exam.get_strategy(exam_no=g.exam_no,
-                                     strategy_id=strategy_id)
+    req_file = 'file' in data
+     # 空：无答案 embedded 无答案+内嵌答案 alone 无答案和答案单独放
+    answer_mode = data.get('answer', '')
+
+    strategies = c_exam.strategy.get_strategy(
+        g.session, exam_no=g.exam_no, strategy_id=strategy_id, internal=None)
     if len(strategies) != 1:
         return {'status': False, 'data': 'Not Found'}
-    strategy_items = [{"value": 3, "num": -1, 'question_subjects': [0, 1]},
-                      {"value": 5, "num": -1, 'question_subjects': [0, 1]}]
-    items = c_exam.get_questions_by_strategy(g.exam_no, strategy_id)
+    strategy_items = strategies[0]['strategy_items']
+    items = c_exam.get_questions_by_strategy_items(g.exam_no, strategy_items)
     items = handle_questions(items, False)
     name = strategies[0]['strategy_name']
-    r_name = 'wild_export_%s.zip' % uuid.uuid4().hex
-    save_path = os.path.join(tempfile.gettempdir(), r_name)
-    write_docx(save_path, name, None, items, G_SELECT_MODE,
-               upload_folder)
-    if 'file' in request.args:
+    save_dir = tempfile.gettempdir()
+    save_path, save_name = write_docx(save_dir, name, answer_mode, items,
+                                      G_SELECT_MODE,
+                                      upload_folder)
+    print(save_path)
+    if req_file:
         # pandoc b.docx -o b.pdf --pdf-engine=xelatex -V mainfont=SimSun
         # libreoffice-writer soffice --headless --convert-to pdf:writer_pdf_Export b.docx
         g.download_file = save_path
         return send_file(save_path, as_attachment=True,
-                         attachment_filename='%s.zip' % name)
+                         attachment_filename=save_name)
     return {'status': True, 'data': strategies[0]}
 
 

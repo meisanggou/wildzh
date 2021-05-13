@@ -5,7 +5,12 @@ import threading
 from threading import Thread
 import uuid
 
+from wildzh.utils.log import getLogger
+
 __author__ = 'zhouhenglc'
+
+
+LOG = getLogger()
 
 
 class Task(object):
@@ -79,9 +84,9 @@ class AsyncWorker(object):
         try:
             func(*args, **kwargs)
         except Exception as e:
-            print(e)
+            LOG.exception(e)
         except SystemExit as se:
-            print(se)
+            LOG.exception(se)
         task_item.set_complete()
         self.try_start_thread()
 

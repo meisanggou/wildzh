@@ -101,7 +101,7 @@ def write_xml(filename, demo_dir, **kwargs):
     medias = kwargs.pop('medias', [])
     answer_medias = kwargs.pop('answer_medias', [])
     show_answer = kwargs.get('show_answer', False)
-    if show_answer:
+    if show_answer or kwargs.get('alone_answers'):
         medias += answer_medias
     doc_file = os.path.join(demo_dir, 'word/document.xml')
     rels_file = os.path.join(demo_dir, 'word/_rels/document.xml.rels')

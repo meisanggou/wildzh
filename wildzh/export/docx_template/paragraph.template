@@ -1,0 +1,16 @@
+<w:p w:rsidR="00550B8B" w:rsidRDefault="00550B8B" w:rsidP="00550B8B">
+    <w:pPr>
+        {% if outline_level %}
+            <w:pStyle w:val="{{ outline_level }}"/>
+            <w:jc w:val="center"/>
+        {% else %}
+        <w:rPr>
+            <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体"/>
+            <w:sz w:val="24"/>
+        </w:rPr>
+        {% endif %}
+    </w:pPr>
+    {% for run in runs %}
+        {{ run }}
+    {% endfor %}
+</w:p>

@@ -25,7 +25,6 @@ Page({
         examName: "",
         questionNum: 0,
         nowQuestionIndex: 0,
-        questionAnswer: new Array(),
         nowQuestion: null,
         showAnswer: false,
         isShowSubject: false,
@@ -337,7 +336,6 @@ Page({
         }
         if ("options" in questionItems[nextIndex]) {
             //已经获取内容
-            var nowQuestion = questionItems[nextIndex];
             that.changeNowQuestion(nextIndex);
             // 判断紧接着10条是否都已预获取数据
             for (var i = 1; i < 11 && nextIndex + i < questionLen; i++) {
@@ -458,7 +456,6 @@ Page({
         this.changeNowQuestion(this.data.skipNums[index] - 1);
     },
     changeNowQuestion: function (index) {
-        var skipNums = [];
         var nowQuestion = questionItems[index];
         if ("options" in nowQuestion) {
             //已经获取内容
@@ -498,27 +495,8 @@ Page({
             return false;
         }
         this.addBrushNum(nowQuestion.question_no, STATE_SKIP);
-        var questionAnswer = new Array();
-
-        for (var index in nowQuestion.options) {
-            if (parseInt(nowQuestion.options[index]["score"]) > 0) {
-                var tmp_answer = app.globalData.optionChar[index] + "、";
-                questionAnswer = questionAnswer.concat({
-                    'value': tmp_answer,
-                    'index': -1
-                });
-                questionAnswer = questionAnswer.concat(nowQuestion.options[index]["desc_rich"]);
-            }
-        }
-        if (questionAnswer.length == 0) {
-            questionAnswer[0] = {
-                'value': "没有答案",
-                'index': -1
-            };
-        }
         that.setData({
             showAnswer: true,
-            questionAnswer: questionAnswer
         })
     },
     toUpdate: function (e) {

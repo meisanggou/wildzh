@@ -42,32 +42,6 @@
                 <view class='showAnswer' bindtap='showAnswer'>显示答案</view>
             </view> -->
 
-            <view wx:if="{{showAnswer}}">
-                <view class='item'>
-                    <block wx:for="{{questionAnswer}}" wx:key="index">
-                        <block wx:if="{{item.url}}">
-                            <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
-                                src="{{remote_host}}{{item.url}}"></image>
-                        </block>
-                        <block wx:else>
-                            {{item.value}}
-                        </block>
-                    </block>
-                </view>
-                <scroll-view scroll-y="true" class='item'>解析：
-                    <block wx:for="{{nowQuestion.answer_rich}}" wx:key='index'>
-                        <block wx:if="{{item.url}}">
-                            <image mode='scaleToFill' style='height:{{item.height}}px;width:{{item.width}}px;'
-                                src="{{remote_host}}{{item.url}}" data-src="{{remote_host}}{{item.url}}"
-                                bindtap="previewImage"></image>
-                        </block>
-                        <block wx:else>
-                            <text>{{item.value}}</text>
-                        </block>
-                    </block>
-
-                </scroll-view>
-            </view>
         </view>
     </view>
     <view class='bottom' wx:if="{{ notFrame }}">

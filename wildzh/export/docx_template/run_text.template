@@ -1,0 +1,9 @@
+<w:r>
+  {% if font_size %}
+  <w:rPr>
+    <w:rFonts w:ascii="宋体" w:eastAsia="宋体" w:hAnsi="宋体" w:cs="宋体" w:hint="eastAsia"/>
+    <w:sz w:val="{{ font_size }}"/>
+  </w:rPr>
+  {% endif %}
+  <w:t>{{ text }}</w:t>
+</w:r>

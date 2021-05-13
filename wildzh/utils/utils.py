@@ -46,10 +46,11 @@ def random_assign(total, range_list, span=None):
 
 
 if __name__ == '__main__':
-    fl = random_assign(60, [
+    fl = random_assign(55, [
         [10, 100],
         [10, 100],
         [10, 100],
         [10, 13],
     ], 15)
     print(fl)
+    get_alone_answers(list(range(56)), None)

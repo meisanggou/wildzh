@@ -247,6 +247,13 @@
         {% endif %} {# 结束if show_answer #}
         {% endfor %} {# 结束循环q_block.questions #}
         {% endfor %} {# 结束循环answer_blocks #}
+        {# 开始单独设置答案 #}
+        {% if alone_answers %}
+        {% for aa in alone_answers %}
+        {{ aa }}
+        {% endfor %}
+        {% endif %}
+        {# 结束单独设置答案 #}
         <w:p w:rsidR="00350324" w:rsidRPr="00550B8B" w:rsidRDefault="00350324">
             <w:bookmarkStart w:id="0" w:name="_GoBack"/>
             <w:bookmarkEnd w:id="0"/>

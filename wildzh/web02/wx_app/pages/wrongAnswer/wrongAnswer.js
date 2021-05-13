@@ -21,7 +21,6 @@ Page({
         questionNum: -1,
         centTip: '无错题',
         nowQuestionIndex: 0,
-        questionAnswer: "",
         nowQuestion: null,
         showAnswer: false,
         showRemove: false,
@@ -45,7 +44,6 @@ Page({
             this.setData({
                 questionNum: 0,
                 nowQuestionIndex: 0,
-                questionAnswer: "",
                 nowQuestion: null,
                 showAnswer: false,
                 showRemove: false,
@@ -214,10 +212,9 @@ Page({
                 }
                 if (showIndex != null) {
                     that.setData({
-                        nowQuestion: questionItems[showIndex],
-                        nowQuestionIndex: showIndex,
                         questionNum: questionItems.length
                     });
+                    that.changeNowQuestion(showIndex);
                 }
                 that.setData({
                     isReq: false
@@ -245,11 +242,13 @@ Page({
                 "question_no": nowQuestion.question_no
             },
             success: function(res) {
-                console.info(res.data);
             }
         })
         questionItems.splice(nowQuestionIndex, 1);
         questionLen = questionItems.length;
+        that.setData({
+            questionNum: questionLen
+        })
         if (questionLen <= 0) {
             questionItems = [];
             wx.showModal({
@@ -268,13 +267,8 @@ Page({
         if (nowQuestionIndex >= questionLen) {
             nowQuestionIndex = questionLen - 1;
         }
-        that.setData({
-            nowQuestion: questionItems[nowQuestionIndex],
-            nowQuestionIndex: nowQuestionIndex,
-            questionNum: questionItems.length,
-            showAnswer: false,
-            showRemove: false
-        })
+        this.changeNowQuestion(nowQuestionIndex);
+        
 
     },
     after: function(afterNum) {
@@ -296,13 +290,7 @@ Page({
         }
         if ("options" in questionItems[nextIndex]) {
             //错题 已经获取内容
-            var nowQuestion = questionItems[nextIndex];
-            that.setData({
-                nowQuestion: nowQuestion,
-                nowQuestionIndex: nextIndex,
-                showAnswer: false,
-                showRemove: false
-            })
+            that.changeNowQuestion(nextIndex);
             // 判断紧接着10条是否都已预获取数据
             for (var i = 1; i < 11 && nextIndex + i < questionLen; i++) {
                 if (!("options" in questionItems[nextIndex + i])) {
@@ -327,7 +315,6 @@ Page({
         that.after(10);
     },
     before: function(preNum) {
-        var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
         var preIndex = nowQuestionIndex - preNum;
         if (nowQuestionIndex <= 0) {
@@ -342,14 +329,7 @@ Page({
         if (preIndex <= 0) {
             preIndex = 0;
         }
-        var nowQuestion = questionItems[preIndex];
-        that.setData({
-            nowQuestion: nowQuestion,
-            nowQuestionIndex: preIndex,
-            showAnswer: false,
-            showRemove: false
-        })
-
+        this.changeNowQuestion(preIndex);
     },
     before1: function() {
         that.before(1);
@@ -358,25 +338,51 @@ Page({
     before10: function() {
         that.before(10);
     },
-    choseItem: function(e) {
-        var choseIndex = parseInt(e.currentTarget.dataset.choseitem);
-        var nowQuestion = that.data.nowQuestion;
-        var nowQuestionIndex = that.data.nowQuestionIndex;
-        var showRemove = false;
-        for (var index in questionItems[nowQuestionIndex]["options"]) {
-            nowQuestion["options"][index]["class"] = "noChose";
+    changeNowQuestion: function (index) {
+        var nowQuestion = questionItems[index];
+        if ("options" in nowQuestion) {
+            //已经获取内容
+        } else {
+            // 没有获取内容
+            wx.showLoading({
+                title: '加载中...',
+                mask: true
+            })
+            that.reqQuestion(index, true);
+            return;
         }
-        if (parseInt(nowQuestion["options"][choseIndex]["score"]) > 0) {
-            nowQuestion["options"][choseIndex]["class"] = "chose";
+        for (var i = 0; i < nowQuestion.question_desc_rich.length; i++) {
+            nowQuestion.question_desc_rich[i] = nowQuestion.question_desc_rich[i];
+        }
+        for (var j = 0; j < nowQuestion.options.length; j++) {
+            for (var k = 0; k < nowQuestion.options[j]['desc_rich'].length; k++) {
+                nowQuestion.options[j]['desc_rich'][k] = nowQuestion.options[j]['desc_rich'][k];
+            }
+        }
+        for (var i = 0; i < nowQuestion.answer_rich.length; i++) {
+            nowQuestion.answer_rich[i] = nowQuestion.answer_rich[i]        }
+        // 过度结束
+        nowQuestion.index = index;
+        this.setData({
+            nowQuestion: nowQuestion,
+            nowQuestionIndex: index,
+            showAnswer: false,
+            showRemove: false,
+            tags: []
+        })
+    },
+    choseOption: function(e){
+        var choseRight = e.detail.choseRight;
+        var nowQuestion = that.data.nowQuestion;
+        var showRemove = false;
+        if(choseRight){
             this.addBrushNum(nowQuestion.question_no, STATE_RIGHT);
             showRemove = true;
-        } else {
-            this.addBrushNum(nowQuestion.question_no, STATE_WRONG);
-            nowQuestion["options"][choseIndex]["class"] = "errorChose";
         }
-
+        else{
+            this.addBrushNum(nowQuestion.question_no, STATE_WRONG);
+        }
         that.setData({
-            nowQuestion: nowQuestion,
             showRemove: showRemove
         })
         // 显示答案
@@ -388,26 +394,8 @@ Page({
             return false;
         }
         this.addBrushNum(nowQuestion.question_no, STATE_SKIP);
-        var questionAnswer = new Array();
-        for (var index in nowQuestion.options) {
-            if (parseInt(nowQuestion.options[index]["score"]) > 0) {
-                var tmp_answer = app.globalData.optionChar[index] + "、";
-                questionAnswer = questionAnswer.concat({
-                    'value': tmp_answer,
-                    'index': -1
-                });
-                questionAnswer = questionAnswer.concat(nowQuestion.options[index]["desc_rich"]);
-            }
-        }
-        if (questionAnswer.length == 0) {
-            questionAnswer[0] = {
-                'value': "没有答案",
-                'index': -1
-            };
-        }
         that.setData({
-            showAnswer: true,
-            questionAnswer: questionAnswer
+            showAnswer: true
         })
     },
     addBrushNum: function (q_no, state) {

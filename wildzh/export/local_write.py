@@ -8,7 +8,7 @@ import shutil
 import tempfile
 import uuid
 import zipfile
-
+from wildzh.export import docx_obj
 from wildzh.export.render_xml import write_xml
 
 
@@ -64,6 +64,47 @@ def download_file(path, upload_folder, save_dir, name):
     save_path = os.path.join(save_dir, name)
     shutil.copy(src, save_path)
     return save_path
+
+
+def get_alone_answers(single_selected, answer_blocks):
+    alone_answers = [docx_obj.ParagraphPageXmlObj().to_xml()]
+    i = 0
+    ss_paragraphs = [[]]
+    ss_item = []
+    for item in single_selected:
+        ss_item.append(item)
+        i += 1
+        if i % 5 == 0:
+            rp = '%s-%s %s ' % (ss_item[0]['this_question_no'],
+                               ss_item[-1]['this_question_no'],
+                               ''.join([x['right_option'] for x in ss_item]))
+            ss_paragraphs[-1].append(rp)
+            ss_paragraphs[-1].append(' ')
+            if i % 10 == 0:
+                ss_paragraphs.append([])
+                ss_item = []
+            else:
+                ss_item = []
+    if ss_item:
+        rp = '%s-%s %s' % (ss_item[0]['this_question_no'],
+                           ss_item[-1]['this_question_no'],
+                           ''.join([x['right_option'] for x in ss_item]))
+        ss_paragraphs[-1].append(rp)
+    title_p = docx_obj.ParagraphXmlObj('答案', outline_level=1)
+    alone_answers.append(title_p.to_xml())
+    for s_paragraph in ss_paragraphs:
+        alone_answers.append(docx_obj.ParagraphXmlObj(s_paragraph).to_xml())
+
+    for ab in answer_blocks:
+        for q_item in ab['questions']:
+            if q_item['multi_answer_rich']:
+                q_item['multi_answer_rich'][0].insert(
+                    0, '%s、' % q_item['this_question_no'])
+            for ar in q_item['multi_answer_rich']:
+                alone_answers.append(docx_obj.ParagraphXmlObj(
+                    ar).to_xml())
+
+    return alone_answers
 
 
 def receive_data(question_items, select_modes):
@@ -208,16 +249,22 @@ def receive_data(question_items, select_modes):
             q_item["multi_question_desc"] = multi_question_desc
 
             question_no += 1
-
+    alone_answers = get_alone_answers(single_selected, answer_blocks)
     r = {'single_block': single_block,
          'answer_blocks': answer_blocks,
          'option_mapping': OPTION_MAPPING,
-         'medias': medias, 'answer_medias': answer_medias}
+         'medias': medias, 'answer_medias': answer_medias,
+         'alone_answers': alone_answers}
     return r
 
 
-def write_docx(save_path, exam_name, show_answer, question_items, select_modes,
+def write_docx(save_dir, exam_name, answer_mode, question_items, select_modes,
                upload_folder):
+    extension = 'docx'
+    if answer_mode == 'embedded':
+        extension = 'zip'
+    filename = '_wildzh_export_%s.%s' % (uuid.uuid4().hex, extension)
+    save_path = os.path.join(save_dir, filename)
     # copy
     temp_dir = tempfile.gettempdir()
     demo_dir = os.path.join(temp_dir, '_wildzh_%s' % uuid.uuid4().hex)
@@ -230,7 +277,8 @@ def write_docx(save_path, exam_name, show_answer, question_items, select_modes,
     answer_medias = q_data['answer_medias']
     for m in medias:
         download_file(m['url'], upload_folder, media_dir, m['name'])
-    if show_answer is None:
+    if answer_mode == 'embedded':
+        q_data['alone_answers'] = []
         _id = uuid.uuid4().hex
         r_name = '_wildzh_%s.docx' % _id
         ra_name = '_wildzh_%s_answer.docx' % _id
@@ -249,17 +297,19 @@ def write_docx(save_path, exam_name, show_answer, question_items, select_modes,
         zip_write.close()
         os.remove(f_path)
         os.remove(fa_path)
-    elif show_answer:
+    elif answer_mode == 'alone':
         for m in answer_medias:
             download_file(m['url'], upload_folder, media_dir, m['name'])
         write_xml(save_path, demo_dir, exam_name=exam_name,
-                  show_answer=True, **q_data)
+                  show_answer=False, **q_data)
     else:
+        q_data['alone_answers'] = []
         write_xml(save_path, demo_dir, exam_name=exam_name,
-                  show_answer=show_answer, **q_data)
+                  show_answer=False, **q_data)
 
     shutil.rmtree(demo_dir)
-    return save_path
+    save_name = '%s.%s' % (exam_name, extension)
+    return save_path, save_name
 
 
 if __name__ == "__main__":

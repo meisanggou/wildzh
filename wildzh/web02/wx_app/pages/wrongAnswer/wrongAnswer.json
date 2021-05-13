@@ -1,3 +1,6 @@
 {
-    "navigationBarTitleText": "错题"
+    "navigationBarTitleText": "错题",
+    "usingComponents": {
+        "mp-question": "/components/showQuestion"
+      }
 }
