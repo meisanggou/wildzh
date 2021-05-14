@@ -75,16 +75,13 @@ def get_alone_answers(single_selected, answer_blocks):
         ss_item.append(item)
         i += 1
         if i % 5 == 0:
-            rp = '%s-%s %s ' % (ss_item[0]['this_question_no'],
+            rp = '%s-%s %s  ' % (ss_item[0]['this_question_no'],
                                ss_item[-1]['this_question_no'],
                                ''.join([x['right_option'] for x in ss_item]))
             ss_paragraphs[-1].append(rp)
-            ss_paragraphs[-1].append(' ')
-            if i % 10 == 0:
+            if i % 20 == 0:
                 ss_paragraphs.append([])
-                ss_item = []
-            else:
-                ss_item = []
+            ss_item = []
     if ss_item:
         rp = '%s-%s %s' % (ss_item[0]['this_question_no'],
                            ss_item[-1]['this_question_no'],

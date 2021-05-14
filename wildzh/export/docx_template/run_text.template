@@ -5,5 +5,5 @@
     <w:sz w:val="{{ font_size }}"/>
   </w:rPr>
   {% endif %}
-  <w:t>{{ text }}</w:t>
+  <w:t xml:space="preserve">{{ text }}</w:t>
 </w:r>

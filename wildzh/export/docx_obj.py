@@ -32,6 +32,14 @@ class XmlObj(object):
     def __init__(self):
         pass
 
+    @classmethod
+    def transfer(cls, s):
+        _d = ["&", "&amp;", "<", "&lt;", ">", "&gt;", "'", "&apos;",
+              '"', '&quot;']
+        for i in range(0, len(_d), 2):
+            s = s.replace(_d[i], _d[i + 1])
+        return s
+
     def _to_xml(self, **kwargs):
         t = self.env.from_string(self.temp_str)
         r = t.render(**kwargs)
@@ -104,7 +112,8 @@ class RunTextXmlObj(XmlObj):
         self.font_size = font_size
 
     def to_xml(self):
-        kwargs = {'text': self.text, 'font_size': self.font_size}
+        kwargs = {'text': self.transfer(self.text),
+                  'font_size': self.font_size}
         return self._to_xml(**kwargs)
 
 
