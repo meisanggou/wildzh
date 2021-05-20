@@ -66,11 +66,10 @@ def download_file(path, upload_folder, save_dir, name):
     return save_path
 
 
-def get_alone_answers(single_selected, answer_blocks):
-    alone_answers = [docx_obj.ParagraphPageXmlObj().to_xml()]
-    i = 0
+def get_single_answer(single_selected):
     ss_paragraphs = [[]]
     ss_item = []
+    i = 0
     for item in single_selected:
         ss_item.append(item)
         i += 1
@@ -87,10 +86,32 @@ def get_alone_answers(single_selected, answer_blocks):
                            ss_item[-1]['this_question_no'],
                            ''.join([x['right_option'] for x in ss_item]))
         ss_paragraphs[-1].append(rp)
+    ps = [docx_obj.ParagraphXmlObj(p).to_xml() for p in ss_paragraphs]
+    return ps
+
+
+def get_single_answer_detail(single_selected):
+    ss_paragraphs = []
+    for item in single_selected:
+        pa = '%s.%s' % (item['this_question_no'], item['right_option'])
+        ss_paragraphs.append(pa)
+        ss_paragraphs.append('解析：')
+        ss_paragraphs.append(item['answer_rich'])
+    ps = [docx_obj.ParagraphXmlObj(p).to_xml() for p in ss_paragraphs]
+    return ps
+
+
+def get_alone_answers(single_selected, answer_blocks, answer_mode='alone'):
+    alone_answers = [docx_obj.ParagraphPageXmlObj().to_xml()]
+
     title_p = docx_obj.ParagraphXmlObj('答案', outline_level=1)
     alone_answers.append(title_p.to_xml())
+    if answer_mode == 'alone':
+        ss_paragraphs = get_single_answer(single_selected)
+    else:
+        ss_paragraphs = get_single_answer_detail(single_selected)
     for s_paragraph in ss_paragraphs:
-        alone_answers.append(docx_obj.ParagraphXmlObj(s_paragraph).to_xml())
+        alone_answers.append(s_paragraph)
 
     for ab in answer_blocks:
         for q_item in ab['questions']:
@@ -104,7 +125,7 @@ def get_alone_answers(single_selected, answer_blocks):
     return alone_answers
 
 
-def receive_data(question_items, select_modes):
+def receive_data(question_items, select_modes, answer_mode):
     def _question_sort(a, b):
         # 按照政治经济学，微观经济学，宏观经济学排序
         # 2 0 1
@@ -246,7 +267,11 @@ def receive_data(question_items, select_modes):
             q_item["multi_question_desc"] = multi_question_desc
 
             question_no += 1
-    alone_answers = get_alone_answers(single_selected, answer_blocks)
+    if answer_mode == 'alone' or answer_mode == 'alone_detail':
+        alone_answers = get_alone_answers(single_selected, answer_blocks,
+                                          answer_mode)
+    else:
+        alone_answers = []
     r = {'single_block': single_block,
          'answer_blocks': answer_blocks,
          'option_mapping': OPTION_MAPPING,
@@ -269,7 +294,7 @@ def write_docx(save_dir, exam_name, answer_mode, question_items, select_modes,
     shutil.copytree(src_dir, demo_dir)
     media_dir = os.path.join(demo_dir, 'word', 'media')
     os.mkdir(media_dir)
-    q_data = receive_data(question_items, select_modes)
+    q_data = receive_data(question_items, select_modes, answer_mode)
     medias = q_data['medias']
     answer_medias = q_data['answer_medias']
     for m in medias:
@@ -294,7 +319,7 @@ def write_docx(save_dir, exam_name, answer_mode, question_items, select_modes,
         zip_write.close()
         os.remove(f_path)
         os.remove(fa_path)
-    elif answer_mode == 'alone':
+    elif answer_mode == 'alone' or answer_mode == 'alone_detail':
         for m in answer_medias:
             download_file(m['url'], upload_folder, media_dir, m['name'])
         write_xml(save_path, demo_dir, exam_name=exam_name,

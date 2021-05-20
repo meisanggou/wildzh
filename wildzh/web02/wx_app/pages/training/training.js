@@ -468,17 +468,6 @@ Page({
             that.reqQuestion(index, true);
             return;
         }
-        for (var i = 0; i < nowQuestion.question_desc_rich.length; i++) {
-            nowQuestion.question_desc_rich[i] = nowQuestion.question_desc_rich[i];
-        }
-        for (var j = 0; j < nowQuestion.options.length; j++) {
-            for (var k = 0; k < nowQuestion.options[j]['desc_rich'].length; k++) {
-                nowQuestion.options[j]['desc_rich'][k] = nowQuestion.options[j]['desc_rich'][k];
-            }
-        }
-        for (var i = 0; i < nowQuestion.answer_rich.length; i++) {
-            nowQuestion.answer_rich[i] = nowQuestion.answer_rich[i]        }
-        // 过度结束
         nowQuestion.index = index;
         this.setData({
             nowQuestion: nowQuestion,

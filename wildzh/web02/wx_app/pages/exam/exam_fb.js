@@ -206,8 +206,9 @@ Page({
             return false;
         }
         var currentFB = this.data.feedbacks[this.data.detailIndex];
+        var args = 'select_mode=-1&question_no=' + currentFB.question_no + '&exam_no=' + this.data.examNo;
         wx.navigateTo({
-            url: "../questions/question?select_mode=-1&question_no=" + currentFB.question_no
+            url: "../questions/question?" + args
         })
     },
     cancelFeedback: function(){

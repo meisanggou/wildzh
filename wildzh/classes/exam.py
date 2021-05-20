@@ -890,7 +890,8 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
         :param exclude_nos:
         :return:
         """
-        m_items = self.select_question_no(exam_no, select_mode, None, question_subject)
+        m_items = self.select_question_no(exam_no, select_mode, None,
+                                          question_subject)
         exclude_set = set([int(x) for x in re.split('\D', exclude_nos)
                            if x != ''])
         m_nos = set(map(lambda x: x["question_no"], m_items)) - exclude_set

@@ -157,7 +157,7 @@ Page({
     },
     startAnswer(sm_value, sj_value, strategy_id) {
         app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
-        var url = "answer?from=home";
+        var url = "answer2?from=home";
         if (strategy_id != null) {
             url += "&strategy_id=" + strategy_id;
         } else {

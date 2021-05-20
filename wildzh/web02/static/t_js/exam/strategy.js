@@ -188,8 +188,13 @@ $(function () {
                     }
                )
             },
-            export_strategy: function () {
-                var url = '/exam/export/word?answer=alone&file=true&exam_no=' + this.current_exam['exam_no'] +'&strategy_id=' + this.strategy_id;
+            export_strategy: function (i_detail) {
+                var answer = 'alone';
+                if(i_detail){
+                    answer = 'alone_detail';
+                }
+                var url = '/exam/export/word?file=true&exam_no=' + this.current_exam['exam_no'] +'&strategy_id=' + this.strategy_id;
+                url += '&answer=' + answer;
                 url += '&t=' + get_timestamp2() ;
                 window.open(url);
             },

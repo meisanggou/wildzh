@@ -1165,7 +1165,7 @@ def set_exam_strategy():
 @login_required
 @required_manager_exam()
 def delete_exam_strategy(strategy_id):
-    l = c_exam.delete_strategy(g.exam_no, strategy_id)
+    l = c_exam.strategy.delete_strategy(g.session, g.exam_no, strategy_id)
     return jsonify({'status': True, 'data': ''})
 
 

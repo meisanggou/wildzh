@@ -199,26 +199,16 @@ Page({
             })
         }
     },
-    choseItem: function (e) {
-        // that = this;
-        var choseIndex = parseInt(e.currentTarget.dataset.choseitem);
+    choseOption: function (e){
+        var choseRight = e.detail.choseRight;
+        var choseIndex = e.detail.choseIndex;
+
         var questionItems = that.data.questionItems;
-        var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
-        for (var index in questionItems[nowQuestionIndex]["options"]) {
-            questionItems[nowQuestionIndex]["options"][index]["chosed"] = false;
-            nowQuestion["options"][index]["chosed"] = false;
-        }
-        questionItems[nowQuestionIndex]["options"][choseIndex]["chosed"] = true;
-        nowQuestion["options"][choseIndex]["chosed"] = true;
-        if (parseInt(questionItems[nowQuestionIndex]["options"][choseIndex]["score"]) > 0) {
-            questionItems[nowQuestionIndex]["right"] = true;
-        } else {
-            questionItems[nowQuestionIndex]["right"] = false;
-        }
-        that.setData({
-            nowQuestion: nowQuestion
-        })
+
+        questionItems[nowQuestionIndex]["right"] = choseRight;
+        questionItems[nowQuestionIndex]["choseIndex"] = choseIndex;
+
         var nextQuestionNumber = nowQuestionIndex + 1;
         if (nextQuestionNumber == that.data.questionItems.length) {
             that.submit();
@@ -234,7 +224,6 @@ Page({
 
         }
     },
-
     submit: function () {
         var msg = '确定要交卷吗？';
         if(this.data.questionItems.length != this.data.totalQuestionNumber){

@@ -2,9 +2,6 @@
 
   <view style='font-size:40rpx;text-align:center;padding-top:20rpx;'>得分:{{score}}/{{totalScore}}</view>
   <view style='border-bottom: 1rpx solid #959595;margin-top:30rpx;'></view>
-  <view style=' margin: 20rpx;font-size:35rpx;'>
-    <text style=' margin-right: 10rpx;font-size:40rpx;color:#959595;'>|</text>单选</view>
-
   <view class='row' wx:for="{{ allQuestionIndexs }}" wx:for-item="lineNums">
     <view wx:for="{{ lineNums }}" bindtap='showDeatil' data-index="{{ item }}" class="{{questionItems[item].right==true? 'item':'item2'}}">{{ item + 1 }}</view>
   </view>

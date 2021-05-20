@@ -36,10 +36,16 @@ Page({
                 if ((currentUser.role & 2) == 2) {}
             }
         }
-        this.setData({
-            examNo: app.globalData.defaultExamNo,
-            examName: app.globalData.defaultExamName
-        });
+        if ('exam_no' in options) {
+            this.setData({
+                examNo: options['exam_no']
+            });
+        } else {
+            this.setData({
+                examNo: app.globalData.defaultExamNo,
+                examName: app.globalData.defaultExamName
+            });
+        }
         that = this;
         var args_url = "";
         var progressStorageKey = "training";
@@ -174,6 +180,7 @@ Page({
                 }
                 that.setData({
                     subjects_array: subjects,
+                    examName: examItem.exam_name
                 });
                 wx.hideLoading();
             },
@@ -253,13 +260,14 @@ Page({
             url: '/exam/questions/?no_rich=true&exam_no=' + exam_no + "&nos=" + nos,
             method: 'GET',
             success: res => {
+                console.info(res)
                 wx.hideLoading();
                 if (res.data.status == false) {
                     return;
                 }
-                if('se' in res.data){
+                if ('se' in res.data) {
                     var r = SE.showSecurityMesg(res.data.se.action, res.data.se.message);
-                    if(r){
+                    if (r) {
                         return false;
                     }
                 }
@@ -278,6 +286,19 @@ Page({
                         }
                     }
                 }
+                if(newItems.length <= 0){
+                    wx.showModal({
+                        title: '异常',
+                        content: "未获得题目信息，请稍后重试！",
+                        showCancel: false,
+                        success(res) {
+                            wx.navigateBack({
+                              delta: 1,
+                            })
+                        }
+                    })
+                    return false;
+                }
                 // 判断 是否questionItems有题
                 if (questionItems.length <= 0) {
                     // 没有错题 有问题
@@ -290,7 +311,7 @@ Page({
                 } else if (startIndex == that.data.nowQuestionIndex) {
                     // 如果当前请求的内容正好是当前显示的，需要重新更新一下答案显示。答案显示是拼出来的没和变量关联
                 }
-
+                console.info('eeeee')
                 that.setData({
                     isReq: false
                 })
@@ -619,7 +640,7 @@ Page({
     },
     // 触摸结束事件
     touchEnd: function (e) {
-        if(this.data.questionNum <= 1){
+        if (this.data.questionNum <= 1) {
             return false
         }
         var touchEndX = e.changedTouches[0].pageX;
