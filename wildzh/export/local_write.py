@@ -95,8 +95,9 @@ def get_single_answer_detail(single_selected):
     for item in single_selected:
         pa = '%s.%s' % (item['this_question_no'], item['right_option'])
         ss_paragraphs.append(pa)
-        ss_paragraphs.append('解析：')
-        ss_paragraphs.append(item['answer_rich'])
+        details = ['解析：']
+        details.extend(item['answer_rich'])
+        ss_paragraphs.append(details)
     ps = [docx_obj.ParagraphXmlObj(p).to_xml() for p in ss_paragraphs]
     return ps
 
