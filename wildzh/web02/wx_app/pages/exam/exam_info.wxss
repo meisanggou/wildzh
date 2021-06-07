@@ -2,6 +2,12 @@
 @import "../common/lib/weui.wxss";
 @import "../common/lib/lib_app.wxss";
 
+
+.font28 {
+  font-size: 28rpx;
+}
+
+
 .bottom {
   width: 100%;
   font-size: 28rpx;

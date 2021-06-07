@@ -15,6 +15,11 @@
       },
       {
         "pri_key": true,
+        "col_comment": "插入时间",
+        "col_name": "insert_time",
+        "col_type": "int(11)"
+      },
+      {
         "col_comment": "题目编号",
         "col_name": "question_no",
         "col_type": "int(11)"
@@ -46,11 +51,6 @@
         "col_name": "times",
         "col_type": "tinyint(4)",
         "default_value": 1
-      },
-      {
-        "col_comment": "插入时间",
-        "col_name": "insert_time",
-        "col_type": "int(11)"
       },
       {
         "col_comment": "更新时间",

@@ -10,7 +10,7 @@ import uuid
 
 from mysqldb_rich.db2 import DB
 from wildzh.classes import BaseObject
-from wildzh.classes.exam_feedback import ExamQuestionFeedback
+from wildzh.classes.exam_feedback import ExamQuestionFeedbackObj
 from wildzh.db.models import exam as exam_models
 from wildzh.utils import constants
 
@@ -661,11 +661,8 @@ class Exam(ExamMember, ExamUsage, ExamOpennessLevel):
                        'question_source_no', "inside_mark", "answer_pic_url",
                        'question_chapter', 'state']
         self.qs_man = QuestionSources(self.db)
-        self.qf_man = ExamQuestionFeedback(self.db)
+        self.qf_man = ExamQuestionFeedbackObj()
         self.strategy = ExamGenStrategy()
-        self.new_question_feedback = self.qf_man.new_or_update_feedback
-        self.get_question_feedback = self.qf_man.select_question_feedback
-        self.update_question_feedback = self.qf_man.update_question_feedback
 
     def _insert_info(self, exam_no, exam_name, exam_desc, adder, status=1, exam_extend=None):
         kwargs = dict(exam_no=exam_no, exam_name=exam_name, exam_desc=exam_desc, status=status,

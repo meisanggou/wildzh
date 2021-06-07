@@ -71,6 +71,27 @@ function duration_show(d) {
     return s_duration;
 }
 
+function duration_str(interval){
+    var hs = parseInt(interval / 3600);
+    interval = interval % 3600;
+    var ms = parseInt(interval / 60);
+    var ss = interval % 60;
+    if(hs < 10){
+        hs = '0' + hs;
+    }
+    if(hs > 99){
+        hs = 99;
+    }
+    if(ms < 10){
+        ms = '0' + ms;
+    }
+    if(ss < 10){
+        ss = '0' + ss;
+    }
+    var s = hs + ':' + ms + ':' + ss;
+    return s;
+}
+
 function get_current_month() {
     var M = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
     var current_date = new Date();
@@ -93,6 +114,8 @@ function get_past_months() {
 
 module.exports = {
     today_timestamp: today_timestamp,
+    get_timestamp: get_timestamp,
+    duration_str: duration_str,
     get_timestamp2: get_timestamp2,
     timestamp_2_datetime: timestamp_2_datetime,
     datetime_2_timestamp: datetime_2_timestamp,

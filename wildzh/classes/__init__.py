@@ -13,6 +13,12 @@ class BaseObject(object):
     def now_time(self):
         return time.time()
 
+    def query(self, session, **kwargs):
+        query = session.query(self.model)
+        if kwargs:
+            query = query.filter_by(**kwargs)
+        return query
+
     def create(self, session, **kwargs):
         obj = self.model(**kwargs)
         obj.save(session)

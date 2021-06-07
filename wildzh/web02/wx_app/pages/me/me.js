@@ -23,7 +23,6 @@ Page({
         brushNum: 0, // 刷题数
         ranking: 0, // 排名
         accuracy: '100%',
-        vcBalance: null, // 积分余额
         version: app.globalData.version,
         useProfile: true,
         enableShare: false, // 是否允许邀请好友
@@ -44,7 +43,7 @@ Page({
 
         this.loadCacheUserInfo()
 
-        this.initAD();
+        // this.initAD();
         if ('share_token' in options) {
             var st = options['share_token'];
             this.receiveShare(st);
@@ -56,7 +55,6 @@ Page({
         })
         this.getExams();
         this.loadCacheUserInfo();
-        this.getVCstatus();
     },
     loadCacheUserInfo: function () {
         var currentUser = app.getOrSetCurrentUserData();
@@ -316,25 +314,6 @@ Page({
             url: "../exam/exam_info?examNo=" + this.data.examNo
         })
     },
-    getVCstatus: function () {
-        var that = this;
-        wx.request2({
-            url: '/vc/status',
-            method: 'GET',
-            success: res => {
-                var pk = res.data;
-                if (pk.status != true) {
-                    return;
-                }
-                var data = pk.data;
-                var vcBalance = data.balance + data.sys_balance;
-                that.setData({
-                    vcBalance: vcBalance
-                })
-            }
-        })
-        this.actionVCGive();
-    },
     actionVCGive: function (action) {
         var that = this;
         if (action == null) {
@@ -373,10 +352,8 @@ Page({
                     that.setData(nData)
                 }
                 else{
-                    var vcBalance = pk.data.vc.sys_balance + pk.data.vc.balance;
                     var enableLookAD = pk.data.cr.next_enable;
                     that.setData({
-                        vcBalance: vcBalance,
                         enableLookAD: enableLookAD
                     })
                     var msg = '获得' + pk.data.cr.give_vc_count + '积分';
@@ -416,9 +393,14 @@ Page({
         
 
     },
-    toVCPage: function (){
+    toWrongPage: function(){
         wx.navigateTo({
-            url: "../vc/goods"
+            url: "../training/training?wrong_question=true"
+        })
+    },
+    toFBPage: function (){
+        wx.navigateTo({
+            url: "feedback"
         })
     },
     toLookAD: function () {

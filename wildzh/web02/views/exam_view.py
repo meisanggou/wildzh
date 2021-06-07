@@ -557,7 +557,7 @@ def delete_exam():
 @required_manager_exam(param_location='args')
 def get_exam_tips():
     data = []
-    f_items = c_exam.get_question_feedback(g.exam_no)
+    f_items = c_exam.qf_man.get_untreated(g.session, g.exam_no)
     if len(f_items) > 0:
         data.append({'tip_type': 'feedback', 'items': f_items,
                      'tip': '有待处理的用户反馈'})
@@ -1224,11 +1224,13 @@ def export_question_to_word_admin():
 def get_question_feedback():
     args = request.args
     user_no = g.user_no
-    if g.exam_role <= 3:
+    if g.exam_role <= 3 and 'user' not in args:
         user_no = None
     question_no = args.get('question_no', None)
     state = args.get('state', None)
-    items = c_exam.get_question_feedback(g.exam_no, user_no, question_no, state)
+    max_state = int(args.get('state', 0))
+    items = c_exam.qf_man.get(g.session, g.exam_no, user_no, question_no,
+                              state, max_state)
     return {'status': True, 'data': items}
 
 
@@ -1275,8 +1277,8 @@ def new_question_feedback():
     question_no = data['question_no']
     fb_type = data['fb_type']
     description = data['description']
-    items = c_exam.new_question_feedback(g.exam_no, user_no, question_no,
-                                         fb_type, description)
+    c_exam.qf_man.new(g.session, g.exam_no, user_no, question_no, fb_type,
+                      description)
     n_data = data
     n_data['user_no'] = user_no
     n_data['exam_no'] = g.exam_no
@@ -1289,12 +1291,15 @@ def new_question_feedback():
 @required_manager_exam()
 def handle_question_feedback():
     data = request.json
+    print(data)
     user_no = data['user_no']
-    question_no = data['question_no']
+    question_no = int(data['question_no'])
     result = data['result']
     state = data['state']
-    items = c_exam.update_question_feedback(g.exam_no, user_no, question_no,
-                                            result=result, state=state)
+    insert_time = data.get('insert_time', None)
+    items = c_exam.qf_man.update_items(g.session, g.exam_no, user_no,
+                                       question_no, insert_time,
+                                       result=result, state=state)
     if state == 4 and items > 0:  # 有效意见
         levels = {'low': 3, 'mid': 5, 'high': 10}
         level = data.get('level', 'high')

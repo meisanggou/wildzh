@@ -50,6 +50,7 @@ page {
   color: #595757;
   margin: 30rpx 20rpx 0rpx 20rpx;
   font-size: 30rpx;
+  height: 100%;
 }
 
 .descPic {
@@ -75,10 +76,10 @@ page {
 .bottom {
   width: 100%;
   position: fixed;
-  bottom: 30rpx;
+  bottom: 0rpx;
   background-color: #fff;
   height: 100rpx;
-  border-top: 3px solid #c9c9d8;
+  border-top: 1px solid #c9c9d8;
   display: flex;
   align-items: center;
   justify-content: space-around;

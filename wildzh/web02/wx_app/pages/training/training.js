@@ -23,10 +23,12 @@ Page({
         optionChar: app.globalData.optionChar,
         examNo: null,
         examName: "",
+        mode: "traning", // 模式 traning 练习模式  wrong 错题模式
         questionNum: 0,
         nowQuestionIndex: 0,
         nowQuestion: null,
         showAnswer: false,
+        showRemove: false, // mode=wrong 是否显示移除按钮
         isShowSubject: false,
         isReq: false,
         progressStorageKey: "",
@@ -36,7 +38,6 @@ Page({
         fbTypeIndex: 1,
         feedbackDesc: "",
         tags: [], // 题目标签
-        notFrame: true,
         showAD: false, // 是否显示推广信息
         richAD: [], // 推广信息
         ignoreTip: "",
@@ -138,6 +139,7 @@ Page({
     onLoad: function (options) {
         brushList = [];
         brushDetail = [];
+        questionItems = [];
         this.setData({
             examNo: app.globalData.defaultExamNo,
             examName: app.globalData.defaultExamName
@@ -161,10 +163,10 @@ Page({
                     return true;
                 }
             } else if ('wrong_question' in options) {
-                this.reqWrongAnswer();
+                this.enterWrongMode();
+                return true;
             }
-            // this.enterWrongMode();
-            // return true;
+
             that.getQuestionNos(options);
         } else {
             wx.showModal({
@@ -251,9 +253,9 @@ Page({
                     // TODO show
                     return;
                 }
-                if('se' in res.data){
+                if ('se' in res.data) {
                     var r = SE.showSecurityMesg(res.data.se.action, res.data.se.message);
-                    if(r){
+                    if (r) {
                         return false;
                     }
                 }
@@ -473,6 +475,7 @@ Page({
             nowQuestion: nowQuestion,
             nowQuestionIndex: index,
             showAnswer: false,
+            showRemove: false,
             tags: []
         })
         this.setSkipNums(index + 1, questionItems.length);
@@ -498,9 +501,24 @@ Page({
             url: "../questions/question?select_mode=-1&question_no=" + question_no
         })
     },
-    choseOption: function(e){
+    choseOption: function (e) {
         var choseRight = e.detail.choseRight;
         var nowQuestion = that.data.nowQuestion;
+        var showRemove = false;
+        if (this.data.mode == 'wrong') {
+            if (choseRight) {
+                this.addBrushNum(nowQuestion.question_no, STATE_RIGHT);
+                showRemove = true;
+            } else {
+                this.addBrushNum(nowQuestion.question_no, STATE_WRONG);
+            }
+            this.setData({
+                showRemove: showRemove
+            })
+            // 显示答案
+            this.showAnswer();
+            return;
+        }
         if (choseRight) {
             this.addBrushNum(nowQuestion.question_no, STATE_RIGHT);
             // 自动进入下一题
@@ -691,92 +709,6 @@ Page({
         app.getOrSetExamCacheData(this.data.progressStorageKey, this.data.nowQuestionIndex);
 
     },
-    calcTags: function (item) {
-        if (item == null) {
-            return ['首次遇到'];
-        }
-        var q_detail = item;
-        var tags = [];
-        var miss_num = q_detail['miss_num'];
-        var num = q_detail['num'];
-        var skip_num = q_detail['skip_num'];
-        var right_num = num - skip_num - miss_num;
-        var state_num = q_detail['state_num'];
-        var last_miss = q_detail['last_miss'];
-        var last_meet = q_detail['last_meet'];
-        var last_meet_time = q_detail['last_meet_time'];
-        if (miss_num == 0 && skip_num == 0) {
-            tags.push('全部做对')
-        } else if (miss_num == 0 && right_num > 0) {
-            tags.push('从未错误')
-        }
-        if (skip_num == num && skip_num >= 3) {
-            tags.push('多次跳过')
-        } else if (right_num == 0) {
-            tags.push('还未对过')
-        } else if (state_num >= 3) {
-            if (last_miss) {
-                tags.push('连续错误')
-            } else {
-                tags.push('最近全对')
-            }
-        }
-        if (right_num >= 1 && miss_num >= 2 * right_num) {
-            tags.push('易错题');
-        }
-        if (last_meet_time - dt.get_timestamp2() < week_delta) {
-            if (last_meet == STATE_RIGHT) {
-                tags.push('最近做对');
-            } else if (last_meet == STATE_WRONG) {
-                tags.push('最近做错');
-            }
-        }
-        return tags
-
-    },
-    getQuestionTag: function () {
-        var tags = [];
-        if (this.data.examNo == null || this.data.nowQuestion == null) {
-            this.setData({
-                tags: tags
-            });
-            return false;
-        }
-        if (this.data.showAnswer == true) {
-            // 查看答案情况 保持原有
-            return true;
-        }
-
-        var nowQuestion = this.data.nowQuestion;
-        var examNo = this.data.examNo;
-        var that = this;
-        wx.request2({
-            url: '/exam/training/tags?exam_no=' + examNo + '&question_no=' + nowQuestion.question_no,
-            method: 'GET',
-            success: res => {
-                var res_data = res.data;
-                if (res_data.status != true) {
-                    tags = [];
-                } else if (!('item' in res_data.data)) {
-                    tags = [];
-                } else {
-                    if ('tags' in res_data.data) {
-                        tags = res_data.data.tags;
-                    } else {
-                        tags = that.calcTags(res_data.data.item);
-                    }
-                }
-                that.setData({
-                    tags: tags
-                });
-            },
-            fail: function () {
-                that.setData({
-                    tags: []
-                });
-            }
-        })
-    },
     getExamAD: function () {
         if (this.data.examNo == null) {
             return false;
@@ -844,7 +776,7 @@ Page({
     // 练习错题模式
     enterWrongMode: function () {
         this.setData({
-            notFrame: false
+            mode: 'wrong'
         });
         this.reqWrongAnswer();
     },
@@ -858,11 +790,12 @@ Page({
         var minWrongTime = 0;
         if (questionLen <= 0) {
             wx.showLoading({
-                title: '加载中...',
+                title: '加载错题中...',
             })
         } else {
             minWrongTime = questionItems[questionLen - 1].wrong_time;
         }
+        
         wx.request2({
             url: '/exam/wrong/?exam_no=' + examNo + "&min_wrong_time=" + minWrongTime,
             methods: "GET",
@@ -931,6 +864,46 @@ Page({
                 })
             }
         })
+    },
+    remove: function() {
+        var nowQuestion = that.data.nowQuestion;
+        var nowQuestionIndex = that.data.nowQuestionIndex;
+        var questionLen = questionItems.length;
+        wx.request2({
+            url: '/exam/wrong/?exam_no=' + that.data.examNo,
+            method: "DELETE",
+            data: {
+                "question_no": nowQuestion.question_no
+            },
+            success: function(res) {
+            }
+        })
+        questionItems.splice(nowQuestionIndex, 1);
+        questionLen = questionItems.length;
+        that.setData({
+            questionNum: questionLen
+        })
+        if (questionLen <= 0) {
+            questionItems = [];
+            wx.showModal({
+                title: '无错题',
+                content: "已经没有错题",
+                showCancel: false,
+                success(res) {
+                    wx.navigateBack({
+                        delta: 1
+                    })
+                }
+            })
+            return true;
+        }
+        
+        if (nowQuestionIndex >= questionLen) {
+            nowQuestionIndex = questionLen - 1;
+        }
+        this.changeNowQuestion(nowQuestionIndex);
+        
+
     },
     // 练习错题模式 结束
     onUnload: function () {

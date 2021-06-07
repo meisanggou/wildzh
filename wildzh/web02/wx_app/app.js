@@ -1,11 +1,11 @@
 var remote_host = "https://meisanggou.vicp.net"
-var version = "6.8.3";
+var version = "6.8.7";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 var reqRandom = 100; // 用于某些资源防止缓存，加到请求参数中
 remote_host = "https://wild.gene.ac"
 
-// remote_host = "http://127.0.0.1:2400"
+remote_host = "http://127.0.0.1:2400"
 
 function getOrSetCacheData(key, value = null) {
     // 同步存储数据

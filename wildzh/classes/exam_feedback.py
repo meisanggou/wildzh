@@ -2,6 +2,9 @@
 # coding: utf-8
 import time
 
+from wildzh.classes import BaseObject
+from wildzh.db.models import exam as exam_model
+
 __author__ = 'zhouhenglc'
 
 
@@ -88,4 +91,62 @@ class ExamQuestionFeedback(object):
         else:
             l = self.insert_question_feedback(exam_no, user_no, question_no,
                                               fb_type, description)
+        return l
+
+
+class ExamQuestionFeedbackObj(BaseObject):
+    model = exam_model.ExamQuestionFeedback
+    offset = 60 * 60
+
+    def get_objs(self, session, exam_no, user_no=None, question_no=None,
+                 state=None, max_state=None):
+        query = self.query(session).filter(self.model.exam_no==exam_no)
+        if user_no is not None:
+            query = query.filter(self.model.user_no==user_no)
+        if question_no is not None:
+            query = query.filter(self.model.question_no==question_no)
+        if state is not None:
+            query = query.filter(self.model.state==state)
+        elif max_state is not None:
+            query = query.filter(self.model.state<=max_state)
+        return query.all()
+
+    def get(self, session, exam_no, user_no=None, question_no=None,
+            state=None, max_state=None):
+        objs = self.get_objs(session, exam_no, user_no, question_no, state,
+                             max_state)
+        return [obj.to_dict() for obj in objs]
+
+    def get_untreated(self, session, exam_no):
+        items= self.get(session, exam_no, max_state=0)
+        return items
+
+    def new(self, session, exam_no, user_no, question_no, fb_type,
+            description):
+        objs = self.get_objs(session, exam_no, user_no, question_no, state=0)
+        if len(objs) > 0:
+            obj = objs[0]
+            obj.description = description
+            obj.times += 1
+            obj.fb_type = fb_type
+            return obj
+        kwargs = {'exam_no': exam_no, 'user_no': user_no,
+                  'question_no': question_no, 'fb_type': fb_type,
+                  'insert_time': self.now_time, 'update_time': self.now_time,
+                  'times': 1, 'description': description, 'state': 0}
+        return self.create(session, **kwargs)
+
+    def update_items(self, session, exam_no, user_no, question_no,
+                     insert_time=None, result=None, state=None):
+        where_value = {'exam_no': exam_no, 'user_no': user_no,
+                       'question_no': question_no}
+        if insert_time:
+            where_value['insert_time'] = insert_time
+        query = self.query(session, **where_value)
+        update_value = {}
+        if result:
+            update_value['result'] = result
+        if state is not None:
+            update_value['state'] = state
+        l = query.update(update_value)
         return l

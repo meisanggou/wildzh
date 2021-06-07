@@ -69,3 +69,17 @@ class ExamGenStrategyModel(Base):
     strategy_items = sqlalchemy.Column(sqlalchemy.VARCHAR(500))
     internal = sqlalchemy.Column(BIT())
     update_time = sqlalchemy.Column(sqlalchemy.INT())
+
+
+class ExamQuestionFeedback(Base):
+    __tablename__ =  'exam_question_feedback'
+    exam_no = sqlalchemy.Column(sqlalchemy.INT(), primary_key=True)
+    user_no = sqlalchemy.Column(sqlalchemy.INT(), primary_key=True)
+    insert_time = sqlalchemy.Column(sqlalchemy.INT(), primary_key=True)
+    question_no = sqlalchemy.Column(sqlalchemy.INT())
+    fb_type = sqlalchemy.Column(sqlalchemy.VARCHAR(30))
+    description = sqlalchemy.Column(sqlalchemy.VARCHAR(200))
+    state = sqlalchemy.Column(sqlalchemy.SMALLINT())
+    result = sqlalchemy.Column(sqlalchemy.VARCHAR(50), default="")
+    times = sqlalchemy.Column(sqlalchemy.SMALLINT())
+    update_time = sqlalchemy.Column(sqlalchemy.INT())

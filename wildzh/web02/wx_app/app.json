@@ -16,7 +16,8 @@
         "pages/exam/exam_fb",
         "pages/me/info",
         "pages/me/share",
-        "pages/vc/goods"
+        "pages/vc/goods",
+        "pages/me/feedback"
     ],
     "window": {
         "backgroundTextStyle": "light",
@@ -39,16 +40,16 @@
                 "text": "测试"
             },
             {
+                "pagePath": "pages/vc/goods",
+                "iconPath": "images/vc.png",
+                "selectedIconPath": "images/vc_fill.png",
+                "text": "积分"
+            },
+            {
                 "pagePath": "pages/query/query",
                 "iconPath": "images/query.png",
                 "selectedIconPath": "images/query_fill.png",
                 "text": "搜题"
-            },
-            {
-                "pagePath": "pages/wrongAnswer/wrongAnswer",
-                "iconPath": "images/wrong.png",
-                "selectedIconPath": "images/wrong_fill.png",
-                "text": "错题"
             },
             {
                 "pagePath": "pages/me/me",

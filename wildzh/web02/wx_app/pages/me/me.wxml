@@ -34,8 +34,15 @@
             </view>
             <view class="statis-division">|</view>
             <view class="statis-div">
-                <view class="statis-div-v">{{accuracy}}</view>
+                <view class="statis-div-v" >{{accuracy}}</view>
                 <view class="statis-div-desc">正确率</view>
+            </view>
+            <view class="statis-division">|</view>
+            <view class="statis-div" bindtap="toWrongPage">
+                <view class="statis-div-v">
+                    <image src="/images/wrong.png" mode="aspectFit"></image>
+                </view>
+                <view class="statis-div-desc">错题本</view>
             </view>
         </view>
         <form>
@@ -64,7 +71,7 @@
                             </view>
                         </view>
                     </view>
-                    <view class="weui-cell weui-cell_input" wx:if="{{ vcBalance != null }}">
+                    <view class="weui-cell weui-cell_input" wx:if="{{ vcBalance != null && false}}">
                         <view class="weui-cell__hd">
                             <view class="weui-label">积分</view>
                         </view>
@@ -121,13 +128,16 @@
                             </view>
                         </view>
                     </view>
-                    <view class="weui-cell weui-cell_input">
+                    <view  class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
-                            <view class="weui-label">版本</view>
+                            <view class="weui-label">我的反馈</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <view class="weui-input">{{version}}
-                            </view>
+                            <view class="weui-input"></view>
+                        </view>
+                        <view  class="weui-cell__ft right-slip">
+                            <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="toFBPage">
+                            </image>
                         </view>
                     </view>
                 </view>
@@ -164,6 +174,20 @@
                             </image>
                         </view>
                     </view>
+                </view>
+            </view>
+            <view class="page-section" >
+                <view class="weui-cells weui-cells_after-title" >
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">版本</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <view class="weui-input">{{version}}
+                            </view>
+                        </view>
+                    </view>
+                    
                 </view>
             </view>
         </form>

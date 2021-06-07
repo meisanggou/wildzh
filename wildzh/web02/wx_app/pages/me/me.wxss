@@ -104,13 +104,20 @@
 
 .statis-div {
     height: 100%;
-    width: 33%;
+    width: 24%;
 }
 
 .statis-div-v {
     font-size: 40rpx;
     margin: 0 auto;
+    height: 90rpx;
     line-height: 90rpx;
+    width: 100%;
+}
+
+.statis-div-v image {
+    margin-top: 30rpx;
+    height: 60rpx;
     width: 100%;
 }
 
