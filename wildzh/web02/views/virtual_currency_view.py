@@ -35,16 +35,21 @@ def func_browse_ad_id(user_no, **kwargs):
 
 
 def func_browse_ad_check(user_no, gf_obj, **kwargs):
-    max_freq = 2
+    max_freq = 3
     give_vc_count = 1
     last_id = None
+    ck_r = {'max_freq': max_freq, 'give_vc_count': give_vc_count,
+            'freq': gf_obj.freq, 'project_name': '看广告得积分'}
     if gf_obj.freq >= max_freq:
-        return None
+        ck_r['result'] = False
+        return ck_r
+    ck_r['result'] = True
     next_enable = max_freq - gf_obj.freq > 1
     cr = {'next_enable': next_enable, 'last_id': last_id,
-          'give_vc_count': give_vc_count, 'billing_project': 'browse_ad',
-          'project_name': '看广告得积分', 'detail': '', 'remark': '',
+          'billing_project': 'browse_ad',
+          'detail': '', 'remark': '',
           'tip': '得积分换会员'}
+    cr.update(ck_r)
     return cr
 
 
@@ -91,9 +96,11 @@ def give_event():
     gf_obj = VC_GF_MAN.get(g.session, give_type, give_id)
     check_func = _reg_gives[give_type]['check_func']
     cr = check_func(g.user_no, gf_obj)
-    if not cr:
-        return {'status': False, 'data': 'participation limit exceeded'}
     data = {'cr': cr}
+    if not cr['result']:
+        data['message'] = 'participation limit exceeded'
+        return {'status': False, 'data': data}
+
     if action == 'run':
         ub_obj, vc_obj = notify_callback(
             constants.R_VC, constants.E_NEW_BILLING, vc_view,
@@ -105,6 +112,7 @@ def give_event():
         gf_obj.freq += 1
         gf_obj.last_id = cr['last_id']
         data['vc'] = vc_obj.to_dict()
+        data['cr']['freq'] += 1
     return {'status': True, 'data': data}
 
 

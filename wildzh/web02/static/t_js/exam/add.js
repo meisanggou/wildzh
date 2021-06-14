@@ -3,7 +3,7 @@
  */
 
 $(function () {
-    var mode_names = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题"];
+    var mode_names = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题", '多选题', '判断题'];
     var select_modes = [];
     var default_subject = {'name': '', 'select_modes': [], 'chapters': [], 'enable': true, 'custom_sm': false};
     for (var i = 0; i < mode_names.length; i++) {

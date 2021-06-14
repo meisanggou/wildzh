@@ -183,7 +183,7 @@ def handle_exam_no_answer(file_path, questions_set):
     uploaded_q_rl = dict()
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     print("start handle %s" % exam_name)
-    questions_set.exam_name = exam_name
+    # questions_set.exam_name = exam_name
     with DocxObject(file_path) as do:
         handle_docx_main_xml(do, ".", u"、", u"．", ':',
                              questions_set=questions_set)
@@ -407,8 +407,8 @@ if __name__ == "__main__":
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
     # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
-    # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
-    # s_kwargs['exam_name'] = '2020年经济学真题'  # 设置题目来源 一般真题需要设置
+    s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
+    s_kwargs['exam_name'] = '2021年经济学真题'  # 设置题目来源 一般真题需要设置
     # s_kwargs['inside_mark_prefix'] = '马工程课后思考题'
     q_set = QuestionSet(**s_kwargs)
     # d = r'D:/Project/word/app/upload'

@@ -476,7 +476,8 @@ Page({
             nowQuestionIndex: index,
             showAnswer: false,
             showRemove: false,
-            tags: []
+            tags: [],
+            feedbackDesc: ""
         })
         this.setSkipNums(index + 1, questionItems.length);
         this.saveTrainingProcess();
@@ -537,31 +538,7 @@ Page({
         }
 
     },
-    updateAnswerOption: function (event) {
-        var selected = event.detail.value;
-        var nowQuestion = this.data.nowQuestion;
-        var index = this.data.nowQuestionIndex;
-        var options = nowQuestion.options;
-        var optLen = options.length;
-        for (var i = 0; i < optLen; i++) {
-            if (i == selected) {
-                if (parseInt(options[i]["score"]) > 0) {
-                    return false;
-                }
-                options[i]["score"] = 1;
-            } else {
-                options[i]["score"] = 0;
-            }
-        }
-        nowQuestion.forceUpdate = true;
-        this.updateQuestion(nowQuestion.question_no, index, options);
-    },
-    actionUpdateAnswer: function () {
-        var nowQuestion = this.data.nowQuestion;
-        var index = this.data.nowQuestionIndex;
-        nowQuestion.forceUpdate = true;
-        this.updateQuestion(nowQuestion.question_no, index, null, nowQuestion.answer);
-    },
+
     previewImage: function (event) {
         var src = event.currentTarget.dataset.src; //获取data-src
         src += '?r=' + Math.random();
@@ -577,32 +554,6 @@ Page({
             }
         })
 
-    },
-    updateQuestion: function (questionNo, index, options = null, answer = null) {
-        var uData = new Object();
-        uData["question_no"] = questionNo;
-        if (options != null) {
-            uData["options"] = options;
-        }
-        if (answer != null) {
-            uData["answer"] = answer;
-        }
-        wx.request2({
-            url: '/exam/questions/?exam_no=' + this.data.examNo,
-            method: 'PUT',
-            data: uData,
-            success: res => {
-                if (res.data.status == false) {
-                    return;
-                }
-                wx.showToast({
-                    title: "更新成功",
-                    icon: "none",
-                    duration: 1000
-                });
-                that.reqQuestion(index, false)
-            }
-        })
     },
     addBrushNum: function (q_no, state) {
         if (brushList.indexOf(q_no) >= 0) {
@@ -641,10 +592,39 @@ Page({
             }
         })
     },
+    getFeedback: function(){
+        var question_no = this.data.nowQuestion.question_no;
+        var url = '/exam/question/feedback?exam_no=' + this.data.examNo;
+        url += '&question_no=' + question_no;
+        url += '&max_state=0&user=';
+        var that = this;
+        wx.request2({
+            url: url,
+            method: 'GET',
+            success: res => {
+                if (res.data.status != true) {
+                } else {
+                    var items = res.data.data;
+                    if(items.length > 0){
+                        var fbTypeIndex = that.data.fbTypes.indexOf(items[0].fb_type);
+                        if(fbTypeIndex < 0){
+                            fbTypeIndex = 0;
+                        }
+                        that.setData({
+                            fbTypeIndex: fbTypeIndex,
+                            feedbackDesc: items[0].description
+                        })
+                    }
+                }
+
+            }
+        })
+    },
     feedbackClick: function () {
         this.setData({
             hiddenFeedback: false
         });
+        this.getFeedback();
     },
     feedbackTypeChange(e) {
         this.setData({
@@ -688,9 +668,6 @@ Page({
 
                     return
                 } else {
-                    that.setData({
-                        feedbackDesc: ""
-                    })
                     wx.showToast({
                         title: "反馈成功"
                     })

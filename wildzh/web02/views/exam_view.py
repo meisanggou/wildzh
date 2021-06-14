@@ -18,13 +18,14 @@ from flask_helper.utils import registry as f_registry
 
 from zh_config import db_conf_path, upload_folder, file_prefix_url
 from zh_config import min_program_conf, es_conf
-from wildzh.classes.exam import Exam, ExamObject
+from wildzh.classes.exam import Exam
 from wildzh.classes.exam import ExamInfo
 from wildzh.classes.exam import ExamMemberFlow2
 from wildzh.classes.exam_es import ExamEs
 from wildzh.classes import goods as goods_op
 from wildzh.classes.user import User
 from wildzh.classes.wx import MiniProgram
+from wildzh.classes.objects.exam_obj import ExamObject
 from wildzh.classes.objects.exam_obj import StrategyObject
 from wildzh.db.session import use_session
 from wildzh.export.local_write import write_docx
@@ -84,7 +85,7 @@ c_exam_es = ExamEs(es_conf)
 min_pro = MiniProgram(conf_path=min_program_conf, section='01')
 ASYNC_POOL = get_pool()
 
-G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题"]
+G_SELECT_MODE = constants.G_SELECT_MODE
 
 
 def separate_image(text, max_width=None, new_fmt=False):
@@ -272,6 +273,10 @@ def parsing_token(resource, event, trigger, **kwargs):
         r['message'] = '不能邀请自己'
         return r
     free_days, expiration_time = [int(x) for x in others]
+    # step 0 校验邀请时间是否过期
+    if expiration_time < time.time():
+        r['message'] = '邀请过期，请重新邀请'
+        return r
     # step 1 组合校验文本
     plain_s = '%s|%s|%s|%s|%s' % (resource, exam_no, inviter_user_no,
                                   free_days, expiration_time)
@@ -317,6 +322,7 @@ def parsing_token(resource, event, trigger, **kwargs):
         r['extend'] = extend
     r['status'] = True
     return r
+
 
 EXAM_GOODS_SUB = [
             {'sub_title': '纸质版学习材料',
@@ -1228,7 +1234,7 @@ def get_question_feedback():
         user_no = None
     question_no = args.get('question_no', None)
     state = args.get('state', None)
-    max_state = int(args.get('state', 0))
+    max_state = int(args.get('max_state', 0))
     items = c_exam.qf_man.get(g.session, g.exam_no, user_no, question_no,
                               state, max_state)
     return {'status': True, 'data': items}

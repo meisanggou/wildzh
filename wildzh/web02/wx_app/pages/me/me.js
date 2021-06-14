@@ -1,11 +1,8 @@
 var app = getApp();
 var dt = require("../common/datetime_tools.js");
 var that;
-var newNickName = '';
 var noExamName = '未选择';
 var lastUpdateUserKey = 'updateUserTime'
-let videoAd = null;
-let adUnitId = 'adunit-2b19f83a1d666b74';
 
 Page({
     data: {
@@ -24,10 +21,7 @@ Page({
         ranking: 0, // 排名
         accuracy: '100%',
         version: app.globalData.version,
-        useProfile: true,
-        enableShare: false, // 是否允许邀请好友
-        enableLookAD: false, // 是否允许看广告得积分
-        ADTip: '得积分' // 广告提示语
+        useProfile: true
     },
     onLoad: function (options) {
         if (app.globalData.defaultExamNo != null) {
@@ -314,85 +308,6 @@ Page({
             url: "../exam/exam_info?examNo=" + this.data.examNo
         })
     },
-    actionVCGive: function (action) {
-        var that = this;
-        if (action == null) {
-            action = 'check';
-        }
-        var data = {
-            'give_type': 'browse_ad',
-            'adUnitId': adUnitId,
-            'action': action
-        }
-        wx.request2({
-            url: '/vc/give',
-            method: 'POST',
-            data: data,
-            success: res => {
-                var pk = res.data;
-                if (pk.status != true) {
-                    that.setData({
-                        enableLookAD: false
-                    })
-                    if(action == 'run'){
-                        wx.showModal({
-                            title: '获得积分失败',
-                            content: pk.data,
-                            showCancel: false,
-                            success(res) {}
-                        })
-                    }
-                    return;
-                }
-                if (action != 'run') {
-                    var nData = {'enableLookAD': true};
-                    if('tip' in pk.data.cr){
-                        nData['ADTip'] = pk.data.cr.tip;
-                    }
-                    that.setData(nData)
-                }
-                else{
-                    var enableLookAD = pk.data.cr.next_enable;
-                    that.setData({
-                        enableLookAD: enableLookAD
-                    })
-                    var msg = '获得' + pk.data.cr.give_vc_count + '积分';
-                    wx.showToast({
-                        title: msg,
-                        icon: "none",
-                        duration: 3000
-                    });
-                }
-            },
-            fail: res => {
-                that.setData({
-                    enableLookAD: false
-                })
-            }
-        })
-    },
-    initAD: function () {
-        var that = this;
-        if (wx.createRewardedVideoAd) {
-            videoAd = wx.createRewardedVideoAd({
-                adUnitId: adUnitId
-            })
-            videoAd.onLoad(() => {
-                console.log('onLoad event emit')
-            })
-            videoAd.onError((err) => {
-                console.log('onError event emit', err)
-            })
-            videoAd.onClose((res) => {
-                if (res.isEnded) {
-                    that.actionVCGive('run');
-                }
-                console.log('onClose event emit', res)
-            })
-        }
-        
-
-    },
     toWrongPage: function(){
         wx.navigateTo({
             url: "../training/training?wrong_question=true"
@@ -402,29 +317,6 @@ Page({
         wx.navigateTo({
             url: "feedback"
         })
-    },
-    toLookAD: function () {
-        if (videoAd) {
-            videoAd.show().catch(() => {
-                // 失败重试
-                videoAd.load()
-                    .then(() => videoAd.show())
-                    .catch(err => {
-                        wx.showToast({
-                            title: "广告加载失败，可能已达观看限制，请稍后重试！",
-                            icon: "none",
-                            duration: 3000
-                        });
-                    })
-            })
-        }
-        else{
-            wx.showToast({
-                title: "广告加载失败，可能已达观看限制，请稍后重试！",
-                icon: "none",
-                duration: 3000
-            });
-        }
     },
     toShare: function () {
         wx.navigateTo({

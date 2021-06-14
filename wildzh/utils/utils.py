@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 import random
+import hashlib
 
 __author__ = 'zhouhenglc'
 
@@ -45,6 +46,10 @@ def random_assign(total, range_list, span=None):
     return final_list, total
 
 
+def hashlib_sha1():
+    pass
+
+
 if __name__ == '__main__':
     fl = random_assign(55, [
         [10, 100],
@@ -53,4 +58,4 @@ if __name__ == '__main__':
         [10, 13],
     ], 15)
     print(fl)
-    get_alone_answers(list(range(56)), None)
+

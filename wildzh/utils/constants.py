@@ -9,6 +9,11 @@ TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 ENCODING = 'utf-8'
 
 
+# exam  mode
+# G_SELECT_MODE
+G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题", "多选题", "判断题"]
+G_MULTI_MODE = [6, ]  # 多选题型  多选题=6
+
 # exam status
 STATUS_ONLINE = 64
 STATUS_OFFLINE = 128

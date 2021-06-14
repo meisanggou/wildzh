@@ -162,18 +162,7 @@
                             </button>
                         </view> -->
                     </view>
-                    <view class="weui-cell weui-cell_input" wx-if="{{ enableLookAD }}">
-                        <view class="weui-cell__hd">
-                            <view class="weui-label">看广告</view>
-                        </view>
-                        <view class="weui-cell__bd">
-                            <view class="weui-input">{{ ADTip }}</view>
-                        </view>
-                        <view class="weui-cell__ft right-slip" bindtap="toLookAD">
-                            <image mode="aspectFit" class="right-slip" src="/images/right_slip.png">
-                            </image>
-                        </view>
-                    </view>
+                    
                 </view>
             </view>
             <view class="page-section" >

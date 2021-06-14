@@ -128,6 +128,7 @@ class ExamQuestionFeedbackObj(BaseObject):
             obj = objs[0]
             obj.description = description
             obj.times += 1
+            obj.update_time = self.now_time
             obj.fb_type = fb_type
             return obj
         kwargs = {'exam_no': exam_no, 'user_no': user_no,

@@ -116,7 +116,7 @@
                 "allow_null": true
             },
             {
-                "col_comment": "答案信息",
+                "col_comment": "答案信息 解释",
                 "col_name": "answer",
                 "col_type": "text",
                 "allow_null": true

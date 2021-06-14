@@ -17,7 +17,8 @@
         "pages/me/info",
         "pages/me/share",
         "pages/vc/goods",
-        "pages/me/feedback"
+        "pages/me/feedback",
+        "pages/vc/make_vc"
     ],
     "window": {
         "backgroundTextStyle": "light",
