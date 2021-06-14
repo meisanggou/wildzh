@@ -235,11 +235,12 @@ def share_token(resource, event, trigger, **kwargs):
     # TODO 判断权限 暂时不判定
     # step 3 获取题库赠送天数
     free_days = 3
-    tips_s = text.load_text('share') % {'days': free_days}
-    tips = text.convert_to_list(tips_s)
     # step 4 计算失效时间
     valid_days = int(kwargs.get('valid_days', 7))
     expiration_time =  int(time.time() + valid_days * 3600 * 24)
+    tips_s = text.load_text('share') % {'days': free_days,
+                                        'valid_days': valid_days}
+    tips = text.convert_to_list(tips_s)
     # step 5 组合明文文本
     plain_s = '%s|%s|%s|%s|%s' % (resource, exam_no, user_no, free_days,
                                   expiration_time)

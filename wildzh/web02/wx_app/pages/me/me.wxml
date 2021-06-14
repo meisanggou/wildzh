@@ -128,7 +128,7 @@
                             </view>
                         </view>
                     </view>
-                    <view  class="weui-cell weui-cell_input">
+                    <!-- <view  class="weui-cell weui-cell_input">
                         <view class="weui-cell__hd">
                             <view class="weui-label">我的反馈</view>
                         </view>
@@ -139,7 +139,7 @@
                             <image class="right-slip" mode="aspectFit" src="/images/right_slip.png" bindtap="toFBPage">
                             </image>
                         </view>
-                    </view>
+                    </view> -->
                 </view>
             </view>
             <view class="page-section" >
