@@ -13,5 +13,5 @@ ALTER TABLE exam_info DROP COLUMN eval_type;
 # 2021-05-05 11:11
 ALTER TABLE exam_gen_strategy modify column strategy_items varchar(500);
 
-
+# 2021-06-14 9:44
 ALTER TABLE `exam_question_feedback` DROP PRIMARY KEY ,ADD PRIMARY KEY ( `exam_no`, `user_no`, `insert_time`);
