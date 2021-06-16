@@ -3,6 +3,16 @@
  */
 
 var q_vm = null;
+var ascii = ["A", "B", "C", "D", "E", "F"];
+
+function get_options(l){
+    var opts = [];
+    for(var i=0;i<l;i++){
+        var opt = {'c': ascii[i], 'desc': '', 'value': 0};
+        opts.push(opt);
+    }
+    return opts;
+}
 
 function popup_waring(head, text){
     $.toast().reset('all');
@@ -56,21 +66,20 @@ function add_question()
     r_data["question_source"] = q_vm.question_source;
     r_data['state'] = q_vm.question_state;
     r_data["options"] = new Array();
-    var chars_o = ["A", "B", "C", "D"];
-    var options = [q_vm.option_a, q_vm.option_b, q_vm.option_c, q_vm.option_d];
-    var selected_option = q_vm.selected_option;
+
+    var options = q_vm.options;
     var i = 0;
     var c = "";
     var t= "";
     var answer = "";
     msg += "选项：\n";
     for(;i<options.length;i++){
-        c = chars_o[i];
-        t = options[i];
+        c = options[i].c;
+        t = options[i].desc;
         var score = 0;
-        if(selected_option == i){
+        if(options[i].value > 0){
             score = 1;
-            answer = c;
+            answer += c;
         }
         if(t.length <= 0){
             break
@@ -79,7 +88,7 @@ function add_question()
         msg += c + ":" + t + "\n";
     }
     for(;i<options.length;i++){
-        t = options[i];
+        t = options[i].desc;
         if(t.length != 0){
             popup_waring("缺少选项", "请录入【" + c +"】选项");
             return 2;
@@ -91,9 +100,17 @@ function add_question()
     }
     var answer_desc = q_vm.answer;
     r_data["answer"] = answer_desc;
-    if(answer == ""){
-        popup_waring("信息不完整", "请选择一个选项作为答案！");
-        return 3;
+    if(q_vm.select_modes[q_vm.select_mode].multi == true){
+        if(answer.length < 2){
+            popup_waring("信息不完整", "当前题型请至少选择2个选项作为答案！");
+            return 3;
+        }
+    }
+    else{
+        if(answer.length != 1){
+            popup_waring("信息不完整", "当前请选择且至多选择1个选项作为答案！");
+            return 3;
+        }
     }
     msg += "答案：" + answer;
     var action = "";
@@ -167,23 +184,17 @@ function receive_questions(data){
     }
     q_vm.answer = current_question.answer;
     q_vm.action = "update";
-    q_vm.option_a = current_question.options[0]["desc"];
-    q_vm.option_b = current_question.options[1]["desc"];
-    q_vm.option_c = "";
-    q_vm.option_d = "";
-    if(current_question.options.length >= 4){
-        q_vm.option_c = current_question.options[2]["desc"];
-        q_vm.option_d = current_question.options[3]["desc"];
+    var el = current_question.options.length;
+    if(el < 5){
+        el = 5;
     }
-    else if(current_question.options.length >= 3){
-        q_vm.option_c = current_question.options[2]["desc"];
+    var options = get_options(el);
+    for(var i= 0,l=current_question.options.length;i<l;i++){
+        options[i].desc = current_question.options[i].desc;
+        options[i].value = current_question.options[i].score;
     }
-    for(var index in current_question.options){
-        if(parseInt(current_question.options[index]["score"]) > 0){
-            q_vm.selected_option = index;
-            break;
-        }
-    }
+    q_vm.options = options;
+
 }
 
 $(function() {
@@ -218,11 +229,7 @@ $(function() {
             question_source: "",
             question_state: 0,
             answer: "",
-            option_a: "",
-            option_b: "",
-            option_c: "",
-            option_d: "",
-            selected_option: -1
+            options: get_options(5)
         },
         methods: {
             select_exam: function(question_no){
@@ -236,6 +243,8 @@ $(function() {
                     this.current_question_no = question_no - 1;
                 }
                 this.action_next();
+            },
+            change_mode: function(){
             },
             upload_pic: function(){
                 var u_files = this.$refs.filElem.files;
@@ -286,8 +295,7 @@ $(function() {
                     this.action = "new";
                     this.select_mode = 0;
                     this.question_subject = 0;
-                    this.option_a = this.option_b = this.option_c = this.option_d = "";
-                    this.selected_option = -1;
+                    this.options = get_options(5);
                     return true;
                 }
                 var data = {"exam_no": this.current_exam.exam_no, "start_no": c_qno + 1, "num": 1};

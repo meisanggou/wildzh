@@ -275,8 +275,9 @@ Page({
                             questionItems[i]["question_desc_rich"] = newItems[j]["question_desc_rich"]
                             questionItems[i]["question_desc_url"] = newItems[j]["question_desc_url"];
                             questionItems[i]["options"] = newItems[j]["options"];
-                            questionItems[i]["answer_rich"] = newItems[j]["answer_rich"]
-                            questionItems[i]["question_source"] = newItems[j]["question_source"]
+                            questionItems[i]["answer_rich"] = newItems[j]["answer_rich"];
+                            questionItems[i]["question_source"] = newItems[j]["question_source"];
+                            questionItems[i].multi = newItems[j].multi;
                             questionItems[i].forceUpdate = false;
                             questionItems[i].canUpdate = canUpdate
                             break;

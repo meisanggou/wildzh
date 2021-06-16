@@ -700,6 +700,10 @@ class Exam(ExamMember, ExamUsage):
             for i in range(len(cols)):
                 d_item[cols[i]] = item[i]
             d_item["options"] = json.loads(d_item["options"])
+            if d_item['select_mode'] in constants.G_MULTI_MODE:
+                d_item['multi'] = True  # 答案多选
+            else:
+                d_item['multi'] = False
             d_items.append(d_item)
         return d_items
 

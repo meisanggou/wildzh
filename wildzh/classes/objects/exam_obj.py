@@ -202,9 +202,18 @@ class ExamObject(object):
             return
         if len(values) < len(self._select_modes):
             return
+        index = 0
         for item in values:
-            if 'name' not in item or 'enable' not in item:
+            if 'enable' not in item:
                 return
+            if 'name' not in item:
+                item['name'] = constants.G_SELECT_MODE[index]
+            if 'multi' not in item:
+                if index in constants.G_MULTI_MODE:
+                    item['multi'] = True
+                else:
+                    item['multi'] = False
+            index += 1
         if len(values) != len(constants.G_SELECT_MODE):
             index = 0
             for item in values:
