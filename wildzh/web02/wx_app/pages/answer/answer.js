@@ -201,7 +201,7 @@ Page({
     },
     choseOption: function (e){
         var choseRight = e.detail.choseRight;
-        var choseIndex = e.detail.choseIndex;
+        var choseIndex = e.detail.selectedOpts;
 
         var questionItems = that.data.questionItems;
         var nowQuestionIndex = that.data.nowQuestionIndex;

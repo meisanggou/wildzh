@@ -357,6 +357,7 @@ Page({
         }
     },
     after1: function () {
+        console.info('after 1')
         that.after(1);
     },
 

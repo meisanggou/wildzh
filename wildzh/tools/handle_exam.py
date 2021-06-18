@@ -407,8 +407,8 @@ if __name__ == "__main__":
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
     # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
-    s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
-    s_kwargs['exam_name'] = '2021年经济学真题'  # 设置题目来源 一般真题需要设置
+    # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
+    # s_kwargs['exam_name'] = '2021年经济学真题'  # 设置题目来源 一般真题需要设置
     # s_kwargs['inside_mark_prefix'] = '马工程课后思考题'
     q_set = QuestionSet(**s_kwargs)
     # d = r'D:/Project/word/app/upload'

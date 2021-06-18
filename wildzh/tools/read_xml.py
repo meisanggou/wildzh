@@ -15,10 +15,10 @@ from wildzh.tools.parse_question import AnswerSet, ParseAnswer, AnswerLocation
 # sys.setdefaultencoding('utf8')
 
 
-Q_TYPE_COMP = re.compile(u"((一|二|三|四|五|六)[、.]|^)(单选|单项|选择|名词解释|简答|简答题|计算|计算题|论述|论述题)")
+Q_TYPE_COMP = re.compile(u"((一|二|三|四|五|六)[、.]|^)(单选|单项|选择|多选|多选题|名词解释|简答|简答题|计算|计算题|论述|论述题|判断|判断题)")
 S_ANSWER_COMP = re.compile(r"(\d+)(?:-|—)(\d+)([a-d]+)", re.I)
 S_ANSWER_COMP2 = re.compile(r"(?:\s|^)(\d+)([a-d](?:\s|$))", re.I)
-G_SELECT_MODE = [u"无", u"选择", u"名词解释", u"简答题", u"计算题", u"论述题"]
+G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题", "多选题", "判断题"]
 
 
 def get_select_mode(content):
@@ -38,6 +38,10 @@ def get_select_mode(content):
         return 4
     if s in (u"论述", u"论述题"):
         return 5
+    if s in (u"多选", u"多选题"):
+        return 6
+    if s in (u"判断", u"判断题"):
+        return 7
     raise RuntimeError("Bad select mode %s" % s)
 
 
@@ -185,13 +189,16 @@ def handle_docx_main_xml(docx_obj, *args, **kwargs):
                                      select_mode=current_question[0],
                                      embedded_answer=embedded_answer)
 
-        if current_question[0] == 1:
+        if current_question[0] in (1, 6):
             if q_item.q_type != QuestionType.Choice:
                 raise QuestionTypeNotMatch(current_question[1:],
                                            '题型应该是选择题，未在题目中发现选择题')
+        elif current_question[0] in (7, ):
+            if q_item.q_type != QuestionType.Judge:
+                raise RuntimeError(u"问题类型解析错误 %s" % q_item.q_type)
         else:
             if q_item.q_type != QuestionType.QA:
-                raise RuntimeError(u"问题类型解析错误")
+                raise RuntimeError(u"问题类型解析错误 %s" % q_item.q_type)
         q_item.select_mode = current_question[0]
         questions_set.append(q_item)
 

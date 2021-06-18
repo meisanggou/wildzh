@@ -11,6 +11,10 @@ from wildzh.tools.parse_option import ListOption
 from wildzh.tools.parse_option import ParseOptions
 
 
+RIGHT_CS = ['对', '√']
+WRONG_CS = ['错', '×']
+
+
 class AnswerLocation(object):
     _instances = {}
 
@@ -50,6 +54,7 @@ class AnswerLocation(object):
 class QuestionType(object):
     Choice = "Choice"
     QA = "Questions and answers"
+    Judge = "Judgment"
 
 
 class Question(object):
@@ -89,14 +94,18 @@ class Question(object):
         self._desc = _value
 
     def set_answer(self, answer):
+        # A
+        # AD
+        # 答案解析
         if self.answer is not None:
             raise RuntimeError("Has already set answer")
         if isinstance(answer, Answer):
             answer = answer.answer
-        if self.q_type == QuestionType.Choice:
-            if not hasattr(self.options, answer):
-                raise p_exc.AnswerNotFound(self.q_items)
-            getattr(self.options, answer).score = 1
+        if self.q_type in (QuestionType.Choice, QuestionType.Judge):
+            for opt in answer:
+                if not hasattr(self.options, opt):
+                    raise p_exc.AnswerNotFound(self.q_items)
+                getattr(self.options, opt).score = 1
             self.answer = ""
         else:
             self.options.A.score = 1
@@ -147,7 +156,14 @@ class ParseQuestion(object):
     _s_of = "".join(ParseOptions.option_prefix)
     option_compile = re.compile("^\s*\(\s*[%s]\s*\)" % _s_of, re.I)  # 匹配 (A)
     option_compile2 = re.compile("^\s*[%s]\s*" % _s_of, re.I)         # 匹配 A
-    answer_compile = re.compile(u'(?:\(|（)\s*([%s])\s*(?:）|\))' % _s_of, re.I)    # 匹配
+
+    # 匹配单选或多选答案 匹配中英文括号 括号内包含不可见字符或者 选项A-E 例如：（A） (A) (ABD) ( AB )
+    answer_compile = re.compile(u'(?:\(|（)\s*([%s]+)\s*(?:）|\))' % _s_of, re.I)
+
+    # 匹配判断题答案
+    j_answer_compile = re.compile(u'(?:\(|（)([\s%s]+)(?:）|\))' % "".join(
+        RIGHT_CS + WRONG_CS), re.I)
+
     qa_answer_compile = re.compile(u'(\s*(?:答|答案)(?::|：))', re.I)
 
     @classmethod
@@ -189,6 +205,7 @@ class ParseQuestion(object):
 
     @classmethod
     def find_qa_answer(cls, desc):
+        # 获得问答题 答案
         n_desc = []
         lines = desc.split("\n")
         if len(lines) == 1:
@@ -220,6 +237,25 @@ class ParseQuestion(object):
         return n_desc, answers
 
     @classmethod
+    def find_judge_answer(cls, desc):
+        _a_num = 1
+        answers = []
+
+        def _replace(m):
+            c = m.groups()[0]
+            if c in RIGHT_CS:
+                c = 'A'
+            else:
+                c = 'B'
+            answers.append(c)
+            return '( )'
+        n_desc, num = cls.j_answer_compile.subn(_replace, desc)
+        if num > _a_num:
+            raise RuntimeError("Answer num not match")
+
+        return n_desc, answers[0]
+
+    @classmethod
     def find_answer(cls, q_type, desc):
         pass
 
@@ -230,9 +266,9 @@ class ParseQuestion(object):
         for i in range(len(question_items)):
             question_items[i] = cls.equal_replace(question_items[i])
         q_no = question_items[0]
-        if select_mode in (None, 1):
+        if select_mode in (None, 1, 6):  # 1选择题 6 多选题
             i = cls.find_options_location(question_items[:])
-            if i < 0 and select_mode == 1:
+            if i < 0 and select_mode in (1, 6):
                 raise p_exc.QuestionTypeNotMatch(question_items,
                                                  '题型应该是选择题，未发现选项')
         else:
@@ -254,6 +290,13 @@ class ParseQuestion(object):
                 if len(answers) == 0:
                     raise p_exc.AnswerNotFound(question_items)
                 q.set_answer(answers)
+            elif embedded_answer and select_mode == 7:
+                # 判断题
+                q.q_type = QuestionType.Judge
+                options.A = u"正确"
+                options.B = u"错误"
+                n_desc, answer = cls.find_judge_answer(desc)
+                q.set_answer(answer)
             else:
                 n_desc, answers = cls.find_qa_answer(desc)
                 if len(answers) > 0:

@@ -29,7 +29,7 @@ class ListOption(object):
         if option_prefix:
             self.option_prefix = option_prefix
         else:
-            self.option_prefix = ["A", "B", "C", "D"]
+            self.option_prefix = ["A", "B", "C", "D", "E", "F"]
         for op in self.option_prefix:
             setattr(self, "_%s" % op, None)
 
@@ -81,7 +81,7 @@ class ListOption(object):
 
 
 class ParseOptions(object):
-    option_prefix = ["A", "B", "C", "D"]
+    option_prefix = ["A", "B", "C", "D", "E", "F"]
     following_chars = [".", u"、", u"．"]
     e_follow_chars = [re.escape(fc) for fc in following_chars]
 
