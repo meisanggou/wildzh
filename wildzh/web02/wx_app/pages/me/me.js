@@ -107,7 +107,7 @@ Page({
             data: data,
             success: res => {
                 var userItem = res.data.data
-                wx.setStorageSync(app.globalData.userInfoStorageKey, userItem)
+                app.getOrSetCurrentUserData(userItem);
                 that.setData({
                     userAvatar: userItem.avatar_url,
                     nickName: userItem.nick_name,

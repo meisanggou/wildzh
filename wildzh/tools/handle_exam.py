@@ -20,7 +20,7 @@ headers = {"User-Agent": "jyrequests"}
 req.headers = headers
 remote_host = "https://meisanggou.vicp.net"
 remote_host = "http://127.0.0.1:2400"
-remote_host = "https://wild.gene.ac"
+# remote_host = "https://wild.gene.ac"
 
 exec_file_dir, exec_file_name = os.path.split(os.path.abspath(__file__))
 EXE_WMF_TO_PNG = os.path.join(exec_file_dir, "Wmf2Png.exe")
@@ -385,10 +385,9 @@ if __name__ == "__main__":
     # exam_no = 1569283516  # 专升本经济学题库
     exam_no = 1570447137  # 专升本经济学题库 会员版
     # exam_no = 1575333741 # 专升本经济学题库 试用版
-    # exam_no = 1585396371  # 本地 测试题库2
+    exam_no = 1585396371  # 本地 测试题库2
     exam_no = 1594597891  # 专升本经济学题库 搜题版
-    # t_exam_no = 1591669814  # 本地 测试题库2-copy
-    # exam_no = 1573464937  # 英语托业
+
     # 538 + 319
     # 会员版 to 试用版
     # transfer_exam(1570447137, 4295, 4357, 1575333741)
@@ -402,7 +401,7 @@ if __name__ == "__main__":
     # d_path = os.path.join(upload_dir, '2020年经济学真题.docx')
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
-    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
+    s_kwargs = dict(exam_no=exam_no, dry_run=False, set_mode=False,
                     question_subject=0, # 0-微观经济学 1-宏观经济学 2-政治经济学
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)

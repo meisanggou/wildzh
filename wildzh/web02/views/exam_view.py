@@ -1225,6 +1225,7 @@ def export_question_to_word_admin():
     return send_file(save_path, as_attachment=True,
                      attachment_filename='%s.zip' % name)
 
+
 @exam_view.route('/question/feedback', methods=['GET'])
 @login_required
 @required_exam_no

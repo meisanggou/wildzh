@@ -38,6 +38,7 @@
                 <w:t>{{ exam_name }}</w:t>
             </w:r>
         </w:p>
+        {% for single_block in single_blocks %}
         <w:p w:rsidR="00550B8B" w:rsidRDefault="00550B8B" w:rsidP="00550B8B">
             <w:pPr>
                 <w:spacing w:beforeLines="50" w:before="156" w:afterLines="50" w:after="156"/>
@@ -192,7 +193,7 @@
                 </w:p>
           {% endif %}
         {% endfor %} {# 结束循环single_block.questions #}
-
+        {% endfor  %} {# 结束循环single_blocks #}
         {% for q_block in answer_blocks %}
         <w:p w:rsidR="00550B8B" w:rsidRDefault="00550B8B" w:rsidP="00550B8B">
             <w:pPr>

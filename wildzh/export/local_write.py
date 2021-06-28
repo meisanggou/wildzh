@@ -66,51 +66,64 @@ def download_file(path, upload_folder, save_dir, name):
     return save_path
 
 
-def get_single_answer(single_selected):
+def get_single_answer(choice_blocks):
     ss_paragraphs = [[]]
     ss_item = []
-    i = 0
-    for item in single_selected:
-        ss_item.append(item)
-        i += 1
-        if i % 5 == 0:
-            rp = '%s-%s %s  ' % (ss_item[0]['this_question_no'],
-                               ss_item[-1]['this_question_no'],
-                               ''.join([x['right_option'] for x in ss_item]))
-            ss_paragraphs[-1].append(rp)
-            if i % 20 == 0:
-                ss_paragraphs.append([])
-            ss_item = []
-    if ss_item:
-        rp = '%s-%s %s' % (ss_item[0]['this_question_no'],
-                           ss_item[-1]['this_question_no'],
-                           ''.join([x['right_option'] for x in ss_item]))
-        ss_paragraphs[-1].append(rp)
+    for c_block in choice_blocks:
+        i = 0
+        single_selected = c_block["questions"]
+        if c_block['mode'] == 1:  # 单选题
+            for item in single_selected:
+                ss_item.append(item)
+                i += 1
+                if i % 5 == 0:
+                    rp = '%s-%s %s  ' % (ss_item[0]['this_question_no'],
+                                       ss_item[-1]['this_question_no'],
+                                       ''.join([x['right_option'] for x in ss_item]))
+                    ss_paragraphs[-1].append(rp)
+                    if i % 20 == 0:
+                        ss_paragraphs.append([])
+                    ss_item = []
+            if ss_item:
+                rp = '%s-%s %s' % (ss_item[0]['this_question_no'],
+                                   ss_item[-1]['this_question_no'],
+                                   ''.join([x['right_option'] for x in ss_item]))
+                ss_paragraphs[-1].append(rp)
+            ss_paragraphs.append([])
+        else:  # 多选题
+            for item in single_selected:
+                p = '%s %s ' % (item['this_question_no'], item['right_option'])
+                ss_paragraphs[-1].append(p)
+                i += 1
+                if i % 5 == 0:
+                    ss_paragraphs.append([])
     ps = [docx_obj.ParagraphXmlObj(p).to_xml() for p in ss_paragraphs]
     return ps
 
 
-def get_single_answer_detail(single_selected):
+def get_single_answer_detail(choice_blocks):
     ss_paragraphs = []
-    for item in single_selected:
-        pa = '%s.%s' % (item['this_question_no'], item['right_option'])
-        ss_paragraphs.append(pa)
-        details = ['解析：']
-        details.extend(item['answer_rich'])
-        ss_paragraphs.append(details)
+    for c_block in choice_blocks:
+        single_selected = c_block["questions"]
+        for item in single_selected:
+            pa = '%s.%s' % (item['this_question_no'], item['right_option'])
+            ss_paragraphs.append(pa)
+            details = ['解析：']
+            details.extend(item['answer_rich'])
+            ss_paragraphs.append(details)
     ps = [docx_obj.ParagraphXmlObj(p).to_xml() for p in ss_paragraphs]
     return ps
 
 
-def get_alone_answers(single_selected, answer_blocks, answer_mode='alone'):
+def get_alone_answers(choice_blocks, answer_blocks, answer_mode='alone'):
     alone_answers = [docx_obj.ParagraphPageXmlObj().to_xml()]
 
     title_p = docx_obj.ParagraphXmlObj('答案', outline_level=1)
     alone_answers.append(title_p.to_xml())
     if answer_mode == 'alone':
-        ss_paragraphs = get_single_answer(single_selected)
+        ss_paragraphs = get_single_answer(choice_blocks)
     else:
-        ss_paragraphs = get_single_answer_detail(single_selected)
+        ss_paragraphs = get_single_answer_detail(choice_blocks)
     for s_paragraph in ss_paragraphs:
         alone_answers.append(s_paragraph)
 
@@ -126,6 +139,65 @@ def get_alone_answers(single_selected, answer_blocks, answer_mode='alone'):
     return alone_answers
 
 
+def _handle_rich_desc(rd_item, rid_c, rid_p):
+    if isinstance(rd_item, dict):
+        rid = "%s%s" % (rid_p, rid_c.value)
+        rd_item['rid'] = rid
+        rd_item['width'] = int(rd_item['width'] * 10000)
+        rd_item['height'] = int(rd_item['height'] * 10000)
+        rd_item['r_index'] = rid_c.value
+        r_name = '%s.%s' % (rid, rd_item['url'].rsplit('.', 1)[-1])
+        rd_item['name'] = r_name
+        rid_c.plus()
+        m_item = {'rid': rid, 'name': r_name, 'url': rd_item['url']}
+        return m_item
+
+
+def handle_choice_question(question, question_no, rid_c, rid_p):
+    medias = []
+    s_item = question
+    for _r_item in s_item['question_desc_rich']:
+        m_item = _handle_rich_desc(_r_item, rid_c, rid_p)
+        medias.append(m_item)
+    s_item['question_desc_rich'].insert(0, '%s.' % question_no)
+    s_item["this_question_no"] = question_no
+
+    max_score = -100
+    right_index = -1
+    right_option = ""
+    max_option_len = 0
+    for index in range(len(s_item["options"])):
+        item = s_item["options"][index]
+        o_len = 0
+        _ll = []
+        for dr_item in item['desc_rich']:
+            if isinstance(dr_item, dict):
+                o_len += dr_item['width'] / 10
+                m_item = _handle_rich_desc(dr_item, rid_c, rid_p)
+                medias.append(m_item)
+            else:
+                o_len += string_length(dr_item)
+        item['desc_rich'].insert(0, '%s.' % OPTION_MAPPING[index])
+        item['desc_rich'].extend(_ll)
+        if o_len > max_option_len:
+            max_option_len = o_len
+        if "score" not in item:
+            item["score"] = 0
+        if item['score'] >= 1:
+            right_option += OPTION_MAPPING[index]
+        if item["score"] > max_score:
+            max_score = item["score"]
+            right_index = index
+    if max_option_len <= 12:
+        s_item["option_style"] = "t_four"
+    elif max_option_len <= 28:
+        s_item["option_style"] = "t_two"
+    else:
+        s_item["option_style"] = "one"
+    s_item["right_option"] = right_option  # OPTION_MAPPING[right_index]
+    return s_item, medias
+
+
 def receive_data(question_items, select_modes, answer_mode):
     def _question_sort(a, b):
         # 按照政治经济学，微观经济学，宏观经济学排序
@@ -138,6 +210,7 @@ def receive_data(question_items, select_modes, answer_mode):
             return 0
         return a_i - b_i
 
+    choice_blocks = []
     single_selected = []
     current_sm = 0
     current_questions = []
@@ -147,27 +220,34 @@ def receive_data(question_items, select_modes, answer_mode):
         sm = q_item['select_mode']
         if sm <= 0:
             continue
-        if sm == 1:
-            single_selected.append(q_item)
+        # if sm == (1, 6):
+        #     single_selected.append(q_item)
+        # else:
+        if sm == current_sm:
+            current_questions.append(q_item)
         else:
-            if sm == current_sm:
-                current_questions.append(q_item)
+            if current_sm == 0 or current_sm >= len(select_modes):
+                pass
             else:
-                if current_sm == 0 or current_sm >= len(select_modes):
-                    pass
+                title = select_modes[current_sm]
+                block = {'title': title, 'questions': current_questions,
+                         'mode': current_sm}
+                if current_sm in (1, 6):
+                    choice_blocks.append(block)
                 else:
-                    title = select_modes[current_sm]
-                    answer_blocks.append({'title': title,
-                                          'questions': current_questions})
-                current_sm = sm
-                current_questions = [q_item]
+                    answer_blocks.append(block)
+            current_sm = sm
+            current_questions = [q_item]
     if current_sm == 0 or current_sm >= len(select_modes):
         pass
     else:
         title = select_modes[current_sm]
-        answer_blocks.append({'title': title,
-                              'questions': current_questions})
-    single_selected.sort(key=cmp_to_key(_question_sort))
+        block = {'title': title, 'questions': current_questions,
+                 'mode': current_sm}
+        if current_sm in (1, 6):
+            choice_blocks.append(block)
+        else:
+            answer_blocks.append(block)
 
     #  数据处理
     question_no = 1
@@ -175,65 +255,20 @@ def receive_data(question_items, select_modes, answer_mode):
     rid_p = 'rId'
     medias = []
     answer_medias = []
-
-    def _handle_rich_desc(rd_item, is_answer=False):
-        if isinstance(rd_item, dict):
-            rid = "%s%s" % (rid_p, rid_c.value)
-            rd_item['rid'] = rid
-            rd_item['width'] = int(rd_item['width'] * 10000)
-            rd_item['height'] = int(rd_item['height'] * 10000)
-            rd_item['r_index'] = rid_c.value
-            r_name = '%s.%s' % (rid, rd_item['url'].rsplit('.', 1)[-1])
-            rd_item['name'] = r_name
-            rid_c.plus()
-            m_item = {'rid': rid, 'name': r_name, 'url': rd_item['url']}
-            if is_answer:
-                answer_medias.append(m_item)
-            else:
-                medias.append(m_item)
-    for s_item in single_selected:
-        for _r_item in s_item['question_desc_rich']:
-            _handle_rich_desc(_r_item)
-        s_item['question_desc_rich'].insert(0, '%s.' % question_no)
-        s_item["this_question_no"] = question_no
-        question_no += 1
-        max_score = -100
-        right_index = -1
-        max_option_len = 0
-        for index in range(len(s_item["options"])):
-            item = s_item["options"][index]
-            o_len = 0
-            _ll = []
-            for dr_item in item['desc_rich']:
-                if isinstance(dr_item, dict):
-                    o_len += dr_item['width'] / 10
-                    _handle_rich_desc(dr_item)
-                else:
-                    o_len += string_length(dr_item)
-            item['desc_rich'].insert(0, '%s.' % OPTION_MAPPING[index])
-            item['desc_rich'].extend(_ll)
-            if o_len > max_option_len:
-                max_option_len = o_len
-            if "score" not in item:
-                item["score"] = 0
-            if item["score"] > max_score:
-                max_score = item["score"]
-                right_index = index
-        if max_option_len <= 12:
-            s_item["option_style"] = "t_four"
-        elif max_option_len <= 28:
-            s_item["option_style"] = "t_two"
-        else:
-            s_item["option_style"] = "one"
-        s_item["right_option"] = OPTION_MAPPING[right_index]
     block_index = 0
-    if single_selected:
-        b_title = '%s、%s（共%s题）' % (cn_num[0], select_modes[1],
-                                   len(single_selected))
-        single_block = {'title':  b_title, 'questions': single_selected}
+    for c_block in choice_blocks:
+        c_block['questions'].sort(key=cmp_to_key(_question_sort))
+        c_questions = c_block["questions"]
+        b_title = '%s、%s（共%s题）' % (cn_num[block_index], c_block["title"],
+                                   len(c_questions))
+        c_block['title'] = b_title
+        for s_item in c_questions:
+            _item, _medias = handle_choice_question(s_item, question_no,
+                                                    rid_c,  rid_p)
+            medias.extend(_medias)
+            question_no += 1
         block_index += 1
-    else:
-        single_block = None
+
 
     for q_block in answer_blocks:
         b_title = '%s、%s（共%s题）' % (cn_num[block_index], q_block["title"],
@@ -245,7 +280,8 @@ def receive_data(question_items, select_modes, answer_mode):
             q_item["this_question_no"] = question_no
             multi_question_desc = [['%s.' % question_no]]
             for _r_item in q_item['question_desc_rich']:
-                _handle_rich_desc(_r_item)
+                m_item = _handle_rich_desc(_r_item, rid_c, rid_p)
+                medias.append(m_item)
                 if not isinstance(_r_item, dict):
                     _items = _r_item.split('\n')
                     multi_question_desc[-1].append(_items[0])
@@ -256,7 +292,8 @@ def receive_data(question_items, select_modes, answer_mode):
 
             multi_answer_rich = [[]]
             for _r_item in q_item['answer_rich']:
-                _handle_rich_desc(_r_item, is_answer=True)
+                m_item = _handle_rich_desc(_r_item, rid_c, rid_p)
+                answer_medias.append(m_item)
                 if not isinstance(_r_item, dict):
                     _items = _r_item.split('\n')
                     multi_answer_rich[-1].append(_items[0])
@@ -269,11 +306,13 @@ def receive_data(question_items, select_modes, answer_mode):
 
             question_no += 1
     if answer_mode == 'alone' or answer_mode == 'alone_detail':
-        alone_answers = get_alone_answers(single_selected, answer_blocks,
+        alone_answers = get_alone_answers(choice_blocks, answer_blocks,
                                           answer_mode)
     else:
         alone_answers = []
-    r = {'single_block': single_block,
+    medias = [x for x in medias if x]
+    answer_medias = [x for x in answer_medias if x]
+    r = {'single_blocks': choice_blocks,
          'answer_blocks': answer_blocks,
          'option_mapping': OPTION_MAPPING,
          'medias': medias, 'answer_medias': answer_medias,
