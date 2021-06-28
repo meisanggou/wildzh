@@ -21,6 +21,11 @@
                     <label>推广信息：</label>
                     <textarea class="box-side width500" v-model.trim="ad_desc" type="text">
                     </textarea>
+                    <input type="file" @change="upload_pic" ref="filElem" placeholder="上传图片" accept="image/*" />
+                    <img id="img_new" :src="new_pic_url">
+                    <label>宽度</label>
+                    <input @change="change_pic_width" type="text" class="box-side width100" v-model.number="new_pic_width">
+                    <button @click="insert_pic">插入</button>
                 </li>
                 <li>
                     <label>推广间隔：</label>

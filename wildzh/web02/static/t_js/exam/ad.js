@@ -19,12 +19,15 @@ function init_info(data) {
 
 $(function () {
     var data_url = $("#data_url").val();
+    var upload_url= $("#upload_url").val();
     ad_vm = new Vue({
         el: "#myTabContent",
         data: {
             all_exams: [],
             current_exam_index: -1,
             ad_desc: "",
+            new_pic_url: "",
+            new_pic_width: 200,
             ignore_interval: 0,
             enabled: 0
         },
@@ -43,6 +46,43 @@ $(function () {
                         ad_vm.enabled = 0;
                     }
                 })
+            },
+            upload_pic: function(){
+                var u_files = this.$refs.filElem.files;
+                if(u_files.length <= 0){
+                    return 1;
+                }
+                var path = window.URL.createObjectURL(u_files[0]);
+                ad_vm.new_pic_url = path;
+                $("#img_new").css('width', this.new_pic_width + 'px');
+                return 0;
+            },
+            change_pic_width: function(){
+                if(this.new_pic_width < 10){
+                    this.new_pic_width = 10;
+                    //return 1;
+                }
+                if(this.new_pic_width > 250){
+                    this.new_pic_width = 250;
+                    //return 1;
+                }
+                $("#img_new").css('width', this.new_pic_width + 'px');
+            },
+            insert_pic: function(){
+                var u_files = this.$refs.filElem.files;
+                if(u_files.length <= 0){
+                    return 1;
+                }
+                var width = $("#img_new").css('width');
+                var height = $("#img_new").css('height');
+                width = width.substr(0, width.length - 2);
+                height = height.substr(0, height.length - 2);
+                var data = {"pic": u_files[0]};
+                upload_request(upload_url, "POST", data, function(data){
+                    ad_vm.new_pic_url = data["pic"];
+                    var pic_desc = '[[' + data['pic'] + ':' + width + ':' + height + ']]';
+                    ad_vm.ad_desc += pic_desc;
+                });
             },
             update: function () {
                 if (this.current_exam_index < 0) {
