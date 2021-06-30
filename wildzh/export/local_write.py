@@ -66,76 +66,23 @@ def download_file(path, upload_folder, save_dir, name):
     return save_path
 
 
-def get_single_answer(choice_blocks):
-    ss_paragraphs = [[]]
-    ss_item = []
-    for c_block in choice_blocks:
-        i = 0
-        single_selected = c_block["questions"]
-        if c_block['mode'] == 1:  # 单选题
-            for item in single_selected:
-                ss_item.append(item)
-                i += 1
-                if i % 5 == 0:
-                    rp = '%s-%s %s  ' % (ss_item[0]['this_question_no'],
-                                       ss_item[-1]['this_question_no'],
-                                       ''.join([x['right_option'] for x in ss_item]))
-                    ss_paragraphs[-1].append(rp)
-                    if i % 20 == 0:
-                        ss_paragraphs.append([])
-                    ss_item = []
-            if ss_item:
-                rp = '%s-%s %s' % (ss_item[0]['this_question_no'],
-                                   ss_item[-1]['this_question_no'],
-                                   ''.join([x['right_option'] for x in ss_item]))
-                ss_paragraphs[-1].append(rp)
-            ss_paragraphs.append([])
-        else:  # 多选题
-            for item in single_selected:
-                p = '%s %s ' % (item['this_question_no'], item['right_option'])
-                ss_paragraphs[-1].append(p)
-                i += 1
-                if i % 5 == 0:
-                    ss_paragraphs.append([])
-    ps = [docx_obj.ParagraphXmlObj(p).to_xml() for p in ss_paragraphs]
-    return ps
-
-
-def get_single_answer_detail(choice_blocks):
-    ss_paragraphs = []
-    for c_block in choice_blocks:
-        single_selected = c_block["questions"]
-        for item in single_selected:
-            pa = '%s.%s' % (item['this_question_no'], item['right_option'])
-            ss_paragraphs.append(pa)
-            details = ['解析：']
-            details.extend(item['answer_rich'])
-            ss_paragraphs.append(details)
-    ps = [docx_obj.ParagraphXmlObj(p).to_xml() for p in ss_paragraphs]
-    return ps
-
-
 def get_alone_answers(choice_blocks, answer_blocks, answer_mode='alone'):
     alone_answers = [docx_obj.ParagraphPageXmlObj().to_xml()]
 
     title_p = docx_obj.ParagraphXmlObj('答案', outline_level=1)
     alone_answers.append(title_p.to_xml())
-    if answer_mode == 'alone':
-        ss_paragraphs = get_single_answer(choice_blocks)
-    else:
-        ss_paragraphs = get_single_answer_detail(choice_blocks)
-    for s_paragraph in ss_paragraphs:
-        alone_answers.append(s_paragraph)
-
+    for c_block in choice_blocks:
+        alone_answers.extend(
+            docx_obj.BlockParent(
+                c_block['mode'],
+                c_block['questions'],
+                answer_mode).get_answers())
     for ab in answer_blocks:
-        for q_item in ab['questions']:
-            if q_item['multi_answer_rich']:
-                q_item['multi_answer_rich'][0].insert(
-                    0, '%s、' % q_item['this_question_no'])
-            for ar in q_item['multi_answer_rich']:
-                alone_answers.append(docx_obj.ParagraphXmlObj(
-                    ar).to_xml())
-
+        alone_answers.extend(
+            docx_obj.BlockParent(
+                ab['mode'],
+                ab['questions'],
+                answer_mode).get_answers())
     return alone_answers
 
 
@@ -211,7 +158,6 @@ def receive_data(question_items, select_modes, answer_mode):
         return a_i - b_i
 
     choice_blocks = []
-    single_selected = []
     current_sm = 0
     current_questions = []
     answer_blocks = []
@@ -220,9 +166,6 @@ def receive_data(question_items, select_modes, answer_mode):
         sm = q_item['select_mode']
         if sm <= 0:
             continue
-        # if sm == (1, 6):
-        #     single_selected.append(q_item)
-        # else:
         if sm == current_sm:
             current_questions.append(q_item)
         else:
