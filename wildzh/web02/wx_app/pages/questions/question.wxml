@@ -5,6 +5,17 @@
     </picker>
 </view>
 <view wx:else class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
+    <modal hidden="{{hiddenFeedback}}" title="问题反馈" confirm-text="反馈" cancel-text="取消" bindcancel="cancelFeedback"
+        bindconfirm="confirmFeedback">
+        <view class="feedback-type">
+            <picker range="{{fbTypes}}" value="{{fbTypeIndex}}" class="fd-type-picker" bindchange="feedbackTypeChange">
+                <text class="fb-type-k">问题类型：</text>
+                <text class="fb-type-v">{{ fbTypes[fbTypeIndex] }}</text>
+            </picker>
+        </view>
+        <textarea class="fb-desc" type='text' placeholder="" bindinput="feedbackDescInput" maxlength='100'
+            value="{{feedbackDesc}}"></textarea>
+    </modal>
     <form bindsubmit="updateQuestion">
         <view class='pageContent'>
             <view class='top'>
@@ -25,39 +36,47 @@
                 <view class="weui-cell weui-cell_input">
                     <!-- <view class="weui-label">{{nowQuestionIndex + 1}}.</view> -->
                     <view class="">
-                        <textarea auto-height="true" maxlength="65535" value="{{nowQuestion.question_desc}}" name="question_desc"></textarea>
+                        <textarea auto-height="true" maxlength="65535" value="{{nowQuestion.question_desc}}"
+                            name="question_desc"></textarea>
                     </view>
                 </view>
                 <!-- <view></view> -->
 
                 <view class='questionOption'>
-                    <view class='weui-cell weui-cell_input noChose' wx:for="{{nowQuestion.options}}" wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">
-                        <view class="weui-label">{{optionChar[idx]}}、</view>
-                        <view class="">
-                            <textarea auto-height="true" maxlength="65535" name="option_{{idx}}" value="{{item['desc']}}"></textarea>
-                        </view>
+                    <view class='weui-cell weui-cell_input noChose' wx:for="{{nowQuestion.options}}" wx:for-index="idx"
+                        data-choseitem="{{idx}}" wx:key="desc" bindtap="clickOption">
+                        <text>{{optionChar[idx]}}、</text>
+                        <text>{{item['desc']}}</text>
                     </view>
                 </view>
 
                 <view class="weui-cell weui-cell_input">
                     <view class="weui-label">科目：</view>
                     <view class="weui-input">
-                        <picker bindchange='pickerSubjectChange' range-key="name" range="{{subjects_array}}">{{ subject_name }}</picker>
+                        <picker bindchange='pickerSubjectChange' range-key="name" range="{{subjects_array}}">{{
+                            subject_name }}</picker>
                     </view>
                 </view>
                 <view wx-if="{{chapters.length}}" class="weui-cell weui-cell_input">
                     <view class="weui-label">章节：</view>
                     <view class="weui-input">
-                        <picker bindchange='changeChapter' range-key="name" range="{{chapters}}">{{ chapter_name }}</picker>
+                        <picker bindchange='changeChapter' range-key="name" range="{{chapters}}">{{ chapter_name }}
+                        </picker>
                     </view>
                 </view>
                 <view class="weui-cell weui-cell_input">
                     <view class="weui-label">答案：</view>
-                    <view class="weui-input">
-                        <picker bindchange='updateAnswerOption' range="{{tools.slice(optionChar,0,nowQuestion.options.length)}}">{{ optionChar[answerIndex] }}</picker>
+                    <view class='options'>
+                        <view class="{{nowQuestion.options[idx].score > 0 ? 'option-chose': 'option' }}" wx:for="{{nowQuestion.options}}" wx:for-index="idx"
+                        data-choseitem="{{idx}}" wx:key="desc" bindtap='clickAOption'>{{optionChar[idx]}}</view>
+                        <!-- <view class="option">B</view>
+                        <view class="option">C</view>
+                        <view class="option">D</view>
+                        <view class="option">E</view>
+                        <view class="option">F</view>
+                        <view class="option">G</view> -->
                     </view>
                 </view>
-
                 <view class="weui-cell weui-cell_input">
                     <view class="weui-label">标记：</view>
                     <view>
@@ -72,8 +91,9 @@
                     </view>
                 </view>
 
-                <view class='item'>解析：
-                    <textarea auto-height="true" maxlength="65535" placeholder="暂无解析" name="answer" value="{{nowQuestion.answer}}">
+                <view class=' item'>解析：
+                    <textarea auto-height="true" maxlength="65535" placeholder="暂无解析" name="answer"
+                        value="{{nowQuestion.answer}}">
                     </textarea>
                 </view>
 

@@ -25,7 +25,6 @@ Page({
         chapter_name: '',
         isReq: false,
         progressStorageKey: "",
-        answerIndex: null,
         subjects_array: [],
     },
 
@@ -281,6 +280,7 @@ Page({
                             questionItems[i]["question_subject"] = newItems[j]["question_subject"];
                             questionItems[i]["question_chapter"] = newItems[j]["question_chapter"];
                             questionItems[i]["inside_mark"] = newItems[j]["inside_mark"];
+                            questionItems[i]["multi"] = newItems[j]["multi"];
                             questionItems[i].forceUpdate = false;
                             break;
                         }
@@ -311,7 +311,6 @@ Page({
                 } else if (startIndex == that.data.nowQuestionIndex) {
                     // 如果当前请求的内容正好是当前显示的，需要重新更新一下答案显示。答案显示是拼出来的没和变量关联
                 }
-                console.info('eeeee')
                 that.setData({
                     isReq: false
                 })
@@ -482,13 +481,7 @@ Page({
         if (nowQuestion.question_subject == null) {
             nowQuestion.question_subject = 0;
         }
-        var answerIndex = null;
-        for (var i in nowQuestion.options) {
-            if (parseInt(nowQuestion.options[i]["score"]) > 0) {
-                answerIndex = i;
-                break;
-            }
-        }
+
         var subject_index = -1;
         for (var i = 0; i < this.data.subjects_array.length; i++) {
             if (this.data.subjects_array[i].value == nowQuestion.question_subject) {
@@ -498,8 +491,7 @@ Page({
         }
         this.setData({
             nowQuestion: nowQuestion,
-            nowQuestionIndex: index,
-            answerIndex: answerIndex
+            nowQuestionIndex: index
         })
         this.changeNowSubject(subject_index);
         this.setSkipNums(index + 1, questionItems.length);
@@ -559,23 +551,31 @@ Page({
             })
         }
     },
-    updateAnswerOption: function (event) {
-        var selected = event.detail.value;
+    clickOption: function(event){
+        var index = event.currentTarget.dataset.choseitem;
+        console.info(index);
         var nowQuestion = this.data.nowQuestion;
-        var options = nowQuestion.options;
-        var optLen = options.length;
-        for (var i = 0; i < optLen; i++) {
-            if (i == selected) {
-                if (parseInt(options[i]["score"]) > 0) {
-                    return false;
-                }
-                options[i]["score"] = 1;
-            } else {
-                options[i]["score"] = 0;
+        var opt_desc = nowQuestion.options[index].desc;
+        wx.showModal()
+    },
+    clickAOption: function(event){
+        var index = event.currentTarget.dataset.choseitem;
+        var nowQuestion = this.data.nowQuestion;
+        if(nowQuestion.multi){
+            if(nowQuestion.options[index].score > 0){
+                nowQuestion.options[index].score = 0
             }
+            else{
+                nowQuestion.options[index].score = 1
+            }
+        }else{
+            for(var i in nowQuestion.options){
+                nowQuestion.options[i].score = 0;
+            }
+            nowQuestion.options[index].score = 1;
         }
         this.setData({
-            answerIndex: selected
+            ['nowQuestion.options']: nowQuestion.options
         })
     },
     updateAnswer: function () {},

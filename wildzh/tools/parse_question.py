@@ -3,6 +3,7 @@
 
 import collections
 import json
+import os
 import re
 import sys
 
@@ -253,7 +254,7 @@ class ParseQuestion(object):
         if num > _a_num:
             raise RuntimeError("Answer num not match")
 
-        return n_desc, answers[0]
+        return n_desc, answers
 
     @classmethod
     def find_answer(cls, q_type, desc):
@@ -295,8 +296,9 @@ class ParseQuestion(object):
                 q.q_type = QuestionType.Judge
                 options.A = u"正确"
                 options.B = u"错误"
-                n_desc, answer = cls.find_judge_answer(desc)
-                q.set_answer(answer)
+                n_desc, answers = cls.find_judge_answer(desc)
+                if answers:
+                    q.set_answer(answers[0])
             else:
                 n_desc, answers = cls.find_qa_answer(desc)
                 if len(answers) > 0:
@@ -344,6 +346,9 @@ class QuestionSet(object):
 
     def __init__(self, exam_no=None, dry_run=True, **kwargs):
         # self.has_answer = kwargs.pop('has_answer', True)
+        self.file_path = kwargs.pop('file_path')
+        self._file_name = os.path.basename(self.file_path).rsplit('.', 1)[0] \
+            if self.file_path else ''
         self.default_select_mode = kwargs.pop('default_sm', None)
         self.set_source = kwargs.pop('set_source', False)
         self.set_mode = kwargs.pop('set_mode', False)
@@ -356,6 +361,8 @@ class QuestionSet(object):
         self._s = collections.OrderedDict()
         self.question_subject = kwargs.pop('question_subject', 0)  # 0-微观经济学 1-宏观经济学 2-政治经济学
         self.inside_mark_prefix = kwargs.pop('inside_mark_prefix', '')
+        self.inside_mark_fmt = kwargs.pop('inside_mark_fmt', None)
+        self._inside_mark_fmt_default = '%(file_name)s %(question_no)s'
         # self._select_mode_s = dict()
 
     @property
@@ -370,12 +377,15 @@ class QuestionSet(object):
             self.set_inside_mark(item)
 
     def set_inside_mark(self, question):
-        if not self.exam_name:
+        if not self.exam_name and not self.inside_mark_fmt:
             return
-        ms = [self.exam_name, '%s' % question.no]
+        kwargs = {'exam_name': self.exam_name, 'question_no': question.no,
+                  'file_name': self._file_name}
+        fmt = self.inside_mark_fmt or self._inside_mark_fmt_default
+        mark = fmt % kwargs
         if self.inside_mark_prefix:
-            ms.insert(0, self.inside_mark_prefix)
-        question.inside_mark = ' '.join(ms)
+            mark = '%s %s' % (self.inside_mark_prefix, mark)
+        question.inside_mark = mark
 
     def _add(self, question):
         self._s[question.select_mode][question.no] = question

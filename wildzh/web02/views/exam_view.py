@@ -866,7 +866,7 @@ def upload_question_file():
     else:
         al = AnswerLocation.embedded()
     s_kwargs = dict(dry_run=True, set_mode=False,
-                    answer_location=al)
+                    answer_location=al, file_path=docx_path)
     q_set = QuestionSet(**s_kwargs)
 
     with DocxObject(docx_path, exit_delete=True) as do:

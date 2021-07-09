@@ -48,6 +48,9 @@ Page({
                 that.setData({
                     errorMsg: '网络连接异常，请检查网络！'
                 })
+                setTimeout(function () {
+                    that.onShow();
+                }, 1500);
                 return;
             }
             if(res.data.status != true){

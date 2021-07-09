@@ -18,9 +18,9 @@ __author__ = 'zhouhenglc'
 req = requests.session()
 headers = {"User-Agent": "jyrequests"}
 req.headers = headers
-remote_host = "https://meisanggou.vicp.net"
-remote_host = "http://127.0.0.1:2400"
-# remote_host = "https://wild.gene.ac"
+
+# remote_host = "http://127.0.0.1:2400"
+remote_host = "https://wild.gene.ac"
 
 exec_file_dir, exec_file_name = os.path.split(os.path.abspath(__file__))
 EXE_WMF_TO_PNG = os.path.join(exec_file_dir, "Wmf2Png.exe")
@@ -89,6 +89,15 @@ def post_questions(questions_set):
     url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
     question_no = next_no
     print(questions_set.set_source)
+    # 正式上传前 必须 先dry_run
+    drt_path = '%s.dry_run' % os.path.basename(questions_set.file_path)
+    if questions_set.dry_run:
+        with open(drt_path, 'w') as w:
+            w.write('')
+    else:
+        if not os.path.exists(drt_path):
+            raise RuntimeError('Please dry_run first')
+        os.remove(drt_path)
     for q_item in questions_set:
         q_item_d = q_item.to_exam_dict()
         q_item_d["question_no"] = question_no
@@ -179,8 +188,9 @@ def upload_media(r_id, rl, width, height, cache_rl, clip_data=None,
                      real_upload=real_upload, freq=freq)
 
 
-def handle_exam_no_answer(file_path, questions_set):
+def handle_exam_no_answer(questions_set):
     uploaded_q_rl = dict()
+    file_path = questions_set.file_path
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     print("start handle %s" % exam_name)
     # questions_set.exam_name = exam_name
@@ -217,7 +227,7 @@ def handle_exam_with_answer(file_path, questions_set):
     uploaded_aw_rl = dict()
     uploaded_q_rl = dict()
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
-    print(file_path)
+    print(questions_set.file_path)
     answer_file = file_path.replace(".docx", u"答案.docx")
     if os.path.exists(answer_file) is False:
         msg = ("Ignore %s, not Answer" % file_path)
@@ -263,7 +273,7 @@ def handle_exam(file_path, question_set):
     if question_set.answer_location.IAmFile:
         handle_exam_with_answer(file_path, question_set)
     else:
-        handle_exam_no_answer(file_path, question_set)
+        handle_exam_no_answer(question_set)
 
 
 def upload_js_no_answer(exam_no, file_path, questions_set):
@@ -401,14 +411,15 @@ if __name__ == "__main__":
     # d_path = os.path.join(upload_dir, '2020年经济学真题.docx')
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
-    s_kwargs = dict(exam_no=exam_no, dry_run=False, set_mode=False,
+    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
+                    file_path=d_path,
                     question_subject=0, # 0-微观经济学 1-宏观经济学 2-政治经济学
                     answer_location=AnswerLocation.embedded(),
                     set_keys=keys)
     # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
     # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
-    # s_kwargs['exam_name'] = '2021年经济学真题'  # 设置题目来源 一般真题需要设置
-    # s_kwargs['inside_mark_prefix'] = '马工程课后思考题'
+    # s_kwargs['exam_name'] = '2015年经济学真题'  # 设置题目来源 一般真题需要设置
+    # s_kwargs['inside_mark_prefix'] = '2006年经济学真题多选判断'
     q_set = QuestionSet(**s_kwargs)
     # d = r'D:/Project/word/app/upload'
     # download_questions(1569283516, 2)
