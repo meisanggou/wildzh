@@ -147,6 +147,14 @@ def replace_media(text, q_rl, cache_rl, real_upload):
             # 需要裁剪
             left, top, right, bottom = r_item[4][1:].split("|")
             clip_data = [left, top, right, bottom]
+            # 需要裁剪
+            for i in range(4):
+                if clip_data[i] == "":
+                    clip_data[i] = 0
+                elif clip_data[i].startswith("-"):
+                    clip_data[i] = 0
+                else:
+                    clip_data[i] = float(clip_data[i]) / 1000.0
         r_url = upload_media(m_id, q_rl, width, height, cache_rl, clip_data, real_upload)
         text = text.replace(r_t, "[[%s:%s:%s]]" % (r_url, width, height))
     return text
@@ -165,13 +173,6 @@ def upload_media(r_id, rl, width, height, cache_rl, clip_data=None,
         png_file = wmf_2_png(rl[r_id], width, height)
     if clip_data is not None:
         # 需要裁剪
-        for i in range(4):
-            if clip_data[i] == "":
-                clip_data[i] = 0
-            elif clip_data[i].startswith("-"):
-                clip_data[i] = 0
-            else:
-                clip_data[i] = float(clip_data[i]) / 1000.0
         png_file = _clip_pic(png_file, clip_data)
     if not real_upload:
         return "/dummy/%s" % r_id

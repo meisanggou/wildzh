@@ -79,7 +79,6 @@ class ListOption(object):
         return self.to_list().__str__()
 
 
-
 class ParseOptions(object):
     option_prefix = ["A", "B", "C", "D", "E", "F"]
     following_chars = [".", u"、", u"．"]

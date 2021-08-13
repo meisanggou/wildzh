@@ -25,14 +25,12 @@
             "disablePlugins": [],
             "outputPath": ""
         },
-        "bundle": false,
         "useIsolateContext": true,
-        "useCompilerModule": false,
-        "userConfirmedUseCompilerModuleSwitch": false,
         "userConfirmedBundleSwitch": false,
         "packNpmManually": false,
         "packNpmRelationList": [],
-        "minifyWXSS": true
+        "minifyWXSS": true,
+        "showES6CompileOption": false
     },
     "compileType": "miniprogram",
     "libVersion": "2.16.0",

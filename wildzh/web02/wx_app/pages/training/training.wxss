@@ -189,6 +189,7 @@ page{
   background-color: white;
   width: 100%;
 }
+
 .view-tag {
   margin-top: 15rpx;
   margin-bottom: 15rpx;

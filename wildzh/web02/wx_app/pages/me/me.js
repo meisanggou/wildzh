@@ -37,7 +37,6 @@ Page({
 
         this.loadCacheUserInfo()
 
-        // this.initAD();
         if ('share_token' in options) {
             var st = options['share_token'];
             this.receiveShare(st);

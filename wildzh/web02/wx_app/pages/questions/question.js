@@ -6,6 +6,8 @@ var touchStartX = 0; //触摸时的原点
 var touchStartY = 0;
 var touchInterval = null;
 var questionItems;
+var gContentChanged = false; // 内容是否有变动，未提交
+var modalContent = ''; // 保存弹出窗 输入的内容
 var com = require("../common/common.js");
 Page({
     data: {
@@ -18,6 +20,10 @@ Page({
         examName: "",
         questionNum: 0,
         nowQuestionIndex: 0,
+        hiddenModal: true,
+        modalTitle: '更新',
+        modalPoint: -1, // -1更新题目 0 选项A 1选项B ...
+        modalContent: '',
         questionAnswer: new Array(),
         nowQuestion: null,
         subject_name: "",
@@ -286,14 +292,14 @@ Page({
                         }
                     }
                 }
-                if(newItems.length <= 0){
+                if (newItems.length <= 0) {
                     wx.showModal({
                         title: '异常',
                         content: "未获得题目信息，请稍后重试！",
                         showCancel: false,
                         success(res) {
                             wx.navigateBack({
-                              delta: 1,
+                                delta: 1,
                             })
                         }
                     })
@@ -327,9 +333,7 @@ Page({
         })
     },
     after: function (afterNum) {
-        var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
-        var questionLen = questionItems.length;
         var nextIndex = nowQuestionIndex + afterNum;
         if (nowQuestionIndex >= questionItems.length - 1) {
             // 判断是否当前是否是最后一题
@@ -343,25 +347,26 @@ Page({
         if (nextIndex >= questionItems.length) {
             nextIndex = questionItems.length - 1;
         }
-        if ("options" in questionItems[nextIndex]) {
-            //已经获取内容
-            var nowQuestion = questionItems[nextIndex];
-            that.changeNowQuestion(nextIndex);
-            // 判断紧接着10条是否都已预获取数据
-            for (var i = 1; i < 11 && nextIndex + i < questionLen; i++) {
-                if (!("options" in questionItems[nextIndex + i])) {
-                    that.reqQuestion(nextIndex + i);
-                    break;
-                }
-            }
-        } else {
-            // 没有获取内容
-            wx.showLoading({
-                title: '加载中...',
-                mask: true
-            })
-            that.reqQuestion(nextIndex, true)
-        }
+        this.changeNowQuestion(nextIndex);
+        // if ("options" in questionItems[nextIndex]) {
+        //     //已经获取内容
+        //     var nowQuestion = questionItems[nextIndex];
+        //     that.changeNowQuestion(nextIndex);
+        //     // 判断紧接着10条是否都已预获取数据
+        //     for (var i = 1; i < 11 && nextIndex + i < questionLen; i++) {
+        //         if (!("options" in questionItems[nextIndex + i])) {
+        //             that.reqQuestion(nextIndex + i);
+        //             break;
+        //         }
+        //     }
+        // } else {
+        //     // 没有获取内容
+        //     wx.showLoading({
+        //         title: '加载中...',
+        //         mask: true
+        //     })
+        //     that.reqQuestion(nextIndex, true)
+        // }
     },
     after1: function () {
         that.after(1);
@@ -371,7 +376,6 @@ Page({
         that.after(10);
     },
     before: function (preNum) {
-        var nowQuestion = that.data.nowQuestion;
         var nowQuestionIndex = that.data.nowQuestionIndex;
         var preIndex = nowQuestionIndex - preNum;
         if (nowQuestionIndex <= 0) {
@@ -386,24 +390,24 @@ Page({
         if (preIndex <= 0) {
             preIndex = 0;
         }
-        if ("options" in questionItems[preIndex]) {
-            //已经获取内容
-            that.changeNowQuestion(preIndex);
-        } else {
-            // 没有获取内容
-            wx.showLoading({
-                title: '加载中...',
-                mask: true
-            })
-            that.reqQuestion(preIndex, true, -13)
-        }
+        this.changeNowQuestion(preIndex);
+        // if ("options" in questionItems[preIndex]) {
+        //     //已经获取内容
+        //     that.changeNowQuestion(preIndex);
+        // } else {
+        //     // 没有获取内容
+        //     wx.showLoading({
+        //         title: '加载中...',
+        //         mask: true
+        //     })
+        //     that.reqQuestion(preIndex, true, -13)
+        // }
 
     },
     before1: function () {
         that.before(1)
 
     },
-
     before10: function () {
         that.before(10)
     },
@@ -466,6 +470,20 @@ Page({
         this.changeNowQuestion(this.data.skipNums[index] - 1);
     },
     changeNowQuestion: function (index) {
+        if (gContentChanged) {
+            var that = this;
+            wx.showModal({
+                title: '确认跳转',
+                content: '当前题目有更新未提交，确认切换题目吗？',
+                success: function (res) {
+                    if (res.confirm) {
+                        gContentChanged = false;
+                        that.changeNowQuestion(index);
+                    }
+                }
+            })
+            return;
+        }
         var nowQuestion = questionItems[index];
         if ("options" in nowQuestion) {
             //已经获取内容
@@ -526,17 +544,19 @@ Page({
             nowQuestion.question_chapter = null;
             nowQuestion.question_subject = null;
         }
-        console.info(chapter_name);
+
         this.setData({
             nowQuestion: nowQuestion,
             subject_name: subject_name,
             chapters: chapters,
             chapter_name: chapter_name
         })
+
     },
     pickerSubjectChange: function (event) {
         var selected = event.detail.value;
         this.changeNowSubject(selected);
+        gContentChanged = true;
     },
     changeChapter: function (event) {
         var selected = event.detail.value;
@@ -550,26 +570,43 @@ Page({
                 chapter_name: chapter_name
             })
         }
+        gContentChanged = true;
     },
-    clickOption: function(event){
-        var index = event.currentTarget.dataset.choseitem;
-        console.info(index);
+    clickOption: function (event) {
+        var index = parseInt(event.currentTarget.dataset.choseitem);
+
         var nowQuestion = this.data.nowQuestion;
-        var opt_desc = nowQuestion.options[index].desc;
-        wx.showModal()
+        var modalTitile = '更新'
+        var content = '';
+        if (index == -2) {
+            content = nowQuestion.answer;
+            modalTitile += '答案解析'
+        } else if (index == -1) {
+            content = nowQuestion.question_desc;
+            modalTitile += '题目描述'
+        } else {
+            content = nowQuestion.options[index].desc;
+            modalTitile += '选项 ' + this.data.optionChar[index];
+        }
+        this.setData({
+            modalPoint: index,
+            hiddenModal: false,
+            modalContent: content,
+            modalTitle: modalTitile
+        })
+        modalContent = content;
     },
-    clickAOption: function(event){
+    clickAOption: function (event) {
         var index = event.currentTarget.dataset.choseitem;
         var nowQuestion = this.data.nowQuestion;
-        if(nowQuestion.multi){
-            if(nowQuestion.options[index].score > 0){
+        if (nowQuestion.multi) {
+            if (nowQuestion.options[index].score > 0) {
                 nowQuestion.options[index].score = 0
-            }
-            else{
+            } else {
                 nowQuestion.options[index].score = 1
             }
-        }else{
-            for(var i in nowQuestion.options){
+        } else {
+            for (var i in nowQuestion.options) {
                 nowQuestion.options[i].score = 0;
             }
             nowQuestion.options[index].score = 1;
@@ -577,24 +614,79 @@ Page({
         this.setData({
             ['nowQuestion.options']: nowQuestion.options
         })
+        gContentChanged = true;
+    },
+    inputModal: function (e) {
+        modalContent = e.detail.value;
+    },
+    confirmModal: function () {
+        this.setData({
+            hiddenModal: true
+        })
+        if (this.data.modalContent == modalContent) {
+            return false;
+        }
+        var key = '';
+        var maxLen = 0;
+        var desc = '';
+        if (this.data.modalPoint == -2) {
+            key = 'nowQuestion.answer';
+            maxLen = 25000;
+            desc = '答案解释';
+        } else if (this.data.modalPoint == -1) {
+            key = 'nowQuestion.question_desc';
+            maxLen = 1500;
+            desc = '题目描述';
+        } else if (this.data.modalPoint >= 0) {
+            key = 'nowQuestion.options[' + this.data.modalPoint + '].desc';
+            maxLen = 2000;
+            desc = '选项' + this.data.optionChar[this.data.modalPoint];
+        } else {
+            // 无效的modalPoint
+            console.error('无效的modalPoint ' + this.data.modalPoint);
+            return false;
+        }
+        if (modalContent.length == 0) {
+            wx.showToast({
+                icon: 'error',
+                title: '请输入' + desc,
+            })
+            this.setData({
+                hiddenModal: false
+            })
+            return false;
+        }
+        if (modalContent.length > maxLen) {
+            wx.showToast({
+                icon: 'error',
+                title: desc + '长度过长',
+            })
+            this.setData({
+                hiddenModal: false
+            })
+            return false;
+        }
+        this.setData({
+            [key]: modalContent
+        })
+        gContentChanged = true;
+
+    },
+    cancelModal: function () {
+        this.setData({
+            hiddenModal: true
+        })
     },
     updateAnswer: function () {},
 
     updateQuestion: function (e) {
         var nowQuestion = this.data.nowQuestion;
         var uData = new Object();
-        var pData = e.detail.value;
         uData.question_no = nowQuestion.question_no;
-        if (pData.question_desc != nowQuestion.question_desc) {
-            uData.question_desc = pData.question_desc;
-        }
-        if (pData.answer != nowQuestion.answer) {
-            uData.answer = pData.answer;
-        }
+        uData.question_desc = nowQuestion.question_desc;
+        uData.answer = nowQuestion.answer;
         uData.options = nowQuestion.options;
-        for (var i = 0; i < uData.options.length; i++) {
-            uData.options[i].desc = pData["option_" + i]
-        }
+
         uData.question_subject = nowQuestion.question_subject;
         uData.question_chapter = nowQuestion.question_chapter
         nowQuestion.forceUpdate = true;
@@ -608,6 +700,7 @@ Page({
                 if (res.data.status == false) {
                     return;
                 }
+                gContentChanged = false;
                 wx.showToast({
                     title: "更新成功",
                     icon: "none",
