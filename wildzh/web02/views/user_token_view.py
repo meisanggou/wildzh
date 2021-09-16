@@ -1,5 +1,6 @@
 # !/usr/bin/env python
 # coding: utf-8
+from flask import g
 from flask import request
 
 from zh_config import db_conf_path
@@ -33,7 +34,7 @@ def gen_token():
     password = data['password']
     # 校验账户名和密码
     c_user = token_view.get_handler('user')
-    code, item = c_user.user_confirm(password, user=user_name)
+    code, item = c_user.user_confirm(g.session, password, user=user_name)
     if code != 0:
         extra_data = {'code': code}
         return {'status': False, 'data': '账户名不存在或者密码不正确',
