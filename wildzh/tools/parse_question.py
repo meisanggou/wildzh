@@ -415,11 +415,12 @@ class QuestionSet(object):
             self.set_inside_mark(item)
 
     def set_inside_mark(self, question):
-        if not self.exam_name and not self.inside_mark_fmt:
+        fmt = self.inside_mark_fmt or self._inside_mark_fmt_default
+        if not self.exam_name and not fmt:
             return
         kwargs = {'exam_name': self.exam_name, 'question_no': question.no,
                   'file_name': self._file_name}
-        fmt = self.inside_mark_fmt or self._inside_mark_fmt_default
+
         mark = fmt % kwargs
         if self.inside_mark_prefix:
             mark = '%s %s' % (self.inside_mark_prefix, mark)

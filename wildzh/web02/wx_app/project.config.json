@@ -17,8 +17,8 @@
         "checkInvalidKey": true,
         "checkSiteMap": true,
         "uploadWithSourceMap": true,
-        "useMultiFrameRuntime": true,
-        "useApiHook": true,
+        "useMultiFrameRuntime": false,
+        "useApiHook": false,
         "useApiHostProcess": false,
         "babelSetting": {
             "ignore": [],

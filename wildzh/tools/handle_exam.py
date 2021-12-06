@@ -395,8 +395,8 @@ if __name__ == "__main__":
     exam_no = 1567506833  # 测试包含图片
     # exam_no = 1569283516  # 专升本经济学题库
     exam_no = 1570447137  # 专升本经济学题库 会员版
-    # exam_no = 1575333741 # 专升本经济学题库 试用版
-    exam_no = 1585396371  # 本地 测试题库2
+    exam_no = 1575333741 # 专升本经济学题库 试用版
+    # exam_no = 1585396371  # 本地 测试题库2
     exam_no = 1594597891  # 专升本经济学题库 搜题版
 
     # 538 + 319
@@ -419,8 +419,8 @@ if __name__ == "__main__":
                     set_keys=keys)
     # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
     # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
-    # s_kwargs['exam_name'] = '2015年经济学真题'  # 设置题目来源 一般真题需要设置
-    # s_kwargs['inside_mark_prefix'] = '2006年经济学真题多选判断'
+    # s_kwargs['exam_name'] = '2008年经济学真题'  # 设置题目来源 一般真题需要设置
+    # s_kwargs['inside_mark_prefix'] = '2008年经济学真题多选判断'
     q_set = QuestionSet(**s_kwargs)
     # d = r'D:/Project/word/app/upload'
     # download_questions(1569283516, 2)
