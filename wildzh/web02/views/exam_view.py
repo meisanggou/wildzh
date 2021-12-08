@@ -582,9 +582,11 @@ def sync_one_question(exam_no, q_item, update=False):
     if q_item['select_mode'] == 0:
         options = '\n'.join([o['desc'] for o in q_item['options']])
     if update:
-        c_exam_es.update_one_item(doc_id, exam_no, desc, options, answer)
+        c_exam_es.update_one_item(doc_id, exam_no, desc, options, answer,
+                                  q_item['select_mode'])
     else:
-        c_exam_es.add_one_item(doc_id, exam_no, desc, options, answer)
+        c_exam_es.add_one_item(doc_id, exam_no, desc, options, answer,
+                               q_item['select_mode'])
 
 
 @exam_view.route("/questions/", methods=["POST"])
@@ -969,6 +971,8 @@ def query2_question_items():
                       'options': item['options'],
                       'answer': item['answer'],
                       'score': item['score']}
+            if 'sm' in item and item['sm'] is not None:
+                q_item['select_mode'] = item['sm']
             if item['score'] > c_score:
                 c_score = item['score']
             current.append(q_item)

@@ -66,8 +66,10 @@ class ExamEs(object):
         res = self.es_man.update(self.index, doc_id, doc)
         return res
 
-    def update_one_item(self, doc_id, exam_no, desc, options, answer):
-        body = {'desc': desc, 'options': options, 'answer': answer}
+    def update_one_item(self, doc_id, exam_no, desc, options, answer,
+                        select_mode=None):
+        body = {'desc': desc, 'options': options, 'answer': answer,
+                'sm': select_mode}
         try:
             res = self.update_one(doc_id, body)
         except NotFoundError:
@@ -75,9 +77,10 @@ class ExamEs(object):
             res = self.add_one(doc_id, body)
         return res
 
-    def add_one_item(self, doc_id, exam_no, desc, options, answer):
+    def add_one_item(self, doc_id, exam_no, desc, options, answer,
+                     select_mode=None):
         body = {'exam_no': exam_no, 'desc': desc, 'options': options,
-                'answer': answer}
+                'answer': answer, 'sm': select_mode}
         return self.add_one(doc_id, body)
 
     def exists(self, doc_id):

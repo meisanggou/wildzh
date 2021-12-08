@@ -73,6 +73,7 @@ Page({
           }
           for (var i = 0; i < items.length; i++) {
             var item = items[i];
+            console.info(item);
             item['text'] = that.replaceImg(item['question_desc']);
             item['value'] = item['question_no'];
           }
