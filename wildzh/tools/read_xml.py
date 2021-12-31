@@ -7,17 +7,21 @@ import pdb
 import re
 # from win32com import client as wc
 import xml.dom.minidom as minidom
+from wildzh.tools.parse.answer import Answer
 from wildzh.tools.parse_exception import QuestionTypeNotMatch
 from wildzh.tools.parse_question import ParseQuestion, QuestionType
-from wildzh.tools.parse_question import AnswerSet, ParseAnswer, AnswerLocation
+from wildzh.tools.parse_question import AnswerSet, AnswerLocation
 
 # reload(sys)
 # sys.setdefaultencoding('utf8')
 
 
 Q_TYPE_COMP = re.compile(u"((一|二|三|四|五|六)[、.]|^)(单选|单项|选择|多选|多选题|名词解释|简答|简答题|计算|计算题|论述|论述题|判断|判断题)")
-S_ANSWER_COMP = re.compile(r"(\d+)(?:-|—)(\d+)([a-d]+)", re.I)
-S_ANSWER_COMP2 = re.compile(r"(?:\s|^)(\d+)([a-d](?:\s|$))", re.I)
+S_ANSWER_COMP = re.compile(r"(\d+)(?:-|—)(\d+)([a-d]+)", re.I)  #  单选题 答案格式 1-5ADBCD
+S_ANSWER_COMP2 = re.compile(r"(?:\s|^)(\d+)([a-d](?:\s|$))", re.I)  #  单选题 答案格式 1A 2B
+S_ANSWER_COMP3 = re.compile(r"(?:\s|^)(\d+)(?:\.|、)([a-f]+(?:\s|$))", re.I)  #  单多题 答案格式 1.ABC 2、BE 3AB
+S_ANSWER_COMP4 = re.compile(r"(\d+)(?:-|—)(\d+)([×√]+)", re.I)  #  判断题 答案格式 1-5×√×√√
+S_ANSWER_COMP5 = re.compile(r"(?:\s|^)(\d+)([×√](?:\s|$))", re.I)  #  判断题 答案格式 1× 2√
 G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题", "多选题", "判断题"]
 
 
@@ -28,7 +32,7 @@ def get_select_mode(content):
     s = fr[0][2]
     if s in G_SELECT_MODE:
         return G_SELECT_MODE.index(s)
-    if s in (u"单选", u"单选题", u"单项"):
+    if s in (u"单选", u"单选题", u"单项", "选择"):
         return 1
     if s in (u"名词解释", u"名词"):
         return 2
@@ -244,7 +248,7 @@ def handle_docx_main_xml(docx_obj, *args, **kwargs):
     return questions_set
 
 
-def get_answers(answer_items, parse_answer):
+def get_answers(q_type, answer_items):
     aw_dict = []
     for a_item in answer_items:
         sp_items = S_ANSWER_COMP.findall(a_item)
@@ -255,18 +259,45 @@ def get_answers(answer_items, parse_answer):
             for i in range(i_start, i_end + 1):
                 if i in aw_dict:
                     raise RuntimeError("repeated answers %s" % i)
-                a = parse_answer.parse(answers[i - i_start])
+                a = Answer.parse(q_type, answers[i - i_start])
                 a.no = i
                 aw_dict.append(a)
         sp_items2 = S_ANSWER_COMP2.findall(a_item)
         for no, answer in sp_items2:
-            a = parse_answer.parse(answer)
+            a = Answer.parse(q_type, answer)
+            a.no = int(no)
+            aw_dict.append(a)
+        sp_items3 = S_ANSWER_COMP3.findall(a_item)
+        for no, answer in sp_items3:
+            a = Answer.parse(q_type, answer)
             a.no = int(no)
             aw_dict.append(a)
     return aw_dict
 
 
-def get_qa_answers(answer_items, parse_answer):
+def get_judge_answers(q_type, answer_items):
+    aw_dict = []
+    for a_item in answer_items:
+        sp_items = S_ANSWER_COMP4.findall(a_item)
+        for start, end, answers in sp_items:
+            i_start, i_end = int(start), int(end)
+            if len(answers) != i_end - i_start + 1:
+                raise RuntimeError("not right format: %s-%s%s" % (start, end, answers))
+            for i in range(i_start, i_end + 1):
+                if i in aw_dict:
+                    raise RuntimeError("repeated answers %s" % i)
+                a = Answer.parse(q_type, answers[i - i_start])
+                a.no = i
+                aw_dict.append(a)
+        sp_items2 = S_ANSWER_COMP5.findall(a_item)
+        for no, answer in sp_items2:
+            a = Answer.parse(q_type, answer)
+            a.no = int(no)
+            aw_dict.append(a)
+    return aw_dict
+
+
+def get_qa_answers(q_type, answer_items):
     aw_dict = []
     qa_aw_comp = re.compile(r"^(\d+)(.|、|．)([\s\S]*)")
     current_no = -1
@@ -289,7 +320,7 @@ def get_qa_answers(answer_items, parse_answer):
             if current_no != -1:
                 if current_no in aw_dict:
                     raise RuntimeError("repeated answers %s" % current_no)
-                a = parse_answer.parse(current_answer)
+                a = Answer.parse(q_type, current_answer)
                 a.no = current_no
                 aw_dict.append(a)
             current_no = next_no
@@ -297,7 +328,7 @@ def get_qa_answers(answer_items, parse_answer):
         else:
             current_answer += "\n" + item
     if current_no != -1:
-        a = parse_answer.parse(current_answer)
+        a = Answer.parse(q_type, current_answer)
         a.no = current_no
         aw_dict.append(a)
     return aw_dict
@@ -315,13 +346,14 @@ def handle_answers_docx_main_xml(docx_obj, questions_set):
         if current_q_type < 0:
             return
 
-        p_answer = ParseAnswer(current_q_type)
-        if current_q_type == 1:
+        if current_q_type in (1, 6):
             # 获取选择题答案
-            sub_aw = get_answers(current_answers_area, p_answer)
-
+            sub_aw = get_answers(current_q_type, current_answers_area)
+        elif current_q_type == 7:
+            # 获得判断题
+            sub_aw = get_judge_answers(current_q_type, current_answers_area)
         else:
-            sub_aw = get_qa_answers(current_answers_area, p_answer)
+            sub_aw = get_qa_answers(current_q_type, current_answers_area)
         for item in sub_aw:
             answers_dict.add(item)
 

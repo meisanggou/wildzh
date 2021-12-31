@@ -1,5 +1,7 @@
 // pages/query/query.js
 var app = getApp();
+var select_modes = [];
+var sm_len = 0;
 Page({
 
   /**
@@ -73,8 +75,12 @@ Page({
           }
           for (var i = 0; i < items.length; i++) {
             var item = items[i];
-            console.info(item);
             item['text'] = that.replaceImg(item['question_desc']);
+            if('select_mode' in item){
+              if(item['select_mode'] < sm_len){
+                item['text'] = '【' + select_modes[item['select_mode']].name + '】' + item['text'];
+              }
+            }
             item['value'] = item['question_no'];
           }
           resolve(items);
@@ -149,6 +155,11 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    var currentExam = app.getDefaultExam();
+    if(currentExam){
+      select_modes = currentExam.select_modes;
+      sm_len = select_modes.length;
+    }
     var examNo = app.globalData.defaultExamNo;
     if (examNo) {} else {
       wx.showModal({

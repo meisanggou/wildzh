@@ -3,11 +3,10 @@
 
 import collections
 import json
-import os
 import re
-import sys
 
 import wildzh.tools.parse_exception as p_exc
+from wildzh.tools.parse.answer import Answer
 from wildzh.tools.parse_option import ListOption
 from wildzh.tools.parse_option import ParseOptions
 
@@ -96,11 +95,18 @@ class Question(object):
         self._desc = None
         self._desc_rs = []
         self._desc_medias = set()
-        self.answer = None
+        # 保存文本字符串与 真实煤体资源对应的路径
+        self._medias_mapping = {'desc': {}, 'answer': {}, 'options': []}
+        self._answer = None
         self.q_type = None
         self.select_mode = None
         self.inside_mark = None
+        self.desc_url = None
         self.in_doubt = False
+        self._uploaded_medias = []
+        # 是否只是测试运行，如果是测试运行，将不真的上传图片
+        # 一般有QuestionSet对象在添加Question时添加
+        self._dry_run = False
 
     @property
     def no(self):
@@ -119,18 +125,59 @@ class Question(object):
         return self._desc
 
     @desc.setter
-    def desc(self, value):
+    def desc(self, values):
+        """
+        :param values
+        case 1: values = value
+        case 2: values = value, medias
+        medias: {'[[<uuid>]]': <path>, '[[<uuid>]]': <path>, ...}
+        :return:
+        """
+        if isinstance(values, (tuple, list)):
+            if len(values) != 2:
+                raise RuntimeError('Bad desc value %s' % values)
+            value, medias = values
+        else:
+            value = values
+            medias = {}
         _value = value.strip()
         if not _value:
             raise RuntimeError("Desc length must gt 0")
-        _rs, _medias = get_medias(_value)
-        self._desc_rs = _rs
-        self._desc_medias = _medias
         self._desc = _value
+        self._medias_mapping['desc'] = medias
 
     @property
-    def has_medias(self):
-        return True if self._desc_medias else False
+    def answer(self):
+        return self._answer
+
+    @answer.setter
+    def answer(self, values):
+        """
+        :param values
+        case 1: values = value
+        case 2: values = value, medias
+        medias: {'[[<uuid>]]': <path>, '[[<uuid>]]': <path>, ...}
+        :return:
+        """
+        if isinstance(values, (tuple, list)):
+            if len(values) != 2:
+                raise RuntimeError('Bad answer value %s' % values)
+            value, medias = values
+        else:
+            value = values
+            medias = {}
+        _value = value.strip()
+
+        self._answer = _value
+        self._medias_mapping['answer'] = medias
+
+    @property
+    def dry_run(self):
+        return self._dry_run
+
+    @dry_run.setter
+    def dry_run(self, v):
+        self._dry_run = v
 
     def set_answer(self, answer):
         # A
@@ -154,14 +201,41 @@ class Question(object):
         if self.answer is None:
             raise p_exc.AnswerNotFound(self.q_items)
 
+    def upload_medias(self, func, *args, **kwargs):
+        if self.dry_run:
+            return
+        #  问题描述图片
+        if self.desc_url and 'desc_url' not in self._uploaded_medias:
+            self.desc_url = func(self.desc_url, *args, **kwargs)
+            self._uploaded_medias.append(self.desc_url)
+        # 问题描述里的图片
+        if self._medias_mapping['desc']:
+            for key in list(self._medias_mapping['desc'].keys()):
+                value = self._medias_mapping['desc'][key]
+                n_value = func(value, *args, **kwargs)
+                self._desc = self._desc.replace(key, n_value)
+                del self._medias_mapping['desc'][key]
+        # 答案描述里的图片
+        if self._medias_mapping['answer']:
+            for key in list(self._medias_mapping['answer'].keys()):
+                value = self._medias_mapping['answer'][key]
+                n_value = func(value, *args, **kwargs)
+                self._answer = self._answer.replace(key, n_value)
+                del self._medias_mapping['answer'][key]
+        # 选项里的图片
+        for option in self.options:
+            option.upload_medias(func, *args, **kwargs)
+
     def to_dict(self):
         real_options = self.options.to_list()
         return dict(no=self.no, desc=self.desc, options=real_options,
-                    select_mode=self.select_mode, answer=self.answer)
+                    select_mode=self.select_mode, answer=self.answer,
+                    question_desc_url=self.desc_url)
 
-    def to_exam_dict(self):
+    def to_exam_dict(self, func, *args, **kwargs):
         if self.answer is None:
             raise RuntimeError("Net set answer %s" % self.no)
+        self.upload_medias(func, *args, **kwargs)
         _q_item = dict()
         _q_item["question_no"] = self.no
         _q_item['question_desc'] = self.desc
@@ -169,6 +243,8 @@ class Question(object):
         _q_item['options'] = self.options.to_list()
         _q_item['inside_mark'] = self.inside_mark
         _q_item['answer'] = self.answer
+        if self.desc_url:
+            _q_item['question_desc_url'] = self.desc_url
         return _q_item
 
     def to_update_dict(self, *keys):
@@ -329,14 +405,17 @@ class ParseQuestion(object):
                 if len(answers) == 0:
                     raise p_exc.AnswerNotFound(question_items)
                 q.set_answer(answers)
-            elif embedded_answer and select_mode == 7:
+            elif select_mode == 7:
                 # 判断题
                 q.q_type = QuestionType.Judge
                 options.A = u"正确"
                 options.B = u"错误"
-                n_desc, answers = cls.find_judge_answer(desc)
-                if answers:
-                    q.set_answer(answers[0])
+                if embedded_answer:
+                    n_desc, answers = cls.find_judge_answer(desc)
+                    if answers:
+                        q.set_answer(answers[0])
+                else:
+                    n_desc = desc
             else:
                 n_desc, answers = cls.find_qa_answer(desc)
                 if len(answers) > 0:
@@ -384,9 +463,6 @@ class QuestionSet(object):
 
     def __init__(self, exam_no=None, dry_run=True, **kwargs):
         # self.has_answer = kwargs.pop('has_answer', True)
-        self.file_path = kwargs.pop('file_path')
-        self._file_name = os.path.basename(self.file_path).rsplit('.', 1)[0] \
-            if self.file_path else ''
         self.default_select_mode = kwargs.pop('default_sm', None)
         self.set_source = kwargs.pop('set_source', False)
         self.set_mode = kwargs.pop('set_mode', False)
@@ -395,17 +471,27 @@ class QuestionSet(object):
         self.set_keys = kwargs.pop('set_keys', ['answer', 'question_desc'])
         self.exam_no = exam_no
         self.exam_name = kwargs.pop('exam_name', None)
-        self.dry_run = dry_run
+        self._dry_run = dry_run
         self._s = collections.OrderedDict()
         self.question_subject = kwargs.pop('question_subject', 0)  # 0-微观经济学 1-宏观经济学 2-政治经济学
         self.inside_mark_prefix = kwargs.pop('inside_mark_prefix', '')
         self.inside_mark_fmt = kwargs.pop('inside_mark_fmt', None)
-        self._inside_mark_fmt_default = '%(file_name)s %(question_no)s'
+        self._inside_mark_fmt_default = '%(exam_name)s %(question_no)s'
         # self._select_mode_s = dict()
 
     @property
     def length(self):
         return len(self._s.keys())
+
+    @property
+    def dry_run(self):
+        return self._dry_run
+
+    @dry_run.setter
+    def dry_run(self, v):
+        self._dry_run = v
+        for q in self:
+            q.dry_run = v
 
     def __len__(self):
         return self.length
@@ -418,8 +504,7 @@ class QuestionSet(object):
         fmt = self.inside_mark_fmt or self._inside_mark_fmt_default
         if not self.exam_name and not fmt:
             return
-        kwargs = {'exam_name': self.exam_name, 'question_no': question.no,
-                  'file_name': self._file_name}
+        kwargs = {'exam_name': self.exam_name, 'question_no': question.no}
 
         mark = fmt % kwargs
         if self.inside_mark_prefix:
@@ -427,6 +512,7 @@ class QuestionSet(object):
         question.inside_mark = mark
 
     def _add(self, question):
+        question.dry_run = self._dry_run
         self._s[question.select_mode][question.no] = question
         self.set_inside_mark(question)
 
@@ -466,36 +552,19 @@ class QuestionSet(object):
         for item in self:
             item.ensure_has_answer()
 
+    def upload_medias(self, func, *args, **kwargs):
+        """
 
-class ParseAnswer(object):
-
-    def __init__(self, select_mode):
-        self.select_mode = select_mode
-
-    def parse(self, answer):
-        a = Answer(self.select_mode)
-        a.answer = answer
-        return a
-
-
-class Answer(object):
-
-    def __init__(self, select_mode=None):
-        self.select_mode = select_mode
-        self.no = None
-        self._answer = None
-
-    @property
-    def answer(self):
-        return self._answer
-
-    @answer.setter
-    def answer(self, v):
-        if self.select_mode == 1:
-            v = v.upper()
-            if v not in ["A", "B", "C", "D"]:
-                raise RuntimeError("Not Choice Answer %s" % v)
-        self._answer = v
+        :param func: 方法需要接受 func(path, *args, **kwargs)，返回上传后的路径
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        if self.dry_run is True:
+            return
+        for q_item in self:
+            q_item.upload_medias(func, *args, **kwargs)
+        # TODO 后续考虑将 desc answer中的图片上传也放到这
 
 
 class AnswerSet(object):

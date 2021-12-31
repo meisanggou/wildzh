@@ -1,8 +1,6 @@
 <wxs src="../common/tools/array.wxs" module="tools" />
 <view wx:if="{{examNo == null}}">
-    <picker bindchange="choseExam" class='picker' value="{{index}}" range="{{allExams}}" range-key="exam_name">
-        <view class='pickerContent'>选择试题库</view>
-    </picker>
+
 </view>
 <view wx:else class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
     <modal hidden="{{hiddenModal}}" title="{{modalTitle}}" confirm-text="更新" cancel-text="取消" bindcancel="cancelModal"

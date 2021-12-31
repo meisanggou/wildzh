@@ -884,6 +884,7 @@ def upload_question_file():
         answer_file = r['answer_file']
         with DocxObject(answer_file) as ado:
             answers_dict = handle_answers_docx_main_xml(ado, q_set)
+            print(answers_dict._s)
             for q_item in q_set:
                 # 判定是否包含答案
                 answer_obj = answers_dict.find_answer(q_item)

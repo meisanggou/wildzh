@@ -16,8 +16,43 @@ def replace_special_space(s):
 class Option(object):
 
     def __init__(self, desc, score=0):
-        self.desc = desc.strip()
+        self._desc = None
+        self._medias = {}
+        self.desc = desc
         self.score = score
+
+    @property
+    def desc(self):
+        return self._desc
+
+    @desc.setter
+    def desc(self, values):
+        """
+        :param values
+        case 1: values = value
+        case 2: values = value, medias
+        medias: {'[[<uuid>]]': <path>, '[[<uuid>]]': <path>, ...}
+        :return:
+        """
+        if isinstance(values, (tuple, list)):
+            if len(values) != 2:
+                raise RuntimeError('Bad desc value %s' % values)
+            value, medias = values
+        else:
+            value = values
+            medias = {}
+        _value = value.strip()
+        if not _value:
+            raise RuntimeError("Desc length must gt 0")
+        self._desc = _value
+        self._medias = medias
+
+    def upload_medias(self, func, *args, **kwargs):
+        for key in list(self._medias.keys()):
+            value = self._medias[key]
+            n_value = func(value, *args, **kwargs)
+            self._desc = self._desc.replace(key, n_value)
+            del self._medias[key]
 
     def to_dict(self):
         return dict(desc=self.desc, score=self.score)

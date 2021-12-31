@@ -2,7 +2,7 @@
  * Created by zhouhenglc on 2020/2/3.
  */
 
-var _key_prefix = 'wildzh';
+var _key_prefix = 'afamily';
 
 function set_local_storage(key, value){
     if(typeof value == 'object'){
@@ -13,8 +13,8 @@ function set_local_storage(key, value){
 }
 
 function get_local_storage(key){
-    var value = localStorage.getItem(key);
     key = _key_prefix + '_' + key;
+    var value = localStorage.getItem(key);
     try{
         value = JSON.parse(value);
     }

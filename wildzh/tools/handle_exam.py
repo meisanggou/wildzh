@@ -1,7 +1,6 @@
 # !/usr/bin/env python
 # coding: utf-8
 
-import cv2
 import json
 import os
 import re
@@ -12,6 +11,7 @@ import uuid
 from wildzh.tools.parse_question import QuestionSet, AnswerLocation
 from wildzh.tools.docx.object import DocxObject
 from wildzh.tools.read_xml import handle_answers_docx_main_xml, handle_docx_main_xml
+from wildzh.utils import img
 
 __author__ = 'zhouhenglc'
 
@@ -19,8 +19,8 @@ req = requests.session()
 headers = {"User-Agent": "jyrequests"}
 req.headers = headers
 
-# remote_host = "http://127.0.0.1:2400"
-remote_host = "https://wild.gene.ac"
+remote_host = "http://127.0.0.1:2400"
+# remote_host = "https://wild.gene.ac"
 
 exec_file_dir, exec_file_name = os.path.split(os.path.abspath(__file__))
 EXE_WMF_TO_PNG = os.path.join(exec_file_dir, "Wmf2Png.exe")
@@ -48,24 +48,8 @@ def wmf_2_png(wmf_path, width, height, multiple=3):
     return output.strip()
 
 
-def _clip_pic(pic_file, clip_data):
-    file_values = pic_file.rsplit(".", 1)
-    clip_pic_path = "".join(file_values[:-1])
-    clip_pic_path += ".clip-%s.%s" % (uuid.uuid4().hex, file_values[-1])
-    img = cv2.imread(pic_file)
-    height = img.shape[0]
-    width = img.shape[1]
-    start_y = int(height * (clip_data[1] / 100.0))
-    end_y = int(height - (height * (clip_data[3] / 100.0)))
-    start_x = int(width * (clip_data[0] / 100.0))
-    end_x = int(width - (width * (clip_data[2] / 100.0)))
-    cropped = img[start_y:end_y, start_x:end_x]  # 裁剪坐标为[y0:y1, x0:x1]
-    cv2.imwrite(clip_pic_path, cropped)
-    return clip_pic_path
-
-
-def login(user_name, password):
-    url = remote_host + "/user/login/password/"
+def login(server, user_name, password):
+    url = server + "/user/login/password/"
     data = dict(user_name=user_name, password=password, next="/exam/")
     response = req.post(url, json=data)
     print(response.text)
@@ -81,25 +65,28 @@ def req_max_no(exam_no):
     return res["data"]
 
 
-def post_questions(questions_set):
+def post_questions(server, questions_set):
     exam_no = questions_set.exam_no
     no_info = req_max_no(exam_no)
     print(no_info)
     next_no = no_info["next_no"]
-    url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
+    url = server + "/exam/questions/?exam_no=%s" % exam_no
     question_no = next_no
     print(questions_set.set_source)
     # 正式上传前 必须 先dry_run
-    drt_path = '%s.dry_run' % os.path.basename(questions_set.file_path)
+    drt_path = '.%s.dry_run' % questions_set.exam_name
+
     if questions_set.dry_run:
         with open(drt_path, 'w') as w:
             w.write('')
+        upload_func  = upload_media_to_server_dummy
     else:
         if not os.path.exists(drt_path):
             raise RuntimeError('Please dry_run first')
         os.remove(drt_path)
+        upload_func = upload_media_to_server
     for q_item in questions_set:
-        q_item_d = q_item.to_exam_dict()
+        q_item_d = q_item.to_exam_dict(upload_func, server)
         q_item_d["question_no"] = question_no
         if questions_set.set_source:
             q_item_d["question_source"] = questions_set.exam_name
@@ -135,6 +122,14 @@ def set_questions(questions_set):
 
 
 def replace_media(text, q_rl, cache_rl, real_upload):
+    """
+
+    :param text:  [[rId49$28$13]]
+    :param q_rl:
+    :param cache_rl:
+    :param real_upload:
+    :return:
+    """
     media_comp = re.compile(r"(\[\[([a-z0-9]+?)\$([\d.]+?)\$([\d.]+?)(|\$[\d\.\-|]+?)\]\])", re.I)
     found_rs = media_comp.findall(text)
     for r_item in found_rs:
@@ -160,41 +155,95 @@ def replace_media(text, q_rl, cache_rl, real_upload):
     return text
 
 
-def upload_media(r_id, rl, width, height, cache_rl, clip_data=None,
-                 real_upload=False, freq=0):
-    if r_id in cache_rl:
-        return cache_rl[r_id]
+def replace_media2(text, q_rl):
+    """
 
-    o_pic = rl[r_id]
-    o_pic_ext = o_pic.rsplit(".")[-1].lower()
-    if o_pic_ext in ("jpeg", "png"):
-        png_file = o_pic
-    else:
-        png_file = wmf_2_png(rl[r_id], width, height)
-    if clip_data is not None:
-        # 需要裁剪
-        png_file = _clip_pic(png_file, clip_data)
-    if not real_upload:
-        return "/dummy/%s" % r_id
-    url = remote_host + "/exam/upload/"
-    files = dict(pic=open(png_file, "rb"))
+    :param text:  [[rId49$28$13]]
+    :param q_rl:
+    :param cache_rl:
+    :return:
+    """
+    media_comp = re.compile(r"(\[\[([a-z0-9]+?)\$([\d.]+?)\$([\d.]+?)(|\$[\d\.\-|]+?)\]\])", re.I)
+    found_rs = media_comp.findall(text)
+    medias = {}
+    for r_item in found_rs:
+        r_t = r_item[0]
+        m_id = r_item[1]
+        width = r_item[2]
+        height = r_item[3]
+        clip_data = None
+        if len(r_item[4]) != 0:
+            # 需要裁剪
+            left, top, right, bottom = r_item[4][1:].split("|")
+            clip_data = [left, top, right, bottom]
+            # 需要裁剪
+            for i in range(4):
+                if clip_data[i] == "":
+                    clip_data[i] = 0
+                elif clip_data[i].startswith("-"):
+                    clip_data[i] = 0
+                else:
+                    clip_data[i] = float(clip_data[i]) / 1000.0
+        m_path = get_media(m_id, q_rl, width, height, clip_data)
+        n_point = '[[%s]]' % str(uuid.uuid4())
+        text = text.replace(r_t, "[[%s:%s:%s]]" % (n_point, width, height))
+        medias[n_point] = m_path
+    return text, medias
+
+
+def upload_media_to_server_dummy(*args, **kwargs):
+    return '/static/dummy'
+
+
+def upload_media_to_server(file_path, server, freq=0):
+    url = server + "/exam/upload/"
+    files = dict(pic=open(file_path, "rb"))
     try:
         resp = req.post(url, files=files)
+        print('upload %s success' % file_path)
         return resp.json()["data"]["pic"]
     except Exception as e:
         if freq >= 5:
             raise
         freq += 1
-        upload_media(r_id, rl, width, height, cache_rl, clip_data=clip_data,
-                     real_upload=real_upload, freq=freq)
+        return upload_media_to_server(server, file_path, freq)
 
 
-def handle_exam_no_answer(questions_set):
-    uploaded_q_rl = dict()
-    file_path = questions_set.file_path
-    exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
+def get_media(r_id, rl, width, height, clip_data=None):
+    o_pic = rl[r_id]
+    o_pic_ext = o_pic.rsplit(".")[-1].lower()
+    if o_pic_ext in ("jpeg", "png", "jpg"):
+        png_file = o_pic
+    else:
+        png_file = wmf_2_png(rl[r_id], width, height)
+    if clip_data is not None:
+        # 需要裁剪
+        png_file = img.clip_pic(png_file, clip_data)
+    return png_file
+
+
+def upload_media(r_id, rl, width, height, cache_rl, clip_data=None,
+                 real_upload=False):
+    if r_id in cache_rl:
+        return cache_rl[r_id]
+
+    o_pic = rl[r_id]
+    o_pic_ext = o_pic.rsplit(".")[-1].lower()
+    if o_pic_ext in ("jpeg", "png", "jpg"):
+        png_file = o_pic
+    else:
+        png_file = wmf_2_png(rl[r_id], width, height)
+    if clip_data is not None:
+        # 需要裁剪
+        png_file = img.clip_pic(png_file, clip_data)
+    if not real_upload:
+        return "/dummy/%s" % r_id
+    return upload_media_to_server(png_file, remote_host)
+
+
+def handle_exam_no_answer(file_path, questions_set):
+    exam_name = questions_set.exam_name
     print("start handle %s" % exam_name)
-    # questions_set.exam_name = exam_name
     with DocxObject(file_path) as do:
         handle_docx_main_xml(do, ".", u"、", u"．", ':',
                              questions_set=questions_set)
@@ -205,30 +254,29 @@ def handle_exam_no_answer(questions_set):
             q_no = q_item.no
             # 开始上传 题目
             # 获取题目描述中的图片
-            q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl,
-                                        real_upload=questions_set.real_upload)
+            q_item.desc = replace_media2(q_item.desc, q_rl)
 
             # 获取选项中的图片
             for option in q_item.options:
-                option.desc = replace_media(option.desc, q_rl, uploaded_q_rl,
-                                            real_upload=questions_set.real_upload)
-            # 获取答案中的图片
+                option.desc = replace_media2(option.desc, q_rl)
+
             q_item.ensure_has_answer()
-            q_item.answer = replace_media(q_item.answer, q_rl, uploaded_q_rl,
-                                          real_upload=questions_set.real_upload)
+
+            # 获取答案中的图片
+            q_item.answer = replace_media2(q_item.answer, q_rl)
 
         if questions_set.set_mode:
             set_questions(questions_set)
         else:
-            post_questions(questions_set)
+            post_questions(remote_host, questions_set)
     return True, "success"
 
 
 def handle_exam_with_answer(file_path, questions_set):
     uploaded_aw_rl = dict()
     uploaded_q_rl = dict()
+    print(file_path)
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
-    print(questions_set.file_path)
     answer_file = file_path.replace(".docx", u"答案.docx")
     if os.path.exists(answer_file) is False:
         msg = ("Ignore %s, not Answer" % file_path)
@@ -266,7 +314,7 @@ def handle_exam_with_answer(file_path, questions_set):
             # 获取答案中的图片
             q_item.answer = replace_media(q_item.answer, aw_rl, uploaded_aw_rl,
                                           real_upload)
-        post_questions(questions_set)
+        post_questions(remote_host, questions_set)
     return True, "success"
 
 
@@ -274,14 +322,7 @@ def handle_exam(file_path, question_set):
     if question_set.answer_location.IAmFile:
         handle_exam_with_answer(file_path, question_set)
     else:
-        handle_exam_no_answer(question_set)
-
-
-def upload_js_no_answer(exam_no, file_path, questions_set):
-    # 计算题
-    login("admin", "admin")
-    questions_set.default_select_mode = 4
-    return handle_exam_no_answer(exam_no, file_path, questions_set)
+        handle_exam_no_answer(file_path, question_set)
 
 
 def transfer_exam(s_exam, start_no, end_no, t_exam, select_mode=None,
@@ -390,14 +431,13 @@ def download_usage(exam_no, period_nos):
 
 
 if __name__ == "__main__":
-    login("admin", "admin")
+    login(remote_host, "admin", "admin")
     # find_from_dir(r'D:\Project\word\app\upload')
-    exam_no = 1567506833  # 测试包含图片
     # exam_no = 1569283516  # 专升本经济学题库
-    exam_no = 1570447137  # 专升本经济学题库 会员版
-    exam_no = 1575333741 # 专升本经济学题库 试用版
-    # exam_no = 1585396371  # 本地 测试题库2
-    exam_no = 1594597891  # 专升本经济学题库 搜题版
+    # exam_no = 1570447137  # 专升本经济学题库 会员版
+    # exam_no = 1575333741 # 专升本经济学题库 试用版
+    exam_no = 1585396371  # 本地 测试题库2
+    # exam_no = 1594597891  # 专升本经济学题库 搜题版
 
     # 538 + 319
     # 会员版 to 试用版
@@ -412,14 +452,15 @@ if __name__ == "__main__":
     # d_path = os.path.join(upload_dir, '2020年经济学真题.docx')
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
+    exam_name = items[0].rsplit(".", 1)[0]
     s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
                     file_path=d_path,
                     question_subject=0, # 0-微观经济学 1-宏观经济学 2-政治经济学
-                    answer_location=AnswerLocation.embedded(),
+                    answer_location=AnswerLocation.file(),
                     set_keys=keys)
     # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
     # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
-    # s_kwargs['exam_name'] = '2008年经济学真题'  # 设置题目来源 一般真题需要设置
+    s_kwargs['exam_name'] = exam_name  # 设置题目来源 一般真题需要设置
     # s_kwargs['inside_mark_prefix'] = '2008年经济学真题多选判断'
     q_set = QuestionSet(**s_kwargs)
     # d = r'D:/Project/word/app/upload'

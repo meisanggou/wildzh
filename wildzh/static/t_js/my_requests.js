@@ -150,6 +150,7 @@ function my_async_request2(request_url, request_method, body_param, request_succ
         }
     });
 }
+
 function upload_request(request_url, request_method, body_param, request_success, exec_obj)
 {
     if (request_url.indexOf("/?") > 0) {

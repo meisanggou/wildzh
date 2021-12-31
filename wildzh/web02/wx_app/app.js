@@ -1,5 +1,5 @@
 var remote_host = "https://meisanggou.vicp.net"
-var version = "7.1.5";
+var version = "7.1.6";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 var reqRandom = 100; // 用于某些资源防止缓存，加到请求参数中
@@ -169,6 +169,7 @@ App({
             this.globalData.defaultExamNo = currentExam["exam_no"];
             this.globalData.defaultExamName = currentExam["exam_name"];
         }
+        return currentExam;
     },
     getOrSetCacheData: getOrSetCacheData,
     getOrSetCacheData2: getOrSetCacheData2,
