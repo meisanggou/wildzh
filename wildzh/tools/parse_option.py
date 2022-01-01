@@ -43,7 +43,7 @@ class Option(object):
             medias = {}
         _value = value.strip()
         if not _value:
-            raise RuntimeError("Desc length must gt 0")
+            raise RuntimeError("选项字数必须大于0")
         self._desc = _value
         self._medias = medias
 
@@ -226,7 +226,10 @@ class ParseOptions(object):
                     return False, '有不存在的选项: %s' % o
         options = ListOption(self.option_prefix[:current_len])
         for key in kp.keys():
-            setattr(options, key, kp[key])
+            try:
+                setattr(options, key, kp[key])
+            except RuntimeError as re:
+                return False, re.args[0]
         return True, {"prefix": prefix, "options": options}
 
     def parse(self, data):
