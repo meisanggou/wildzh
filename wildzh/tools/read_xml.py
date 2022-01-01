@@ -16,7 +16,7 @@ from wildzh.tools.parse_question import AnswerSet, AnswerLocation
 # sys.setdefaultencoding('utf8')
 
 
-Q_TYPE_COMP = re.compile(u"((一|二|三|四|五|六)[、.]|^)(单选|单项|选择|多选|多选题|名词解释|简答|简答题|计算|计算题|论述|论述题|判断|判断题)")
+Q_TYPE_COMP = re.compile(u"((一|二|三|四|五|六|七|八)[、.]|^)(单选|单项|选择|多选|多选题|名词解释|简答|简答题|计算|计算题|论述|论述题|判断|判断题)")
 S_ANSWER_COMP = re.compile(r"(\d+)(?:-|—)(\d+)([a-d]+)", re.I)  #  单选题 答案格式 1-5ADBCD
 S_ANSWER_COMP2 = re.compile(r"(?:\s|^)(\d+)([a-d](?:\s|$))", re.I)  #  单选题 答案格式 1A 2B
 S_ANSWER_COMP3 = re.compile(r"(?:\s|^)(\d+)(?:\.|、)([a-f]+(?:\s|$))", re.I)  #  单多题 答案格式 1.ABC 2、BE 3AB

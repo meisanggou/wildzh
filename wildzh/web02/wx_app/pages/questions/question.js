@@ -265,7 +265,6 @@ Page({
             url: '/exam/questions/?no_rich=true&exam_no=' + exam_no + "&nos=" + nos,
             method: 'GET',
             success: res => {
-                console.info(res)
                 wx.hideLoading();
                 if (res.data.status == false) {
                     return;
@@ -470,8 +469,8 @@ Page({
         this.changeNowQuestion(this.data.skipNums[index] - 1);
     },
     changeNowQuestion: function (index) {
+        var that = this;
         if (gContentChanged) {
-            var that = this;
             wx.showModal({
                 title: '确认跳转',
                 content: '当前题目有更新未提交，确认切换题目吗？',

@@ -2,6 +2,7 @@
  * Created by zhouhenglc on 2020/5/28.
  */
 var exam_name_mapping = {};
+var SELECT_MODES = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题", "多选题", "判断题"];
 $(function () {
     var query_url = $("#query_url").val();
     var file_url = $("#file_url").val();
@@ -55,6 +56,11 @@ $(function () {
                 upload_request(file_url, "POST", data, function(data){
                     that.questions_items = data.q_list;
                     that.error_question = data.error_question;
+                    for(var i in data.q_list){
+                        var q = data.q_list[i];
+                        q['q_type'] = SELECT_MODES[q['select_mode']];
+                        that.questions_items.push(q);
+                    }
                     that.error_msg = data.error_msg;
                 });
             }

@@ -585,9 +585,6 @@ class AnswerSet(object):
         if answer.select_mode not in self._s:
             self._s[answer.select_mode] = collections.OrderedDict()
         if answer.no in self._s[answer.select_mode]:
-            print(answer)
-            import pdb
-            pdb.set_trace()
             raise RuntimeError("repeated answers %s" % answer.no)
         self._s[answer.select_mode][answer.no] = answer
 

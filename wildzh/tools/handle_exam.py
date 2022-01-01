@@ -20,7 +20,7 @@ headers = {"User-Agent": "jyrequests"}
 req.headers = headers
 
 remote_host = "http://127.0.0.1:2400"
-# remote_host = "https://wild.gene.ac"
+remote_host = "https://wild.gene.ac"
 
 exec_file_dir, exec_file_name = os.path.split(os.path.abspath(__file__))
 EXE_WMF_TO_PNG = os.path.join(exec_file_dir, "Wmf2Png.exe")
@@ -55,8 +55,8 @@ def login(server, user_name, password):
     print(response.text)
 
 
-def req_max_no(exam_no):
-    url = remote_host + "/exam/questions/no/"
+def req_max_no(server, exam_no):
+    url = server + "/exam/questions/no/"
     response = req.get(url, params=dict(exam_no=exam_no))
     res = response.json()
     if res['status'] is False:
@@ -67,7 +67,7 @@ def req_max_no(exam_no):
 
 def post_questions(server, questions_set):
     exam_no = questions_set.exam_no
-    no_info = req_max_no(exam_no)
+    no_info = req_max_no(server, exam_no)
     print(no_info)
     next_no = no_info["next_no"]
     url = server + "/exam/questions/?exam_no=%s" % exam_no
@@ -102,11 +102,11 @@ def post_questions(server, questions_set):
         question_no += 1
 
 
-def set_questions(questions_set):
+def set_questions(server, questions_set):
     d_set_keys = ['answer', 'question_desc']
     set_keys = getattr(questions_set, 'set_keys', d_set_keys)
     exam_no = questions_set.exam_no
-    url = remote_host + "/exam/questions/?exam_no=%s" % exam_no
+    url = server + "/exam/questions/?exam_no=%s" % exam_no
     for q_item in questions_set:
         q_item_d = q_item.to_update_dict(*set_keys)
         # if set_source:
@@ -266,7 +266,7 @@ def handle_exam_no_answer(file_path, questions_set):
             q_item.answer = replace_media2(q_item.answer, q_rl)
 
         if questions_set.set_mode:
-            set_questions(questions_set)
+            set_questions(remote_host, questions_set)
         else:
             post_questions(remote_host, questions_set)
     return True, "success"
@@ -433,11 +433,10 @@ def download_usage(exam_no, period_nos):
 if __name__ == "__main__":
     login(remote_host, "admin", "admin")
     # find_from_dir(r'D:\Project\word\app\upload')
-    # exam_no = 1569283516  # 专升本经济学题库
-    # exam_no = 1570447137  # 专升本经济学题库 会员版
+
     # exam_no = 1575333741 # 专升本经济学题库 试用版
     exam_no = 1585396371  # 本地 测试题库2
-    # exam_no = 1594597891  # 专升本经济学题库 搜题版
+    exam_no = 1594597891  # 专升本经济学题库 搜题版
 
     # 538 + 319
     # 会员版 to 试用版

@@ -52,7 +52,7 @@
                     <p class="error-msg">【错误提示】{{error_msg}}</p>
                 </div>
                 <div class="search-item" v-for="q_item in questions_items">
-                    <p>{{q_item["no"]}}、{{q_item["desc"]}}</p>
+                    <p>【{{q_item["q_type"]}}】{{q_item["no"]}}、{{q_item["desc"]}}</p>
                     <template v-for="(option, o_index) in q_item['options']">
                         <p v-if="option['score']>0" class="right-option">
                             {{option_mapping[o_index]}}、{{option['desc']}}</p>
