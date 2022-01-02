@@ -893,14 +893,17 @@ def upload_question_file():
     q_list = []
     for q_item in q_set:
         q_list.append(q_item.to_dict())
+    error_obj = None
     try:
         q_set.ensure_has_answer()
     except ParseException as pe:
         if not error_question:
             error_msg = pe.msg
             error_question = pe.q_items
+            if hasattr(pe, 'q_obj') and pe.q_obj:
+                error_obj = pe.q_obj.to_dict()
     data = {'q_list': q_list, 'error_question': error_question,
-            'error_msg': error_msg}
+            'error_msg': error_msg, 'error_obj': error_obj}
     return jsonify({"status": True, "data": data})
 
 

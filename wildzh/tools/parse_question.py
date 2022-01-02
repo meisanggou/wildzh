@@ -199,7 +199,7 @@ class Question(object):
 
     def ensure_has_answer(self):
         if self.answer is None:
-            raise p_exc.AnswerNotFound(self.q_items)
+            raise p_exc.AnswerNotFound(self.q_items, self)
 
     def upload_medias(self, func, *args, **kwargs):
         if self.dry_run:

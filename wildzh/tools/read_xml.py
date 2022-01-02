@@ -1,52 +1,16 @@
 # !/usr/bin/env python
 # coding: utf-8
 
-from contextlib import contextmanager
 import os
 import pdb
 import re
 # from win32com import client as wc
 import xml.dom.minidom as minidom
 from wildzh.tools.parse.answer import Answer
-from wildzh.tools.parse_exception import QuestionTypeNotMatch
+from wildzh.tools.parse.exception import QuestionTypeNotMatch
+from wildzh.tools.parse.option_type import OptionType
 from wildzh.tools.parse_question import ParseQuestion, QuestionType
 from wildzh.tools.parse_question import AnswerSet, AnswerLocation
-
-# reload(sys)
-# sys.setdefaultencoding('utf8')
-
-
-Q_TYPE_COMP = re.compile(u"((一|二|三|四|五|六|七|八)[、.]|^)(单选|单项|选择|多选|多选题|名词解释|简答|简答题|计算|计算题|论述|论述题|判断|判断题)")
-S_ANSWER_COMP = re.compile(r"(\d+)(?:-|—)(\d+)([a-d]+)", re.I)  #  单选题 答案格式 1-5ADBCD
-S_ANSWER_COMP2 = re.compile(r"(?:\s|^)(\d+)([a-d](?:\s|$))", re.I)  #  单选题 答案格式 1A 2B
-S_ANSWER_COMP3 = re.compile(r"(?:\s|^)(\d+)(?:\.|、)([a-f]+(?:\s|$))", re.I)  #  单多题 答案格式 1.ABC 2、BE 3AB
-S_ANSWER_COMP4 = re.compile(r"(\d+)(?:-|—)(\d+)([×√]+)", re.I)  #  判断题 答案格式 1-5×√×√√
-S_ANSWER_COMP5 = re.compile(r"(?:\s|^)(\d+)([×√](?:\s|$))", re.I)  #  判断题 答案格式 1× 2√
-G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题", "多选题", "判断题"]
-
-
-def get_select_mode(content):
-    fr = Q_TYPE_COMP.findall(content)
-    if len(fr) != 1:
-        return -1
-    s = fr[0][2]
-    if s in G_SELECT_MODE:
-        return G_SELECT_MODE.index(s)
-    if s in (u"单选", u"单选题", u"单项", "选择"):
-        return 1
-    if s in (u"名词解释", u"名词"):
-        return 2
-    if s in (u"简答", u"简答题"):
-        return 3
-    if s in (u"计算", u"计算题"):
-        return 4
-    if s in (u"论述", u"论述题"):
-        return 5
-    if s in (u"多选", u"多选题"):
-        return 6
-    if s in (u"判断", u"判断题"):
-        return 7
-    raise RuntimeError("Bad select mode %s" % s)
 
 
 def replace_special_space(s):
@@ -55,16 +19,6 @@ def replace_special_space(s):
     # for c in (u"\u6bb5", ):
     #     s = s.replace(c, "\n")
     return s
-
-
-# def doc_to_docx(doc_path):
-#     word = wc.Dispatch("Word.Application")
-#     doc = word.Documents.Open(doc_path)
-#     docx_path = doc_path + "x"
-#     doc.SaveAs(docx_path, 12)  # 12为docx
-#     doc.Close()
-#     word.Quit()
-#     return docx_path
 
 
 def _get_node(p_node, node_name):
@@ -209,7 +163,7 @@ def handle_docx_main_xml(docx_obj, *args, **kwargs):
     for p_content in docx_obj.read_paragraphs(handle_paragraph=handle_paragraph):
         # 判断是否是题目类型
         if not select_mode:
-            _q_tpe = get_select_mode(p_content)
+            _q_tpe = OptionType.detection_type(p_content)
             if _q_tpe > 0:
                 current_q_type = _q_tpe
                 continue
@@ -248,92 +202,6 @@ def handle_docx_main_xml(docx_obj, *args, **kwargs):
     return questions_set
 
 
-def get_answers(q_type, answer_items):
-    aw_dict = []
-    for a_item in answer_items:
-        sp_items = S_ANSWER_COMP.findall(a_item)
-        for start, end, answers in sp_items:
-            i_start, i_end = int(start), int(end)
-            if len(answers) != i_end - i_start + 1:
-                raise RuntimeError("not right format: %s-%s%s" % (start, end, answers))
-            for i in range(i_start, i_end + 1):
-                if i in aw_dict:
-                    raise RuntimeError("repeated answers %s" % i)
-                a = Answer.parse(q_type, answers[i - i_start])
-                a.no = i
-                aw_dict.append(a)
-        sp_items2 = S_ANSWER_COMP2.findall(a_item)
-        for no, answer in sp_items2:
-            a = Answer.parse(q_type, answer)
-            a.no = int(no)
-            aw_dict.append(a)
-        sp_items3 = S_ANSWER_COMP3.findall(a_item)
-        for no, answer in sp_items3:
-            a = Answer.parse(q_type, answer)
-            a.no = int(no)
-            aw_dict.append(a)
-    return aw_dict
-
-
-def get_judge_answers(q_type, answer_items):
-    aw_dict = []
-    for a_item in answer_items:
-        sp_items = S_ANSWER_COMP4.findall(a_item)
-        for start, end, answers in sp_items:
-            i_start, i_end = int(start), int(end)
-            if len(answers) != i_end - i_start + 1:
-                raise RuntimeError("not right format: %s-%s%s" % (start, end, answers))
-            for i in range(i_start, i_end + 1):
-                if i in aw_dict:
-                    raise RuntimeError("repeated answers %s" % i)
-                a = Answer.parse(q_type, answers[i - i_start])
-                a.no = i
-                aw_dict.append(a)
-        sp_items2 = S_ANSWER_COMP5.findall(a_item)
-        for no, answer in sp_items2:
-            a = Answer.parse(q_type, answer)
-            a.no = int(no)
-            aw_dict.append(a)
-    return aw_dict
-
-
-def get_qa_answers(q_type, answer_items):
-    aw_dict = []
-    qa_aw_comp = re.compile(r"^(\d+)(.|、|．)([\s\S]*)")
-    current_no = -1
-    current_answer = ""
-    answer_items = map(lambda x: x.strip(), answer_items)
-    for item in answer_items:
-        # 判断是否是答案开始
-        found_items = qa_aw_comp.findall(item)
-        if found_items:
-            found_item = found_items[0]
-            next_no = int(found_item[0])
-            if next_no < current_no:
-                # 不允许出现同一个答案区域，出现题号下降。防止答案里出现小题题号，出现误判
-                current_answer += "\n" + item
-                continue
-            if next_no >= current_no + 10 and current_no > 0:
-                # 不允许出现同一个答案区域，出现题号上升过快
-                current_answer += "\n" + item
-                continue
-            if current_no != -1:
-                if current_no in aw_dict:
-                    raise RuntimeError("repeated answers %s" % current_no)
-                a = Answer.parse(q_type, current_answer)
-                a.no = current_no
-                aw_dict.append(a)
-            current_no = next_no
-            current_answer = found_item[2]
-        else:
-            current_answer += "\n" + item
-    if current_no != -1:
-        a = Answer.parse(q_type, current_answer)
-        a.no = current_no
-        aw_dict.append(a)
-    return aw_dict
-
-
 def handle_answers_docx_main_xml(docx_obj, questions_set):
     select_mode = questions_set.default_select_mode
     current_q_type = select_mode
@@ -345,20 +213,13 @@ def handle_answers_docx_main_xml(docx_obj, questions_set):
             return
         if current_q_type < 0:
             return
-
-        if current_q_type in (1, 6):
-            # 获取选择题答案
-            sub_aw = get_answers(current_q_type, current_answers_area)
-        elif current_q_type == 7:
-            # 获得判断题
-            sub_aw = get_judge_answers(current_q_type, current_answers_area)
-        else:
-            sub_aw = get_qa_answers(current_q_type, current_answers_area)
+        sub_aw = Answer.get_parser(current_q_type).parse_answers(
+            current_answers_area)
         for item in sub_aw:
             answers_dict.add(item)
 
     for p_content in docx_obj.read_paragraphs(handle_paragraph=handle_paragraph):
-        _q_type = get_select_mode(p_content)
+        _q_type = OptionType.detection_type(p_content)
         if not select_mode:
             if _q_type >= 0:
                 # match到关键字 且字符串长度不能

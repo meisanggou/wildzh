@@ -296,9 +296,6 @@ def handle_exam_with_answer(file_path, questions_set):
             # 判定是否包含答案
             answer_obj = answers_dict.find_answer(q_item)
             if not answer_obj:
-                print(exam_name)
-                import pdb
-                pdb.set_trace()
                 raise RuntimeError("lack answer %s %s" % (q_item.select_mode,
                                                           q_item.no))
             q_item.set_answer(answer_obj)
@@ -452,7 +449,7 @@ if __name__ == "__main__":
     keys = ['answer', 'question_desc']
     # keys.append(['options'])
     exam_name = items[0].rsplit(".", 1)[0]
-    s_kwargs = dict(exam_no=exam_no, dry_run=False, set_mode=False,
+    s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
                     file_path=d_path,
                     question_subject=0, # 0-微观经济学 1-宏观经济学 2-政治经济学
                     answer_location=AnswerLocation.file(),
