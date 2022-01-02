@@ -121,40 +121,6 @@ def set_questions(server, questions_set):
             print(resp.text)
 
 
-def replace_media(text, q_rl, cache_rl, real_upload):
-    """
-
-    :param text:  [[rId49$28$13]]
-    :param q_rl:
-    :param cache_rl:
-    :param real_upload:
-    :return:
-    """
-    media_comp = re.compile(r"(\[\[([a-z0-9]+?)\$([\d.]+?)\$([\d.]+?)(|\$[\d\.\-|]+?)\]\])", re.I)
-    found_rs = media_comp.findall(text)
-    for r_item in found_rs:
-        r_t = r_item[0]
-        m_id = r_item[1]
-        width = r_item[2]
-        height = r_item[3]
-        clip_data = None
-        if len(r_item[4]) != 0:
-            # 需要裁剪
-            left, top, right, bottom = r_item[4][1:].split("|")
-            clip_data = [left, top, right, bottom]
-            # 需要裁剪
-            for i in range(4):
-                if clip_data[i] == "":
-                    clip_data[i] = 0
-                elif clip_data[i].startswith("-"):
-                    clip_data[i] = 0
-                else:
-                    clip_data[i] = float(clip_data[i]) / 1000.0
-        r_url = upload_media(m_id, q_rl, width, height, cache_rl, clip_data, real_upload)
-        text = text.replace(r_t, "[[%s:%s:%s]]" % (r_url, width, height))
-    return text
-
-
 def replace_media2(text, q_rl):
     """
 
@@ -222,25 +188,6 @@ def get_media(r_id, rl, width, height, clip_data=None):
     return png_file
 
 
-def upload_media(r_id, rl, width, height, cache_rl, clip_data=None,
-                 real_upload=False):
-    if r_id in cache_rl:
-        return cache_rl[r_id]
-
-    o_pic = rl[r_id]
-    o_pic_ext = o_pic.rsplit(".")[-1].lower()
-    if o_pic_ext in ("jpeg", "png", "jpg"):
-        png_file = o_pic
-    else:
-        png_file = wmf_2_png(rl[r_id], width, height)
-    if clip_data is not None:
-        # 需要裁剪
-        png_file = img.clip_pic(png_file, clip_data)
-    if not real_upload:
-        return "/dummy/%s" % r_id
-    return upload_media_to_server(png_file, remote_host)
-
-
 def handle_exam_no_answer(file_path, questions_set):
     exam_name = questions_set.exam_name
     print("start handle %s" % exam_name)
@@ -273,8 +220,6 @@ def handle_exam_no_answer(file_path, questions_set):
 
 
 def handle_exam_with_answer(file_path, questions_set):
-    uploaded_aw_rl = dict()
-    uploaded_q_rl = dict()
     print(file_path)
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
     answer_file = file_path.replace(".docx", u"答案.docx")
@@ -301,16 +246,13 @@ def handle_exam_with_answer(file_path, questions_set):
             q_item.set_answer(answer_obj)
             # 开始上传 题目
             # 获取题目描述中的图片
-            q_item.desc = replace_media(q_item.desc, q_rl, uploaded_q_rl,
-                                        real_upload)
+            q_item.desc = replace_media2(q_item.desc, q_rl)
 
             # 获取选项中的图片
             for option in q_item.options:
-                option.desc = replace_media(option.desc, q_rl, uploaded_q_rl,
-                                            real_upload)
+                option.desc = replace_media2(option.desc, q_rl)
             # 获取答案中的图片
-            q_item.answer = replace_media(q_item.answer, aw_rl, uploaded_aw_rl,
-                                          real_upload)
+            q_item.answer = replace_media2(q_item.answer, aw_rl)
         post_questions(remote_host, questions_set)
     return True, "success"
 
