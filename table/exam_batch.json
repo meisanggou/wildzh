@@ -1,0 +1,40 @@
+[
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "批处理编号",
+                "col_name": "batch_id",
+                "col_type": "char(32)"
+            },
+            {
+                "col_comment": "关联题库编号",
+                "col_name": "exam_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "批处理类型",
+                "col_name": "batch_type",
+                "col_type": "varchar(12)"
+            },
+            {
+                "col_comment": "批处理详情",
+                "col_name": "batch_data",
+                "col_type": "varchar(500)",
+                "default_value": ""
+            },
+            {
+                "col_comment": "创建时间",
+                "col_name": "create_time",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "更新时间",
+                "col_name": "update_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "题库批处理事件",
+        "table_name": "exam_batch_events"
+    }
+]

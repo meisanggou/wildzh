@@ -5,6 +5,7 @@ from flask import g, request, session, make_response
 from flask_helper.flask_hook import FlaskHook
 
 from wildzh.utils import registry
+from wildzh.web02 import login_manager
 
 
 __author__ = 'zhouhenglc'
@@ -38,7 +39,11 @@ class TokenHook(FlaskHook):
             session['_user_id'] = data['user_no']
             session['role'] = data['extra_data']['user_role']
             g.user_role = data['extra_data']['user_role']
+            if login_manager.session_protection == 'strong':
+                ident = login_manager._session_identifier_generator()
+                session['_id'] = ident
             login_manager._load_user()
+
         else:
             error = data.get('error', '')
             detail = data.get('detail', '')

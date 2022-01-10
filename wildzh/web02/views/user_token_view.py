@@ -44,5 +44,4 @@ def gen_token():
     identity = data['identity']
     r, t_data = c_token.gen_token(item['user_no'], identity=identity,
                                   timeout=timeout, user_role=item['role'])
-    print(t_data)
     return {'status': r, 'data': t_data}

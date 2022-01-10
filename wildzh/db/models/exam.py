@@ -83,3 +83,13 @@ class ExamQuestionFeedback(Base):
     result = sqlalchemy.Column(sqlalchemy.VARCHAR(50), default="")
     times = sqlalchemy.Column(sqlalchemy.SMALLINT())
     update_time = sqlalchemy.Column(sqlalchemy.INT())
+
+
+class ExamBatchEvent(Base):
+    __tablename__ =  'exam_batch_events'
+    batch_id = sqlalchemy.Column(sqlalchemy.CHAR(32), primary_key=True)
+    exam_no = sqlalchemy.Column(sqlalchemy.INT())
+    batch_type = sqlalchemy.Column(sqlalchemy.VARCHAR(30))
+    batch_data = sqlalchemy.Column(sqlalchemy.VARCHAR(500))
+    create_time = sqlalchemy.Column(sqlalchemy.INT())
+    update_time = sqlalchemy.Column(sqlalchemy.INT())

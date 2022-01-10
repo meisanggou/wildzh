@@ -222,42 +222,50 @@ def handle_exam_no_answer(file_path, questions_set):
 def handle_exam_with_answer(file_path, questions_set):
     print(file_path)
     exam_name = os.path.basename(file_path).rsplit(".", 1)[0]
-    answer_file = file_path.replace(".docx", u"答案.docx")
-    if os.path.exists(answer_file) is False:
-        msg = ("Ignore %s, not Answer" % file_path)
-        print(msg)
-        return False, msg
+    answer_file = None
+    if questions_set.answer_location.IAmFile:
+        answer_file = file_path.replace(".docx", u"答案.docx")
+        if os.path.exists(answer_file) is False:
+            msg = ("Ignore %s, not Answer" % file_path)
+            print(msg)
+            return False, msg
     print("start handle %s" % exam_name)
-    real_upload = questions_set.real_upload
-    with DocxObject(file_path) as do, DocxObject(answer_file) as ado:
-        handle_docx_main_xml(do, ".", u"、", u"．", ':', questions_set=questions_set)
-        answers_dict = handle_answers_docx_main_xml(ado, questions_set)
+    with DocxObject(file_path) as do:
+        handle_docx_main_xml(do, ".", u"、", u"．", ':',
+                             questions_set=questions_set)
         q_rl = do.relationships
-        aw_rl = ado.relationships
         if questions_set.length <= 0:
             raise RuntimeError("没发现题目")
         for q_item in questions_set:
-            q_no = q_item.no
-            # 判定是否包含答案
-            answer_obj = answers_dict.find_answer(q_item)
-            if not answer_obj:
-                raise RuntimeError("lack answer %s %s" % (q_item.select_mode,
-                                                          q_item.no))
-            q_item.set_answer(answer_obj)
-            # 开始上传 题目
             # 获取题目描述中的图片
             q_item.desc = replace_media2(q_item.desc, q_rl)
-
             # 获取选项中的图片
             for option in q_item.options:
                 option.desc = replace_media2(option.desc, q_rl)
-            # 获取答案中的图片
-            q_item.answer = replace_media2(q_item.answer, aw_rl)
+            if not answer_file:
+                q_item.ensure_has_answer()
+                # 获取答案中的图片
+                q_item.answer = replace_media2(q_item.answer, q_rl)
+        if answer_file:
+            with DocxObject(answer_file) as ado:
+                answers_dict = handle_answers_docx_main_xml(ado, questions_set)
+                aw_rl = ado.relationships
+                for q_item in questions_set:
+                    # 判定是否包含答案
+                    answer_obj = answers_dict.find_answer(q_item)
+                    if not answer_obj:
+                        raise RuntimeError("lack answer %s %s" % (
+                            q_item.select_mode, q_item.no))
+                    q_item.set_answer(answer_obj)
+                    # 获取答案中的图片
+                    q_item.answer = replace_media2(q_item.answer, aw_rl)
         post_questions(remote_host, questions_set)
     return True, "success"
 
 
 def handle_exam(file_path, question_set):
+    handle_exam_with_answer(file_path, question_set)
+    return
     if question_set.answer_location.IAmFile:
         handle_exam_with_answer(file_path, question_set)
     else:

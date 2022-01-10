@@ -15,35 +15,6 @@ RIGHT_CS = ['对', '√']
 WRONG_CS = ['错', '×']
 
 
-def get_medias(text):
-    media_comp = re.compile(r"(\[\[([a-z0-9]+?)\$([\d.]+?)\$([\d.]+?)(|\$[\d\.\-|]+?)\]\])", re.I)
-    found_rs = media_comp.findall(text)
-    rs = {}
-    medias = set()
-    for r_item in found_rs:
-        r_t = r_item[0]
-        m_id = r_item[1]
-        width = r_item[2]
-        height = r_item[3]
-        clip_data = None
-        if len(r_item[4]) != 0:
-            # 需要裁剪
-            left, top, right, bottom = r_item[4][1:].split("|")
-            clip_data = [left, top, right, bottom]
-            # 需要裁剪
-            for i in range(4):
-                if clip_data[i] == "":
-                    clip_data[i] = 0
-                elif clip_data[i].startswith("-"):
-                    clip_data[i] = 0
-                else:
-                    clip_data[i] = float(clip_data[i]) / 1000.0
-        rs[r_t] = {'rid': m_id, 'width': width, 'height': height,
-                    'clip_data': clip_data}
-        medias.add(m_id)
-    return rs, medias
-
-
 class AnswerLocation(object):
     _instances = {}
 
