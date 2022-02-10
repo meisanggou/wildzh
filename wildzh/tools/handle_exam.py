@@ -157,7 +157,9 @@ def replace_media2(text, q_rl):
     return text, medias
 
 
-def upload_media_to_server_dummy(*args, **kwargs):
+def upload_media_to_server_dummy(file_path, *args, **kwargs):
+    if not os.path.exists(file_path):
+        raise RuntimeError('file %s not exist!' % file_path)
     return '/static/dummy'
 
 
@@ -259,7 +261,9 @@ def handle_exam_with_answer(file_path, questions_set):
                     q_item.set_answer(answer_obj)
                     # 获取答案中的图片
                     q_item.answer = replace_media2(q_item.answer, aw_rl)
-        post_questions(remote_host, questions_set)
+                post_questions(remote_host, questions_set)
+        else:
+            post_questions(remote_host, questions_set)
     return True, "success"
 
 
@@ -402,10 +406,10 @@ if __name__ == "__main__":
     s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
                     file_path=d_path,
                     question_subject=0, # 0-微观经济学 1-宏观经济学 2-政治经济学
-                    answer_location=AnswerLocation.file(),
+                    answer_location=AnswerLocation.file(), #  单独的答案文件
                     set_keys=keys)
-    # s_kwargs['answer_location'] = AnswerLocation.file()  #  单独的答案文件
-    # s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
+
+    s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
     s_kwargs['exam_name'] = exam_name  # 设置题目来源 一般真题需要设置
     # s_kwargs['inside_mark_prefix'] = '2008年经济学真题多选判断'
     q_set = QuestionSet(**s_kwargs)

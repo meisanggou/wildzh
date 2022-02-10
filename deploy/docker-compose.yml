@@ -13,16 +13,14 @@ services:
     volumes:
     - ../:/opt/wildzh
     - $ZH_UPLOAD_FOLDER:/opt/upload
-  wildzh-es:
-    container_name: wildzh-es
+  wildzh-es2:
+    container_name: wildzh-es2
     environment:
       - discovery.type=single-node
     network_mode: host
     image: meisanggou/elasticsearch-ik:7.7.1
     restart: always
     volumes:
-      - wildzh-es:/usr/share/elasticsearch/data
+      - /mnt/JINGD/data/es:/usr/share/elasticsearch/data
 version: '2.4'
-volumes:
-  wildzh-es:
-    name: wildzh-es
+

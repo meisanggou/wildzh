@@ -173,8 +173,6 @@ class Question(object):
             raise p_exc.AnswerNotFound(self.q_items, self)
 
     def upload_medias(self, func, *args, **kwargs):
-        if self.dry_run:
-            return
         #  问题描述图片
         if self.desc_url and 'desc_url' not in self._uploaded_medias:
             self.desc_url = func(self.desc_url, *args, **kwargs)
@@ -531,7 +529,8 @@ class QuestionSet(object):
         :param kwargs:
         :return:
         """
-        if self.dry_run is True:
+        if self.dry_run is True and False:
+            # if dry_run please set a dummy_func
             return
         for q_item in self:
             q_item.upload_medias(func, *args, **kwargs)
