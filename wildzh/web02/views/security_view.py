@@ -15,9 +15,12 @@ url_prefix = '/security'
 security_view = View2("security", __name__, url_prefix=url_prefix,
                 auth_required=True)
 SE_SC_MAN = SecurityCaptureScreen()
+TRUST_USERS = [8, ]
 
 
 def security_firewall(resource, event, trigger, session, user_no, **kwargs):
+    if user_no in TRUST_USERS:
+        return None
     obj = SE_SC_MAN.get(session, user_no)
     if obj.num > 10:
         action = constants.SE_ACTION_EXIT
@@ -41,7 +44,7 @@ def capture_screen():
     obj = SE_SC_MAN.get(g.session, g.user_no)
     if times is not None:
         obj.num += times
-    if obj.num <= 5:
+    if obj.num <= 5 or g.user_no in TRUST_USERS:
         action = constants.SE_ACTION_NORMAL
         message = ''
     elif obj.num <= 10:
