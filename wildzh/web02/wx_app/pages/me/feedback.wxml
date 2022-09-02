@@ -1,0 +1,43 @@
+<!--pages/me/feedback.wxml-->
+<view>
+    <view class="top"></view>
+    <view class="statis">
+        <view class="statis-div">
+            <view class="statis-div-v"> {{ fbNum }} </view>
+            <view class="statis-div-desc">总反馈</view>
+        </view>
+        <view class="statis-division">|</view>
+        <view class="statis-div">
+            <view class="statis-div-v"> {{ fbAvailNum }}</view>
+            <view class="statis-div-desc">有效反馈</view>
+        </view>
+        <view class="statis-division">|</view>
+        <view class="statis-div">
+            <view class="statis-div-v"> {{ fbPendingNum }}</view>
+            <view class="statis-div-desc">未处理</view>
+        </view>
+    </view>
+    <view class="goods">
+        <view class="good-item" wx:for="{{ fbItems }}" wx:key="insert_time">
+            <view class="good-item-left">
+                <view class="good-item-title red">
+                    <view>
+                        <view>{{ item.fb_type }}</view>
+                    </view>
+                </view>
+
+                <view class="good-item-vc">
+                    <view>
+                        <view>{{ item.description }}</view>
+                    </view>
+                </view>
+            </view>
+            <view class="good-item-right">
+                <block>
+                    <view class="good-item-button bc-enable" 
+                        data-index="{{index}}" bindtap="preExchange">{{ item.state_desc }}</view>
+                </block>
+            </view>
+        </view>
+    </view>
+</view>

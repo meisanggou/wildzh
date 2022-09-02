@@ -1,0 +1,68 @@
+/* components/showQuestion.wxss */
+.view-tag {
+    margin-top: 15rpx;
+    margin-bottom: 15rpx;
+  }
+  .tag {
+    /* border:2rpx solid; */
+    border-radius:15rpx;
+    margin-left: 10rpx;
+    padding-left: 15rpx;
+    padding-right: 15rpx;
+    padding-top: 12rpx;
+    padding-bottom: 12rpx;
+    background-color: #FFBB77	;
+  }
+
+  .noChose {
+    background-color: #f0f5fb;
+    line-height: 70rpx;
+    font-size: 30rpx;
+    margin: 20rpx 20rpx 20rpx 20rpx;
+    padding-left: 20rpx;
+    color: #363637;
+    border-radius: 5rpx;
+  }
+  
+  .chose {
+    background-color: #fff;
+     /* DodgerBlue  */
+    color: #1E90FF; 
+    border: 1rpx #1E90FF solid;
+    line-height: 68rpx;
+    font-size: 30rpx;
+    margin: 20rpx 20rpx 20rpx 20rpx;
+    padding-left: 20rpx;
+    border-radius: 5rpx;
+  }
+
+  .errorChose {
+    background-color: #fff;
+    color: #f01212;
+    border: 1rpx #f01212 solid;
+    line-height: 68rpx;
+    font-size: 30rpx;
+    margin: 20rpx 20rpx 20rpx 20rpx;
+    padding-left: 20rpx;
+    border-radius: 5rpx;
+  }
+
+.btn-warn{
+  margin-top: 40rpx;
+  margin-bottom: 30rpx;
+  margin-left: 40rpx;
+  /* border: solid 1rpx ; */
+  color: black;
+  background-color: #dec674;
+  text-align: center;
+  padding: 10rpx;
+  width: 150rpx;
+}
+
+  .analysis{
+    margin-top: 20rpx;
+  }
+
+  .deepskyblue {
+    color: 	#00BFFF;
+  }

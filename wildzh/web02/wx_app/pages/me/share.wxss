@@ -1,0 +1,36 @@
+/* pages/me/share.wxss */
+.body {
+    text-align: center;
+}
+
+.title {
+    height: 150rpx;
+    line-height: 150rpx;
+    font-size: large;
+}
+
+.sub-title {
+    color: #20b2aa;
+    font-size: large;
+    margin-bottom: 50rpx;
+}
+
+.button {
+    width: 75%;
+    margin: auto;
+}
+
+.content{
+    width: 90%;
+    margin: auto;
+    font-size: small;
+}
+
+.section{
+    margin: 30rpx;
+    text-align: left;
+}
+
+.section-title {
+    margin-bottom: 10rpx;
+}

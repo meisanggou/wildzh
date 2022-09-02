@@ -1,0 +1,70 @@
+<!--pages/vc/goods.wxml-->
+<view>
+    <view class="top"></view>
+    <view class="statis">
+        <view class="statis-div">
+            <view class="statis-div-v"> {{ vcBalance }} </view>
+            <view class="statis-div-desc">拥有积分</view>
+        </view>
+        <view class="statis-division">|</view>
+        <view class="statis-div">
+            <view class="statis-div-v"> {{ vcExpenses }}</view>
+            <view class="statis-div-desc">已消费积分</view>
+        </view>
+        <view class="statis-division">|</view>
+        <view class="statis-div">
+            <view class="statis-div-v">-</view>
+            <view class="statis-div-desc">积分记录</view>
+        </view>
+        <view class="statis-division">|</view>
+        <view class="statis-div" bindtap="toMakeVCPage">
+            <view class="statis-div-v">
+                <image src="/images/make_vc.png" mode="aspectFit"></image>
+            </view>
+            <view class="statis-div-desc">赚积分</view>
+        </view>
+    </view>
+    <modal hidden="{{hiddenModal}}" title="积分兑换" confirm-text="确认兑换" cancel-text="取消" bindcancel="cancelExchange"
+        bindconfirm="confirmExchange">
+        <view class="dis-flex">
+            <view>消耗：</view>
+            <view class="red">{{ goods[goodIndex].vc_count }}</view>
+            <view><text> 积分</text></view>
+        </view>
+        <view class="text-center">-- 兑换 --</view>
+        <view>{{ goods[goodIndex].title }}</view>
+        <view>{{ goods[goodIndex].sub_title }}</view>
+    </modal>
+    <view class="goods">
+        <view class="good-item" wx:for="{{ goods }}" wx:key="id"
+            wx:if="{{ item.available == 'enable' || item.disable_msg}}">
+            <view class="good-item-left">
+                <view class="good-item-title">
+                    <view>
+                        <view>{{ item.title }}</view>
+                        <view wx:if="{{item.sub_title}}">{{ item.sub_title }}</view>
+                    </view>
+                </view>
+
+                <view class="good-item-vc red">
+                    <view>
+                        <view>{{ item.vc_count }}积分</view>
+                        <view class="good-item-attention" wx:if="{{item.attention}}">{{ item.attention}}</view>
+                    </view>
+                </view>
+            </view>
+            <view class="good-item-right">
+                <block wx:if="{{item.available == 'enable'}}">
+                    <view class="good-item-button bc-enable" wx:if="{{ vcBalance >= item.vc_count }}"
+                        data-index="{{index}}" bindtap="preExchange">立即兑换</view>
+                    <view class="good-item-button bc-disable" wx:else>积分不足</view>
+                </block>
+                <block wx:else>
+                    <view class="good-item-button bc-disable">立即兑换</view>
+                    <view class="good-item-lh red text-center">{{ item.disable_msg}}</view>
+                </block>
+
+            </view>
+        </view>
+    </view>
+</view>

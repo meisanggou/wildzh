@@ -1,0 +1,15 @@
+<view class="body">
+    <view class="title">
+        <view>邀请好友加入题库</view>
+    </view>
+    <view class="sub-title">{{ examName }}</view>
+    <view class="button" wx:if="{{shareToken}}">
+        <button type="primary" open-type="share">立即邀请</button>
+    </view>
+    <view class="content">
+        <view class="section" wx:for="{{tips}}" wx:key="title">
+            <view class="section-title">{{item.title}}</view>
+            <view wx:for="{{ item.items }}" wx:key='text' wx:for-item="subItem">{{ subItem.text }} </view>
+        </view>
+    </view>
+</view>

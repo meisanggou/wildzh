@@ -1,0 +1,73 @@
+<view bindtap="getQuestionTag">
+    <text wx:if="{{ nowQuestion.index + 1 }}">{{nowQuestion.index + 1}}.</text>
+    <block wx:for="{{nowQuestion.question_desc_rich}}" wx:key="index">
+        <block wx:if="{{item.url}}">
+            <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
+                src="{{remote_host}}{{item.url}}"></image>
+        </block>
+        <block wx:else>
+            <text>{{item.value}}</text>
+        </block>
+    </block>
+    <text wx:if="{{nowQuestion.question_source}}">({{nowQuestion.question_source}})</text>
+    <block wx:if="{{isShowSubject}}">
+        【{{nowQuestion.question_subject}}】
+    </block>
+    <text wx:if="{{ multiOpts }}">[多选]</text>
+</view>
+
+<!-- <view></view> -->
+<image class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url && !videoDesc}}"
+    src='{{remote_host}}{{nowQuestion.question_desc_url}}'></image>
+<video class='descPic' mode='aspectFit' wx:if="{{nowQuestion.question_desc_url && videoDesc}}"
+    src='{{remote_host}}{{nowQuestion.question_desc_url}}'></video>
+<view class="view-tag">
+    <text class="tag" wx:for="{{tags}}" wx:key="item">{{item}}</text>
+</view>
+<view class='questionOption'>
+    <view class="{{options[idx].class? options[idx].class:'noChose'}}" bindtap='choseItem' wx:for="{{options}}"
+        wx:for-index="idx" data-choseitem="{{idx}}" wx:key="desc">{{optionChar[idx]}}、
+        <block wx:for="{{item['desc_rich']}}" wx:for-item="desc_item" wx:key="index">
+            <block wx:if="{{desc_item.url}}">
+                <image mode='aspectFit' style='height:{{desc_item.height}}px;width:{{desc_item.width}}px;'
+                    src="{{remote_host}}{{desc_item.url}}"></image>
+            </block>
+            <block wx:else>
+                {{desc_item.value}}
+            </block>
+
+        </block>
+
+    </view>
+</view>
+<view wx:if="{{ showConfirm }}" class="btn-warn" bindtap="confirmAnswer">选好了</view>
+<view wx:if="{{showAnswer}}">
+    <!-- <view class='item' wx:if="{{ mode != 'answer-show' }}">
+        <block wx:for="{{questionAnswer}}" wx:key="index">
+            <block wx:if="{{item.url}}">
+                <image mode='aspectFit' style='height:{{item.height}}px;width:{{item.width}}px;'
+                    src="{{remote_host}}{{item.url}}"></image>
+            </block>
+            <block wx:else>
+                {{item.value}}
+            </block>
+        </block>
+    </view> -->
+    <view class="deepskyblue">
+        <view>参考答案： {{ rightOption }}</view>
+        <view>你的答案： {{ selectedOption }}</view>
+    </view>
+    <scroll-view scroll-y="true" class='analysis'>解析：
+        <block wx:for="{{nowQuestion.answer_rich}}" wx:key='index'>
+            <block wx:if="{{item.url}}">
+                <image mode='scaleToFill' style='height:{{item.height}}px;width:{{item.width}}px;'
+                    src="{{remote_host}}{{item.url}}" data-src="{{remote_host}}{{item.url}}" bindtap="previewImage">
+                </image>
+            </block>
+            <block wx:else>
+                <text>{{item.value}}</text>
+            </block>
+        </block>
+
+    </scroll-view>
+</view>

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "测试",
+  "usingComponents": {
+    "mp-question": "/components/showQuestion"
+  }
+}

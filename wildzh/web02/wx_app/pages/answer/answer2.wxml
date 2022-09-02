@@ -1,0 +1,62 @@
+<view class="page" bindtouchstart="touchStart" bindtouchend="touchEnd">
+  <view class="loading_box" wx:if="{{loading}}">
+    <view class="loading3 loading3_1"></view>
+    <view class="loading3 loading3_2"></view>
+    <view class="loading3 loading3_3"></view>
+  </view>
+  <view wx:if="{{ showSurvey == false }}" class="content">
+    <view class='top'>
+      <view class='topName'>
+        <text>{{examName}}</text>
+      </view>
+      <view class='topProgress'>
+        <text class="topTime">{{ answerTime }}</text>
+        <text class="topNum">{{nowQuestionIndex+1}} / {{ totalQuestionNumber }}</text>
+      </view>
+    </view>
+
+    <view class='questionTitle'>
+      <mp-question nowQuestion="{{ nowQuestion}}" examNo="{{ examNo}}" showAnswer="{{ showAnswer }}" mode="{{ mode }}"
+        bindchoseOption="choseOption"></mp-question>
+    </view>
+  </view>
+  <view class="survey" wx:else>
+    <view class="blank"></view>
+    <view class="statis">
+      <view class="statis-div">
+        <view class="statis-div-v">{{ rightNum }}</view>
+        <view class="statis-div-desc">正确题数</view>
+      </view>
+      <view class="statis-division">|</view>
+      <view class="statis-div">
+        <view class="statis-div-v">{{answerTime}}</view>
+        <view class="statis-div-desc">用时</view>
+      </view>
+      <view class="statis-division">|</view>
+      <view class="statis-div">
+        <view class="statis-div-v">{{skipNum}}</view>
+        <view class="statis-div-desc">跳过题数</view>
+      </view>
+    </view>
+    <view class="center">
+      <view class="score">{{score}}/{{totalScore}}</view>
+      <view class="statis-div-desc">得分</view>
+    </view>
+    <view class="detail">
+      <view class="label-detail">查看解析</view>
+      <view class='row' wx:for="{{ allQuestionIndexs }}" wx:for-item="lineNums">
+        <view wx:for="{{ lineNums }}" bindtap='showDeatil' data-index="{{ item }}"
+          class="item {{questionItems[item].right? 'bg-right':'bg-error'}}">{{ item + 1 }}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class='bottom' wx:if="{{ showSurvey == false }}" >
+    <view bindtap='before1' class='switch'>‹</view>
+    <view wx-if="{{ mode == 'answer' }}" class='switchtext' bindtap='submit'>交卷</view>
+    <view wx:else class='switchtext' bindtap='returnSurvey'>返回
+    </view>
+    <view bindtap='after1' class='switch'>›</view>
+  </view>
+
+</view>

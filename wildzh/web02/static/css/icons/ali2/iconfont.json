@@ -1,0 +1,51 @@
+{
+  "id": "3624992",
+  "name": "wildzh",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "7408834",
+      "name": "题库",
+      "font_class": "tiku",
+      "unicode": "e6a0",
+      "unicode_decimal": 59040
+    },
+    {
+      "icon_id": "485771",
+      "name": "用户中心",
+      "font_class": "yonghuzhongxin",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "2076271",
+      "name": "退出",
+      "font_class": "tuichu",
+      "unicode": "e892",
+      "unicode_decimal": 59538
+    },
+    {
+      "icon_id": "2675009",
+      "name": "首页",
+      "font_class": "shouye",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "2901897",
+      "name": "视频",
+      "font_class": "shipin",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "4300068",
+      "name": "班级管理",
+      "font_class": "banjiguanli",
+      "unicode": "e66d",
+      "unicode_decimal": 58989
+    }
+  ]
+}

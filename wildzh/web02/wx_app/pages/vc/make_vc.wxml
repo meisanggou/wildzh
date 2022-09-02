@@ -1,0 +1,23 @@
+<!--pages/vc/make_vc.wxml-->
+<view class="items">
+    <view class="item" wx:if="{{ !hideLookAD }}">
+        <view class="item-left">
+            <view class="item-top">
+                <text>{{ lookADItem.project_name }}</text>
+                <text class="margin-l10 ">({{ lookADItem.freq }}/{{ lookADItem.max_freq }})</text>
+            </view>
+            <view class="item-bottom">
+                <text>最高可得</text>
+                <text class="margin-l10 yellow">{{ lookADItem.give_vc_count }}</text>
+                <text class="margin-l10 ">积分</text>
+                <text></text>
+            </view>
+        </view>
+        <view class="item-right">
+            <view class="item-center">
+                <view wx:if="{{ enableLookAD }}" class="item-center-content item-btn-enable" bindtap="toLookAD">观看</view>
+                <view wx:else class="item-center-content item-btn-disable">观看</view>
+            </view>
+        </view>
+    </view>
+</view>

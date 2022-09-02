@@ -1,5 +1,3 @@
-ali2目录替换 ali目录。ali目录废弃
-
 如何添加一个图标
 
 进入 https://www.iconfont.cn/ 登录（github meisanggou账号）
