@@ -10,7 +10,7 @@ __author__ = 'meisa'
 url_prefix = "/classes"
 
 rt = RenderTemplate("classes", menu_active="classes", page_title=u"班级管理")
-menu_list = {"title": u"班级管理", "icon_class": "icon-classes", "menu_id": "classes", "sub_menu": [
+menu_list = {"title": u"班级管理", "icon_class": "icon-banjiguanli", "menu_id": "classes", "sub_menu": [
     {"title": u"我的班级", "url": url_prefix + "/"},
     {"title": u"成员管理", "url": url_prefix + "/"},
     {"title": u"班级资源", "url": url_prefix + "/"},

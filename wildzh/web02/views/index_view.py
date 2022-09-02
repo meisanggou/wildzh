@@ -12,7 +12,7 @@ from wildzh.web02.view import View2
 
 __author__ = 'meisa'
 
-menu_list = {"title": u"首页", "icon_class": "icon-home", "menu_id": "home", "index": 0}
+menu_list = {"title": u"首页", "icon_class": "icon-shouye", "menu_id": "home", "index": 0}
 rt = RenderTemplate()
 index_view = View2("index", __name__, url_prefix="/", menu_list=menu_list)
 index_view.register_jinja_global_env('menu_url', '/')

@@ -65,7 +65,7 @@ defined_routes = dict(add_url=add_url, upload_url=upload_url,
                       page_question_url=page_question_url, file_url=file_url,
                       sync_url=sync_url)
 rt = RenderTemplate("exam", menu_active="exam", defined_routes=defined_routes)
-menu_list = {"title": u"试题库", "icon_class": "icon-exam", "menu_id": "exam", "sub_menu": [
+menu_list = {"title": u"试题库", "icon_class": "icon-tiku", "menu_id": "exam", "sub_menu": [
     {"title": u"试题库管理", "url": url_prefix + "/"},
     {"title": u"添加试题库", "url": url_prefix + "/?action=exam"},
     {"title": u"试题管理", "url": url_prefix + "/question/"},
