@@ -19,51 +19,24 @@
                 <div class="form-group apiContentLine">
                     <ul>
                         <li>
-                            <label>测试名称：</label>
-                            <select class="box-side width150" type="text" @change="select_exam" v-model="current_exam_index">
-                                <option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>
-                            </select>
-                            <label>当前题号：</label>
-                            <input class="box-side width100" type="text" v-model.number="current_question_no" @change="change_question"/>
-                            <label>已录入</label>
-                            <input class="width100" readonly disabled about="" :value="current_exam.question_num">
-                            <label>题</label>
+                            <label>视频标题：</label>
+                            <input class="box-side width500" v-model.trim="video_title" type="text"/>
                         </li>
                         <li>
-                            <label>题目类型：</label>
-                            <select class="box-side width150" type="text"  v-model="select_mode" @change="change_mode">
-                                <option v-for="(item,index) in select_modes" :value="index" v-if="item.enable">{{item.name}}</option>
-                            </select>
-                            <label>所属科目：</label>
-                            <select class="box-side width150" type="text" v-model="question_subject">
-                                <option v-for="(item,index) in subjects" :value="index">{{item.name}}</option>
-                            </select>
+                            <label class="api-describe" for="">视频描述：</label>
+                            <textarea class="box-side" rows="2" required="" v-model.trim="question_desc"></textarea>
                         </li>
                         <li>
-                            <label class="api-describe" for="">题目描述：</label>
-                            <textarea class="box-side" rows="3" required="" v-model.trim="question_desc"></textarea>
-                        </li>
-                        <li>
-                            <label class="api-describe" for="">题目图片：</label>
-                            <input @change="upload_pic" ref="filElem" type="file" placeholder="上传图片" accept="image/*"/>
+                            <label class="api-describe" for="">上传视频：</label>
+                            <input @change="upload_pic" ref="filElem" type="file" placeholder="选择视频" accept="video/*"/>
                             <img :src="question_desc_url" width="500px"/>
                             <a v-if="question_desc_url.length>0" @click="remove_pic" class="status_move">删除描述图片</a>
                         </li>
                         <li>
-                            <label>题目来源：</label>
-                            <input class="box-side width300" type="text" v-model="question_source"/>
-                        </li>
-                        <li>
-                            <label>题目状态：</label>
+                            <label>视频状态：</label>
                             <select class="box-side width150" type="text" v-model="question_state">
                                 <option v-for="(item,index) in q_states" :value="index">{{item.name}}</option>
                             </select>
-                        </li>
-                        <li name="li_option" v-for="(opt in options">
-                            <label>{{opt.c}}、</label>
-                            <input class="box-side width500" type="text" v-model.trim="opt.desc"/>
-                            <label>答案</label>
-                            <input class="box-side" type="checkbox" name="answer-options" v-model="opt.value" :value="1" />
                         </li>
 
                     </ul>

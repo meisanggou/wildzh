@@ -1,0 +1,50 @@
+[
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "视频编号",
+                "col_name": "video_uuid",
+                "col_type": "varchar(36)"
+            },
+            {
+                "col_comment": "视频标题",
+                "col_name": "video_title",
+                "col_type": "varchar(100)"
+            },
+            {
+                "col_comment": "视频描述",
+                "col_name": "video_desc",
+                "col_type": "varchar(255)"
+            },
+            {
+                "col_comment": "视频状态",
+                "col_name": "video_state",
+                "col_type": "int(11)"
+            },
+            {
+                "default_value": "0",
+                "col_comment": "视频位置",
+                "col_name": "sys_balance",
+                "col_type": "varchar(255)"
+            },
+            {
+                "col_comment": "上传者",
+                "col_name": "uploader",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "创建时间",
+                "col_name": "add_time",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "更新时间",
+                "col_name": "update_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "视频信息",
+        "table_name": "video"
+    }
+]

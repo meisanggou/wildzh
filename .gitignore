@@ -102,5 +102,5 @@ ENV/
 .idea/
 
 # upload data
-/data
+data
 data/exam/pic

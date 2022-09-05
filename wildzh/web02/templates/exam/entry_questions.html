@@ -1,6 +1,6 @@
 {% extends "base_a.html" %}
 
-{% block title %}测试管理{% endblock %}
+{% block title %}试题管理{% endblock %}
 {##}
 {% block css_content %}
 {#    <link href="assets/plugins/jquery-toast/jquery.toast.min.css" rel="stylesheet" type="text/css">#}
@@ -19,7 +19,7 @@
                 <div class="form-group apiContentLine">
                     <ul>
                         <li>
-                            <label>测试名称：</label>
+                            <label>试题库名称：</label>
                             <select class="box-side width150" type="text" @change="select_exam" v-model="current_exam_index">
                                 <option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>
                             </select>
