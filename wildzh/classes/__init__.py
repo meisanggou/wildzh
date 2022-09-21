@@ -1,6 +1,8 @@
 # !/usr/bin/env python
 # coding: utf-8
 import time
+import uuid
+
 from mysqldb_rich.db2 import DB
 
 __author__ = 'meisa'
@@ -8,6 +10,7 @@ __author__ = 'meisa'
 
 class BaseObject(object):
     model = None
+    uuid_col = None
 
     @property
     def now_time(self):
@@ -20,6 +23,12 @@ class BaseObject(object):
         return query
 
     def create(self, session, **kwargs):
+        if hasattr(self.model, 'update_time'):
+            kwargs['update_time'] = self.now_time
+        if hasattr(self.model, 'add_time'):
+            kwargs['add_time'] = self.now_time
+        if self.uuid_col:
+            kwargs[self.uuid_col] = uuid.uuid4()
         obj = self.model(**kwargs)
         obj.save(session)
         return obj
@@ -29,8 +38,6 @@ class BaseObject(object):
 
     def update(self, session, where_value, **kwargs):
         kwargs['internal'] = 1 if kwargs['internal'] else 0
-        print(kwargs)
-        print(where_value)
         return session.query(self.model).filter_by(**where_value).update(
             kwargs)
 

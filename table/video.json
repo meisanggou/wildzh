@@ -23,9 +23,8 @@
                 "col_type": "int(11)"
             },
             {
-                "default_value": "0",
                 "col_comment": " ”∆µŒª÷√",
-                "col_name": "sys_balance",
+                "col_name": "video_location",
                 "col_type": "varchar(255)"
             },
             {

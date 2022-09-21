@@ -1,6 +1,5 @@
 # !/usr/bin/env python
 # coding: utf-8
-import time
 
 from wildzh.classes import BaseObject
 from wildzh.db.models import virtual_currency as vc_model
