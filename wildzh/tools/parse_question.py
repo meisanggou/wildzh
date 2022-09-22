@@ -5,6 +5,7 @@ import collections
 import json
 import re
 
+from wildzh.tools import constants
 import wildzh.tools.parse_exception as p_exc
 from wildzh.tools.parse.answer import Answer
 from wildzh.tools.parse_option import ListOption
@@ -171,6 +172,10 @@ class Question(object):
     def ensure_has_answer(self):
         if self.answer is None:
             raise p_exc.AnswerNotFound(self.q_items, self)
+
+    def ensure_no_math(self):
+        if constants.MATH_FILL in self.desc:
+            raise p_exc.QuestionDescIncludeMath(self.q_items, self)
 
     def upload_medias(self, func, *args, **kwargs):
         #  问题描述图片
@@ -520,6 +525,10 @@ class QuestionSet(object):
     def ensure_has_answer(self):
         for item in self:
             item.ensure_has_answer()
+
+    def ensure_no_math(self):
+        for item in self:
+            item.ensure_no_math()
 
     def upload_medias(self, func, *args, **kwargs):
         """

@@ -25,7 +25,7 @@ class QuestionNoRepeat(ParseQuestionException):
 
     def __init__(self, q_items, no):
         msg = '不允许设置重复的题目编号，已存在题目编号：%s' % no
-        ParseException.__init__(self, q_items, msg)
+        super().__init__(q_items, msg)
 
 
 class AnswerNotFound(ParseQuestionException):
@@ -33,20 +33,27 @@ class AnswerNotFound(ParseQuestionException):
     def __init__(self, q_items, q_obj=None):
         msg = '没有设置答案'
         self.q_obj = q_obj
-        ParseException.__init__(self, q_items, msg)
+        super().__init__(q_items, msg)
+
+
+class QuestionDescIncludeMath(ParseQuestionException):
+    def __init__(self, q_items, q_obj=None):
+        msg = '题目描述中包含公式'
+        self.q_obj = q_obj
+        super().__init__(q_items, msg)
 
 
 class InvalidOption(ParseQuestionException):
 
     def __init__(self, q_items, msg):
         msg = '选项有误：%s' % msg
-        ParseException.__init__(self, q_items, msg)
+        super().__init__(q_items, msg)
 
 
 class QuestionTypeNotMatch(ParseQuestionException):
 
     def __init__(self, q_items, msg):
-        ParseException.__init__(self, q_items, msg)
+        super().__init__(q_items, msg)
 
 
 class ParseAnswerError(ParseException):

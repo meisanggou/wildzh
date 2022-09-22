@@ -11,5 +11,9 @@ class Video(BaseObject):
     model = video.VideoModel
     uuid_col = 'video_uuid'
 
-    def new(self, session, title, desc, state, user_no, ):
-        pass
+    def new(self, session, video_title, video_desc, video_state,
+            video_location, user_no):
+        kwargs = {'video_title': video_title, 'video_desc': video_desc,
+                  'video_state': video_state, 'video_location': video_location,
+                  'uploader': user_no}
+        return self.create(session, **kwargs)

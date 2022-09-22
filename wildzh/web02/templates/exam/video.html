@@ -29,6 +29,7 @@
                         <li>
                             <label class="api-describe" for="">上传视频：</label>
                             <input @change="upload_video" ref="filElem" type="file" placeholder="选择视频" accept="video/*"/>
+                            <label>{{upload_lab}}</label>
                             <video v-if="video_url.length>0" :src="video_url" width="500px"/>
                             <a v-if="video_url.length>0" @click="remove_video" class="status_move">删除视频</a>
                         </li>

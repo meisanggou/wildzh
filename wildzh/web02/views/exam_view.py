@@ -896,6 +896,7 @@ def upload_question_file():
     error_obj = None
     try:
         q_set.ensure_has_answer()
+        q_set.ensure_no_math()
     except ParseException as pe:
         if not error_question:
             error_msg = pe.msg

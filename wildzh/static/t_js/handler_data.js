@@ -76,6 +76,30 @@ function isSuitableNaN(num, min_allow, max_allow){
     return true;
 }
 
+
+function split(s, sep, num){
+    var arr = s.split(sep);
+    if(num == null || num <=0){
+        return arr;
+    }
+    if(num >= arr.length - 1){
+        return  arr;
+    }
+    var n_arr = new Array();
+    var i=0;
+    for(;i<num;i++){
+        n_arr.push(arr[i]);
+    }
+    var _w = "";
+    for(;i<arr.length - 1;i++){
+        _w += arr[i] + sep;
+    }
+    _w += arr[i];
+    n_arr.push(_w);
+    return n_arr;
+}
+
+
 $(function() {
    $("input[type=tel]").change(function(){
        var v = $(this).val();

@@ -3,47 +3,47 @@
         "table_cols": [
             {
                 "pri_key": true,
-                "col_comment": "ÊÓÆµ±àºÅ",
+                "col_comment": "è§†é¢‘ç¼–å·",
                 "col_name": "video_uuid",
                 "col_type": "varchar(36)"
             },
             {
-                "col_comment": "ÊÓÆµ±êÌâ",
+                "col_comment": "è§†é¢‘æ ‡é¢˜",
                 "col_name": "video_title",
                 "col_type": "varchar(100)"
             },
             {
-                "col_comment": "ÊÓÆµÃèÊö",
+                "col_comment": "è§†é¢‘æè¿°",
                 "col_name": "video_desc",
                 "col_type": "varchar(255)"
             },
             {
-                "col_comment": "ÊÓÆµ×´Ì¬",
+                "col_comment": "è§†é¢‘çŠ¶æ€",
                 "col_name": "video_state",
                 "col_type": "int(11)"
             },
             {
-                "col_comment": "ÊÓÆµÎ»ÖÃ",
+                "col_comment": "è§†é¢‘ä½ç½®",
                 "col_name": "video_location",
                 "col_type": "varchar(255)"
             },
             {
-                "col_comment": "ÉÏ´«Õß",
+                "col_comment": "ä¸Šä¼ è€…",
                 "col_name": "uploader",
                 "col_type": "int(11)"
             },
             {
-                "col_comment": "´´½¨Ê±¼ä",
+                "col_comment": "åˆ›å»ºæ—¶é—´",
                 "col_name": "add_time",
                 "col_type": "int(11)"
             },
             {
-                "col_comment": "¸üĞÂÊ±¼ä",
+                "col_comment": "æ›´æ–°æ—¶é—´",
                 "col_name": "update_time",
                 "col_type": "int(11)"
             }
         ],
-        "table_comment": "ÊÓÆµĞÅÏ¢",
+        "table_comment": "è§†é¢‘ä¿¡æ¯",
         "table_name": "video"
     }
 ]

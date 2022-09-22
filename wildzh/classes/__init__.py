@@ -28,7 +28,7 @@ class BaseObject(object):
         if hasattr(self.model, 'add_time'):
             kwargs['add_time'] = self.now_time
         if self.uuid_col:
-            kwargs[self.uuid_col] = uuid.uuid4()
+            kwargs[self.uuid_col] = str(uuid.uuid4())
         obj = self.model(**kwargs)
         obj.save(session)
         return obj

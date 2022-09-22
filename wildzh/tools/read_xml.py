@@ -6,11 +6,14 @@ import pdb
 import re
 # from win32com import client as wc
 import xml.dom.minidom as minidom
+from wildzh.tools import constants
 from wildzh.tools.parse.answer import Answer
 from wildzh.tools.parse.exception import QuestionTypeNotMatch
 from wildzh.tools.parse.option_type import OptionType
 from wildzh.tools.parse_question import ParseQuestion, QuestionType
 from wildzh.tools.parse_question import AnswerSet, AnswerLocation
+
+
 
 
 def replace_special_space(s):
@@ -23,6 +26,10 @@ def replace_special_space(s):
 
 def _get_node(p_node, node_name):
     f =  filter(lambda x: x.nodeName == node_name, p_node.childNodes)
+    return list(f)
+
+def _get_nodes(p_node, node_names):
+    f =  filter(lambda x: x.nodeName in node_names, p_node.childNodes)
     return list(f)
 
 
@@ -92,10 +99,12 @@ def _handle_drawing(drawing_node):
 
 
 def handle_paragraph(p_node):
-    run_children = _get_node(p_node, "w:r")
+    run_children = _get_nodes(p_node, ["w:r", "m:oMath"])
     p_contents = []
     is_bold = True
     for child in run_children:
+        if child.nodeName == 'm:oMath':
+            p_contents.append(constants.MATH_FILL)
         text_children = _get_node(child, "w:t")
         for c in text_children:
             p_contents.append(c.firstChild.nodeValue)

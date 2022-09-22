@@ -75,7 +75,7 @@ def post_questions(server, questions_set):
     print(questions_set.set_source)
     # 正式上传前 必须 先dry_run
     drt_path = '.%s.dry_run' % questions_set.exam_name
-
+    questions_set.ensure_no_math()
     if questions_set.dry_run:
         with open(drt_path, 'w') as w:
             w.write('')

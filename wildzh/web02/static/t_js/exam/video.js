@@ -37,103 +37,31 @@ function entry_success(r_d){
       });
 }
 
-function add_question()
+function add_video()
 {
     var btn = $(this);
     var r_data = new Object();
-    r_data["question_no"] = parseInt(q_vm.current_question_no);
     var msg = "";
-    var question_desc = q_vm.question_desc;
-    if(question_desc.length <= 0){
-        popup_waring("数据格式有误", "请输入 题目描述");
+    var video_title = q_vm.video_title;
+    if(video_title.length <= 0){
+        popup_waring("数据格式有误", "请输入 视频标题");
         return 1;
     }
-    msg += "题目描述：";
-    msg += question_desc + "\n";
-    r_data["select_mode"] = q_vm.select_mode;
-    r_data["question_desc"] = question_desc;
-    r_data["question_desc_url"] = q_vm.question_desc_url;
-    r_data["question_subject"] = q_vm.question_subject;
-    r_data["question_source"] = q_vm.question_source;
-    r_data['state'] = q_vm.question_state;
-    r_data["options"] = new Array();
-
-    var options = q_vm.options;
-    var i = 0;
-    var c = "";
-    var t= "";
-    var answer = "";
-    msg += "选项：\n";
-    for(;i<options.length;i++){
-        c = options[i].c;
-        t = options[i].desc;
-        var score = 0;
-        if(options[i].value > 0){
-            score = 1;
-            answer += c;
-        }
-        if(t.length <= 0){
-            break
-        }
-        r_data["options"][i] = {"desc": t, "score": score};
-        msg += c + ":" + t + "\n";
+    r_data['video_title'] = video_title;
+    r_data['video_desc'] = q_vm.video_desc;
+    if(q_vm.upload_lab.length == 0){
+        popup_waring("未选择视频", "请选择一个要上传的视频");
+        return 1;
     }
-    for(;i<options.length;i++){
-        t = options[i].desc;
-        if(t.length != 0){
-            popup_waring("缺少选项", "请录入【" + c +"】选项");
-            return 2;
-        }
+    if(q_vm.video_url.length <= 0){
+        popup_waring("视频上传中", "请等待视频上传完成");
+        return 1;
     }
-    if(r_data["options"].length < 2){
-        popup_waring("缺少选项", "请至少录入两个选项！");
-        return 2;
-    }
-    var answer_desc = q_vm.answer;
-    r_data["answer"] = answer_desc;
-    if(q_vm.select_modes[q_vm.select_mode].multi == true){
-        if(answer.length < 2){
-            popup_waring("信息不完整", "当前题型请至少选择2个选项作为答案！");
-            return 3;
-        }
-    }
-    else{
-        if(answer.length != 1){
-            popup_waring("信息不完整", "当前请选择且至多选择1个选项作为答案！");
-            return 3;
-        }
-    }
-    msg += "答案：" + answer;
-    var action = "";
-    if(q_vm.action == "new"){
-        action = '添加'
-    }
-    else{
-        action = '更新';
-    }
-    swal({
-            title: "是否" + action,
-            text: '',//msg,
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: '#DD6B55',
-            confirmButtonText: action,
-            cancelButtonText: "取消",
-            closeOnConfirm: true,
-            closeOnCancel: true
-        },
-        function(isConfirm){
-            if (isConfirm){
-                var questions_url = $("#questions_url").val() + "?exam_no=" + q_vm.current_exam.exam_no;
-                if(q_vm.action == "new") {
-                    my_async_request2(questions_url, "POST", r_data, entry_success);
-                }
-                else{
-                    my_async_request2(questions_url, "PUT", r_data, entry_success);
-                }
-            }
-        }
-    );
+    r_data['video_url'] = q_vm.video_url;
+    r_data['video_state'] = q_vm.video_state;
+    console.info(r_data);
+    var obj_url = $("#obj_url").val();
+    my_async_request2(obj_url, 'POST', r_data, entry_success);
 }
 
 function init_info(data){
@@ -190,7 +118,6 @@ function receive_questions(data){
 $(function() {
     var video_uuid = UrlArgsValue(location.href, "video_uuid");
 
-    var questions_url = $("#questions_url").val();
     var upload_url= $("#upload_url").val();
     q_vm = new Vue({
         el: "#myTabContent",
@@ -198,6 +125,7 @@ $(function() {
             video_states: [{'name': '正常'}, {'name': '停用'}],
             video_title: "",
             video_desc: "",
+            upload_lab: "",
             video_url: "",
             video_state: 0
         },
@@ -207,26 +135,23 @@ $(function() {
             upload_video: function(){
                 var u_files = this.$refs.filElem.files;
                 if(u_files.length <= 0){
+                    this.upload_lab = '';
+                    this.video_url = '';
                     return 1;
                 }
-                console.info(u_files[0]);
-                var name = u_files[0].name;
+                var name = split(u_files[0].name, '.', 1)[0];
                 if(this.video_title.length <= 0){
                     this.video_title = name;
                 }
                 var data = {"video": u_files[0]};
-                //upload_request(upload_url, "POST", data, function(data){
-                //    q_vm.video_url = data["video"];
-                //});
-            },
-            remove_video: function(){
-                q_vm.video_url = "";
-            },
-            update_question: function(){
-                add_question();
+                this.upload_lab = '视频上传中...';
+                upload_request(upload_url, "POST", data, function(data){
+                    q_vm.video_url = data["video"];
+                    q_vm.upload_lab = '视频上传完成';
+                });
             },
             new_video: function(){
-                add_question();
+                add_video();
             }
         }
     });
