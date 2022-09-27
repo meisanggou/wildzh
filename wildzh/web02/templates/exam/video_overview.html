@@ -19,38 +19,29 @@
                     <div style="position: relative">
                         <table class="table table-bordered table-hover api-list-table margintop20" id="t_exams">
                             <tr>
-                                <th scope="col" width="20%">名称</th>
+                                <th scope="col" width="20%">视频标题</th>
                                 <th scope="col" width=15%">创建时间</th>
                                 <th scope="col" width=10%">状态</th>
                                 <th scope="col" width=30%">操作</th>
                             </tr>
                             <tr id="tr_none" class="display_none">
-                                <td colSpan="9" class="text-center">一条记录都没有</td>
+                                <td colSpan="9" class="text-center">一条视频都没有</td>
                             </tr>
-                            <tr v-for="(item, index) in all_exams">
-{#                                <td>{{cn_exam_type[item["exam_type"]]}}</td>#}
-                                <td><a href="#" name="exam_name" data-type="text" data-pk="1" data-title="Enter username" class="editable editable-click" data-original-title="">{{item.exam_name}}</a></td>
+                            <tr v-for="(item, index) in all_videos">
+                                <td><a href="#" name="video_title" data-type="text" data-pk="1" class="editable editable-click" data-original-title="">{{item.video_title}}</a></td>
                                 <td>{{item.add_time}}</td>
-                                <td>{{item.cn_status}}</td>
+                                <td>{{video_states[item.video_state].name}}</td>
                                 <td>
-                                    <a href='javascript:void(0)' @click="delete_exam(index)">删除</a>
-                                    <template>
+                                    <a href='javascript:void(0)' @click="to_action(index, 'exam')">更新信息</a>
+                                    <template v-if="item.video_state == 0">
                                         <label>|</label>
-                                        <a href='javascript:void(0)' @click="to_action(index, 'question')">管理试题</a>
-                                        <label>|</label>
-                                        <a href='javascript:void(0)' @click="to_action(index, 'exam')">更新信息</a>
+                                        <a href='javascript:void(0)' @click="online(index)">停用</a>
                                     </template>
-                                    <template v-if="(item.status & 3) == 3 && (item.status & 64) == 0">
+                                    <template v-if="item.video_state == 1">
                                         <label>|</label>
-                                        <a href='javascript:void(0)' @click="online(index)">上线</a>
-                                    </template>
-                                    <template v-if="(item.status & 64) == 64">
+                                        <a href='javascript:void(0)' @click="offline(index)">启用</a>
                                         <label>|</label>
-                                        <a href='javascript:void(0)' @click="offline(index)">下线</a>
-                                    </template>
-                                    <template v-if="item.show_btn_sync">
-                                        <label>|</label>
-                                        <a href='javascript:void(0)' @click="sync_search_data(index)">同步数据</a>
+                                        <a href='javascript:void(0)' @click="offline(index)">删除</a>
                                     </template>
                                 </td>
                             </tr>

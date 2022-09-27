@@ -65,18 +65,19 @@ defined_routes = dict(add_url=add_url, upload_url=upload_url,
                       page_question_url=page_question_url, file_url=file_url,
                       sync_url=sync_url)
 rt = RenderTemplate("exam", menu_active="exam", defined_routes=defined_routes)
-menu_list = {"title": u"试题库", "icon_class": "icon-tiku", "menu_id": "exam", "sub_menu": [
-    {"title": u"试题库管理", "url": url_prefix + "/"},
-    {"title": u"添加试题库", "url": url_prefix + "/?action=exam"},
-    {"title": u"试题管理", "url": url_prefix + "/question/"},
-    {"title": u"导入试题", "url": url_prefix + "/question/import"},
-    {"title": u"组卷策略", "url": url_prefix + "/strategy"},
-    {"title": u"试题搜索", "url": url_prefix + "/search/"}
+menu_list = {"title": "试题库", "icon_class": "icon-tiku", "menu_id": "exam", "sub_menu": [
+    {"title": "试题库管理", "url": url_prefix + "/"},
+    {"title": "添加试题库", "url": url_prefix + "/?action=exam"},
+    {"title": "试题管理", "url": url_prefix + "/question/"},
+    {"title": "导入试题", "url": url_prefix + "/question/import"},
+    {"title": "组卷策略", "url": url_prefix + "/strategy"},
+    {"title": "试题搜索", "url": url_prefix + "/search/"}
 ]}
 
 exam_view = View2("exam", __name__, url_prefix=url_prefix,
                   auth_required=False, menu_list=menu_list)
-
+f_registry.DATA_REGISTRY.update(constants.DR_KEY_ROUTES,
+                                **{'exam_info_url': info_url})
 c_exam = Exam(db_conf_path)
 EXAM_MAN = ExamInfo()
 EXAM_MF_MAN = ExamMemberFlow2()

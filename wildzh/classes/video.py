@@ -17,3 +17,11 @@ class Video(BaseObject):
                   'video_state': video_state, 'video_location': video_location,
                   'uploader': user_no}
         return self.create(session, **kwargs)
+
+
+class VideoExamMap(BaseObject):
+    model = video.VideoExamMapModel
+
+    def new(self, session, exam_no, video_uuid, position,
+            video_subject=None, video_chapter=None):
+        kwargs = {}

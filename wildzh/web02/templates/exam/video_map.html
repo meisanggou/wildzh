@@ -1,0 +1,53 @@
+{% extends "base_a.html" %}
+
+{% block title %}视频关联{% endblock %}
+{##}
+{% block css_content %}
+{#    <link href="assets/plugins/jquery-toast/jquery.toast.min.css" rel="stylesheet" type="text/css">#}
+    {{ 'plugins/jquery-toast/jquery.toast.min.css' | make_static_html | safe }}
+{% endblock %}
+
+{% block js_content %}
+    {{ 'plugins/jquery-toast/jquery.toast.min.js' | make_static_html | safe }}
+    {{ 't_js/exam/video_map.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+    <div id="div_content">
+        <div id="myTabContent" class="tab-content" style="padding-top: 20px;">
+            <fieldset>
+                <div class="form-group apiContentLine">
+                    <ul>
+                        <li>
+                            <label>视&nbsp;&nbsp;&nbsp;频：</label>
+                            <select class="box-side width300" type="text" @change="select_video" v-model="video_index">
+                                <option v-for="(item,index) in all_videos" :value="index">{{item["video_title"]}}</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>题库名称：</label>
+                            <select class="box-side width300" type="text" @change="select_exam" v-model="exam_index">
+                                <option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>所属科目：</label>
+                            <select class="box-side width300" type="text" v-model="project_index">
+                                <option v-for="(item,index) in subjects" :value="index">{{item.name}}</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>所属章节：</label>
+                            <select class="box-side width300" type="text" v-model="chapter_index">
+                                <option v-for="(item,index) in chapters" :value="index">{{item.name}}</option>
+                            </select>
+                        </li>
+                    </ul>
+                </div>
+            </fieldset>
+            <button class="btn btn-success btn-down"  @click="set_map">关联</button>
+            <button class="btn btn-success btn-down" @click="set_map">解除关联</button>
+
+        </div>
+    </div>
+{% endblock %}

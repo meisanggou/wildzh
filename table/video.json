@@ -18,7 +18,7 @@
                 "col_type": "varchar(255)"
             },
             {
-                "col_comment": "视频状态",
+                "col_comment": "视频状态 0正常 1停用",
                 "col_name": "video_state",
                 "col_type": "int(11)"
             },
@@ -45,5 +45,51 @@
         ],
         "table_comment": "视频信息",
         "table_name": "video"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "题库编号",
+                "col_name": "exam_no",
+                "col_type": "int(11)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "视频编号",
+                "col_name": "video_uuid",
+                "col_type": "varchar(36)",
+                "mul_key": true
+            },
+            {
+                "col_comment": "视频所属科目",
+                "col_name": "video_subject",
+                "col_type": "tinyint(4)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "视频所属章节",
+                "col_name": "video_chapter",
+                "col_type": "varchar(35)",
+                "allow_null": true
+            },
+            {
+                "col_comment": "视频位置",
+                "col_name": "position",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "创建时间",
+                "col_name": "add_time",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "更新时间",
+                "col_name": "update_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "视频关联题库信息",
+        "table_name": "video_exam_map"
     }
 ]

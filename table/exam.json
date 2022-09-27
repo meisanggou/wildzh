@@ -3,7 +3,7 @@
         "table_cols": [
             {
                 "pri_key": true,
-                "col_comment": "测试编号",
+                "col_comment": "题库编号",
                 "col_name": "exam_no",
                 "col_type": "int(11)"
             },
@@ -147,7 +147,7 @@
             },
             {
                 "pri_key": true,
-                "col_comment": "测试编号",
+                "col_comment": "题库编号",
                 "col_name": "exam_no",
                 "col_type": "int(11)"
             },
@@ -183,7 +183,7 @@
             },
             {
                 "pri_key": true,
-                "col_comment": "测试编号",
+                "col_comment": "题库编号",
                 "col_name": "exam_no",
                 "col_type": "int(11)"
             },
@@ -270,7 +270,7 @@
             },
             {
                 "pri_key": true,
-                "col_comment": "测试编号",
+                "col_comment": "题库编号",
                 "col_name": "exam_no",
                 "col_type": "int(11)"
             },

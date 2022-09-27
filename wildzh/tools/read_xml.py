@@ -28,6 +28,7 @@ def _get_node(p_node, node_name):
     f =  filter(lambda x: x.nodeName == node_name, p_node.childNodes)
     return list(f)
 
+
 def _get_nodes(p_node, node_names):
     f =  filter(lambda x: x.nodeName in node_names, p_node.childNodes)
     return list(f)
@@ -105,11 +106,14 @@ def handle_paragraph(p_node):
     for child in run_children:
         if child.nodeName == 'm:oMath':
             p_contents.append(constants.MATH_FILL)
+        # 一般情况下 只有可能是一种 可能是 文本，object类型图片
+        # 段内换行，直接嵌入的图片，文本框里的图片，转换兼容的图片
+        # 获取文本
         text_children = _get_node(child, "w:t")
         for c in text_children:
             p_contents.append(c.firstChild.nodeValue)
 
-        # 获得
+        # 获得 object类型图片
         object_children = _get_node(child, "w:object")
         for oc in object_children:
             v_shape = _get_node(oc, "v:shape")[0]
@@ -131,6 +135,18 @@ def handle_paragraph(p_node):
             drawing_data = _handle_drawing(drawing_nodes[0])
             if drawing_data is not None:
                 p_contents.append(drawing_data)
+        # 获取转换兼容的图片 w:pict
+        pict_nodes = _get_node(child, 'w:pict')
+        for pn in pict_nodes:
+            v_shape = _get_node(pn, "v:shape")[0]
+            v_shape_style = v_shape.getAttribute("style")
+            width, height = analysis_style(v_shape_style)
+            r_id = _get_node(v_shape, "v:imagedata")[0].getAttribute("r:id")
+            p_s = "[[%s$%s$%s]]" % (r_id, width, height)
+            # pict 每次都是两份 没有深入研究区分 先简单判断去重
+            if p_contents and p_contents[-1] == p_s:
+                continue
+            p_contents.append(p_s)
 
     if len(p_contents) <= 0:
         is_bold = False

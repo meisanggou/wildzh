@@ -64,6 +64,7 @@ SE_ACTION_EXIT = 'exit'
 
 # DATA_REGISTRY keys
 DR_KEY_VC_GOODS = 'vc_goods'
+DR_KEY_ROUTES = 'routes'
 
 
 # goods type

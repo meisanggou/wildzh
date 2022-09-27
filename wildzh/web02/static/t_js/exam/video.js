@@ -130,8 +130,6 @@ $(function() {
             video_state: 0
         },
         methods: {
-            change_mode: function(){
-            },
             upload_video: function(){
                 var u_files = this.$refs.filElem.files;
                 if(u_files.length <= 0){

@@ -3,9 +3,9 @@
  */
 
 var e_vm = null;
-var cn_exam_type = {"xlcp1": "专业测评", "xlcp2": "兴趣测评"};
+var video_states = [{'name': '正常'}, {'name': '停用'}];
 
-function explain_status(s) {
+function explain_state(s) {
     if ((s & 128) != 0) {
         return "已下线"
     }
@@ -18,24 +18,25 @@ function explain_status(s) {
     return "待上线"
 }
 
+
 function init_info(data) {
     if (data == null) {
-        var info_url = $("#info_url").val() + '?offline=true';
-        my_async_request2(info_url, "GET", null, init_info);
+        var obj_url = $("#obj_url").val();
+        my_async_request2(obj_url, "GET", null, init_info);
         return 0;
     }
     if (data.length > 0) {
+        console.info(data);
         for (var i = 0; i < data.length; i++) {
             var e_item = data[i];
-            e_item["add_time"] = timestamp_2_datetime(e_item["exam_no"]);
-            e_item["cn_status"] = explain_status(e_item["status"]);
+            e_item["add_time"] = timestamp_2_datetime(e_item["add_time"]);
             e_item['show_btn_del'] = true;
             e_item['show_btn_man'] = true;
             e_item['show_btn_info'] = true;
             e_item['show_btn_online'] = true;
             e_item['show_btn_offline'] = true;
             e_item['show_btn_sync'] = true;
-            e_vm.all_exams.push(e_item);
+            e_vm.all_videos.push(e_item);
         }
     }
 
@@ -45,8 +46,8 @@ $(function () {
     e_vm =new Vue({
         el: "#div_overview",
         data: {
-            all_exams: [],
-            cn_exam_type: cn_exam_type
+            all_videos: [],
+            video_states: video_states
         },
         methods: {
             delete_exam: function(index){
