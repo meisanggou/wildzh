@@ -17,6 +17,7 @@ function popup_waring(head, text){
         hideAfter: 5500
     });
 }
+
 function entry_success(r_d){
     var action = r_d.action;
     var msg = "更新成功";

@@ -544,6 +544,20 @@ class Exam(ExamMember, ExamUsage):
         items = self.select_exam(exam_no, offline=offline, user_no=user_no)
         return [ExamObject(**item) for item in items]
 
+    def get_exam_role(self, exam_no, user_no):
+        exist_items = self.select_exam2(exam_no, offline=True)
+        if len(exist_items) <= 0:
+            return None
+        if int(exist_items[0].adder) == user_no:
+            exam_role = 1
+        else:
+            e_items = self.user_exams(user_no, exam_no)
+            if len(e_items) <= 0:
+                exam_role = 10
+            else:
+                exam_role = e_items[0]['exam_role']
+        return exam_role
+
     def _select_questions(self, **kwargs):
         cols = self.q_cols
         items = self.db.execute_select(self.t_q, cols=cols, **kwargs)

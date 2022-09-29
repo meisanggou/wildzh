@@ -25,6 +25,12 @@
                             </select>
                         </li>
                         <li>
+                            <label>已关联题库：</label>
+                        </li>
+                        <li class="margin-left20" v-for="map in maps">
+                            <label>已关联题库：</label>
+                        </li>
+                        <li>
                             <label>题库名称：</label>
                             <select class="box-side width300" type="text" @change="select_exam" v-model="exam_index">
                                 <option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>
@@ -32,7 +38,7 @@
                         </li>
                         <li>
                             <label>所属科目：</label>
-                            <select class="box-side width300" type="text" v-model="project_index">
+                            <select class="box-side width300" type="text" v-model="subject_index" @change="select_subject">
                                 <option v-for="(item,index) in subjects" :value="index">{{item.name}}</option>
                             </select>
                         </li>

@@ -186,18 +186,10 @@ def required_manager_exam(key='exam_no', **role_desc):
             if g.is_admin:
                 exam_role = 0
             else:
-                exist_items = c_exam.select_exam(exam_no, offline=True)
-                if len(exist_items) <= 0:
+                exam_role = c_exam.get_exam_role(exam_no, g.user_no)
+                if exam_role is None:
                     return jsonify({"status": False, "data": 'exam %s not '
                                                              'exist' % exam_no})
-                if int(exist_items[0]['adder']) == g.user_no:
-                    exam_role = 1
-                else:
-                    e_items = c_exam.user_exams(g.user_no, exam_no)
-                    if len(e_items) <= 0:
-                        exam_role = 10
-                    else:
-                        exam_role = e_items[0]['exam_role']
             if exam_role < min_role or exam_role > max_role:
                 return jsonify({"status": False, "data": 'forbidden'})
             setattr(g, key, exam_no)
