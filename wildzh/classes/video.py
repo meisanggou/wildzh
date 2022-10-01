@@ -37,3 +37,7 @@ class VideoExamMap(BaseObject):
                 return objs[0]
             raise ie
         return obj
+
+    def set(self, session, exam_no, video_uuid, **kwargs):
+        where_value = {'exam_no': exam_no, 'video_uuid': video_uuid}
+        return self.update(session, where_value, **kwargs)

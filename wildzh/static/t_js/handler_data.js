@@ -4,7 +4,7 @@
 
 function bit_and(role1, role2) {
     var v = role1 & role2;
-    if (v < role1 && v < role2)
+    if(v < role1 && v < role2)
         return false;
     else
         return true;
@@ -49,6 +49,18 @@ function format_num(s) {
     return s.replace(/[^\d]/g, "");
 }
 
+function str_format(s, args) {
+    var ss = s.split('%s');
+    if (ss.length != args.length + 1) {
+        throw new Error("Can not format " + s);
+    }
+    var ns = ss[0];
+    for (var i = 1; i < ss.length; i++) {
+        ns += args[i - 1];
+        ns += ss[i];
+    }
+    return ns;
+}
 
 function replace_url(content) {
     var reg = /https?:\/\/(\w|=|\?|\.|\/|\&|-)+/ig;

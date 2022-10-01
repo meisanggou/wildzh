@@ -37,7 +37,9 @@ class BaseObject(object):
         return session.query(self.model).filter_by(**kwargs).all()
 
     def update(self, session, where_value, **kwargs):
-        kwargs['internal'] = 1 if kwargs['internal'] else 0
+        # kwargs['internal'] = 1 if kwargs['internal'] else 0
+        if hasattr(self.model, 'update_time'):
+            kwargs['update_time'] = self.now_time
         return session.query(self.model).filter_by(**where_value).update(
             kwargs)
 

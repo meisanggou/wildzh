@@ -116,12 +116,21 @@ def set_map():
     return {'status': True}
 
 
-@video_view.route('/map', methods=['UPDATE'])
+@video_view.route('/map', methods=['PUT'])
 def update_map():
     data = request.json
     # 必须是管理的题库
     exam_no = data['exam_no']
     video_uuid = data['video_uuid']
+    kwargs = {}
+    keys = ['video_subject', 'video_chapter', 'position']
+    for key in keys:
+        if key in data:
+            kwargs[key] = data[key]
+    if not kwargs:
+        return {'status': True, 'data': 'not update'}
+    video_map_man.set(g.session, exam_no, video_uuid, **kwargs)
+    return {'status': True, 'data': 'success'}
 
 
 @video_view.route('/map', methods=['DELETE'])
@@ -130,3 +139,5 @@ def delete_map():
     # 必须是管理的题库
     exam_no = data['exam_no']
     video_uuid = data['video_uuid']
+    video_map_man.delete(g.session, exam_no=exam_no, video_uuid=video_uuid)
+    return {'status': True, 'data': 'success'}

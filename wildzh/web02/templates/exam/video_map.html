@@ -27,8 +27,13 @@
                         <li>
                             <label>已关联题库：</label>
                         </li>
-                        <li class="margin-left20" v-for="map in maps">
-                            <label>已关联题库：</label>
+                        <li class="margin-left20 " v-for="map in maps">
+                            <div :class="{ 'yellowBg': map.updating }">
+                                <label class="margin5">{{map.desc}}</label>
+                                <a v-if="map.updating" class="margin5 status_move ">更新中</a>
+                                <a v-else class="margin5 status_move" @click="prepare_update(map)">更新</a>
+                                <a class="margin5 status_move" @click="delete_map(map)">解除关联</a>
+                            </div>
                         </li>
                         <li>
                             <label>题库名称：</label>
@@ -51,8 +56,8 @@
                     </ul>
                 </div>
             </fieldset>
-            <button class="btn btn-success btn-down"  @click="set_map">关联</button>
-            <button class="btn btn-success btn-down" @click="set_map">解除关联</button>
+            <button class="btn btn-success btn-down" v-if="action=='new'"  @click="set_map">关联</button>
+            <button class="btn btn-success btn-down" v-else  @click="set_map">更新关联</button>
 
         </div>
     </div>
