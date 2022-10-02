@@ -26,7 +26,6 @@ function init_videos(data) {
         return 0;
     }
     if (data.length > 0) {
-        console.info(data);
         for (var i = 0; i < data.length; i++) {
             var e_item = data[i];
             e_item["add_time"] = timestamp_2_datetime(e_item["add_time"]);
@@ -62,6 +61,7 @@ function init_exams(data){
         e_vm.all_exams.push(exam);
     }
 }
+
 
 var no_exam = {'name': '--请选择题库--'};
 var no_subject = {'name': '--请选择科目--'};

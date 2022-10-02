@@ -1,0 +1,52 @@
+{% extends "base_a.html" %}
+
+{% block title %}视频位置{% endblock %}
+
+{% block css_content %}
+    {{ 't_css/tabControls.css' | make_static_html | safe }}
+{% endblock %}
+
+{% block js_content %}
+    {{ 'plugins/bootstrap-editable/js/bootstrap-editable.min.js' | make_static_html | safe }}
+    {{ 't_js/exam/video_position.js' | make_static_html | safe }}
+{% endblock %}
+
+{% block center_content %}
+    <div id="div_content">
+        <div class="tab-content" style="padding-top: 20px;">
+            <label>题库名称：</label>
+            <select class="box-side width300" type="text" @change="select_exam" v-model="exam_index">
+                <option v-for="(item,index) in all_exams" :value="index">{{item["exam_name"]}}</option>
+            </select>
+            <div class="tab-pane fade in active" id="div_overview">
+                <div>
+                    <div style="position: relative">
+                        <table class="table table-bordered table-hover api-list-table margintop20" id="t_exams">
+                            <tr>
+                                <th scope="col" width="25%">视频标题</th>
+                                <th scope="col" width=30%">关联信息</th>
+                                <th scope="col" width=10%">状态</th>
+                                <th scope="col" width=10%">操作</th>
+                            </tr>
+                            <tr id="tr_none" class="display_none">
+                                <td colSpan="9" class="text-center">一条视频都没有</td>
+                            </tr>
+                            <tr v-for="(item, index) in all_videos">
+                                <td><a href="#" name="video_title" data-type="text" data-pk="1" class="editable editable-click" data-original-title="">{{item.video_title}}</a></td>
+                                <td>{{item.map_desc}}</td>
+                                <td>{{video_states[item.video_state].name}}</td>
+                                <td>
+                                    <a href='javascript:void(0)' @click="change_position(index,index-1)">上移</a>
+                                    <label> | </label>
+                                    <a href='javascript:void(0)' @click="change_position(index,index+1)">下移</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-success btn-down"  @click="set_position">调整位置</button>
+        </div>
+    </div>
+{% endblock %}
+

@@ -5,19 +5,6 @@
 var e_vm = null;
 var video_states = [{'name': '正常'}, {'name': '停用'}];
 
-function explain_state(s) {
-    if ((s & 128) != 0) {
-        return "已下线"
-    }
-    if ((s & 2) == 0) {
-        return "缺少试题";
-    }
-    if ((s & 64) != 0) {
-        return "已上线"
-    }
-    return "待上线"
-}
-
 
 function init_info(data) {
     if (data == null) {
@@ -30,17 +17,12 @@ function init_info(data) {
         for (var i = 0; i < data.length; i++) {
             var e_item = data[i];
             e_item["add_time"] = timestamp_2_datetime(e_item["add_time"]);
-            e_item['show_btn_del'] = true;
-            e_item['show_btn_man'] = true;
-            e_item['show_btn_info'] = true;
-            e_item['show_btn_online'] = true;
-            e_item['show_btn_offline'] = true;
-            e_item['show_btn_sync'] = true;
             e_vm.all_videos.push(e_item);
         }
     }
 
 }
+
 
 $(function () {
     e_vm =new Vue({

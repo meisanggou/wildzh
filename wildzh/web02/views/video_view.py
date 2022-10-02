@@ -29,6 +29,7 @@ menu_list = {"title": "视频管理", "icon_class": "icon-shipin",
                  {"title": "视频管理", "url": url_prefix + "/page"},
                  {"title": "上传视频", "url": url_prefix + "/upload"},
                  {"title": "关联视频", "url": url_prefix + "/map/page"},
+                 {"title": "视频顺序", "url": url_prefix + "/position/page"},
 ]}
 upload_url = url_prefix + "/upload/"
 obj_url = url_prefix + '/entries'
@@ -84,6 +85,14 @@ def set_map_page():
     return rt.render('video_map.html', page_title='关联视频')
 
 
+@video_view.route('/position/page', methods=['GET'])
+def set_video_position_page():
+    if 'exam_info_url' not in defined_routes:
+        defined_routes['exam_info_url'] = f_registry.DATA_REGISTRY.get(
+            constants.DR_KEY_ROUTES)['exam_info_url']
+    return rt.render('video_position.html', page_title='视频位置')
+
+
 @video_view.route('/map', methods=['GET'])
 def get_map():
     data = request.args
@@ -95,8 +104,9 @@ def get_map():
         filters['video_uuid'] = data['video_uuid']
     if not filters:
         return {'status': False, 'data': '请设置题库编号或者视频ID'}
-    items = video_map_man.get_all(g.session, **filters)
-    data = [item.to_dict() for item in items]
+    items = video_map_man.get_items(g.session, **filters)
+
+    data = items
     return {'status': True, 'data': data}
 
 
