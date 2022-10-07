@@ -258,6 +258,11 @@ Page({
         var sm_value = this.data.select_modes[index].value;
         this.startTraining(sm_value, -1, null, null, 'update');
     },
+    toVideo(){
+        wx.navigateTo({
+            url: '../videos/video_index'
+        })
+    },
     startTraining(sm_value, sj_value, ch_value, source_value, action) {
         app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
         var url = "training?from=home";

@@ -22,19 +22,21 @@ __author__ = 'zhouhenglc'
 
 LOG = getLogger()
 url_prefix = "/video"
-
+upload_url = url_prefix + "/upload/"
+upload_page = url_prefix + "/upload"
+obj_url = url_prefix + '/entries'
+map_url = url_prefix + '/map'
+defined_routes = dict(upload_url=upload_url, obj_url=obj_url,
+                      map_url=map_url, upload_page=upload_page)
 menu_list = {"title": "视频管理", "icon_class": "icon-shipin",
              "menu_id": "video",
              "sub_menu": [
                  {"title": "视频管理", "url": url_prefix + "/page"},
-                 {"title": "上传视频", "url": url_prefix + "/upload"},
+                 {"title": "上传视频", "url": upload_page},
                  {"title": "关联视频", "url": url_prefix + "/map/page"},
                  {"title": "视频顺序", "url": url_prefix + "/position/page"},
 ]}
-upload_url = url_prefix + "/upload/"
-obj_url = url_prefix + '/entries'
-map_url = url_prefix + '/map'
-defined_routes = dict(upload_url=upload_url, obj_url=obj_url, map_url=map_url)
+
 rt = RenderTemplate("exam", menu_active="video",
                     defined_routes=defined_routes)
 
@@ -75,6 +77,29 @@ def get_videos():
     videos = [item.to_dict() for item in items]
 
     return {'status': True, 'data': videos}
+
+
+@video_view.route('/entries/<video_uuid>', methods=['GET'])
+def get_video(video_uuid):
+    items = video_man.get_all(g.session, video_uuid=video_uuid)
+    if not items:
+        return {'status': False, 'data': '视频不存在'}
+    data = {'info': items[0].to_dict()}
+    return {'status': True, 'data': data}
+
+
+@video_view.route('/entries/<video_uuid>', methods=['PUT'])
+def update_video(video_uuid):
+    data = request.json
+    keys = ['video_title', 'video_desc', 'video_state']
+    kwargs = {}
+    for key in keys:
+        if key in data:
+            kwargs[key] = data[key]
+    if not kwargs:
+        return {'status': True, 'data': '未更新'}
+    video_man.update(g.session, {'video_uuid': video_uuid,}, **kwargs)
+    return {'status': True, 'data': '更新成功'}
 
 
 @video_view.route('/map/page', methods=['GET'])

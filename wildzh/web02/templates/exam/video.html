@@ -18,6 +18,10 @@
             <fieldset>
                 <div class="form-group apiContentLine">
                     <ul>
+                        <li v-if="video_uuid">
+                            <label>视频标题：</label>
+                            <label>{{video_title_old}}</label>
+                        </li>
                         <li>
                             <label>视频标题：</label>
                             <input class="box-side width500" v-model.trim="video_title" type="text"/>
@@ -26,13 +30,18 @@
                             <label class="api-describe" for="">视频描述：</label>
                             <textarea class="box-side" rows="2" required="" v-model.trim="video_desc"></textarea>
                         </li>
-                        <li>
+                        <li v-if="video_uuid">
+                            <label class="api-describe" for="">视频：</label>
+                            <video v-if="video_url.length>0" :src="video_url" width="500px"/>
+                        </li>
+                        <li v-else>
                             <label class="api-describe" for="">上传视频：</label>
-                            <input @change="upload_video" ref="filElem" type="file" placeholder="选择视频" accept="video/*"/>
+                            <input @change="replace_video" ref="filElem" type="file" placeholder="选择视频" accept="video/*"/>
                             <label>{{upload_lab}}</label>
                             <video v-if="video_url.length>0" :src="video_url" width="500px"/>
                             <a v-if="video_url.length>0" @click="remove_video" class="status_move">删除视频</a>
                         </li>
+
                         <li>
                             <label>视频状态：</label>
                             <select class="box-side width150" type="text" v-model="video_state">
@@ -43,7 +52,8 @@
                     </ul>
                 </div>
             </fieldset>
-            <button class="btn btn-success btn-down"  @click="new_video">创建</button>
+            <button v-if="video_uuid" class="btn btn-success btn-down"  @click="update_video">更新</button>
+            <button v-else class="btn btn-success btn-down"  @click="new_video">创建</button>
         </div>
     </div>
 {% endblock %}

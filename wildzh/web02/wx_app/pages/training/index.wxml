@@ -1,17 +1,5 @@
 <view class="page">
 	<view wx:if="{{!errorMsg}}">
-		<!-- <view class="menu">
-			<picker class="picker" bindchange="comprehensiveExerciseChange" range="{{select_modes}}" range-key="name">
-				<view class="kind-list-item">
-					<view class="kind-list-item-hd">
-
-						<view class="kind-list-text">综合练习</view>
-						<image class="kind-list-img" src="../../images/practise_fill.png"></image>
-
-					</view>
-				</view>
-			</picker>
-		</view> -->
 		<view class='button-menu'>
 			<picker bindchange="comprehensiveExerciseChange" class="picker" range="{{select_modes}}" range-key="name">
 				<view class='button-color1'>综合练习</view>
@@ -31,6 +19,9 @@
 			<picker bindchange="sourceChange" class='picker' range="{{sources_array}}" range-key="question_source">
 				<view class='button-color4'>真题练习</view>
 			</picker>
+		</view>
+		<view class='button-menu' >
+			<view class='picker button-color6' bindtap="toVideo">视频学习</view>
 		</view>
 		<view class='button-menu' wx:if="{{canUpdate}}">
 			<picker bindchange="updateQuestionChange" class='picker' range="{{select_modes}}" range-key="name">

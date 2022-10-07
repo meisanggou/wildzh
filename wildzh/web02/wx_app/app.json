@@ -18,7 +18,9 @@
         "pages/me/share",
         "pages/vc/goods",
         "pages/me/feedback",
-        "pages/vc/make_vc"
+        "pages/vc/make_vc",
+        "pages/videos/video_index",
+        "pages/videos/video_play"
     ],
     "window": {
         "backgroundTextStyle": "light",

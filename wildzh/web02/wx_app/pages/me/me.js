@@ -1,7 +1,7 @@
 var app = getApp();
 var dt = require("../common/datetime_tools.js");
 var that;
-var noExamName = '未选择';
+var noExamName = '未选择 -- 点击选择';
 var lastUpdateUserKey = 'updateUserTime'
 
 Page({
@@ -303,6 +303,9 @@ Page({
         }
     },
     lookExam: function () {
+        if(this.data.examNo <= 0){
+            return false;
+        }
         wx.navigateTo({
             url: "../exam/exam_info?examNo=" + this.data.examNo
         })

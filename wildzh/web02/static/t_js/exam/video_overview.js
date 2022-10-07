@@ -25,6 +25,7 @@ function init_info(data) {
 
 
 $(function () {
+    var upload_page = $("#upload_page").val();
     e_vm =new Vue({
         el: "#div_overview",
         data: {
@@ -57,81 +58,9 @@ $(function () {
                     }
                 );
             },
-            to_action: function(index, action){
-                var e_item = this.all_exams[index];
-                var basic_url = AddUrlArg(location.pathname, "exam_no", e_item.exam_no);
-                //basic_url = AddUrlArg(basic_url, "exam_type", e_item.exam_type);
-                var action_url = AddUrlArg(basic_url, "action", action);
+            to_update: function(video_uuid){
+                var action_url = AddUrlArg(upload_page, "video_uuid", video_uuid);
                 location.href = action_url;
-            },
-            online: function(index){
-                var e_item = this.all_exams[index];
-                var msg = "确定上线【" + e_item["exam_name"] + "】\n上线后将不可更改测试内容！";
-                swal({
-                        title: "上线提醒",
-                        text: msg,
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: '#DD6B55',
-                        confirmButtonText: '上线',
-                        cancelButtonText: "取消",
-                        closeOnConfirm: true,
-                        closeOnCancel: true
-                    },
-                    function (isConfirm) {
-                        if (isConfirm) {
-                            my_async_request2($("#online_url").val(), "POST", e_item, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
-                );
-            },
-            offline: function(index){
-                var e_item = this.all_exams[index];
-                var msg = "确定下线【" + e_item["exam_name"] + "】\n下线后用户将不可见！";
-                swal({
-                        title: "下线提醒",
-                        text: msg,
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: '#DD6B55',
-                        confirmButtonText: '下线',
-                        cancelButtonText: "取消",
-                        closeOnConfirm: true,
-                        closeOnCancel: true
-                    },
-                    function (isConfirm) {
-                        if (isConfirm) {
-                            my_async_request2($("#online_url").val(), "DELETE", e_item, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
-                );
-            },
-            sync_search_data: function(index){
-                var e_item = this.all_exams[index];
-                var msg = "确定同步【" + e_item["exam_name"] + "】\n！";
-                swal({
-                        title: "同步提醒",
-                        text: msg,
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: '#DD6B55',
-                        confirmButtonText: '同步',
-                        cancelButtonText: "取消",
-                        closeOnConfirm: true,
-                        closeOnCancel: true
-                    },
-                    function (isConfirm) {
-                        if (isConfirm) {
-                            my_async_request2($("#sync_url").val(), "POST", e_item, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
-                );
             }
         }
     });
