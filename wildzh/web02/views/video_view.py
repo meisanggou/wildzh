@@ -56,7 +56,11 @@ def video_page():
 
 @video_view.route('/upload', methods=['GET'])
 def video_upload_page():
-    return rt.render('video.html', page_title='上传视频')
+    if 'video_uuid' in request.args:
+        title = '更新视频'
+    else:
+        title = '上传视频'
+    return rt.render('video.html', page_title=title)
 
 
 @video_view.route('/entries', methods=['POST'])
