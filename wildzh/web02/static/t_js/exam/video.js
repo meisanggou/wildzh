@@ -44,9 +44,10 @@ function add_video()
     r_data['video_url'] = q_vm.video_url;
     r_data['video_state'] = q_vm.video_state;
     var obj_url = $("#obj_url").val();
-    my_async_request2(obj_url, 'POST', r_data, function(){
+    my_async_request2(obj_url, 'POST', r_data, function(data){
         popup_show('操作成功！');
-        window.location.reload();
+        var url = location.pathname + '?video_uuid=' + data.video_uuid;
+        location.href = url;
     });
 }
 
@@ -123,6 +124,9 @@ $(function() {
             },
             update_video: function(){
                 update_video();
+            },
+            to_upload: function(){
+                location.href = location.pathname;
             }
         }
     });

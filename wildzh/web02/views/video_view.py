@@ -68,7 +68,7 @@ def add_video():
     video_state = data['video_state']
     obj = video_man.new(g.session, video_title, video_desc, video_state,
                         video_url, g.user_no)
-    return obj.to_dict()
+    return {'status': True, 'data': obj.to_dict()}
 
 
 @video_view.route('/entries', methods=['GET'])

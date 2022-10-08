@@ -54,6 +54,8 @@
             </fieldset>
             <button v-if="video_uuid" class="btn btn-success btn-down"  @click="update_video">更新</button>
             <button v-else class="btn btn-success btn-down"  @click="new_video">创建</button>
+
+            <a v-if="video_uuid" class="margin-left20 status_move" @click="to_upload" >上传新视频</a>
         </div>
     </div>
 {% endblock %}
