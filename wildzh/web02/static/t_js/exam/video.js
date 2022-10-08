@@ -44,7 +44,10 @@ function add_video()
     r_data['video_url'] = q_vm.video_url;
     r_data['video_state'] = q_vm.video_state;
     var obj_url = $("#obj_url").val();
-    my_async_request2(obj_url, 'POST', r_data, entry_success);
+    my_async_request2(obj_url, 'POST', r_data, function(){
+        popup_show('操作成功！');
+        window.location.reload();
+    });
 }
 
 function update_video()
