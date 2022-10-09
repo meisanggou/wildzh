@@ -3,6 +3,7 @@
  */
 
 var e_vm = null;
+var video_uuid = null; // url中包含video_uuid 自动选择该视频
 var video_states = [{'name': '正常'}, {'name': '停用'}];
 var exam_id_dict = {};
 
@@ -26,10 +27,18 @@ function init_videos(data) {
         return 0;
     }
     if (data.length > 0) {
+        var video_index = -1;
         for (var i = 0; i < data.length; i++) {
             var e_item = data[i];
             e_item["add_time"] = timestamp_2_datetime(e_item["add_time"]);
             e_vm.all_videos.push(e_item);
+            if(e_item.video_uuid == video_uuid){
+                video_index = i;
+            }
+        }
+        if(video_index != -1){
+            e_vm.video_index = video_index;
+            e_vm.select_video();
         }
     }
 
@@ -126,6 +135,7 @@ function get_maps_result(data){
 
 
 $(function () {
+    video_uuid = UrlArgsValue(location.href, "video_uuid");
     var map_url = $("#map_url").val();
     e_vm =new Vue({
         el: "#div_content",

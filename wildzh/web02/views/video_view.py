@@ -26,14 +26,16 @@ upload_url = url_prefix + "/upload/"
 upload_page = url_prefix + "/upload"
 obj_url = url_prefix + '/entries'
 map_url = url_prefix + '/map'
+map_page = url_prefix + '/map/page'
 defined_routes = dict(upload_url=upload_url, obj_url=obj_url,
-                      map_url=map_url, upload_page=upload_page)
+                      map_url=map_url, upload_page=upload_page,
+                      map_page=map_page)
 menu_list = {"title": "视频管理", "icon_class": "icon-shipin",
              "menu_id": "video",
              "sub_menu": [
                  {"title": "视频管理", "url": url_prefix + "/page"},
                  {"title": "上传视频", "url": upload_page},
-                 {"title": "关联视频", "url": url_prefix + "/map/page"},
+                 {"title": "关联视频", "url": map_page},
                  {"title": "视频顺序", "url": url_prefix + "/position/page"},
 ]}
 

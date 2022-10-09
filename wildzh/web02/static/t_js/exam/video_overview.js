@@ -3,8 +3,15 @@
  */
 
 var e_vm = null;
+var map_url = null;
 var video_states = [{'name': '正常'}, {'name': '停用'}];
 
+
+function get_maps(video_uuid){
+    my_async_request2(map_url, 'GET', {'video_uuid': video_uuid}, function(data){
+        e_vm.video_maps[video_uuid].maps = data.length;
+    });
+}
 
 function init_info(data) {
     if (data == null) {
@@ -13,11 +20,13 @@ function init_info(data) {
         return 0;
     }
     if (data.length > 0) {
-        console.info(data);
         for (var i = 0; i < data.length; i++) {
             var e_item = data[i];
             e_item["add_time"] = timestamp_2_datetime(e_item["add_time"]);
+            e_item['maps'] = -1;
             e_vm.all_videos.push(e_item);
+            e_vm.video_maps[e_item.video_uuid] = e_item;
+            get_maps(e_item.video_uuid);
         }
     }
 
@@ -25,11 +34,14 @@ function init_info(data) {
 
 
 $(function () {
+    map_url = $("#map_url").val();
+    var map_page = $("#map_page").val();
     var upload_page = $("#upload_page").val();
     e_vm =new Vue({
         el: "#div_overview",
         data: {
             all_videos: [],
+            video_maps: {},
             video_states: video_states
         },
         methods: {
@@ -61,6 +73,10 @@ $(function () {
             to_update: function(video_uuid){
                 var action_url = AddUrlArg(upload_page, "video_uuid", video_uuid);
                 location.href = action_url;
+            },
+            to_map: function(video_uuid){
+                var url = map_page + '?video_uuid=' + video_uuid;
+                location.href = url;
             }
         }
     });

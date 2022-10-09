@@ -34,7 +34,11 @@
                                 <td>{{item.add_time}}</td>
                                 <td>{{video_states[item.video_state].name}}</td>
                                 <td>
-                                    <a href='javascript:void(0)' @click="to_update(item.video_uuid)">更新信息</a>
+                                    <a class="status_move margin5" @click="to_update(item.video_uuid)">更新信息</a>
+                                    <template v-if="item.maps >= -1">
+                                        <label class="margin5">|</label>
+                                        <a class="status_move margin5" @click="to_map(item.video_uuid)">{{item.maps}}关联</a>
+                                    </template>
                                     <!--<template v-if="item.video_state == 0">-->
                                         <!--<label>|</label>-->
                                         <!--<a href='javascript:void(0)' @click="online(index)">停用</a>-->
