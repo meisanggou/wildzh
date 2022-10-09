@@ -62,7 +62,8 @@ class VideoExamMap(BaseObject):
 
     def get_items(self, session, **kwargs):
         query = session.query(self.model).filter_by(**kwargs).join(
-            video.VideoModel, video.VideoModel.video_uuid==self.model.video_uuid
+            video.VideoModel,
+            video.VideoModel.video_uuid==self.model.video_uuid
         ).add_entity(video.VideoModel)
         _items = query.all()
         items = []

@@ -91,5 +91,38 @@
         ],
         "table_comment": "视频关联题库信息",
         "table_name": "video_exam_map"
+    },
+    {
+        "table_cols": [
+            {
+                "pri_key": true,
+                "col_comment": "视频编号",
+                "col_name": "video_uuid",
+                "col_type": "varchar(36)"
+            },
+            {
+                "pri_key": true,
+                "col_comment": "用户",
+                "col_name": "user_no",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "进度",
+                "col_name": "position",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "创建时间",
+                "col_name": "add_time",
+                "col_type": "int(11)"
+            },
+            {
+                "col_comment": "更新时间",
+                "col_name": "update_time",
+                "col_type": "int(11)"
+            }
+        ],
+        "table_comment": "视频学习进度",
+        "table_name": "video_progress"
     }
 ]

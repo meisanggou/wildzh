@@ -19,15 +19,17 @@
                     <div style="position: relative">
                         <table class="table table-bordered table-hover api-list-table margintop20" id="t_exams">
                             <tr>
-                                <th scope="col" width="20%">视频标题</th>
-                                <th scope="col" width=15%">创建时间</th>
-                                <th scope="col" width=10%">状态</th>
+                                <th scope="col" width="5%">序号</th>
+                                <th scope="col" width="23%">视频标题</th>
+                                <th scope="col" width=12%">创建时间</th>
+                                <th scope="col" width=8%">状态</th>
                                 <th scope="col" width=30%">操作</th>
                             </tr>
                             <tr id="tr_none" class="display_none">
                                 <td colSpan="9" class="text-center">一条视频都没有</td>
                             </tr>
                             <tr v-for="(item, index) in all_videos">
+                                <td class="center center-align">{{index+1}}</td>
                                 <td><a href="#" name="video_title" data-type="text" data-pk="1" class="editable editable-click" data-original-title="">{{item.video_title}}</a></td>
                                 <td>{{item.add_time}}</td>
                                 <td>{{video_states[item.video_state].name}}</td>
