@@ -9,6 +9,7 @@ from flask_helper.utils import registry as f_registry
 
 from wildzh.classes.video import Video
 from wildzh.classes.video import VideoExamMap
+from wildzh.classes.video import VideoProgress
 from wildzh.utils import constants
 from wildzh.utils.log import getLogger
 from wildzh.web02.view import View2
@@ -46,6 +47,7 @@ video_view = View2('video', __name__, url_prefix=url_prefix,
                    auth_required=True, menu_list=menu_list)
 video_man = Video()
 video_map_man = VideoExamMap()
+video_pg_man = VideoProgress()
 
 support_upload2(video_view, upload_folder, file_prefix_url,
                 ("exam", "video"), "upload", rename_mode="sha1")
@@ -91,6 +93,13 @@ def get_video(video_uuid):
     if not items:
         return {'status': False, 'data': '视频不存在'}
     data = {'info': items[0].to_dict()}
+    p_items = video_pg_man.get_all(g.session, video_uuid=video_uuid,
+                                   user_no=g.user_no)
+    if p_items:
+        progress = p_items[0].to_dict()
+    else:
+        progress = {'play_seconds': 0}
+    data['progress'] = progress
     return {'status': True, 'data': data}
 
 
@@ -181,4 +190,13 @@ def delete_map():
     exam_no = data['exam_no']
     video_uuid = data['video_uuid']
     video_map_man.delete(g.session, exam_no=exam_no, video_uuid=video_uuid)
+    return {'status': True, 'data': 'success'}
+
+
+@video_view.route('/progress', methods=['PUT'])
+def update_progress():
+    data = request.json
+    video_uuid = data['video_uuid']
+    play_seconds = int(data['play_seconds'])
+    video_pg_man.set(g.session, video_uuid, g.user_no, play_seconds)
     return {'status': True, 'data': 'success'}

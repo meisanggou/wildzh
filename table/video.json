@@ -107,9 +107,10 @@
                 "col_type": "int(11)"
             },
             {
-                "col_comment": "进度",
-                "col_name": "position",
-                "col_type": "int(11)"
+                "col_comment": "播放的秒数",
+                "col_name": "play_seconds",
+                "col_type": "int(11)",
+                "default": 0
             },
             {
                 "col_comment": "创建时间",

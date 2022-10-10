@@ -33,3 +33,15 @@ class VideoExamMapModel(Base):
     position = sqlalchemy.Column(sqlalchemy.INT())
     add_time = sqlalchemy.Column(sqlalchemy.INT())
     update_time = sqlalchemy.Column(sqlalchemy.INT())
+
+
+class VideoProgressModel(Base):
+
+    __tablename__ = 'video_progress'
+
+    video_uuid = sqlalchemy.Column(sqlalchemy.VARCHAR(36), primary_key=True)
+    user_no = sqlalchemy.Column(sqlalchemy.INT(), primary_key=True)
+
+    play_seconds = sqlalchemy.Column(sqlalchemy.INT())
+    add_time = sqlalchemy.Column(sqlalchemy.INT())
+    update_time = sqlalchemy.Column(sqlalchemy.INT())

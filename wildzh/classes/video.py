@@ -75,3 +75,18 @@ class VideoExamMap(BaseObject):
         items.sort(key=cmp_to_key(self._cmp))
 
         return items
+
+
+class VideoProgress(BaseObject):
+    model = video.VideoProgressModel
+
+    def new(self, session, video_uuid, user_no, play_seconds):
+        kwargs = {'video_uuid': video_uuid, 'user_no': user_no,
+                  'play_seconds': play_seconds}
+        self.create(session, **kwargs)
+
+    def set(self, session, video_uuid, user_no, play_seconds):
+        where_value = {'video_uuid': video_uuid, 'user_no': user_no}
+        n = self.update(session, where_value, play_seconds=play_seconds)
+        if n <= 0:
+            self.new(session, video_uuid, user_no, play_seconds)
