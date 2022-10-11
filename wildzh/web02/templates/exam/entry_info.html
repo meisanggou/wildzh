@@ -58,7 +58,7 @@
                     </label>
                 </li>
                 <li>
-                    <label>支持搜索：</label>
+                   <label>支持搜索：</label>
                    <label class="radio-inline">
                         <input type="radio" name="allow_search" value="1" v-model.number='allow_search'>支持
                     </label>
@@ -66,6 +66,16 @@
                         <input type="radio" name="allow_search" value="0" v-model.number='allow_search'>不支持
                     </label>
                     <input type="text" class="box-side width300" placeholder="搜索提示" v-model.trim="search_tip">
+                </li>
+                <li>
+                   <label>支持视频：</label>
+                   <label class="radio-inline">
+                        <input type="radio" name="enable_video" value="1" v-model.number='enable_video'>支持
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="enable_video" value="0" v-model.number='enable_video'>不支持
+                    </label>
+
                 </li>
                 <li>
                     <button class="btn btn-success" @click="add_subject">增加科目</button>

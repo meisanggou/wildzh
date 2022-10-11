@@ -22,6 +22,7 @@ $(function () {
             open_no_start: '',
             open_no_end: '',
             allow_search: 0,
+            enable_video: 0,
             search_tip: "",
             select_modes: select_modes,
             subjects: [],
@@ -57,7 +58,7 @@ $(function () {
                     keys.push('exam_no')
                 }
                 r_data['allow_search'] = parseInt(this.allow_search);
-
+                r_data['enable_video'] = parseInt(this.enable_video);
                 r_data['select_modes'] = this.select_modes;
                 for (var i = 0; i < keys.length; i++) {
                     r_data[keys[i]] = this[keys[i]];
@@ -147,7 +148,8 @@ $(function () {
                 vm.exam_no = exam_item.exam_no;
                 vm.exam_name = exam_item.exam_name;
                 vm.exam_desc = exam_item.exam_desc;
-                var keys = ['openness_level', 'open_mode', 'open_no_start', 'open_no_end', 'allow_search', 'search_tip', 'subjects', 'select_modes'];
+                var keys = ['openness_level', 'open_mode', 'open_no_start', 'open_no_end',
+                    'allow_search', 'search_tip', 'subjects', 'select_modes', 'enable_video'];
                 for (var i = 0; i < keys.length; i++) {
                     if (keys[i] in exam_item) {
                         vm[keys[i]] = exam_item[keys[i]];

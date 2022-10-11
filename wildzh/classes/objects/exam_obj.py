@@ -21,12 +21,30 @@ class ExamOpenMode(object):
     ALL = 7
 
 
-class ExamObject(object):
+class AttrEnableVideo(object):
+
+    def __init__(self):
+        self._enable_video = 0
+
+    @property
+    def enable_video(self):
+        return self._enable_video
+
+    @enable_video.setter
+    def enable_video(self, v):
+        if v:
+            self._enable_video = 1
+        else:
+            self._enable_video = 0
+
+
+class ExamObject(AttrEnableVideo):
     extend_keys = ['openness_level', 'open_mode', 'open_no_start',
                    'open_no_end', 'pic_url', 'subjects', 'allow_search',
-                   'search_tip', 'select_modes']
+                   'search_tip', 'select_modes', 'enable_video']
 
     def __init__(self, **kwargs):
+        super().__init__()
         self._d = dict()
         self.exam_no = None
         self.exam_name = None
@@ -43,6 +61,7 @@ class ExamObject(object):
         self._search_tip = ""
         self._select_modes = []
         self._subjects = []
+
         self.pic_url = None
         self._exam_role = 100
         self.update(**kwargs)
@@ -53,9 +72,11 @@ class ExamObject(object):
             if hasattr(self, k):
                 self._internal_set(k, v)
         if isinstance(exam_extend, dict):
-            for k, v in exam_extend.items():
-                if k in self.extend_keys:
-                    self._internal_set(k, v)
+            for k in self.extend_keys:
+                if k in exam_extend:
+                    self._internal_set(k, exam_extend[k])
+                elif hasattr(self, '_%s' % k):
+                    self._internal_set(k, getattr(self, '_%s' % k))
 
     @property
     def openness_level(self):
@@ -270,10 +291,6 @@ class ExamObject(object):
     def _internal_set(self, k, v):
         self._d[k] = v
         setattr(self, k, v)
-    # def __setattr__(self, key, value):
-    #     if not key.startswith('_'):
-    #         self._d[key] = value
-    #     return object.__setattr__(self, key, value)
 
     def to_dict(self):
         return self._d

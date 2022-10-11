@@ -19,6 +19,7 @@ Page({
         sources_array: [], // 对应真题练习 题目来源
         errorMsg: "题库信息加载中...",
         cacheSelectedKey: "selectedTrainingOptions",
+        enableVideo: 0,
         canUpdate: false
     },
     onLoad: function (options) {
@@ -163,11 +164,13 @@ Page({
                 if (subjects.length >= 1) {
                     chapters_array[1] = subjects[0]['chapters'];
                 }
+                var enableVideo = examItem.enable_video;
                 that.setData({
                     errorMsg: errorMsg,
                     select_modes: select_modes,
                     subjects_array: subjects_array,
-                    chapters_array: chapters_array
+                    chapters_array: chapters_array,
+                    enableVideo: enableVideo
                 });
                 wx.hideLoading();
             },

@@ -20,7 +20,7 @@
 				<view class='button-color4'>真题练习</view>
 			</picker>
 		</view>
-		<view class='button-menu' >
+		<view class='button-menu' wx:if="{{ enableVideo == 1 }}">
 			<view class='picker button-color6' bindtap="toVideo">视频学习</view>
 		</view>
 		<view class='button-menu' wx:if="{{canUpdate}}">
