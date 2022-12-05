@@ -1,11 +1,11 @@
 var remote_host = "https://meisanggou.vicp.net"
-var version = "7.2.0";
+var version = "7.2.3";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 var reqRandom = 100; // 用于某些资源防止缓存，加到请求参数中
 remote_host = "https://wild.gene.ac"
 
-remote_host = "http://127.0.0.1:2400"
+// remote_host = "http://127.0.0.1:2400"
 
 function getOrSetCacheData(key, value = null) {
     // 同步存储数据
@@ -158,23 +158,26 @@ App({
         this.getDefaultExam();
         return true;
     },
+    
+    getOrSetCacheData: getOrSetCacheData,
+    getOrSetCacheData2: getOrSetCacheData2,
+    getOrSetCurrentUserData: getOrSetCurrentUserData,
     setDefaultExam: function (examItem) {
+        var key = 'default.exam';
         this.globalData.defaultExamNo = examItem["exam_no"];
         this.globalData.defaultExamName = examItem["exam_name"];
-        wx.setStorageSync(exam_storage_key, examItem);
+        this.getOrSetCacheData(key, examItem);
     },
     getDefaultExam: function () {
-        var currentExam = wx.getStorageSync(exam_storage_key);
+        var key = 'default.exam';
+        var currentExam = this.getOrSetCacheData(key);
         if (currentExam != null && currentExam != undefined) {
             this.globalData.defaultExamNo = currentExam["exam_no"];
             this.globalData.defaultExamName = currentExam["exam_name"];
         }
         return currentExam;
     },
-    getOrSetCacheData: getOrSetCacheData,
-    getOrSetCacheData2: getOrSetCacheData2,
-    getOrSetCurrentUserData: getOrSetCurrentUserData,
-    getOrSetExamCacheData: function (key, value = null) {
+    getOrSetExamCacheData: function (key, value) {
         if (this.globalData.defaultExamNo == null) {
             return null;
         }

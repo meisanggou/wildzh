@@ -18,7 +18,6 @@ Page({
         chapter_indexs: [0, 0, 0],
         sources_array: [], // 对应真题练习 题目来源
         errorMsg: "题库信息加载中...",
-        cacheSelectedKey: "selectedTrainingOptions",
         enableVideo: 0,
         canUpdate: false
     },
@@ -26,7 +25,7 @@ Page({
         var canUpdate = false;
         var currentUser = app.getOrSetCurrentUserData();
         if (currentUser != null && typeof currentUser == "object") {
-            if ("role" in currentUser) {
+            if (currentUser.role !== undefined) {
                 if ((currentUser.role & 2) == 2) {
                     canUpdate = true;
                 }
@@ -35,7 +34,7 @@ Page({
         this.setData({
             canUpdate: canUpdate
         })
-        if ("to" in options) {
+        if (options.to !== undefined) {
             this.setData({
                 to: options["to"]
             })
@@ -45,7 +44,7 @@ Page({
     onShow: function () {
         var that = this;
         wx.user_ping(function(res){
-            if(!('data' in res)){
+            if(res.data == undefined){
                 that.setData({
                     errorMsg: '网络连接异常，请检查网络！'
                 })
@@ -267,7 +266,6 @@ Page({
         })
     },
     startTraining(sm_value, sj_value, ch_value, source_value, action) {
-        app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
         var url = "training?from=home";
         if (action == 'update') {
             url = "../questions/question?from=home";

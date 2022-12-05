@@ -5,7 +5,7 @@ import re
 __author__ = 'zhouhenglc'
 
 
-def separate_image(text, max_width=None):
+def separate_image(text, max_width=None, host=None):
     text_groups = []
     s_l = re.findall(r"(\[\[([/\w.]+?):([\d.]+?):([\d.]+?)\]\])", text)
     last_point = 0
@@ -19,9 +19,13 @@ def separate_image(text, max_width=None):
             index += 1
         o_item = dict(value=item, url=items[1], width=float(items[2]),
                       height=float(items[3]))
+        if host:
+            o_item['href'] = host + o_item['url']
         if max_width and max_width < o_item["width"]:
             o_item["height"] = o_item["height"] * max_width / o_item["width"]
             o_item["width"] = max_width
+        o_item['style'] = "height:%spx;width:%spx" % (o_item["height"],
+                                                      o_item["width"])
         o_item['index'] = index
         index += 1
         text_groups.append(o_item)

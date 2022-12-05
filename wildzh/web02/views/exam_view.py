@@ -89,9 +89,9 @@ ASYNC_POOL = get_pool()
 G_SELECT_MODE = constants.G_SELECT_MODE
 
 
-def separate_image(text, max_width=None, new_fmt=False):
+def separate_image(text, max_width=None, host=None, new_fmt=False):
     if new_fmt:
-        return rich_text.separate_image(text, max_width)
+        return rich_text.separate_image(text, max_width, host=host)
     text_groups = []
     s_l = re.findall(r"(\[\[([/\w.]+?):([\d.]+?):([\d.]+?)\]\])", text)
     last_point = 0
@@ -632,7 +632,7 @@ def update_question():
     return jsonify({"status": True, "data": dict(action=request.method, data=data)})
 
 
-def handle_questions(q_items, no_rich=False, fmt_version=1):
+def handle_questions(q_items, no_rich=False, fmt_version=1, host=None):
     if g.user_no is None:
         for item in q_items:
             options = item["options"]
@@ -663,16 +663,16 @@ def handle_questions(q_items, no_rich=False, fmt_version=1):
             max_width = int(request.headers["X-Device-Screen-Width"]) * 0.95
 
         for item in q_items:
-            question_desc_rich = separate_image(item["question_desc"],
-                                                max_width, new_fmt=new_fmt)
+            question_desc_rich = separate_image(
+                item["question_desc"], max_width, new_fmt=new_fmt, host=host)
             del item['question_desc']
             item["question_desc_rich"] = question_desc_rich
             for option in item["options"]:
-                option["desc_rich"] = separate_image(option["desc"],
-                                                     new_fmt=new_fmt)
+                option["desc_rich"] = separate_image(
+                    option["desc"], new_fmt=new_fmt, host=host)
                 del option["desc"]
-            item["answer_rich"] = separate_image(item["answer"],
-                                                 max_width, new_fmt=new_fmt)
+            item["answer_rich"] = separate_image(
+                item["answer"], max_width, new_fmt=new_fmt, host=host)
             del item['answer']
     return q_items
 
@@ -714,7 +714,7 @@ def get_exam_questions():
             desc = True
         items = c_exam.select_questions(g.exam_no, start_no=start_no, num=int(num), desc=desc)
 
-    items = handle_questions(items, no_rich, fmt_version)
+    items = handle_questions(items, no_rich, fmt_version, host=request.host)
     use_time = time.time() - start_time
     exam_item = g.current_exam.to_dict()
     exam_item['exam_role'] = g.exam_role

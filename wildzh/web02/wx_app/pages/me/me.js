@@ -164,12 +164,13 @@ Page({
                 if (allExams[i].exam_role > 10) {
                     examTip = '未拥有当前题库所有操作权限';
                 }
-                if ('end_time' in allExams[i]) {
+                if (allExams[i].end_time !== undefined) {
                     var end_time = allExams[i]['end_time'];
                     if (end_time == null) {
                         examEndTime = '无期限'
                     } else if (end_time <= 0) {
                         // 不显示 有效期
+                        examEndTime = '--'
                         break;
                     } else {
                         examEndTime = dt.timestamp_2_date(end_time);

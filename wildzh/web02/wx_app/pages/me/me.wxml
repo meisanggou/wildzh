@@ -6,7 +6,8 @@
             <image bindtap="updateNickNameClick"  class="avatar bottom30" mode="aspectFit" src="{{userAvatar}}"></image>
             <view class="user-data">
                 <view class="user-data-name">{{nickName}}</view>
-                <view class="user-data-exam"><text>题库：</text>
+                <view class="user-data-exam">
+                    <text>题库：</text>
                     <picker bindchange="examChange" value="{{examIndex}}" range="{{allExams}}" range-key="exam_name">
                         <text class="user-data-exam-text">{{examName}}</text>
                     </picker>

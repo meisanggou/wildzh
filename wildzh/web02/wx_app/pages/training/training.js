@@ -12,7 +12,6 @@ var brushDetail = new Array();
 var STATE_WRONG = 'wrong';
 var STATE_RIGHT = 'right'
 var STATE_SKIP = 'skip'
-var week_delta = 60 * 60 * 24 * 7;
 
 Page({
     data: {
@@ -37,7 +36,6 @@ Page({
         fbTypes: ['题目错误', '答案错误', '解析错误', '其他'],
         fbTypeIndex: 1,
         feedbackDesc: "",
-        tags: [], // 题目标签
         showAD: false, // 是否显示推广信息
         richAD: [], // 推广信息
         ignoreTip: "",
@@ -477,7 +475,6 @@ Page({
             nowQuestionIndex: index,
             showAnswer: false,
             showRemove: false,
-            tags: [],
             feedbackDesc: ""
         })
         this.setSkipNums(index + 1, questionItems.length);

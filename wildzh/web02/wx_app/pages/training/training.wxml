@@ -41,10 +41,6 @@
 
         <view class='content'>
             <mp-question nowQuestion="{{ nowQuestion}}" examNo="{{ examNo}}" showAnswer="{{ showAnswer }}" bindchoseOption="choseOption"></mp-question>
-            <!-- <view class='line'>
-                <view class='showAnswer' bindtap='showAnswer'>显示答案</view>
-            </view> -->
-
         </view>
     </view>
     <view class='bottom' wx:if="{{ mode == 'traning' }}">

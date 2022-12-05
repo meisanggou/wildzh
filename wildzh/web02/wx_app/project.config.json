@@ -1,7 +1,8 @@
 {
     "description": "项目配置文件。",
     "packOptions": {
-        "ignore": []
+        "ignore": [],
+        "include": []
     },
     "setting": {
         "urlCheck": false,
@@ -36,22 +37,11 @@
     "libVersion": "2.16.0",
     "appid": "wx8ea4e9ba27687c6e",
     "projectname": "%E5%88%B7%E9%A2%98",
-    "isGameTourist": false,
     "simulatorType": "wechat",
     "simulatorPluginLibVersion": {},
-    "condition": {
-        "search": {
-            "list": []
-        },
-        "conversation": {
-            "list": []
-        },
-        "game": {
-            "currentL": -1,
-            "list": []
-        },
-        "miniprogram": {
-            "list": []
-        }
+    "condition": {},
+    "editorSetting": {
+        "tabIndent": "insertSpaces",
+        "tabSize": 4
     }
 }
