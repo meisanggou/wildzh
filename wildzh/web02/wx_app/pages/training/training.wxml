@@ -40,13 +40,13 @@
         </view>
 
         <view class='content'>
-            <mp-question nowQuestion="{{ nowQuestion}}" examNo="{{ examNo}}" showAnswer="{{ showAnswer }}" bindchoseOption="choseOption"></mp-question>
+            <mp-question nowQuestion="{{ nowQuestion}}" examNo="{{ examNo}}" showAnswer="{{ isShowAnswer }}" bindchoseOption="choseOption"></mp-question>
         </view>
     </view>
     <view class='bottom' wx:if="{{ mode == 'traning' }}">
         <view wx:if="{{questionNum>1}}" bindtap='before1' class='switch'>‹</view>
-        <view wx:if="{{!(showAnswer && nowQuestion.canUpdate) }}" class='switchtext' bindtap='showAnswer'>显示答案</view>
-        <view wx:if="{{showAnswer && nowQuestion.canUpdate}}" class='switchtext' bindtap='toUpdate'>修改
+        <view wx:if="{{!(isShowAnswer && nowQuestion.canUpdate) }}" class='switchtext' bindtap='showAnswer'>显示答案</view>
+        <view wx:if="{{isShowAnswer && nowQuestion.canUpdate}}" class='switchtext' bindtap='toUpdate'>修改
         </view>
         <view wx:if="{{questionNum>1}}" bindtap='after1' class='switch'>›</view>
     </view>

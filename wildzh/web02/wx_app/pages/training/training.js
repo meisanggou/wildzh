@@ -26,7 +26,7 @@ Page({
         questionNum: 0,
         nowQuestionIndex: 0,
         nowQuestion: null,
-        showAnswer: false,
+        isShowAnswer: false,
         showRemove: false, // mode=wrong 是否显示移除按钮
         isShowSubject: false,
         isReq: false,
@@ -473,7 +473,7 @@ Page({
         this.setData({
             nowQuestion: nowQuestion,
             nowQuestionIndex: index,
-            showAnswer: false,
+            isShowAnswer: false,
             showRemove: false,
             feedbackDesc: ""
         })
@@ -487,7 +487,7 @@ Page({
         }
         this.addBrushNum(nowQuestion.question_no, STATE_SKIP);
         that.setData({
-            showAnswer: true,
+            isShowAnswer: true,
         })
     },
     toUpdate: function (e) {
@@ -521,12 +521,15 @@ Page({
         if (choseRight) {
             this.addBrushNum(nowQuestion.question_no, STATE_RIGHT);
             // 自动进入下一题
-            if (this.data.showAnswer == false) {
+            if (this.data.isShowAnswer == false) {
                 // 当前显示答案 不进入下一题
                 var interval = setInterval(function () {
                     clearInterval(interval)
                     that.after1();
                 }, 1000)
+            }
+            else{
+                this.showAnswer();
             }
         } else {
             // 记录错题

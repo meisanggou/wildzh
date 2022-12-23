@@ -88,38 +88,6 @@ page{
   background-color: #fff;
 }
 
-.noChose {
-  background-color: #f0f5fb;
-  line-height: 70rpx;
-  font-size: 30rpx;
-  margin: 20rpx 20rpx 20rpx 20rpx;
-  padding-left: 20rpx;
-  color: #363637;
-  border-radius: 5rpx;
-}
-
-.chose {
-  background-color: #fff;
-  color: #7a89df;
-  border: 1rpx #7a89df solid;
-  line-height: 68rpx;
-  font-size: 30rpx;
-  margin: 20rpx 20rpx 20rpx 20rpx;
-  padding-left: 20rpx;
-  border-radius: 5rpx;
-}
-
-.errorChose {
-  background-color: #fff;
-  color: #f01212;
-  border: 1rpx #f01212 solid;
-  line-height: 68rpx;
-  font-size: 30rpx;
-  margin: 20rpx 20rpx 20rpx 20rpx;
-  padding-left: 20rpx;
-  border-radius: 5rpx;
-}
-
 .switch {
   font-size: 70rpx;
   text-align: center;
@@ -190,20 +158,6 @@ page{
   width: 100%;
 }
 
-.view-tag {
-  margin-top: 15rpx;
-  margin-bottom: 15rpx;
-}
-.tag {
-  /* border:2rpx solid; */
-  border-radius:15rpx;
-  margin-left: 10rpx;
-  padding-left: 15rpx;
-  padding-right: 15rpx;
-  padding-top: 12rpx;
-  padding-bottom: 12rpx;
-  background-color: #FFBB77	;
-}
 
 /* 推广信息 样式 */
 .ad-modal {

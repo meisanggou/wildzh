@@ -47,6 +47,7 @@ Component({
         selectedOpts: [], // 选择的选项 下标
         showConfirm: false, // 是否显示 选好了 按钮
         questionAnswer: [], // 答案,
+        rightOption: "", // 正确答案
         selectedOption: '', // 选择的答案
         erroChoseCls: "errorChose",
         tags: [] // 题目标签
@@ -257,31 +258,6 @@ Component({
                 
                 return this.confirmAnswer(options);
             }
-
-
-            var nowQuestionIndex = this.data.nowQuestion.index;
-            var eventOptions = {};
-            var eventDetail = {
-                'choseIndex': choseIndex,
-                'rightIndex': -1
-            };
-            for (var index in options) {
-                options[index]["class"] = "noChose";
-                if (parseInt(options[index]["score"]) > 0) {
-                    eventDetail['rightIndex'] = index;
-                }
-            }
-            if (eventDetail['rightIndex'] == choseIndex) {
-                options[choseIndex]["class"] = "chose";
-                eventDetail['choseRight'] = true;
-            } else {
-                options[choseIndex]["class"] = this.data.erroChoseCls;
-                eventDetail['choseRight'] = false;
-            }
-            this.setData({
-                options: options
-            })
-            this.triggerEvent('choseOption', eventDetail, eventOptions)
         },
         confirmAnswer: function (options) {
             if(options instanceof Array){
