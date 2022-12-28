@@ -1,0 +1,94 @@
+<template>
+	<view class="hoc-login-other-lr">
+		<view class="footer">
+			<text class="footer-oterlog">其他登录方式</text>
+			<view class="login-type">
+				<view class="login-type-item">
+					<image class="item-src"
+						src="http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/f271d4e54189ae997b9de64ef8a47157.png" />
+				</view>
+				<view class="login-type-item middle">
+					<image class="item-src"
+						src="http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/aa09aa1f441dba52f5400c09e5cbcd95.png" />
+				</view>
+				<view class="login-type-item">
+					<image class="item-src"
+						src="http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/4206b10f6c4473c3e2731d562d25b2f1.png" />
+				</view>
+			</view>
+			<view class="footer-text">
+				<text class="text-default">登录注册即表明同意</text>
+				<text class="text-active">用户协议</text>
+				<text class="text-default">和</text>
+				<text class="text-active">隐私政策</text>
+			</view>
+		</view>
+	</view>
+</template>
+<script>
+export default {
+	name: 'hoc-login-other-lr',
+	apiready() {//like created
+
+	},
+	data() {
+		return {
+
+		}
+	},
+	methods: {
+
+	}
+}
+</script>
+<style>
+.page {
+	height: 100%;
+}
+.footer {
+	position: absolute;
+	bottom: 30px;
+	width: 100%;
+	height: 130px;
+	border-top: 1px solid #cccccc;
+	justify-content: center;
+	align-items: center;
+}
+.footer-oterlog {
+	position: absolute;
+	top: -8px;
+	font-size: 12px;
+	color: #9c9c9c;
+	padding: 0 10px;
+	background-color: #fff;
+}
+.login-type {
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+.login-type-item {
+	width: 35px;
+	height: 35px;
+}
+.item-src {
+	width: 100%;
+}
+.middle {
+	margin: 0 35px;
+}
+.text-default {
+	font-size: 10px;
+	color: #9c9c9c;
+}
+.text-active {
+	margin: 0 2px;
+	font-size: 10px;
+	color: #17b998;
+}
+.footer-text {
+	flex-direction: row;
+	bottom: 0;
+	position: absolute;
+}
+</style>

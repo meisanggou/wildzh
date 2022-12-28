@@ -1,0 +1,61 @@
+<!--首页-关于我们-->
+<template>
+	<view class="main__about">
+		<view class="main__about--title">
+			<text class="main__about--title-line"></text>
+			<text class="main__about--title-text">{{moduleTitle}}</text>
+		</view>
+		<rich-text class="main__about--text " v-for="item in contents" :key="item.id" nodes={item.value}></rich-text>
+	</view>
+</template>
+<script>
+const aboutus = [{
+	value: "<p class='content-text'>柚子英语教育，创建于2007年，专为为有学习英语需求的学员提供英语辅导教学。采取“直播+辅导”双师模式，AI技术辅助教学。总部设立在北京，先后在上海、广州、深圳、天津、杭州、成都、西安、南京等地成立分支机构，现已有120余所辅导中心，成为颇受家长和学生信赖的英语辅导品牌之一。秉承“激发兴趣、培养习惯、塑造品格”的教育理念，柚子英语不仅关注学生学习成绩的提高，更关注学生学习兴趣的激发、学习习惯的培养和思维模式的塑造。柚子英语以“给孩子受益一生的教育”为使命，为广大学子提供优质的课程辅导和贴心的教学服务，满足学生英语课外补习需求。</p>"
+}, {
+	value: "<img src='http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/70886d751d5940247055ab8b88854e08.png' style='height: 194px; width: 100%; margin: 15px 0;'/>"
+}, {
+	value: "<div style='display: flex; flex-direction: row; align-items: center; margin: 15px 0;'><div style='width: 33%; display: flex; flex-direction: column; align-items: center; justify-content: center;'><img src='http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/08f0b0eddc704b17b39dd6c891da9d58.png' style='width: 70px; height: 70px;'/><div class='desc-list-item-title'>教职员工</div><div class='desc-list-item-desc'>3000+</div></div><div style='width: 33%; display: flex; flex-direction: column; align-items: center; justify-content: center;'><img src='http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/08f0b0eddc704b17b39dd6c891da9d58.png' style='width: 70px; height: 70px;'/><div class='desc-list-item-title'>覆盖城市</div><div class='desc-list-item-desc'>200+</div></div><div style='width: 33%; display: flex; flex-direction: column; align-items: center; justify-content: center;'><img src='http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/08f0b0eddc704b17b39dd6c891da9d58.png' style='width: 70px; height: 70px;'/><div class='desc-list-item-title'>上课学员</div><div class='desc-list-item-desc'>30w+</div></div></div>"
+}, {
+	value: "<p class='content-text'>柚子英语教育还与北京大学数学系、南开大学数学系、上海交大数学系、武汉大学数学系等机构签订合作协议，成为他们的实习基地和就业实践基地。依托强大的教学资源与师资力量，柚子英语以实现优秀教育资源的共享为己任，建立起英语网络远程教育平台，大量学员在每年的考试与各类竞赛中取得优异成绩。</p>"
+}]
+export default {
+	name: 'hoc-aboutus-et',
+	data() {
+		return {
+			moduleTitle: this.props.moduleTitle !== undefined ? this.props.moduleTitle : '关于我们',
+			contents: this.props.contents || aboutus
+		}
+	}
+}
+</script>
+<style>
+.main__about {
+	background: #fff;
+	padding: 16px;
+	margin-bottom: 10px;
+}
+.main__about--title {
+	margin-bottom: 16px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+.main__about--title-line {
+	width: 4px;
+	height: 18px;
+	background: #f1c694;
+	margin-right: 8px;
+	border-radius: 4px;
+}
+.main__about--title-text {
+	font-size: 18px;
+	font-weight: bold;
+	color: #333;
+}
+.main__about--text {
+	color: #666;
+	font-size: 14px;
+	line-height: 24px;
+	white-space: wrap;
+}
+</style>

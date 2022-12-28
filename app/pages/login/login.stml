@@ -1,0 +1,61 @@
+<template name='tpl'>
+	<view class="page">
+		<!-- 顶部导航 -->
+		<safe-area></safe-area>
+		<view class="login">
+			<hoc-login-title-lr />
+			<hoc-login-form-lr onlogin="loginAction" />
+			<!-- <hoc-login-other-lr /> -->
+		</view>
+	</view>
+</template>
+<script>
+import '../../components/feature-component/hoc-login-title-lr.stml'
+import '../../components/feature-component/hoc-login-form-lr.stml'
+// import '../../components/feature-component/hoc-login-other-lr.stml'
+import app from '../../script/app.js'
+// console.info(app.getOrSetCurrentUserData())
+
+
+function login_return(ret) {
+	if (ret.status == false) {
+		api.alert({
+			title: '登录失败',
+			msg: ret.data,
+		});
+	}
+	else {
+		var t_data = ret.data;
+		t_data['identity'] = app.identity;
+		app.getOrSetTokenData(t_data);
+		api.openTabLayout({
+			name: 'root',
+		})
+	}
+}
+export default {
+	name: "hoc-login-lr",
+	data() {
+		return {
+
+		}
+	},
+	methods: {
+		loginAction(data) {
+			var detail = data.detail;
+			var r_data = {'user_name': detail.username, 'password': detail.password, 'identity': app.identity };
+			app.my_request('password', 'post', r_data, login_return);
+		},
+	}
+}
+</script>
+<style>
+.page {
+	height: 100%;
+}
+.login {
+	height: 100%;
+	padding: 15px 25px 30px;
+	background-color: #fff;
+}
+</style>

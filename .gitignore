@@ -104,3 +104,7 @@ ENV/
 # upload data
 data
 data/exam/pic
+
+.svn
+.bin
+.apicloud

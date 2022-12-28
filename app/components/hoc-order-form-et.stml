@@ -1,0 +1,94 @@
+<!--预约报名-->
+<template>
+	<scroll-view class="b-preorder">
+    <input class="b-preorder-input" placeholder="姓名" v-model="this.data.name"/>
+    <input class="b-preorder-input" placeholder="手机号" v-model="this.data.phone"/>
+    <input class="b-preorder-input" placeholder="来校时间" v-model="this.data.comeTime"/>
+    <textarea class="b-preorder-input b-preorder-textarea" placeholder="备注" v-model="this.data.remark"/>
+    <view class="b-preorder-btn" @click="submit">
+        <text class="b-preorder-btn-text">提交</text>
+    </view>
+  </scroll-view>
+</template>
+<script>
+export default {
+	name: 'hoc-order-form-et',
+	data() {
+		return {
+      name: this.props.name || "",
+      phone: this.props.phone || "",
+      comeTime: this.props.comeTime || "",
+      remark: this.props.remark || ""
+		}
+	},
+	methods: {
+		submit(formnfo) {
+      const {name, phone, comeTime} = this.data;
+      if (!this.data.name) {
+          api.toast({
+            msg: '请输入姓名!'
+          })
+          return false;
+      }
+      if (!this.data.phone) {
+          api.toast({
+            msg: '请输入手机号!'
+          })
+          return false;
+      }
+
+      if (!/^1[3456789]\d{9}$/.test(this.data.phone)) {
+          api.toast({
+            msg: '请输入正确的手机号!'
+          })
+          return false;
+      }
+
+      if (!this.data.comeTime) {
+          api.toast({
+            msg: '请输入来校时间!'
+          })
+          return false;
+      }
+      this.fire('handleSubmit', this.data)
+		}
+	}
+}
+</script>
+<style>
+.b-preorder {
+  background: #fff;
+  padding: 16px;
+  font-size: 14px;
+  color: #333;
+}
+.b-preorder-input {
+  border: 1px solid #e8e8e8;
+  box-sizing: border-box;
+  width: 100%;
+  height: 52px;
+  padding: 10px;
+  background: #f8f8f8;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.b-preorder-textarea {
+  height: 200px;
+}
+.b-preorder-btn {
+  margin-top: 16px;
+  width: 100%;
+  height: 44px;
+  background: #F1C694;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.b-preorder-btn-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #FFFFFF;
+  line-height: 16px;
+}
+</style>

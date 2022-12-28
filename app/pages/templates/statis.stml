@@ -1,0 +1,108 @@
+<template>
+    <view class="statis">
+        <view class="statis-div">
+            <text class="statis-div-v">{{value1}}</text>
+            <text class="statis-div-desc">{{title1}}</text>
+        </view>
+        <text class="statis-division">|</text>
+        <view class="statis-div">
+            <text class="statis-div-v">{{value2}}</text>
+            <text class="statis-div-desc">{{title2}}</text>
+        </view>
+        <text class="statis-division">|</text>
+        <view class="statis-div">
+            <text class="statis-div-v">{{value3}}</text>
+            <text class="statis-div-desc">{{title3}}</text>
+        </view>
+        <text class="statis-division">|</text>
+        <view class="statis-div" bindtap="toWrongPage">
+            <image class="statis-div-v" :src="image4" mode="aspectFit"></image>
+            <text class="statis-div-desc">{{title4}}</text>
+        </view>
+    </view>
+</template>
+<script>
+export default {
+    name: 'statis',
+    apiready() { //like created
+    },
+    data() {
+        return {
+            title1: this.props.titles !== undefined ? this.props.titles[0] : '标题',
+            title2: this.props.titles !== undefined ? this.props.titles[1] : '标题',
+            title3: this.props.titles !== undefined ? this.props.titles[2] : '标题',
+            title4: this.props.titles !== undefined ? this.props.titles[3] : '标题',
+            image4: this.props.image4 !== undefined ? this.props.image4 : "",
+            ranking: 14,
+            brushNum: 5,
+            accuracy: "100%"
+        };
+    },
+    computed: {
+        value1: function(){
+            return this.props.value1 !== undefined ? this.props.value1 : '--'
+        },
+        value2: function(){
+            return this.props.value2 !== undefined ? this.props.value2 : '--'
+        },
+        value3: function(){
+            return this.props.value3 !== undefined ? this.props.value3 : '--'
+        },
+    },
+    methods: {}
+};
+</script>
+<style>
+.statis {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: 3%;
+    margin-bottom: 20px;
+    border-radius: 2px;
+    background-color: white;
+    width: 94%;
+    height: 90px;
+    text-align: center;
+}
+
+.statis-div {
+    height: 100%;
+    width: 24%;
+}
+
+.statis-div-v {
+    font-size: 20px;
+    /* margin: 0 auto; */
+    height: 45px;
+    line-height: 45px;
+    width: 100%;
+    text-align: center;
+}
+
+.statis-div-v image {
+    margin-top: 15px;
+    height: 30px;
+    width: 100%;
+}
+
+.statis-div-desc {
+    font-size: 15px;
+    color: gray;
+    margin: 0 auto;
+    width: 100%;
+    line-height: 45px;
+    text-align: center;
+}
+
+.statis-division {
+    /* width: 25px; */
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    height: 90px;
+    display: inline-block;
+    line-height: 90px;
+}
+</style>

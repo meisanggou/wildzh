@@ -1,0 +1,31 @@
+<template>
+    <view class="page">
+        <hoc-header-bar-et title="预约报名" isBack @onBack="onBack"/>
+        <hoc-order-form-et @handleSubmit="handleSubmit" name="" phone="" comeTime="" remark="" />
+    </view>
+</template>
+<script>
+import '../../components/hoc-header-bar-et.stml';
+import '../../components/hoc-order-form-et.stml';
+export default {
+    name: "course-preorder",
+    methods: {
+        handleSubmit(forminfo) {
+            api.openWin({
+                name: 'pay-result',
+                url: '../pay-result/pay-result.stml',
+                pageParam: {
+                    title: '报名成功',
+                    desc: '可在“我的”中查看预约报名记录'
+                }
+            });
+        }
+    }
+};
+</script>
+<style>
+.page {
+    height: 100%;
+    background: #FFF;
+}
+</style>

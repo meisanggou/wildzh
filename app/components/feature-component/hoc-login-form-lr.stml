@@ -1,0 +1,110 @@
+<template>
+	<view class="page">
+		<view class="form">
+			<view class="f-input-box input-phone">
+				<text>账户名</text>
+				<input class="f-input"  maxlength="22"
+					:placeholder="data.placeholderName" :value="data.valueName" v-model="userName"></input>
+			</view>
+
+			<view class="f-input-box">
+				<text>密码</text>
+				<input class="f-input" type="password" :value="data.valuePassword"
+					:placeholder="data.placeholderPassword" v-model="password"></input>
+			</view>
+			<view class="btn-login" @click="login">
+				<text class="btn-login-text" >登录</text>
+			</view>
+			<view class="btn-other">
+				<!-- <text class="btn-other-text">短信快捷登录</text> -->
+				<text class="btn-other-text">忘记密码</text>
+			</view>
+		</view>
+	</view>
+</template>
+<script>
+export default {
+	name: 'hoc-login-form-lr',
+	apiready() {//like created
+
+	},
+	props: {
+		data: {
+			type: Object,
+			default: function () {
+				return {}
+			}
+		}
+	},
+	apiready() {//like created
+
+	},
+	data() {
+		return {
+			data: this.props.data || {
+				placeholderName: "请输入账户名",
+				valueName: "",
+				placeholderPassword: "请输入密码",
+				valuePassword: "",
+			},
+			userName: "",
+			password: ""
+		}
+	},
+	methods: {
+		login(){
+			console.info(this.data.userName);
+			var data = {'username': this.data.userName, 'password': this.data.password};
+			console.info(JSON.stringify(data));
+			this.fire('login', data);
+		}
+	}
+}
+</script>
+<style>
+.page {
+	height: 100%;
+}
+.form {
+	margin-top: 50px;
+	font-size: 14px;
+}
+.f-input {
+	margin-bottom: 20px;
+	width: 100%;
+	height: 40px;
+	box-sizing: border-box;
+	border: none;
+	border-bottom: 1px solid #efefef;
+}
+
+.areacode {
+	position: absolute;
+	bottom: 30px;
+	left: 0;
+}
+
+.btn-login {
+	margin-top: 20px;
+	width: 100%;
+	height: 46px;
+	border-radius: 4px;
+	background: #17b998;
+	justify-content: center;
+	align-items: center;
+	color: #fff;
+}
+.btn-login-text {
+	font-size: 15px;
+	color: #fff;
+}
+.btn-other {
+	flex-direction: row;
+	justify-content: space-between;
+}
+.btn-other-text {
+	margin-top: 20px;
+	font-size: 14px;
+	color: #17b998;
+}
+</style>

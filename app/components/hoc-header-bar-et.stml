@@ -1,0 +1,64 @@
+<template>
+	<safe-area class="a-header">
+		<view class="a-header__icon a-header__icon--left" @click="onBack" v-if="isBack">
+			<img :src="leftIcon || 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/0b234caf9662d757a20a96b70f0d4eda.png'"
+				class="a-header__icon--img" />
+		</view>
+		<text class="a-header--text">{{title}}</text>
+		<view class="a-header__icon a-header__icon--right" @click="onClickRight" v-if="rightIcon">
+			<img :src="rightIcon" class="a-header__icon--img" />
+		</view>
+	</safe-area>
+</template>
+
+<script>
+
+export default {
+	name: "hoc-header-bar-et",
+	data() {
+		return {
+			title: this.props.title !== undefined ? this.props.title : '柚子英语教育',
+			isBack: this.props.isBack || false,
+			leftIcon: this.props.leftIcon || null,
+			rightIcon: this.props.rightIcon || null
+		}
+	},
+	methods: {
+		onBack() {
+			this.fire('onBack')
+		},
+		onClickRight() {
+			this.fire('onClickRight')
+		}
+	}
+}
+</script>
+
+<style scoped>
+.a-header {
+	background: #fff;
+	flex-flow: row nowrap;
+	border-bottom: 1px solid #f0f0f0;
+	flex-shrink: 0;
+}
+
+.a-header__icon {
+	padding: 15px;
+	align-self: center;
+}
+
+.a-header__icon--img {
+	width: 18px;
+	height: 18px;
+}
+
+.a-header--text {
+	font-size: 18px;
+	font-weight: bold;
+	color: #000;
+	height: 26px;
+	margin: 9px 0;
+	text-align: center;
+	flex: 1;
+}
+</style>

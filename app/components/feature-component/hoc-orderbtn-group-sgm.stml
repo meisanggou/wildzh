@@ -1,0 +1,121 @@
+<!--我的-商品状态操作按钮组-->
+<template>
+	<view class="my-btn-group">
+		<view class="my-btn-group-title" @click="gotoOrderList">
+			<text class="my-btn-group-title-text">{{title}}</text>
+			<img
+				class="my-btn-group-title-img"
+				src="http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/c89316e175437ebce8f361ef3f9c3973.png"
+				alt="right-arrow"/>
+		</view>
+		<view class="my-btn-group-btn">
+			<view class="my-btn" v-for="(item,index) in btnList" @click="btnClick(item)">
+				<image class="my-btn-icon" :src="item.icon"></image>
+				<text class="my-btn-text">{{item.title}}</text>
+				<text class="my-btn-red" v-if="item.curNum">{{item.curNum}}</text>
+			</view>
+		</view>
+	</view>
+</template>
+<script>
+export default {
+	name: 'hoc-orderbtn-group-sgm',
+	apiready() {//like created
+
+	},
+	data() {
+		return {
+			redDot: this.props.redDot || 0,
+			title: this.props.title !== undefined ? this.props.title : '我的订单',
+			btnList: this.props.btnList || [{
+				icon: 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/f9598c0f83fd29b3e4ca2a4841ab0e74.png',
+				title: '待成团',
+				type: 2,
+				curNum: 3
+			},{
+				icon: 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/ed4e2be97367495159c485945c27f8c1.png',
+				title: '待发货',
+				type: 3
+			},{
+				icon: 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/7536dd50631ca84685212723acaef895.png',
+				title: '待收货',
+				type: 4
+			},{
+				icon: 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/9e3281f3b18e74bade2d3f34129eb014.png',
+				title: '已完成',
+				type: 5
+			},{
+				icon: 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/23d1c533a1a64b2729d340ddb6fb6ecf.png',
+				title: '售后',
+				type: 0,
+				curNum: 5
+			}]
+		}
+	},
+	methods: {
+		btnClick(item) {
+			this.fire('btnClick', item)
+		},
+		gotoOrderList() {
+			this.fire('gotoOrderList')
+		}
+	}
+}
+</script>
+<style>
+.my-btn-group {
+	background: #fff;
+	border-radius: 4px;
+	margin-bottom: 10px;
+}
+.my-btn-group-title {
+	height: 50px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	margin: 0 8px;
+	border-bottom: 1px solid #f8f8f8;
+}
+.my-btn-group-title-text {
+	font-size: 14px;
+	color: #333;
+	font-weight: bold;
+}
+.my-btn-group-btn {
+	padding: 16px 0;
+	display: flex;
+	flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+.my-btn-group-title-img {
+	width: 10px;
+	height: 10px;
+}
+.my-btn {
+	align-items: center;
+}
+.my-btn-icon {
+    width: 24px;
+    height: 24px;
+}
+.my-btn-text {
+    font-size: 12px;
+    color: #333333;
+	padding-top: 5px;
+}
+.my-btn-red {
+	position: absolute;
+	height: 14px;
+	line-height: 14px;
+	text-align: center;
+	font-size: 12px;
+	background-color: #f00;
+	color: #fff;
+	border-radius: 7px;
+	right: -3px;
+	top: -6px;
+	padding: 0 3px;
+}
+</style>

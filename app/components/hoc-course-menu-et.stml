@@ -1,0 +1,84 @@
+<!--首页-课程类别菜单-->
+<template>
+	<view class="main__menu" scroll-x :show-scrollbar="false">
+		<view class="main__menu--item" v-for="item in menuList" :key="item.id" @click="goto(item)">
+			<img :src="item.image" class="main__menu--item-img" />
+			<text class="main__menu--item-text">{item.name}</text>
+		</view>
+	</view>
+</template>
+<script>
+const course_category = [{
+	id: "749961c0-bd94-11ea-8376-af740ed8c823",
+	name: "雅思培训",
+	sort: 1,
+	image: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/390be1f11e19e09f45c1136bba0b53f1.png"
+}, {
+	id: "961d8d30-bd94-11ea-8376-af740ed8c823",
+	name: "托福培训",
+	sort: 2,
+	image: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/7169bed4660ca42b7c6f847bcbfcd58e.png"
+}, {
+	id: "90200b10-bd94-11ea-8376-af740ed8c823",
+	name: "商务英语",
+	sort: 3,
+	image: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/4fe32561e81c4b7dda9b8a30ae18e287.png"
+}, {
+	id: "80fbcea0-022e-11ec-9c07-fb71c9c0d810",
+	name: "少儿英语",
+	sort: 5,
+	image: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/0c659a25e1561802b467b14a1b7c209c.png"
+}]
+export default {
+	name: 'hoc-course-menu-et',
+	apiready() {//like created
+
+	},
+	data() {
+		return {
+			menuList: this.props.menuList || course_category
+		}
+	},
+	methods: {
+		goto(item) {
+			this.fire('itemClick', item)
+		}
+	}
+}
+</script>
+<style>
+.main__menu {
+	flex-flow: row nowrap;
+	white-space: nowrap;
+	flex-shrink: 0;
+	margin-bottom: 10px;
+	/* box-shadow: 0 2px 2px #DDD; */
+	padding: 16px 0;
+	align-items: center;
+	justify-content: space-around;
+	background: #fff;
+}
+.main__menu--item {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 80px;
+	flex-shrink: 0;
+}
+.main__menu--item-img {
+	width: 60px;
+	height: 60px;
+	border-radius: 8px;
+}
+.main__menu--item-text {
+	color: #333;
+	font-size: 12px;
+	padding-top: 12px;
+	text-align: center;
+	width: 80px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+</style>

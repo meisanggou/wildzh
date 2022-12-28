@@ -1,0 +1,47 @@
+<template>
+    <view class="page">
+        <hoc-header-bar-et title="查看公开课" isBack @onBack="onBack"/>
+        <view class="main" name="21212121">
+            <video src={this.data.video_path} poster={this.data.cover} mode="aspectFit" autoplay="true"></video>
+        </view>
+    </view>
+</template>
+<script>
+import AHeader from "../../components/hoc-header-bar-et.stml";
+export default {
+    name: "play-video",
+    components: {
+        AHeader
+    },
+    data() {
+        return {
+            video_path: 'https://www.apicloud.com/img/new/newhome/video.mp4',
+            cover: api.pageParam.cover
+        };
+    },
+    methods: {
+        onBack() {
+            api.closeWin();
+        }
+    }
+};
+</script>
+<style>
+.page {
+    height: 100%;
+}
+
+.main {
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    background: #333;
+}
+
+video {
+    width: 100%;
+    height: 200px;
+    background-color: #666;
+    align-self: center;
+}
+</style>

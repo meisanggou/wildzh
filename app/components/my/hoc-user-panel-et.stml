@@ -1,0 +1,58 @@
+<template>
+<view class="b-user-panel" @click="handleClick">
+	<img :src="imgSrc" alt="avatar" class="b-user-panel-avatar"/>
+	<text class="b-user-panel-name" v-if="userInfo && userInfo.id">{{userInfo.name}}</text>
+	<text v-else>请登录</text>
+</view>
+</template>
+<script>
+export default {
+	name: 'hoc-user-panel-et',
+	computed: {
+		imgSrc() {
+			return this.userInfo && this.userInfo.id
+        ? 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/6fbc0b9f6404895c6400d27261011ab1.png'
+        : 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/21ecd0b8aa98499fa0bb3534295480ee.png'
+		}
+	},
+	data() {
+		return{
+      userInfo: {
+        "id": "111",
+        "name": "APP用户9626"
+      },
+			// userInfo: null
+		}
+	},
+	methods: {
+		handleClick() {
+			this.fire('handleClick')
+		}
+	}
+}
+</script>
+<style>
+.b-user-panel {
+  width: 100%;
+  height: 170px;
+  background-color: #fdf9f5;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.b-user-panel-avatar {
+  width: 60px;
+  height: 60px;
+  background: #EFEFEF;
+  border-radius: 30px;
+  border: 4px solid #F1C694;
+  margin: 20px;
+}
+
+.b-user-panel-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333333;
+  line-height: 16px;
+}
+</style>

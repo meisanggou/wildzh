@@ -1,0 +1,120 @@
+<template>
+  extendsClassStyleEvents.call(this,
+  <view class={mixedClass('a-cell__root',{['a-cell__root--type-'+(this.props.type||'default')]:true})}
+        onclick={this.handleCellClick}>
+    <view class="a-cell">
+      {this.props.imgIcon&&<img src={this.props.imgIcon} class="a-cell__icon--img"/>}
+      <view class={mixedClass('a-cell__main',{['a-cell__main--type-'+(this.props.type||'default')]:true})}>
+        <text class="a-cell__title--text-title">{this.props.title}</text>
+        <text class="a-cell__title--text-value">{this.props.value}</text>
+      </view>
+      {this.props.link&&<img src="../../components/img/icon__a-cell-arrow-right.png" class="a-cell__link--arrow"/>}
+    </view>
+
+    {this.props.children.length!==0 &&
+    <view class="a-cell__content">
+      {this.props.children}
+    </view>
+    }
+
+  </view>
+  )
+</template>
+
+<script>
+import {extendsClassStyleEvents, mixedClass} from "./utils";
+
+export default {
+  name: "a-cell",
+  install() {
+    this.props.type = 'default';
+  },
+  methods: {
+    handleCellClick(ev) {
+      if (this.props.link) {
+        let options = {};
+        if (typeof this.props.link === 'string') {
+          if (this.props.link.endsWith('.stml')) {
+            options.name = this.props.link.split('/').pop().replace('.stml', '');
+            options.url = this.props.link;
+          } else {
+            options.name = this.props.link;
+            options.url = `../${this.props.link}/${this.props.link}.stml`;
+          }
+        } else {
+          options = this.props.link;
+        }
+        console.log(['a-cell:link', JSON.stringify(options)]);
+        api.openWin(options);
+      } else if (this.props.onClick) {
+        this.props.onClick(ev);
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+.a-cell__root {
+}
+
+.a-cell__root--type-default {
+  border-bottom: 1px solid #F1F1F1;
+}
+
+.a-cell__root--type-plain {
+  border: none;
+}
+
+.a-cell {
+  flex-flow: row nowrap;
+}
+
+
+.a-cell__icon--img {
+  align-self: center;
+  height: 20px;
+  width: 20px;
+  margin-left: 18px;
+}
+
+.a-cell__content {
+  padding: 0 15px 15px 15px;
+}
+
+.a-cell__main {
+  align-self: center;
+  flex: 1;
+  flex-flow: row nowrap;
+}
+
+.a-cell__main--type-default {
+  margin: 18px;
+}
+
+.a-cell__main--type-plain {
+  margin: 9px 0;
+}
+
+.a-cell__title--text-title {
+  font-size: 14px;
+  height: 20px;
+  line-height: 20px;
+  color: #333;
+  flex: 1;
+}
+
+.a-cell__title--text-value {
+  font-size: 14px;
+  height: 20px;
+  line-height: 20px;
+  color: #999;
+}
+
+.a-cell__link--arrow {
+  width: 18px;
+  height: 18px;
+  align-self: center;
+  margin-right: 20px;
+}
+</style>

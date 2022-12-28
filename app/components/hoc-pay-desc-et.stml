@@ -1,0 +1,73 @@
+<!--支付-中间内容部分-->
+<template>
+<view class="b-pay-content">
+	<view
+		v-for="(item, index) in payInfo"
+		:key="`content${index}`"
+		:class="`b-pay-content-item ${item.isRow ? 'b-pay-content-item-row' : ''}`">
+		<text class="b-pay-content-item-label">{{item.label}}</text>
+		<text :class="`b-pay-content-item-content ${!item.isRow ? 'b-pay-content-item-content-padTop' : ''}`">{{item.value}}</text>
+	</view>
+</view>
+</template>
+<script>
+export default {
+	name: 'hoc-pay-desc-et',
+	apiready(){//like created
+
+	},
+	data() {
+		return{
+			payInfo: this.props.payInfo || [
+                {
+                    "label": "课程类型",
+                    "isRow": true,
+                    "value": "线上直播课"
+                },
+                {
+                    "label": "开课时间",
+                    "isRow": true,
+                    "value": "5月30日 09:00"
+                },
+                {
+                    "label": "购买须知",
+                    "isRow": false,
+                    "value": "本课程由线上直播授课，请在购买课程后下载xxAPP，并 使用您登录小程序的手机号进行登录，登录后即可同步您 购买的课程进行上课。"
+                }
+            ]
+		}
+	},
+	methods: {
+
+	}
+}
+</script>
+<style>
+.b-pay-content {
+	margin-top: 10px;
+	background: #fff;
+	padding: 0 16px;
+}
+.b-pay-content-item {
+	padding: 12px 0;
+	border-bottom: 1px solid #e8e8e8;
+}
+.b-pay-content-item-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+.b-pay-content-item-label {
+	font-size: 14px;
+	color: #333;
+}
+.b-pay-content-item-content {
+	font-size: 14px;
+	color: #999;
+}
+.b-pay-content-item-content-padTop {
+	padding-top: 12px;
+	line-height: 16px;
+}
+</style>

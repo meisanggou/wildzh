@@ -1,0 +1,84 @@
+<!--展示列表信息-左侧是标题，右侧是内容，可多列展示-->
+<template>
+<view class="b-form-list">
+	<view class="b-form-list-title">
+		<text class="b-form-list-title-line"></text>
+		<text class="b-form-list-title-text">{{moduleName}}</text>
+	</view>
+	<view class="b-form-list-item" v-for="item in infoList">
+		<text class="b-form-list-item-title">{{item.label}}</text>
+		<text class="b-form-list-item-value">{{item.content}}</text>
+	</view>
+</view>
+</template>
+<script>
+export default {
+	name: 'hoc-form-list-et',
+	apiready(){//like created
+
+	},
+	data() {
+		return{
+			moduleName: this.props.moduleName !== undefined ? this.props.moduleName : '预约信息',
+			infoList: this.props.infoList || [{
+                label: "预约信息",
+                content: "2021-01-14 16:49:36",
+            }, {
+                label: "预约姓名",
+                content: "APP用户60F2",
+            }, {
+                label: "手机号",
+                content: "13466669999",
+            }, {
+                label: "备注",
+                content: "下午三点左右我可能到达，缴纳费用",
+            }]
+		}
+	},
+	methods: {
+
+	}
+}
+</script>
+<style>
+.b-form-list {
+	padding: 16px;
+	background: #fff;
+}
+.b-form-list-title {
+	flex-direction: row;
+	align-items: center;
+	height: 22px;
+    margin-bottom: 16px;
+}
+.b-form-list-title-text {
+	height: 22px;
+    line-height: 22px;
+	font-size: 18px;
+	font-weight: bold;
+	color: #333;
+}
+.b-form-list-title-line {
+	width: 4px;
+	height: 18px;
+	background: #F1C694;
+	margin-right: 8px;
+	border-radius: 4px;
+}
+.b-form-list-item {
+	padding-bottom: 16px;
+	flex-direction: row;
+}
+.b-form-list-item-title {
+	font-size: 14px;
+	color: #333;
+}
+.b-form-list-item-value {
+	font-size: 14px;
+	color: #999;
+	flex: 1;
+	flex-wrap: wrap;
+	text-align: right;
+	margin-left: 12px;
+}
+</style>

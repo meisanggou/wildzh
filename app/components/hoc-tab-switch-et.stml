@@ -1,0 +1,103 @@
+<template>
+	<view class="a-tabs">
+		<view v-for="(item, index) in tabList" :key="item.id" class="a-tab-item"
+			@click="tabClick(item, index)">
+			<text :class="`a-tab-item-text  ${current === index ? 'a-tab-item-text-active' : ''}`">{item.name}</text>
+			<text class="a-tab-item-line" v-if="current === index"></text>
+		</view>
+	</view>
+</template>
+<script>
+export default {
+	name: 'hoc-tab-switch-et',
+	apiready() {//like created
+
+	},
+	props: {
+		tabList: Array,
+		curTabIndex: Number
+	},
+	data() {
+		return {
+			current: this.props.curTabIndex !== undefined ? this.props.curTabIndex : 0,
+			tabList: this.props.tabList || [
+				{
+					"id": "749961c0-bd94-11ea-8376-af740ed8c823",
+					"name": "班级通知",
+					"sort": 1,
+					"image": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/81a87fd10a1230a70471742c0f74fe79.jpg",
+				},
+				{
+					"id": "961d8d30-bd94-11ea-8376-af740ed8c823",
+					"name": "课时课程",
+					"sort": 2,
+					"image": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/1b61d88512ca97be541bde8af683c843.jpg",
+				},
+				{
+					"id": "90200b10-bd94-11ea-8376-af740ed8c823",
+					"name": "体育比赛",
+					"sort": 3,
+					"image": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/d1f24b049b711af201636460188b3891.jpg"
+				},
+				{
+					"id": "80fbcea0-022e-11ec-9c07-fb71c9c0d810",
+					"name": "文娱活动",
+					"sort": 5,
+					"image": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/a509a1b7be98d65cf2270f9cb9c07857.jpg"
+				},
+				{
+					"id": "7d001bb0-bd94-11ea-8376-af740ed8c823",
+					"name": "班务管理",
+					"sort": 6,
+					"image": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/da13f315322f6e0c1a1f64e826e75d20.jpg"
+				}
+			]
+		}
+	},
+	methods: {
+		tabClick(item, index) {
+			this.data.current = index;
+			this.fire('tabClick', { data: item, curTabIndex: index })
+		}
+	}
+}
+</script>
+<style>
+.a-tabs {
+	width: 100%;
+	justify-content: space-between;
+	align-items: center;
+	height: 44px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	flex-shrink: 0;
+	background: #fff;
+	overflow: auto;
+}
+.a-tab-item {
+	flex: 1;
+	height: 100%;
+	padding: 0 12px;
+	justify-content: center;
+	align-items: center;
+}
+.a-tab-item-text {
+	color: #666;
+	font-size: 14px;
+	font-weight: normal;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.a-tab-item-text-active {
+	color: #333;
+	font-weight: bold;
+}
+.a-tab-item-line {
+	position: absolute;
+	bottom: 0;
+	background: #f1c694;
+	width: 20px;
+	height: 2px;
+}
+</style>

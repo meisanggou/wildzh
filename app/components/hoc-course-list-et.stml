@@ -1,0 +1,96 @@
+<!--不同类别下课程列表-卡片-->
+<template>
+	<view class="page">
+		<view v-for="item in list" :key="item.id" class="b-course-card" @click="gotoCourseDetail(item)">
+			<img class="b-course-card-img" :src="item.cover" />
+			<view class="b-course-card-content">
+				<view class="b-course-card-content-info">
+					<text class="b-course-card-content-title">{{ item.title }}</text>
+					<text class="b-course-card-price">{{ item.class_hour }}课时/{{ item.class_hour }}元</text>
+				</view>
+				<text class="b-course-card-content-desc">{{ item.introduction }}</text>
+			</view>
+		</view>
+	</view>
+</template>
+<script>
+export default {
+	name: 'hoc-course-list-et',
+	apiready() {//like created
+
+	},
+	data() {
+		return {
+			list: this.props.list || [{
+				id: "38fee560-cd78-11ea-be50-d959bf2e4116",
+				title: "托福基础班",
+				introduction: "专项针对听说和读写进行授课，符合英语学习规律为冲刺托福高分奠定坚实基础。",
+				class_hour: 20,
+				price: 3500,
+				cover: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/f37011096dcb1d65093b6aa247b4f7c7.png"
+			}, {
+				id: "4e17d4f0-db76-11ea-b3b2-3d48f89dcea5",
+				title: "托福提高班",
+				introduction: "针对性地讲解托福考试中的考点和学生们的问题，听说读写核心考点讲授，学习效果显著。",
+				class_hour: 20,
+				price: 3500,
+				cover: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/9e904b8fcf2572d05d44c553f3f74f04.png"
+			}, {
+				id: "4e17d4f0-db76-11ea-b3b2-3d48f89dcea6",
+				title: "托福提分班",
+				introduction: "托福听说读写核心考点分析和讲解，全面提升托福综合能力，帮助学员冲刺前30的美国名校。",
+				class_hour: 20,
+				price: 5000,
+				cover: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/d0e5835a20a57e2716aba301ae715893.png"
+			}]
+		}
+	},
+	methods: {
+		gotoCourseDetail(item) {
+			this.fire('gotoCourseDetail', item)
+		}
+	}
+}
+</script>
+<style>
+.b-course-card {
+	width: auto;
+	height: auto;
+	margin: 15px;
+	background: #fff;
+	border: 1px solid #f3f3f3;
+	border-radius: 4px;
+}
+.b-course-card-img {
+	width: 100%;
+	height: 194px;
+}
+.b-course-card-content {
+	margin: 12px;
+}
+.b-course-card-content-info {
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	height: 22px;
+}
+.b-course-card-content-title {
+	flex: 1;
+	color: #333;
+	font-size: 16px;
+	font-weight: bold;
+	margin-right: 8px;
+	flex-wrap: wrap;
+}
+.b-course-card-content-desc {
+	margin-top: 15px;
+	white-space: pre-wrap;
+	font-size: 14px;
+	color: #666666;
+}
+.b-course-card-price {
+	font-size: 16px;
+	color: #fa6400;
+	font-weight: bold;
+}
+</style>

@@ -1,0 +1,55 @@
+<!--头部导航栏-->
+<template>
+    <view class="nav-bar" :style="{background: this.props.bgClolor || '#fff'}">
+		<view v-if="this.props.isShowBack" @click="back" class="nav-bar-back">
+			<img src="http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/6958c7448f8d7106d3ee273fa7430063.png" alt="back" class="nav-bar-back-icon"/>
+			<text class="nav-bar-back-text" :style="{color: this.props.textColor || '#000'}">返回</text>
+		</view>
+		<text class="nav-bar-title" :style="{color: this.props.textColor || '#000'}">{title}</text>
+    </view>
+</template>
+<script>
+export default {
+	name: 'hoc-nav-bar-sgm',
+	data() {
+		return {
+			title: this.props.title !== undefined ? this.props.title : '拼团商城'
+		}
+	},
+	methods: {
+		back() {
+			this.fire('backClick')
+		}
+	}
+}
+</script>
+<style>
+.nav-bar {
+	width: 100%;
+	display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+	flex-shrink: 0;
+	height: 48px;
+	border-bottom: 0.5px solid #e8e8e8;
+}
+.nav-bar-back {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	position: absolute;
+	left: 16px;
+}
+.nav-bar-back-icon {
+	width: 20px;
+	height: 20px;
+}
+.nav-bar-back-text {
+	font-size: 17px;
+}
+.nav-bar-title {
+	font-size: 17px;
+	font-weight: 500;
+}
+</style>

@@ -1,0 +1,81 @@
+<!--可选择列表-->
+<template>
+<view class="a-checklist">
+	<view v-for="item in list" :key="item.id" class="a-checklist-item" @click="handleClick(item)">
+		<img :src="item.leftIcon" alt="left" class="a-checklist-item-left-icon" v-if="item.leftIcon"/>
+		<text class="a-checklist-item-text">{item.text}</text>
+		<view class="a-checklist-item-right">
+			<text class="a-checklist-item-right-text">{item.extraText}</text>
+			<img class="a-checklist-item-right-icon" :src="item.rightIcon || 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/32c33a52906720ff44bd953ad901b853.png'" alt="right">
+		</view>
+	</view>
+</view>
+</template>
+<script>
+export default {
+	name: 'hoc-check-list-et',
+	data() {
+		return {
+			list: this.props.list || [{
+				id: 'preorderList',
+				leftIcon: 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/f5286334165d33c9e96aad27d08d67cb.png',
+				text: '我的预约',
+				extraText: '立即查看',
+				link: null
+			}, {
+				id: 'orderList',
+				leftIcon: 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/07d97e58534b11938a0d1c682c2511df.png',
+				text: '我的线上课订单',
+				link: null
+			}]
+		}
+	},
+	methods: {
+		handleClick(item) {
+			this.fire('itemClick', item)
+			if (item.link) {
+				api.openWin({
+					name: `open${item.id}`,
+					url: item.link
+				})
+			}
+		}
+	}
+}
+</script>
+<style>
+.a-checklist {
+	background: #fff;
+	padding: 0 16px;
+	margin-bottom: 10px;
+}
+.a-checklist-item {
+	padding: 15px 0;
+	align-items: center;
+	flex-direction: row;
+	border-bottom: 1px solid #f1f1f1;
+}
+.a-checklist-item-left-icon {
+	width: 20px;
+	height: 20px;
+}
+.a-checklist-item-text {
+	flex: 1;
+	font-size: 14px;
+	color: #333;
+	margin-right: 15px;
+}
+.a-checklist-item-right {
+	flex-direction: row;
+	align-items: center;	
+}
+.a-checklist-item-right-icon {
+	width: 20px;
+	height: 20px;
+	margin-left: 8px;
+}
+.a-checklist-item-right-text {
+	font-size: 14px;
+	color: #999;
+}
+</style>

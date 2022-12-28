@@ -1,0 +1,67 @@
+<!--首页-轮播图-->
+<template>
+	<swiper :autoplay="true" :circular="true" class="main__swiper">
+		<swiper-item v-for="item in swiperList" :key="item.id" class="main__swiper--item">
+			<img :src="item.cover" class="main__swiper--img" />
+		</swiper-item>
+	</swiper>
+</template>
+<script>
+export default {
+	name: 'hoc-swiper-et',
+	apiready() {//like created
+
+	},
+	data() {
+		return {
+			swiperList: this.props.swiperList || [
+				{
+					"id": "33993850-0288-11ec-9c07-fb71c9c0d810",
+					"title": "0",
+					"cover": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/2cda070a815f0eec0833f209f6cd08cc.jpg",
+					"jump_url": null
+				},
+				{
+					"id": "4064f8f0-9dea-11ec-8e9b-03659952203e",
+					"title": "1",
+					"cover": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/1f696c571be82ee158b24cd3414ef07d.jpg",
+					"jump_url": null
+				},
+				{
+					"id": "425fd800-03ee-11ec-a31b-d9c40205f716",
+					"title": "2",
+					"cover": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/a08406b7922a582c1d730ba80f1b85bc.jpg",
+					"jump_url": null
+				},
+				{
+					"id": "49439b70-03ee-11ec-a31b-d9c40205f716",
+					"title": "3",
+					"cover": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/cfddbef8adfa50b8442db2bbbc0061f3.jpg",
+					"jump_url": null
+				},
+				{
+					"id": "58b2ddb0-a285-11ec-88ce-0fa89481d651",
+					"title": "4",
+					"cover": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/8f5b2793125a7995f725b31f45be10fe.jpg",
+					"jump_url": null
+				}
+			]
+		}
+	},
+	methods: {
+
+	}
+}
+</script>
+<style>
+.main__swiper {
+	height: 200px;
+}
+.main__swiper--item {
+	height: 100%;
+}
+.main__swiper--img {
+	height: 100%;
+	width: 100%;
+}
+</style>

@@ -1,0 +1,57 @@
+<template>
+	<view class="hoc-login-title-lr">
+		<view class="title">
+			<text class="title-register">{ data.title }</text>
+			<view class="title-login">
+				<text class="title-other">{ data.otherText }</text>
+				<text class="title-oter-login">{ data.btnText }</text>
+			</view>
+		</view>
+	</view>
+</template>
+<script>
+export default {
+	name: 'hoc-login-title-lr',
+	props:{
+		data:{
+			type:Object,
+			default:function(){
+				return {}
+			}
+		}
+	},
+	apiready() {//like created
+
+	},
+	data() {
+		return {
+			data:this.props.data || {
+				title:'登录',
+				otherText:'还没有账号？',
+				btnText:'点击注册'
+			}
+		}
+	},
+	methods: {
+
+	}
+}
+</script>
+<style>
+
+.title-register {
+	margin-bottom: 15px;
+	color: #000;
+	font-size: 30px;
+}
+.title-login {
+	flex-direction: row;
+	font-size: 12px;
+}
+.title-other {
+	color: #9c9c9c;
+}
+.title-oter-login {
+	color: #17b998;
+}
+</style>

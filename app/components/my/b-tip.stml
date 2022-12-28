@@ -1,0 +1,29 @@
+<template>
+  <view class="b-tip">
+    <hoc-header-bar-et :title="this.props.title || '我是大标题2323232323'"/>
+    <hoc-apply-succ-tip-et/>
+  </view>
+</template>
+
+<script>
+import AHeader from "../../components/hoc-header-bar-et.stml";
+import BNotice from "../../components/hoc-apply-succ-tip-et.stml";
+
+export default {
+  name: "b-tip",
+  components: {BNotice, AHeader},
+  methods: {
+		back() {
+			this.fire('btnClick')
+		}
+	}
+}
+</script>
+
+<style scoped>
+.b-tip {
+  background: #F8F8F8;
+  height: 100%;
+}
+
+</style>

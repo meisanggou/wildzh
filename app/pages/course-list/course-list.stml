@@ -1,0 +1,105 @@
+<template name='course-list'>
+	<view class="page">
+		<hoc-header-bar-et isBack title="柚子英语教育" @onBack="onBack" />
+		<hoc-tab-switch-et :tabList="tabList" :curTabIndex="current" @tabClick="tabChange" />
+		<scroll-view scroll-y :show-scrollbar="false">
+			<view class="course-tabs__item--list">
+				<hoc-course-list-et :list="dataList" @gotoCourseDetail="goto" />
+			</view>
+		</scroll-view>
+	</view>
+</template>
+<script>
+import "../../components/hoc-header-bar-et.stml";
+import '../../components/hoc-tab-switch-et.stml';
+import "../../components/hoc-loading-et.stml";
+import "../../components/hoc-no-data-et.stml";
+import '../../components/hoc-course-list-et.stml';
+export default {
+	name: "tab-course",
+	apiready() {
+		this.getCourseData(0);
+	},
+	data() {
+		// 当前选中tab
+		let leftIcon = api.pageParam && api.pageParam.id ? true : false;
+		return {
+			leftIcon,
+			current: 0,
+			tabList: [{
+				id: "749961c0-bd94-11ea-8376-af740ed8c823",
+				name: "雅思培训",
+				sort: 1,
+				image: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/390be1f11e19e09f45c1136bba0b53f1.png"
+			}, {
+				id: "961d8d30-bd94-11ea-8376-af740ed8c823",
+				name: "托福培训",
+				sort: 2,
+				image: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/7169bed4660ca42b7c6f847bcbfcd58e.png"
+			}, {
+				id: "90200b10-bd94-11ea-8376-af740ed8c823",
+				name: "商务英语",
+				sort: 3,
+				image: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/4fe32561e81c4b7dda9b8a30ae18e287.png"
+			}, {
+				id: "80fbcea0-022e-11ec-9c07-fb71c9c0d810",
+				name: "少儿英语",
+				sort: 5,
+				image: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/0c659a25e1561802b467b14a1b7c209c.png"
+			}],
+			dataList: [{
+				id: "38fee560-cd78-11ea-be50-d959bf2e4116",
+				title: "托福基础班",
+				introduction: "专项针对听说和读写进行授课，符合英语学习规律为冲刺托福高分奠定坚实基础。",
+				class_hour: 20,
+				price: 3500,
+				cover: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/f37011096dcb1d65093b6aa247b4f7c7.png"
+			}, {
+				id: "4e17d4f0-db76-11ea-b3b2-3d48f89dcea5",
+				title: "托福提高班",
+				introduction: "针对性地讲解托福考试中的考点和学生们的问题，听说读写核心考点讲授，学习效果显著。",
+				class_hour: 20,
+				price: 3500,
+				cover: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/9e904b8fcf2572d05d44c553f3f74f04.png"
+			}, {
+				id: "4e17d4f0-db76-11ea-b3b2-3d48f89dcea6",
+				title: "托福提分班",
+				introduction: "托福听说读写核心考点分析和讲解，全面提升托福综合能力，帮助学员冲刺前30的美国名校。",
+				class_hour: 20,
+				price: 5000,
+				cover: "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/d0e5835a20a57e2716aba301ae715893.png"
+			}],
+			isLoading: false
+		};
+	},
+	methods: {
+		onBack() {
+			api.closeWin();
+		},
+		getCourseData(curTabIndex) {
+			this.data.isLoading = true;
+			setTimeout(() => {
+				this.data.isLoading = false; // this.data.dataList = course_list[curTabIndex].list;
+			}, 1500);
+		},
+		tabChange(e) {
+			console.log(e.detail.curTabIndex);
+			this.data.current = e.detail.curTabIndex;
+			this.getCourseData(e.detail.curTabIndex);
+		},
+		goto(data) {
+			api.openWin({
+				name: 'course-detail',
+				url: '../course-detail/course-detail.stml',
+				pageParam: data.detail
+			});
+		}
+	}
+};
+</script>
+<style>
+.page {
+	height: 100%;
+	background-color: #f8f8f8;
+}
+</style>

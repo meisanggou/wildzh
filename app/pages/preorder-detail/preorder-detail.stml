@@ -1,0 +1,67 @@
+<template name="preorder-detail">
+    <view class="page">
+        <hoc-header-bar-et title="预约详情" isBack @onBack="onBack"/>
+        <scroll-view style="flex: 1;">
+            <hoc-course-baseinfo-et
+                id="458287d0-daf0-11ea-860c-79b0f1c26dc1"
+                title="托福基础班"
+                introduction="托福基础班"
+                price={3500}
+                cover="http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/f644528c36a155b6d7e05deb972f504a.png"
+                type="2"
+                class_hour={20} />
+            <hoc-form-list-et :infoList="formlist" title="预约信息" />
+        </scroll-view>
+
+        <view>
+            <hoc-handle-btn-et btnText="取消预约" btnBgColor="#F1C694" @btnClick="nextStep" />
+        </view>
+    </view>
+</template>
+<script>
+import "../../components/hoc-header-bar-et.stml";
+import "../../components/hoc-course-baseinfo-et.stml";
+import '../../components/hoc-form-list-et.stml';
+import '../../components/hoc-handle-btn-et.stml';
+export default {
+    name: "preorder-detail",
+    data() {
+        return {
+            formlist: [{
+                label: "预约信息",
+                content: "2021-01-14 16:49:36"
+            }, {
+                label: "预约姓名",
+                content: "APP用户60F2"
+            }, {
+                label: "手机号",
+                content: "13466669999"
+            }, {
+                label: "备注",
+                content: "下午三点左右我可能到达，缴纳费用"
+            }]
+        };
+    },
+    installed() {},
+    methods: {
+        onBack() {
+            api.closeWin();
+        },
+        nextStep() {
+            api.confirm({
+                title: '提示',
+                msg: '是否要取消预约?',
+                buttons: ['确定', '取消']
+            }, (ret, err) => {
+                ret.buttonIndex === 1 && api.closeWin();
+            });
+        }
+    }
+};
+</script>
+<style>
+.page {
+    height: 100%;
+    background-color: #f8f8f8;
+}
+</style>

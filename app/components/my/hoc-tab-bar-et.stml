@@ -1,0 +1,72 @@
+<template>
+<view class="a-tab-bar">
+	<view v-for="item in tabList" class="a-tab-bar-item" :key="item.id" @click="tabClick(item)">
+		<img :src="item.id === this.data.curTab ? item.activeIcon : item.icon" alt="icon" class="a-tab-bar-icon"/>
+		<text :class="`a-tab-bar-text ${item.id === this.data.curTab ? 'a-tab-bar-text-active' : ''}`">{item.text}</text>
+	</view>
+</view>
+</template>
+<script>
+export default {
+	name: 'hoc-tab-bar-et',
+	apiready(){//like created
+
+	},
+	data() {
+		return{
+			curTab: this.props.curTab || 'index',
+			tabList:[{
+					"icon": "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/e2eeef19cabf85214c89ab0dc8c9720f.png",
+					"activeIcon": "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/489dedc6acb0733479d99fb103d2a8c0.png",
+					"text": "首页",
+					"id": "index"
+				}, {
+					"icon": "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/0cff8ae2601e81845b2265663e1b0055.png",
+					"activeIcon": "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/5d6297350ebac9433215d588f311e0ae.png",
+					"text": "预约课程",
+					"id": "course"
+				}, {
+					"icon": "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/21ecd0b8aa98499fa0bb3534295480ee.png",
+					"activeIcon": "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/6fbc0b9f6404895c6400d27261011ab1.png",
+					"text": "我的",
+					"id": "my"
+				}]
+		}
+	},
+	methods: {
+		tabClick(item) {
+			this.data.curTab = item.id;
+			this.fire('tabClick', item.id)
+		}
+	}
+}
+</script>
+<style>
+.a-tab-bar {
+	padding: 12px 0;
+	flex-shrink: 0;
+	background: #fff;
+	flex-direction: row;
+	align-items: center;
+}
+.a-tab-bar-item {
+	flex: 1;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
+}
+.a-tab-bar-icon {
+	width: 30px;
+	height: 30px;
+	margin-bottom: 12px;
+}
+.a-tab-bar-text {
+	font-size: 14px;
+	color: #999;
+}
+.a-tab-bar-text-active {
+	font-size: 14px;
+	color: #333;
+	font-weight: 500;
+}
+</style>

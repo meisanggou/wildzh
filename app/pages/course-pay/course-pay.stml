@@ -1,0 +1,58 @@
+<template>
+    <view class="page">
+        <hoc-header-bar-et title="预约支付" isBack @onBack="onBack"/>
+        <scroll-view style="flex: 1;" scroll-y>
+            <hoc-pay-course-info-et
+                cover="http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/f37011096dcb1d65093b6aa247b4f7c7.png"
+                title="托福提高班"
+                class_hour={20}
+                price="3500" />
+            <hoc-pay-desc-et :payInfo="payInfo" payCourseInfo={payInfo} :payCourseInfo="payInfo" />
+        </scroll-view>
+        <hoc-handle-btn-et btnText="去支付20元" btnBgColor="#F1C694" @btnClick="placeAnOrder" />
+    </view>
+</template>
+<script>
+import '../../components/hoc-header-bar-et.stml';
+import '../../components/hoc-pay-course-info-et.stml';
+import '../../components/hoc-pay-desc-et.stml';
+import '../../components/hoc-handle-btn-et.stml';
+export default {
+    name: "course-pay",
+    installed() {},
+    data() {
+        return {
+            payInfo: [{
+                label: "课程类型",
+                isRow: true,
+                value: "线上直播课"
+            }, {
+                label: "开课时间",
+                isRow: true,
+                value: "5月30日 09:00"
+            }, {
+                label: "购买须知",
+                isRow: false,
+                value: "本课程由线上直播授课，请在购买课程后下载xxAPP，并 使用您登录小程序的手机号进行登录，登录后即可同步您 购买的课程进行上课。"
+            }]
+        };
+    },
+    methods: {
+        onBack() {
+            api.closeWin();
+        },
+        placeAnOrder() {
+            api.toast({
+                msg: '支付成功!'
+            });
+            api.closeWin();
+        }
+    }
+};
+</script>
+<style>
+.page {
+    background: #F8F8F8;
+    height: 100%;
+}
+</style>

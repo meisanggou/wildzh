@@ -1,0 +1,98 @@
+<!--我的预约-课程卡片-->
+<template>
+<scroll-view scroll-y :show-scrollbar="false" class="b-preorder-card-wrapper">
+  <view class="b-preorder-card" v-for="item in list" :key="item.id" @click="itemClick(item)">
+    <view class="b-preorder-card-left">
+      <view class="b-preorder-card-left__header">
+        <text class="b-preorder-card__header--title">{{item.title}}</text>
+        <text
+          class="b-preorder-card__header--tag"
+          v-if="item.status === 1"
+          style="background: #F1C694;">预约中</text>
+        <text
+          class="b-preorder-card__header--tag"
+          v-else
+          style="background: #CCC;">已取消</text>
+      </view>
+      <text class="b-preorder-card__content--time">预约时间：{{ this.timer(item.create_time)}}</text>
+    </view>
+    <img
+      class="b-preorder-card__content--arrow"
+      src="http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/32c33a52906720ff44bd953ad901b853.png"/>
+  </view>
+</scroll-view>
+</template>
+<script>
+export default {
+	name: 'hoc-my-order-card-et',
+	apiready(){//like created
+
+	},
+	data() {
+		return{
+      list: this.props.list || [{
+        status: 1,
+        create_time: '2022-03-27',
+        title: '课程一'
+      }, {
+        status: 0,
+        create_time: '2022-03-27',
+        title: '课程二'
+      }]
+		}
+	},
+	methods: {
+    timer(time) {
+      return new Date(new Date(time) - 0 - new Date().getTimezoneOffset() * 60 * 1000).toJSON().replace('T', ' ').slice(0, -5);
+    },
+    itemClick(item) {
+      this.fire('itemClick', item)
+    }
+	}
+}
+</script>
+<style>
+.b-preorder-card-wrapper {
+  height: 100%;
+}
+.b-preorder-card {
+  flex-direction: row;
+  align-items: center;
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px 10px;
+  margin: 10px 15px 0;
+}
+.b-preorder-card-left {
+  flex: 1;
+}
+
+.b-preorder-card-left__header {
+  flex-flow: row nowrap;
+}
+
+.b-preorder-card__header--title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.b-preorder-card__header--tag {
+  border-radius: 2px;
+  font-size: 12px;
+  padding: 3px 6px;
+  color: #fff;
+  margin-left: 10px;
+}
+
+.b-preorder-card__content--time {
+  margin-top: 14px;
+  color: #999;
+  font-size: 14px;
+}
+
+.b-preorder-card__content--arrow {
+  width: 18px;
+  height: 18px;
+}
+</style>

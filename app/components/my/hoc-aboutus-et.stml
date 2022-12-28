@@ -1,0 +1,57 @@
+<!--首页-关于我们-->
+<template>
+	<view class="main__about">
+		<view class="main__about--title">
+			<text class="main__about--title-line"></text>
+			<text class="main__about--title-text">{{moduleTitle}}</text>
+		</view>
+		<rich-text class="main__about--text " v-for="item in (this.props.contents || aboutus)" :key="item.id" nodes={item.value}></rich-text>
+	</view>
+</template>
+<script>
+const aboutus = [
+    {
+        "value": "<div>重拾梦想，享受追梦的过程，因为追梦本身就是一种成长。我不知道坚持下去能否成功，但是我知道不坚持就会一无所有。不是所有的梦想都能实现，但是实现梦想的过程对自己来说是一种历练、一种提升，在这期间磨练的技能也会在未来的某一刻派上用场。</div>\n<div>如果不愿沉溺于现实的安逸，那就做一只跳出温水的青蛙。余生未可知，庸庸碌碌也好、奋起直追也好，愿你不要辜负似水流年。</div>"
+    }
+]
+export default {
+	name: 'hoc-aboutus-et',
+	data() {
+		return {
+			moduleTitle: this.props.moduleTitle || '关于我们',
+			contents: this.props.contents || aboutus
+		}
+	}
+}
+</script>
+<style>
+.main__about {
+	background: #fff;
+	padding: 16px;
+	margin-bottom: 10px;
+}
+.main__about--title {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.main__about--title-line {
+  width: 4px;
+  height: 18px;
+  background: #F1C694;
+  margin-right: 8px;
+  border-radius: 4px;
+}
+.main__about--title-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+.main__about--text  {
+	color: #666;
+	font-size: 14px;
+	line-height: 24px;
+	white-space: wrap;
+}
+</style>

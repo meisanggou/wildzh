@@ -1,0 +1,57 @@
+<template>
+<view class="a-module-title" :style="{background: this.data.bgColor}">
+	<view class="a-module-title--solid" :style="{height: this.data.fontSize}"></view>
+	<text class="a-module-title--text" :style="fontStyle">{moduleTitle}</text>
+</view>
+</template>
+<script>
+export default {
+	name: 'hoc-module-title-et',
+	apiready(){//like created
+
+	},
+	data() {
+		return{
+			moduleTitle: this.props.moduleTitle !== undefined ? this.props.moduleTitle : '我是大标题',
+			bgColor: this.props.bgColor !== undefined ? this.props.bgColor : '#fff',
+            fontSize: this.props.fontSize !== undefined ? this.props.fontSize : '18px',
+            fontColor: this.props.fontColor !== undefined ? this.props.fontColor : '#333'
+		}
+	},
+	computed: {
+		fontStyle() {
+			return {
+				fontSize: this.data.fontSize,
+				color: this.data.fontColor
+			}
+		}
+	},
+	methods: {
+
+	}
+}
+</script>
+<style>
+.a-module-title {
+	padding: 16px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.a-module-title--solid {
+  width: 4px;
+  background: #F1C694;
+  margin-right: 8px;
+  border-radius: 4px;
+}
+
+.a-module-title--text {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	line-height: 1;
+	font-weight: bold;
+}
+</style>

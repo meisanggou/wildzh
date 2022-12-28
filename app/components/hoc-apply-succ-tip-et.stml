@@ -1,0 +1,84 @@
+<template>
+  <view class="b-notice">
+    <img :src="iconSrc" alt="" class="b-notice__icon--img"/>
+    <text class="b-notice__title--text">{{title}}</text>
+    <text class="b-notice__desc--text"> {{desc}}</text>
+    <view class="b-notice__btn">
+      <view class="b-notice__button" @Click="btnClick">
+        <text class="b-notice__button--text">{{btnText}}</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+export default {
+  name: "hoc-apply-succ-tip-et",
+  data() {
+    return {
+      iconSrc: this.props.iconSrc !== undefined ? this.props.iconSrc : 'http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/3dd2bde750a04efd60869b5f9efdb3ca.png',
+      title: this.props.title !== undefined ? this.props.title : '报名成功',
+      desc: this.props.desc !== undefined ? this.props.desc : '可在"我的"中查看预约报名记录',
+      btnText: this.props.btnText !== undefined ? this.props.btnText : '确定'
+    }
+  },
+  methods: {
+    btnClick() {
+      api.toast({
+        msg:'点击按钮了'
+      })
+      this.fire('btnClick')
+    }
+  }
+}
+</script>
+
+<style scoped>
+.b-notice {
+  justify-content: center;
+  align-items: center;
+}
+
+.b-notice__icon--img {
+  width: 100px;
+  height: 100px;
+  margin-top: 40px;
+}
+
+.b-notice__title--text {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.b-notice__desc--text {
+  margin-top: 6px;
+  color: #999;
+  font-size: 15px;
+}
+
+.b-notice__btn {
+  margin-top: 30px;
+  flex-flow: row;
+  width: 100%;
+}
+
+.b-notice__button {
+  height: 44px;
+  background: #F1C694;
+  border-radius: 4px;
+  box-sizing: border-box;
+  justify-content: center;
+  flex: 1;
+  margin: 20px;
+}
+
+.b-notice__button--text {
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+</style>

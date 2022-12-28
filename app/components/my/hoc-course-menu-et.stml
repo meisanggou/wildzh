@@ -1,0 +1,94 @@
+<!--首页-课程类别菜单-->
+<template>
+<scroll-view
+	class="main__menu"
+	scroll-x
+	:show-scrollbar="false">
+	<view
+		class="main__menu--item"
+		v-for="item in menuList"
+		:key="item.id"
+		@click="goto(item)"
+		:style="'width:'+api.winWidth/4+'px;'">
+		<img :src="item.image" class="main__menu--item-img"/>
+		<text class="main__menu--item-text">{item.name}</text>
+	</view>
+</scroll-view>
+</template>
+<script>
+const course_category = [
+    {
+        "id": "749961c0-bd94-11ea-8376-af740ed8c823",
+        "name": "班级通知",
+        "sort": 1,
+        "image": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/81a87fd10a1230a70471742c0f74fe79.jpg",
+    },
+    {
+        "id": "961d8d30-bd94-11ea-8376-af740ed8c823",
+        "name": "课时课程",
+        "sort": 2,
+        "image": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/1b61d88512ca97be541bde8af683c843.jpg",
+    },
+    {
+        "id": "90200b10-bd94-11ea-8376-af740ed8c823",
+        "name": "体育比赛",
+        "sort": 3,
+        "image": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/d1f24b049b711af201636460188b3891.jpg"
+    },
+    {
+        "id": "80fbcea0-022e-11ec-9c07-fb71c9c0d810",
+        "name": "文娱活动",
+        "sort": 5,
+        "image": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/a509a1b7be98d65cf2270f9cb9c07857.jpg"
+    },
+    {
+        "id": "7d001bb0-bd94-11ea-8376-af740ed8c823",
+        "name": "班务管理",
+        "sort": 6,
+        "image": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/da13f315322f6e0c1a1f64e826e75d20.jpg"
+    }
+]
+export default {
+	name: 'hoc-course-menu-et',
+	apiready(){//like created
+
+	},
+	data() {
+		return{
+			menuList: this.props.menuList || course_category
+		}
+	},
+	methods: {
+		goto(item) {
+			this.fire('itemClick', item)
+		}
+	}
+}
+</script>
+<style>
+.main__menu {
+  	flex-flow: row nowrap;
+	white-space: nowrap;
+	flex-shrink: 0;
+	margin-bottom: 10px;
+	/* box-shadow: 0 2px 2px #DDD; */
+	padding: 16px 0;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+}
+.main__menu--item {
+	justify-content: center;
+	align-items: center;
+}
+.main__menu--item-img {
+	width: 60px;
+	height: 60px;
+	border-radius: 8px;
+}
+.main__menu--item-text {
+	color: #333;
+	font-size: 12px;
+	padding-top: 12px;
+}
+</style>

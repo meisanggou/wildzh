@@ -1,0 +1,51 @@
+<template>
+  <view class="a-section">
+    <view class="a-section__header">
+      <view class="a-section__header--solid"></view>
+      <text class="a-section__header--text">{this.props.title || '我是大标题'}</text>
+    </view>
+    <view>
+      {this.props.children}
+    </view>
+  </view>
+</template>
+
+<script>
+import {extendsClassStyleEvents} from "./utils";
+
+export default {
+  name: "a-section"
+}
+</script>
+
+<style scoped>
+.a-section {
+  background: #fff;
+  /* box-shadow: 0 0 0 #DDDDDD; */
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 15px;
+}
+
+.a-section__header {
+  flex-direction: row;
+  align-items: center;
+  padding-bottom: 15px;
+}
+
+.a-section__header--solid {
+  width: 4px;
+  height: 18px;
+  background: #F1C694;
+  margin-right: 8px;
+  border-radius: 4px;
+}
+
+.a-section__header--text {
+  line-height: 1;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+</style>

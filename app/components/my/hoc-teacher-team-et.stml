@@ -1,0 +1,128 @@
+<!--首页-名师团队列表-->
+<template>
+<view class="main__teacher">
+  <view class="main__teacher--title">
+    <text class="main__teacher--title-line"></text>
+    <text class="main__teacher--title-text">{{moduleTitle}}</text>
+  </view>
+  <scroll-view class="main__teacher-con" scroll-x :show-scrollbar="false">
+    <view
+      class="main__teacher--item"
+      :key="item.name"
+      v-for="item in teacherList"
+      @click="handleClick(item)">
+      <img :src="item.thumb" class="main__teacher--item-img"/>
+      <text class="main__teacher--item-name">{{ item.name }}</text>
+      <text class="main__teacher--item-introduction">{{ item.introduction }}</text>
+    </view>
+  </scroll-view>
+</view>
+</template>
+<script>
+const teacher_teams = [
+    {
+        "name": "孙学胜",
+        "thumb": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/b512ecf81c2637a752d4e3fdfc2cdb53.png",
+        "introduction": "每天，当太阳升起来的时候，非洲大草原上的动物们就开始奔跑了。狮子妈妈在教育自己的孩子：“孩子，你必须跑得再快一点，再快一点，你要是跑不过最慢的羚羊，你就会活活地饿死。”在另外一个场地上，羚羊妈妈也在教育自己的孩子：“孩子，你必须跑得再快一点，再快一点，如果你不能比跑得最快的狮子还要快，你那肯定就会被他们吃掉。”"
+    },
+    {
+        "name": "曹领臣",
+        "thumb": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/168d31eb88dbe673fb3c2d8c64d50154.jpg",
+        "introduction": "多数的错失，是因为不坚持，不努力，不挽留，然后催眠自己说一切都是命运。分手不是一种罪过，而是一种经历，就像一场蓄谋已久的远行，唯一不同的是，有的是你主动选择，有的则是被动接受;时过境迁，你留给过去的不过是一抹淡淡的微笑和浅浅的回忆，你会忘记当初为什么会那么痛苦和"
+    },
+    {
+        "name": "周鹏庆",
+        "thumb": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/84070e46de6ba60bff8302dbad3df1a8.jpg",
+        "introduction": "把现在的工作做好，才能幻想将来的事情，专注于眼前的事情，对于尚未发生的事情而陷入无休止的忧虑之中，对事情毫无帮助，反而为自己凭添了烦恼。"
+    },
+    {
+        "name": "周鹏庆",
+        "thumb": "http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/84070e46de6ba60bff8302dbad3df1a8.jpg",
+        "introduction": "把现在的工作做好，才能幻想将来的事情，专注于眼前的事情，对于尚未发生的事情而陷入无休止的忧虑之中，对事情毫无帮助，反而为自己凭添了烦恼。"
+    }
+]
+export default {
+	name: 'hoc-teacher-team-et',
+	data() {
+		return{
+      moduleTitle: this.props.moduleTitle || "名师团队",
+			teacherList: this.props.teacherList || teacher_teams
+		}
+	},
+	methods: {
+		handleClick(item) {
+			this.fire('itemClick', item)
+		}
+	}
+}
+</script>
+<style>
+.main__teacher {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background: #fff;
+  margin-bottom: 10px;
+}
+.main__teacher--title {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.main__teacher--title-line {
+  width: 4px;
+  height: 18px;
+  background: #F1C694;
+  margin-right: 8px;
+  border-radius: 4px;
+}
+.main__teacher--title-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+.main__teacher-con {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+}
+.main__teacher--item {
+  width: 120px;
+  padding: 16px 0;
+  background: #FFFFFF;
+  border: 1px solid #f0f0f0;
+  box-shadow: 1px 1px 6px #e2e0e0;
+  border-radius: 3px;
+  margin: 0 5px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  display: inline-flex;
+}
+.main__teacher--item-img {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+}
+.main__teacher--item-name {
+  color: #333;
+  font-size: 14px;
+  margin: 12px 0;
+  font-weight: bold;
+}
+.main__teacher--item-introduction {
+  color: #999;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: center;
+  width: 110px;
+  white-space: nowrap;
+}
+</style>

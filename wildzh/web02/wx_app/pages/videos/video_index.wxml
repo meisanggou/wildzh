@@ -1,0 +1,25 @@
+<!--pages/videos/video_index.wxml-->
+<view class="goods">
+        <view class="good-item" wx:for="{{ videos }}" wx:key="id">
+            <view class="good-item-left">
+                <view class="good-item-title">
+                    <view>
+                        <view>{{ item.video_title }}</view>
+                    </view>
+                </view>
+
+                <view class="list-item-desc">
+                    <view>
+                        <view>{{ item.short_desc }}</view>
+                    </view>
+                </view>
+            </view>
+            <view class="good-item-right">
+                <block>
+                    <view class="good-item-button bc-enable" bindtap="toVideo" data-video-uuid="{{item.video_uuid}}">观看视频</view>
+                    <view class="good-item-lh red text-center">{{ item.disable_msg}}</view>
+                </block>
+
+            </view>
+        </view>
+    </view>

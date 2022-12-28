@@ -1,0 +1,43 @@
+<template>
+<view class="no-data">
+	<img :src="iconSrc" alt="" class="no-data-img" />
+	<text class="no-data-title">{{ title }}</text>
+</view>
+</template>
+<script>
+export default {
+	name: 'hoc-no-data-et',
+	apiready(){//like created
+
+	},
+	data() {
+		return{
+			iconSrc: this.props.iconSrc !== undefined ? this.props.iconSrc : "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/a74aa8ce90ba4ed3ec5c9963208ed856.png",
+			title: this.props.title !== undefined ? this.props.title : "暂无数据哦"
+		}
+	},
+	methods: {
+
+	}
+}
+</script>
+<style>
+.no-data {
+	margin: 16px 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.no-data-img {
+	width: 100px;
+    height: 100px;
+}
+.no-data-title {
+	font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 20px;
+    text-align: center;
+}
+</style>

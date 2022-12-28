@@ -1,0 +1,119 @@
+<template>
+  extendsClassStyleEvents.call(this,
+  <view class="a-tabs">
+    <view
+      class={mixedClass('a-tabs__nav',{'a-tabs__nav-scroll':this.scrollNav})}
+      style="flex-flow: row nowrap;justify-content: space-around;height: 44px;align-items: center;flex-shrink: 0;">
+      <view
+        class={mixedClass('a-tabs__nav--item',{'a-tabs__nav--item-scroll':this.scrollNav})}
+        onClick={this.handleNavClick.bind(this,index)}
+        v-for="(item,index) in this.props.children">
+        <text :class="'a-tabs__nav-text' + (index===this.props.param.current?' a-tabs__nav-text---active':'')">
+          {item.attributes.title}
+        </text>
+        <view class="a-tabs__nav--line" v-if="index === this.props.param.current"></view>
+      </view>
+    </view>
+    <swiper
+      autoplay={false}
+      circular={false}
+      :current={this.props.param.current}
+      onchange={this.handleSwiperChange} class="a-tabs__content">
+      <swiper-item v-for="tab in this.props.children">
+        <scroll-view scroll-y="true" class="a-tabs__content--scroll-view">
+          {tab}
+        </scroll-view>
+      </swiper-item>
+    </swiper>
+  </view>
+  )
+</template>
+
+<script>
+
+import {extendsClassStyleEvents, mixedClass} from "./utils";
+import {colors} from "./theme";
+
+export default {
+  name: "a-tabs",
+  computed: {
+    scrollNav() {
+      return this.props.children.length > 4;
+    }
+  },
+  methods: {
+    tabChanged(current, type) {
+      this.props.param.current = current;
+      this.props.onChange && this.props.onChange({current, type});
+    },
+    handleNavClick(current) {
+      this.tabChanged(current, 'click')
+    },
+    handleSwiperChange({detail: {current}}) {
+      this.tabChanged(current, 'swipe')
+    }
+  }
+}
+
+
+</script>
+
+<style scoped>
+.a-tabs {
+  flex: 1;
+}
+
+.a-tabs__nav {
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  height: 44px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.a-tabs__nav-scroll {
+  justify-content: flex-start;
+  overflow-x: scroll;
+}
+
+.a-tabs__content {
+  flex: 1;
+}
+
+.a-tabs__content--scroll-view {
+  flex: 1;
+}
+
+.a-tabs__nav--item {
+  flex: 1 0 auto;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  height: 100%;
+}
+
+.a-tabs__nav--item-scroll {
+  width: 25%;
+}
+
+.a-tabs__nav-text {
+  color: #666;
+  font-size: 14px;
+  font-weight: normal;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.a-tabs__nav-text---active {
+  color: #333;
+  font-weight: bold;
+}
+
+.a-tabs__nav--line {
+  position: absolute;
+  bottom: 0;
+  background: #F1C694;
+  width: 20px;
+  height: 2px;
+}
+</style>

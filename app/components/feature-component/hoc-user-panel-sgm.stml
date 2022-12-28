@@ -1,0 +1,121 @@
+<!--我的-头部个人信息面板-->
+<template>
+	<view class="hoc-user-panel-sgm" @click="handleClick">
+		<view class="hoc-user-panel-sgm-wrap">
+			<img class="hoc-user-panel-sgm-logo" :src="avatar" mode="aspectFill" />
+			<view class="hoc-user-panel-sgm-name">
+				<view class="hoc-user-panel-sgm-name-1">
+					<text class="hoc-user-panel-sgm-name-1">{{nickname}}</text>
+				</view>
+				<view class="hoc-user-panel-sgm-name-2">
+					<view><text class="hoc-user-panel-sgm-name-2-center">题库：</text></view>
+					<picker class="hoc-user-panel-sgm-name-2-text" onchange="selectChange" mode="selector" range={{allExams}} range-key="exam_name">
+						<view class="hoc-user-panel-sgm-name-2-text"><text class="hoc-user-panel-sgm-name-2-center hoc-user-panel-sgm-name-2-color">{{examName}}</text></view>
+					</picker>
+				</view>
+			</view>
+			<image class="hoc-user-panel-sgm-gol" src="../../images/right_slip.png"></image>
+		</view>
+	</view>
+</template>
+<script>
+export default {
+	name: 'hoc-user-panel-sgm',
+	apiready() {//like created
+
+	},
+	data() {
+		return {
+			id: this.props.id !== undefined ? this.props.id : '111',
+			// examName: this.props.examName !== undefined ? this.props.examName : "--"
+		}
+	},
+	computed: {
+		nickname: function () {
+			return this.props.nickname !== undefined ? this.props.nickname : "未登录"
+		},
+		avatar: function () {
+			return this.props.avatar !== undefined ? this.props.avatar : "../../images/unregister.png"
+		},
+		allExams: function(){
+			return this.props.allExams !== undefined ? this.props.allExams : []
+		},
+		examName: function(){
+			return this.props.examName !== undefined ? this.props.examName : "--"
+		},
+	},
+	methods: {
+		handleClick() {
+			this.fire('handleClick')
+		},
+		selectChange(e){
+			// var index = e.detail.value;
+			// this.data.examName = this.props.allExams[index].exam_name;
+			this.fire('selectChange', e.detail)
+		}
+	}
+}
+</script>
+<style>
+.hoc-user-panel-sgm {
+	height: 126px;
+	/* background-color: white; */
+	background-color: transparent;
+}
+.hoc-user-panel-sgm_bg {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+.hoc-user-panel-sgm-wrap {
+	flex-direction: row;
+	align-items: center;
+	height: 100%;
+}
+.hoc-user-panel-sgm-logo {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	margin-left: 20px;
+	background-color: #f8f8f8;
+}
+.hoc-user-panel-sgm-name {
+	flex: 1;
+	font-size: 17px;
+	color: black;
+	margin: 0 15px;
+	/* height: 80px; */
+}
+.hoc-user-panel-sgm-name-1 {
+	font-size: 20px;
+	color: black;
+}
+.hoc-user-panel-sgm-name-2 {
+	margin-top: 5px;
+	font-size: 14px;
+	flex-direction: row;
+	height: 35px;
+	line-height: 35px;
+}
+.hoc-user-panel-sgm-name-2-color {
+	color: #20b2aa;
+}
+
+.hoc-user-panel-sgm-name-2-center {
+	height: 35px;
+	line-height: 35px;
+}
+
+.hoc-user-panel-sgm-name-2-text {
+	color: #20b2aa;
+	padding-left: 5px;
+	padding-right: 5px;
+	background-color: white;
+}
+
+.hoc-user-panel-sgm-gol {
+	width: 16px;
+	height: 16px;
+	margin-right: 20px;
+}
+</style>

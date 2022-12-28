@@ -1,0 +1,378 @@
+<template>
+	<safe-area class="hoc-mine-page-wrapper">
+		<hoc-nav-bar-sgm title="我的" />
+		<hoc-user-panel-sgm nickname={{nickName}} avatar={{userAvatar}} allExams={{allExams}} examName={{examName}} onselectChange="examChange" onhandleClick="toLogin" />
+		<statis image4="../../images/wrong.png" titles={{titles}} value1={{ranking}}  value2={{brushNum}} value3={{accuracy}}/>
+		<hoc-menu-list-sgm menuList={{menuList1}} />
+		<hoc-menu-list-sgm menuList={{menuList2}}/>
+	</safe-area>
+</template>
+
+<script>
+import '../../components/feature-component/hoc-nav-bar-sgm.stml'
+import '../../components/feature-component/hoc-user-panel-sgm.stml'
+import '../templates/statis.stml'
+import '../../components/feature-component/hoc-orderbtn-group-sgm.stml'
+import '../../components/feature-component/hoc-menu-list-sgm.stml'
+import app from '../../script/app.js'
+
+var wx = app.wx;
+var noExamName = '未选择 -- 点击选择';
+var lastUpdateUserKey = 'updateUserTime';
+var that = this;
+
+const KEY_DATA = 'user.me';
+
+
+export default {
+	name: 'hoc-mine-page-sgm',
+	apiready() {
+		this.onLoad();
+	},
+	data() {
+		return {
+			register: false,
+			userNo: "",
+			userAvatar: "",
+			nickName: "专升本用户",
+			hiddenUnickName: true,
+			allExams: [],
+			examName: noExamName,
+			examNo: 0,
+			examEndTime: null,
+			examTip: "未拥有当前题库所有操作权限",
+			currentTip: null,
+			brushNum: 0, // 刷题数
+			ranking: 0, // 排名
+			accuracy: '100%',
+			version: app.globalData.version,
+			useProfile: true,
+			// 小程序外 添加的
+			titles: ['刷题排名', '刷题数', '正确率', '错题本'],
+			menuList2:  [
+				{ 'title': '版本', 'content': app.globalData.version },
+			],
+		}
+	},
+	computed: {
+		menuList1: function(){
+			return this.getMenuList1();
+		}
+	},
+	methods: {
+		// start ---非小程序有的方法
+		setData(data) {
+			app.print(data);
+			for (var key in data) {
+				this.data[key] = data[key];
+			}
+		},
+		getMenuList1(){
+			return [
+				{ 'title': '昵称', 'content': this.data.nickName },
+				{ 'title': '编号', 'content': this.data.userNo },
+				// { 'title': '积分', 'content': '' },
+				{ 'title': '题库', 'content': this.data.examName },
+				{ 'title': '题库有效期', 'content': this.data.examEndTime },
+			]
+
+		},
+		getMenuList2(){
+			return [
+				{ 'title': '版本', 'content': this.data.version },
+			]
+
+		},
+		// end --- 非小程序有的数据
+		loadCacheData() {
+			this.data.menuList = [
+				{ 'title': '昵称', 'content': '未选择' },
+				{ 'title': '编号', 'content': '' },
+				{ 'title': '积分', 'content': '' },
+				{ 'title': '题库', 'content': '' },
+				{ 'title': '题库有效期', 'content': '' },
+			]
+		},
+		toLogin() {
+			// api.openWin({
+			// 	name: 'page-login',
+			// 	url: '../login/login.stml',
+			// 	pageParam: {}
+			// });
+
+		},
+		onLoad: function () {
+			app.getDefaultExam();
+			if (app.globalData.defaultExamNo != null) {
+				this.setData({
+					examName: app.globalData.defaultExamName,
+					examNo: app.globalData.defaultExamNo
+				})
+			}
+
+			// var useProfile = wx.canIUse('getUserProfile');
+			// this.setData({
+			//     useProfile: useProfile
+			// })
+
+			// this.loadCacheUserInfo()
+
+			// if ('share_token' in options) {
+			//     var st = options['share_token'];
+			//     this.receiveShare(st);
+			// }
+		},
+		onShow: function () {
+			this.setData({
+				examTip: ''
+			})
+			this.getExams();
+			this.loadCacheUserInfo();
+		},
+		loadCacheUserInfo: function (data) {
+			if(data==null){
+				this.getUserData();
+				return
+			}
+			else{
+				var currentUser = data;
+			}
+			if (currentUser != null) {
+				if (currentUser['user_no']) {
+					this.setData({
+						userNo: currentUser.user_no
+					})
+				}
+				if (currentUser.avatar_url) {
+					this.setData({
+						userAvatar: currentUser.avatar_url,
+						nickName: currentUser.nick_name
+					})
+				}
+			}
+			else {
+				this.getUserData();
+			}
+		},
+		getUserInfo: function (e) {
+			var that = this
+			var userInfo = e.detail.userInfo
+			var data = {
+				"avatar_url": userInfo.avatarUrl,
+				"nick_name": userInfo.nickName
+			}
+			wx.showLoading({
+				title: '登录中...',
+				mask: true
+			})
+			this.updateUserInfoAction(data);
+
+		},
+		getUserData: function () {
+			that = this;
+			wx.request2({
+				url: '/user/info/',
+				method: 'GET',
+				success: res => {
+					var data = res['data'];
+					app.getOrSetCurrentUserData(data['data'][0]);
+					that.loadCacheUserInfo(data['data'][0]);
+				},
+				fail: res => {
+					that.setData({
+						examTip: '网络连接错误，请检查网络'
+					})
+				}
+			})
+		},
+		getExams: function () {
+			that = this;
+			wx.request2({
+				url: '/exam/info/',
+				method: 'GET',
+				success: res => {
+					var allExams = [];
+					var resData = res.data.data;
+					for (var index in resData) {
+						if (resData[index]["question_num"] > 0) {
+							allExams.push(resData[index]);
+						}
+					}
+					that.setData({
+						allExams: allExams
+					});
+					that.examChange();
+					wx.hideLoading();
+				},
+				fail: res => {
+					that.setData({
+						examTip: '网络连接错误，请检查网络'
+					})
+				}
+			})
+		},
+		getBrushNum: function () {
+			var examNo = this.data.examNo;
+			var examEndTime = null;
+			var allExams = this.data.allExams;
+			var examTip = '';
+			for (var i = 0; i < allExams.length; i++) {
+				if (allExams[i].exam_no == examNo) {
+					if (allExams[i].exam_role > 10) {
+						examTip = '未拥有当前题库所有操作权限';
+					}
+					if (allExams[i].end_time !== undefined) {
+						var end_time = allExams[i]['end_time'];
+						if (end_time == null) {
+							examEndTime = '无期限'
+						} else if (end_time <= 0) {
+							// 不显示 有效期
+							examEndTime = '--'
+							break;
+						} else {
+							examEndTime = app.timestamp_2_date(end_time);
+						}
+					}
+					break;
+				}
+			}
+			this.setData({
+				examEndTime: examEndTime,
+				examTip: examTip
+			})
+			if (examNo == 0) {
+				that.setData({
+					brushNum: 0
+				});
+				return false;
+			}
+			that = this;
+			wx.request2({
+				url: '/exam/usage?period_no=-1&exam_no=' + examNo,
+				method: 'GET',
+				success: res => {
+					if (res.data.status == false) {
+						return false;
+					}
+					var resData = res.data.data;
+					var brushNum = resData['num'];
+					var rightNum = resData['right_num'];
+					var accuracy = '0%';
+					if (rightNum > 0) {
+						accuracy = parseInt(rightNum * 100 / brushNum) + '%';
+					}
+					that.setData({
+						brushNum: brushNum,
+						accuracy: accuracy
+					});
+					that.getRanking(brushNum);
+				}
+			})
+		},
+		getRanking: function (brushNum) {
+			if (brushNum <= 0) {
+				return false;
+			}
+			var examNo = this.data.examNo;
+			var that = this;
+			wx.request2({
+				url: '/exam/usage/ranking?exam_no=' + examNo + '&num=' + brushNum,
+				method: 'GET',
+				success: res => {
+					if (res.data.status == false) {
+						return false;
+					}
+					var resData = res.data.data;
+					var ranking = resData['ranking'];
+					that.setData({
+						ranking: ranking
+					});
+				}
+			})
+
+		},
+		getTips: function () {
+			var examNo = this.data.examNo;
+			var examTip = '';
+			var currentTip = null;
+			this.setData({
+				currentTip: null
+			})
+			that = this;
+			wx.request2({
+				url: '/exam/tips?exam_no=' + examNo,
+				method: 'GET',
+				success: res => {
+					if (res.data.status == false) {
+						return false;
+					}
+					var resData = res.data.data;
+					if (resData.length <= 0) {
+						return;
+					}
+					currentTip = resData[0];
+					examTip = currentTip.tip;
+					that.setData({
+						examTip: examTip,
+						currentTip: currentTip
+					})
+
+				}
+			})
+
+		},
+		examChange: function (e) {
+			var examIndex = -1;
+			var currentExam = {
+				'exam_no': 0,
+				'exam_name': noExamName,
+				'enable_share': false
+			};
+			
+			if (e == null) {
+				var allExams = this.data.allExams;
+				for (let l = allExams.length, i = 0; i < l; i++) {
+					if (allExams[i].exam_no == this.data.examNo) {
+						examIndex = i;
+					}
+				}
+			} else {
+				examIndex = e.detail.value;
+			}
+			if (examIndex >= 0) {
+				currentExam = this.data.allExams[examIndex];
+			}
+			this.setData({
+				examNo: currentExam.exam_no,
+				examName: currentExam.exam_name,
+				enableShare: currentExam.enable_share,
+				examIndex: examIndex
+			});
+			if (examIndex >= 0) {
+				app.setDefaultExam(currentExam);
+				this.getBrushNum();
+				if (currentExam.exam_role <= 3) {
+					this.getTips();
+				}
+			}
+			else {
+				this.setData({
+					examTip: "请选择题库！"
+				})
+			}
+		},
+	}
+}
+
+</script>
+<style>
+.hoc-mine-page-wrapper {
+	display: flex;
+	flex-direction: column;
+	background: #f8f8f8;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+</style>

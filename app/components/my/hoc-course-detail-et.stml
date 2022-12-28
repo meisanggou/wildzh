@@ -1,0 +1,27 @@
+<!--课程详情-课程详细说明-->
+<template>
+    <view class="a-rich-text">
+		<rich-text nodes={this.data.content}></rich-text>
+    </view>
+</template>
+<script>
+	export default {
+		name: 'hoc-course-detail-et',
+		apiready(){//like created
+
+		},
+		data() {
+			return{
+				content: this.props.content || '<b>重拾梦想</b>，<img src="http://a0a67a2d94d23442aaa3.qiniucdn.apicloud-system.com/apicloud/da13f315322f6e0c1a1f64e826e75d20.jpg" style="width: 20px; height: 20px;"/>享受追梦的过程，因为追梦本身就是一种成长。'
+			}
+		},
+		methods: {
+
+		}
+	}
+</script>
+<style>
+    .page {
+        height: 100%;
+    }
+</style>

@@ -1,0 +1,68 @@
+<template>
+	<view class="hoc-menu-list">
+		<view class="hoc-menu-list-item" v-for="(item, index) in menuList" :key="item.title + index"
+			@click="itemClick(item)">
+			<text class="hoc-menu-list-item-title">{{ item.title }}</text>
+			<text v-if="item.content" class="hoc-menu-list-item-title">{{ item.content }}</text>
+			<img class="hoc-menu-list-item-gor" src="../../images/right_slip.png" />
+		</view>
+	</view>
+</template>
+<script>
+export default {
+	name: 'hoc-menu-list-sgm',
+	apiready() {//like created
+
+	},
+	data() {
+		return {
+		}
+	},
+	computed: {
+		menuList: function () {
+			return this.props.menuList || [
+				{
+					title: "收货地址",
+					link: null,
+				},
+				{
+					title: "关于我们",
+					link: null,
+				}
+			]
+		}
+	},
+	methods: {
+		itemClick(item) {
+			this.fire('itemClick', item)
+		}
+	}
+}
+</script>
+<style>
+.hoc-menu-list {
+	border-radius: 4px;
+	background-color: white;
+	margin-bottom: 10px;
+	padding: 0 10px;
+}
+.hoc-menu-list-item {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #f8f8f8;
+	height: 49px;
+}
+.hoc-menu-list-item:active {
+	opacity: 0.7;
+}
+.hoc-menu-list-item-title {
+	font-size: 14px;
+	color: #333;
+}
+.hoc-menu-list-item-gor {
+	width: 10px;
+	height: 10px;
+}
+</style>

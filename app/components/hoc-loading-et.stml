@@ -1,0 +1,43 @@
+<template>
+<view class="loading">
+	<img :src="iconSrc" alt="" class="loading-img" />
+	<text class="loading-title">{{ title }}</text>
+</view>
+</template>
+<script>
+export default {
+	name: 'hoc-loading-et',
+	apiready(){//like created
+
+	},
+	data() {
+		return{
+			iconSrc: this.props.iconSrc !== undefined ? this.props.iconSrc : "http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/57c8f972dc7a095e2d0ed9dc33197d4d.gif",
+			title: this.props.title !== undefined ? this.props.title : "加载中，请稍后..."
+		}
+	},
+	methods: {
+
+	}
+}
+</script>
+<style>
+.loading {
+	margin: 16px 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.loading-img {
+	width: 100px;
+    height: 100px;
+}
+.loading-title {
+	font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 20px;
+    text-align: center;
+}
+</style>
