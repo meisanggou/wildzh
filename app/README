@@ -5,3 +5,4 @@
 4、双重for循环报：
 [WARN] Tools.Todsl.no container! with handle v-for directive near '(_item, _index) in item$1.list'  +2ms
 [ERROR] Tools.Todsl.handle v-for directive error: ReferenceError: Container is falsy  +0ms
+5、picker onchage事件里没法从e.currentTarget.dataset['strategy-id']获取数据，可以直接给<picker strategy-id="11222">，然后取值e.currentTarget.attributes['strategy-id']

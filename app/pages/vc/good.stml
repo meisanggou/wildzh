@@ -1,0 +1,311 @@
+<template>
+	<safe-area>
+	
+	<hoc-nav-bar-sgm title="积分" />
+	<view class="page">
+		<view class="top"></view>
+		<statis image4="../../images/make_vc.png" titles={{titles}} value1={{vcBalance}}  value2={{vcExpenses}} value3="--"/>
+		<!-- <modal hidden="{{hiddenModal}}" title="积分兑换" confirm-text="确认兑换" cancel-text="取消" bindcancel="cancelExchange"
+			bindconfirm="confirmExchange">
+			<view class="dis-flex">
+				<view>消耗：</view>
+				<view class="red">{{ goods[goodIndex].vc_count }}</view>
+				<view><text> 积分</text></view>
+			</view>
+			<view class="text-center">-- 兑换 --</view>
+			<view>{{ goods[goodIndex].title }}</view>
+			<view>{{ goods[goodIndex].sub_title }}</view>
+		</modal> -->
+		<view class="goods">
+			<view class="good-item" v-for="item in goods" v-key="id" v-if={{ item.available == 'enable' || item.disable_msg}}>
+				<view class="good-item-left">
+					<view class="good-item-title">
+						<view>
+							<text>{{item.title}}</text>
+							<text v-if="item.sub_title">{{item.sub_title}}</text>
+						</view>
+					</view>
+
+					<view class="good-item-vc red">
+						<view>
+							<text>{{item.vc_count}}积分</text>
+							<text class="good-item-attention" v-if="item.attention">{{item.attention}}</text>
+						</view>
+					</view>
+				</view>
+				<view class="good-item-right">
+					<view v-if="item.available == 'enable'">
+						<text class="good-item-button bc-enable" v-if="vcBalance >= item.vc_count" data-index={{index}} bindtap="preExchange">立即兑换</text>
+						<text class="good-item-button bc-disable" v-else>积分不足</text>
+					</view>
+					<view v-else>
+						<text class="good-item-button bc-disable">立即兑换</text>
+						<text class="good-item-lh red text-center">{{ item.disable_msg}}</text>
+					</view>
+
+				</view>
+			</view>
+		</view>
+	</view>
+	</safe-area>
+</template>
+<script>
+import app from '../../script/app.js'
+import '../../components/feature-component/hoc-nav-bar-sgm.stml'
+import '../templates/statis.stml'
+
+var wx = app.wx;
+
+export default {
+	name: 'good',
+	apiready(){//like created
+		var options = api.pageParam;
+		this.onLoad(options);
+	},
+	data() {
+		return{
+			vcBalance: 0,
+			vcExpenses: 0,
+			hiddenModal: true,
+			goods: [],
+			goodIndex: -1,
+			// 小程序外 添加的
+			titles: ['拥有积分', '已消费积分', '积分记录', '赚积分'],
+			menuList2:  [
+				{ 'title': '版本', 'content': app.globalData.version },
+			],
+		}
+	},
+	methods: {
+		// start ---非小程序有的方法
+		setData(data) {
+			// app.print(data);
+			if(data.options !== undefined){
+				this.data.options = [];
+			}
+			for (var key in data) {
+
+				this.data[key] = data[key];
+			}
+		},
+		// end --- 非小程序有的数据
+		onLoad: function (options) {
+        
+    	},
+		onShow: function () {
+			this.getVCstatus();
+			this.getVCGoods();
+		},
+		updateGoods: function(goods){
+			for(let i=0,l=goods.length;i<l;i++){
+				goods[i]['id'] = goods[i].good_type + '-' + goods[i].good_id;
+				if(goods[i].available == 'conditional'){
+					this.isEnableGoods(goods[i].good_type, goods[i].good_id);
+				}
+			}
+			this.setData({
+				goods: goods
+			})
+		},
+		getVCstatus: function () {
+			var that = this;
+			wx.request2({
+				url: '/vc/status',
+				method: 'GET',
+				success: res => {
+					var pk = res.data;
+					if (pk.status != true) {
+						return;
+					}
+					var data = pk.data;
+					var vcBalance = data.balance + data.sys_balance;
+					var vcExpenses = data.expenses + data.sys_expenses;
+					that.setData({
+						vcBalance: vcBalance,
+						vcExpenses: vcExpenses
+					})
+				}
+			})
+		},
+		getVCGoods: function () {
+			var that = this;
+			wx.request2({
+				url: '/vc/goods',
+				method: 'GET',
+				success: res => {
+					var pk = res.data;
+					if (pk.status != true) {
+						return;
+					}
+					var data = pk.data;
+					that.updateGoods(data.goods);
+				}
+			})
+		},
+		toMakeVCPage: function(){
+			wx.navigateTo({
+				url: "make_vc"
+			})
+		},
+		isEnableGoods: function (good_type, good_id) {
+			var that = this;
+			var url_args = 'good_type=' + good_type + '&good_id=' + good_id;
+			wx.request2({
+				url: '/vc/goods/condition?' + url_args,
+				method: 'GET',
+				success: res => {
+					var pk = res.data;
+					if (pk.status != true) {
+						return;
+					}
+					var data = pk.data;
+					for(let i=0,l=that.data.goods.length;i<l;i++){
+						var good_item = that.data.goods[i];
+						if(good_item.good_type == good_type && good_item.good_id == good_id){
+							good_item['available'] = data.available;
+							that.setData({
+								['goods[' + i + '].available']: data.available 
+							})
+							break;
+						}
+					}
+				}
+			})
+		},
+		goodsExchange: function (g_item) {
+			var that = this;
+			var data = g_item;
+			wx.request2({
+				url: '/vc/goods/exchange',
+				method: 'POST',
+				data: data,
+				success: res => {
+					var pk = res.data;
+					if (pk.status != true) {
+						wx.showModal({
+							title: '兑换失败',
+							content: pk.data,
+							showCancel: false
+						})
+						that.getVCstatus();
+						that.getVCGoods();
+						return;
+					}
+					var vc = pk.data.vc;
+					wx.showToast({
+						title: pk.data.message
+					})
+					
+					var vcBalance = vc.balance + vc.sys_balance;
+					var vcExpenses = vc.expenses + vc.sys_expenses;
+					that.setData({
+						vcBalance: vcBalance,
+						vcExpenses: vcExpenses
+					})
+					that.getVCGoods();
+				}
+			})
+		},
+		preExchange: function(e){
+			var index = e.currentTarget.dataset.index;
+			this.setData({
+				hiddenModal: false,
+				goodIndex: index
+			})
+		},
+		confirmExchange: function(){
+			this.setData({
+				hiddenModal: true
+			})
+			var g_item = this.data.goods[this.data.goodIndex];
+			this.goodsExchange(g_item);
+		},
+		cancelExchange: function(){
+			this.setData({
+				hiddenModal: true
+			})
+		},
+	}
+}
+</script>
+<style>
+	page {
+		background-color: #F8F8F8;
+		height: 100%;
+	}
+	.top {
+		height: 45rpx;
+	}
+	.good-item{
+		display: flex;
+		flex-direction: row;
+		border-top:whitesmoke solid 1px;
+		background-color: white;
+		border-radius: 5px;
+		margin-top: 10px;
+		margin-left: 1.5%;
+		width: 97%;
+		height: 125px;
+		font-size: 15px;
+	}
+	.good-item-title {
+		display: flex;
+		height: 75px;
+		align-items: center;
+		font-size: 17px;
+	}
+	.good-item-lh {
+		height: 25px;
+		line-height: 25px;
+		margin: 0 auto;
+	}
+	.good-item-left{
+		width: 70%;
+		margin-left: 5px;
+	}
+
+	.red {
+		color: red;
+	}
+
+	.good-item-vc {
+		display: flex;
+		height: 50px;
+		align-items: center;
+	}
+	.good-item-attention {
+		padding-left: 7px;
+		padding-right: 7px;
+		border-radius: 2px;
+		border: red solid 0px;
+	}
+
+	.good-item-button{
+		margin-top: 30px;
+		height: 45px;
+		line-height: 45px;
+		padding: 5px 15px;
+		font-size: 18px;
+		text-align: center;
+		border-radius: 5px;
+	}
+	.text-center {
+		text-align: center;
+	}
+	.bc-enable {
+		background-color: #fae1ab;
+	}
+	.bc-disable {
+		background-color:#999999;
+		color: white;
+	}
+
+	.dis-flex{
+		display: flex;
+	}
+
+	.margin-l20 {
+		margin-left: 10px;
+	}
+
+</style>

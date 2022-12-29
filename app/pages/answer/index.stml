@@ -9,13 +9,13 @@
 		</view>
 		<view v-else>
 			<view class='button-menu'>
-				<picker mode="multiSelector" bindchange="randomAnswer" class='picker' range={{subjects_modes}} range-key="name">
-					<text class='button-color1'>随便测测</text>
+				<picker mode="multiSelector" onchange="randomAnswer" class='picker' range={{subjects_modes}} range-key="name">
+					<text class='button button-color1'>随便测测</text>
 				</picker>
 			</view>
 		<view class='button-menu' v-for="strategy_item in strategies_array" v-key="strategy_id">
-				<picker bindchange="strategySubjectChange" class='picker' range={{subjects_array}} range-key="name" data-id={{strategy_item.strategy_id}}>
-					<text class='button-color1'>{{strategy_item.strategy_name}}</text>
+				<picker onchange="strategySubjectChange" class='picker' range={{subjects_array}} range-key="name" strategy-id={{strategy_item.strategy_id}} data-id={{strategy_item.strategy_id}}>
+					<text class='button button-color1'>{{strategy_item.strategy_name}}</text>
 				</picker>
 			</view>
 		</view>
@@ -200,12 +200,12 @@ export default {
 		},
 		strategySubjectChange(e) {
 			var index = e.detail.value;
-			var strategy_id = e.currentTarget.dataset.id;
+			var strategy_id = e.currentTarget.attributes['strategy-id'];
 			var subject_value = this.data.subjects_array[index].value;
 			this.startAnswer(null, subject_value, strategy_id);
 		},
 		startAnswer(sm_value, sj_value, strategy_id) {
-			app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
+			// app.getOrSetCacheData(this.data.cacheSelectedKey, this.data);
 			var url = "answer2?from=home";
 			if (strategy_id != null) {
 				url += "&strategy_id=" + strategy_id;
@@ -238,6 +238,15 @@ export default {
 		height: 90vh;
 	}
 
+	.button {
+		width: 100%;
+		height: 50px;
+		line-height: 50px;
+		text-align: center;
+		color: #ffffff;
+		font-size: 22px;
+	}
+
 	.button-menu {
 	display: flex;
 	width: 300px;
@@ -250,16 +259,16 @@ export default {
 	}
 
 	.picker{
-	width: 80%;
-	height: 50px;
-	color: #fcf5f9;
-	font-size: 22px;
-	line-height: 50px;
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 7px;
-	margin-bottom: 7px;
+		width: 80%;
+		height: 50px;
+		color: #fcf5f9;
+		font-size: 22px;
+		line-height: 50px;
+		text-align: center;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 7px;
+		margin-bottom: 7px;
 	}
 	.button-color1{
 	/* background-color: #fa4545; */
