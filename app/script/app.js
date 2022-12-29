@@ -120,7 +120,7 @@ function str_format(s, args) {
     }
     return ns;
 }
-// 时间相关
+// dt 时间相关
 function get_timestamp() {
     var timestamp = Date.parse(new Date());
     timestamp = timestamp / 1000;
@@ -159,7 +159,10 @@ function timestamp_2_date(ts) {
     var n_str = y + "-" + M + "-" + d;
     return n_str;
 }
-
+var dt = {
+    get_timestamp2: get_timestamp2
+}
+// dt对象 时间相关结束
 // 网络请求相关
 function my_request(url_name, method, data, success_func) {
     var r_url = SERVER_ENDPOINT + urls[url_name];
@@ -605,7 +608,8 @@ var app =  {
     str_format: str_format,
     globalData: globalData,
     wx: wx,
-    SE: SE
+    SE: SE,
+    dt: dt
 }
 var _app = app
 export default app

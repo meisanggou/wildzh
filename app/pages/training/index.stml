@@ -1,6 +1,6 @@
 <template>
 	<safe-area>
-	<hoc-nav-bar-sgm title="我的" />
+	<hoc-nav-bar-sgm title="练习" />
 	<view  class="page">
 	<view v-if={{errorMsg != ''}}>
 		<view class='button-menu'>
@@ -49,8 +49,12 @@ var lastExamNo = null;
 var lastUpdateSource = 0;
 
 export default {
-	name: 'training_index',
+	name: 'training-index',
 	apiready() {//like created
+		api.setStatusBarStyle({
+            style: 'dark',
+            color: '#ff5757'
+        });
 		this.onLoad({});
 	},
 	data() {

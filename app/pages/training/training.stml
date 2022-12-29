@@ -16,7 +16,8 @@
 					<text class="">{{examName}}</text>
 					<text class="" v-if={{mode == 'wrong'}}>错题本</text>
 				</view>
-				<image v-if="examNo && nowQuestion" onclick="feedbackClick" class="icon" src="../../images/feedback.png"></image>
+				<!-- <image v-if="examNo && nowQuestion" onclick="feedbackClick" class="icon" src="../../images/feedback.png"></image>
+				 -->
 			</view>
 
 			<view class='middle'>

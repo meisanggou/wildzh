@@ -9,8 +9,8 @@
       },
       {
         "title": "专升本经济学刷题",
-        "name": "course",
-        "url": "./pages/tab-course/tab-course"
+        "name": "answer",
+        "url": "./pages/answer/index"
       },
       {
         "title": "专升本经济学刷题",

@@ -1,11 +1,11 @@
 <!--头部导航栏-->
 <template>
-    <view class="nav-bar" :style="{background: this.props.bgClolor || '#fff'}">
+    <view class="nav-bar" :style="{background: this.props.bgClolor || '#ff5757'}">
 		<view v-if="this.props.isShowBack" @click="back" class="nav-bar-back">
 			<img src="http://ae8b3ee28597856d3283.qiniucdn.apicloud-system.com/apicloud/6958c7448f8d7106d3ee273fa7430063.png" alt="back" class="nav-bar-back-icon"/>
 			<text class="nav-bar-back-text" :style="{color: this.props.textColor || '#000'}">返回</text>
 		</view>
-		<text class="nav-bar-title" :style="{color: this.props.textColor || '#000'}">{title}</text>
+		<text class="nav-bar-title" :style="{color: this.props.textColor || '#ffffff'}">{title}</text>
     </view>
 </template>
 <script>
@@ -13,7 +13,7 @@ export default {
 	name: 'hoc-nav-bar-sgm',
 	data() {
 		return {
-			title: this.props.title !== undefined ? this.props.title : '拼团商城'
+			title: this.props.title !== undefined ? this.props.title : '专升本经济学刷题'
 		}
 	},
 	methods: {
