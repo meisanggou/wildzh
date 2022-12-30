@@ -1,8 +1,8 @@
 <template>
-	<safe-area>
-	
-	<hoc-nav-bar-sgm title="积分" />
 	<view class="page">
+		<safe-area>
+			<hoc-nav-bar-sgm title="积分" />
+		</safe-area>
 		<view class="top"></view>
 		<statis image4="../../images/make_vc.png" titles={{titles}} value1={{vcBalance}}  value2={{vcExpenses}} value3="--"/>
 		<!-- <modal hidden="{{hiddenModal}}" title="积分兑换" confirm-text="确认兑换" cancel-text="取消" bindcancel="cancelExchange"
@@ -16,7 +16,7 @@
 			<view>{{ goods[goodIndex].title }}</view>
 			<view>{{ goods[goodIndex].sub_title }}</view>
 		</modal> -->
-		<view class="goods">
+		<scroll-view class="goods">
 			<view class="good-item" v-for="item in goods" v-key="id" v-if={{ item.available == 'enable' || item.disable_msg}}>
 				<view class="good-item-left">
 					<view class="good-item-title">
@@ -45,9 +45,8 @@
 
 				</view>
 			</view>
-		</view>
+		</scroll-view>
 	</view>
-	</safe-area>
 </template>
 <script>
 import app from '../../script/app.js'
@@ -229,7 +228,7 @@ export default {
 }
 </script>
 <style>
-	page {
+	.page {
 		background-color: #F8F8F8;
 		height: 100%;
 	}
