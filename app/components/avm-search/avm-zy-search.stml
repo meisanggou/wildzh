@@ -1,0 +1,81 @@
+<template>
+	<view class="avm-zy-search-search_box">
+		<view class="avm-zy-search-search_warp">
+			<view @click="leftIcon()" class="avm-zy-search-search_icon_box">
+				<image class="avm-zy-search-search_icon" src="../../image/avm-zy-icon_search.png" />
+			</view>
+			<view class="avm-zy-search-search_content">
+				<input :id="id" class="avm-zy-search-search_content_input" :placeholder="placeholder || '搜索'" :value="value" confirm-type="search" onfocus={this.onfocus} oninput={this.oninput} onconfirm={this.onconfirm}/>
+			</view>
+			<view v-if="value && value.length" @click="rightIcon()" class="avm-zy-search-search_icon_box">
+				<image class="avm-zy-search-search_icon" src="../../image/avm-zy-icon_clean.png" />
+			</view>
+		</view>
+	</view>
+</template>
+<script>
+export default {
+	name: "avm-zy-search",
+	props:{
+    	id: String,
+    	value: String,
+    	placeholder: String,
+    },
+	installed(){
+	},
+	computed: {
+	},
+	data() {
+		return {
+			id:this.id,
+			value:this.value,
+			placeholder:this.placeholder
+		};
+	},
+	methods: {
+		leftIcon(){
+			this.fire('event',{
+				type: "icon",
+				value:this.value || ""
+			});
+		},
+		rightIcon(){
+			this.value = '';
+			this.fire('event',{
+				type: "clean",
+				value:this.value || ""
+			});
+		},
+		onfocus(e){
+			this.value = e.detail.value;
+			this.fire('event',{
+				type: "focus",
+				value:this.value || ""
+			});
+		},
+		oninput(e){
+			this.value = e.detail.value;
+			this.fire('event',{
+				type: "input",
+				value:this.value || ""
+			});
+		},
+		onconfirm(e){
+			$('#'+this.id).blur();
+			this.fire('event',{
+				type: "enter",
+				value:this.value || ""
+			});
+		}
+	},
+
+};
+</script>
+<style>
+.avm-zy-search-search_box{padding: 0px 0;height: 38px;box-sizing: border-box;background: #fff;}
+.avm-zy-search-search_warp{background: #F8F8F8;border-radius: 4px;height: 100%;position: relative;display:flex;flex-direction: row;}
+.avm-zy-search-search_icon_box{width:48px;height: 38px;display:flex;justify-content: center; align-items: center;}
+.avm-zy-search-search_icon{width: 18px;height: 18px;}
+.avm-zy-search-search_content{flex:1;justify-content: center;height: 38px;}
+.avm-zy-search-search_content_input{color: #333; width: 100%; background: rgba(0,0,0,0); height: 30px; flex:1; border: 0px; padding: 0;font-size: 15px; }
+</style>

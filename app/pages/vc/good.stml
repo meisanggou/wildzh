@@ -20,16 +20,16 @@
 			<view class="good-item" v-for="item in goods" v-key="id" v-if={{ item.available == 'enable' || item.disable_msg}}>
 				<view class="good-item-left">
 					<view class="good-item-title">
-						<view>
+						<view >
 							<text>{{item.title}}</text>
 							<text v-if="item.sub_title">{{item.sub_title}}</text>
 						</view>
 					</view>
 
 					<view class="good-item-vc red">
-						<view>
-							<text>{{item.vc_count}}积分</text>
-							<text class="good-item-attention" v-if="item.attention">{{item.attention}}</text>
+						<view class="good-item-vc-detail">
+							<text class="red">{{item.vc_count}}积分</text>
+							<text class="good-item-attention red" v-if="item.attention">{{item.attention}}</text>
 						</view>
 					</view>
 				</view>
@@ -259,6 +259,7 @@ export default {
 		margin: 0 auto;
 	}
 	.good-item-left{
+		display: flex;
 		width: 70%;
 		margin-left: 5px;
 	}
@@ -270,23 +271,31 @@ export default {
 	.good-item-vc {
 		display: flex;
 		height: 50px;
-		align-items: center;
+		align-items: left;
+	}
+	/* app新增样式 */
+	.good-item-vc-detail {
+		position: absolute;
 	}
 	.good-item-attention {
 		padding-left: 7px;
 		padding-right: 7px;
 		border-radius: 2px;
-		border: red solid 0px;
+		border: red solid 1px;
+		
 	}
 
 	.good-item-button{
 		margin-top: 30px;
 		height: 45px;
 		line-height: 45px;
-		padding: 5px 15px;
-		font-size: 18px;
+		/* padding: 5px 15px; */
+		padding-left: 15px;
+		padding-right: 15px;
+		font-size: 16px;
 		text-align: center;
 		border-radius: 5px;
+		background-color: chocolate;
 	}
 	.text-center {
 		text-align: center;

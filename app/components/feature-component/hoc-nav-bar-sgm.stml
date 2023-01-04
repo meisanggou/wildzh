@@ -1,4 +1,4 @@
-<!--头部导航栏-->
+<!--头部导航栏 使用中-->
 <template>
     <view class="nav-bar" :style="{background: this.props.bgClolor || '#ff5757'}">
 		<view v-if="this.props.isShowBack" @click="back" class="nav-bar-back">

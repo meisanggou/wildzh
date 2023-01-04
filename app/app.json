@@ -19,8 +19,8 @@
       },
       {
         "title": "专升本经济学刷题",
-        "name": "user",
-        "url": "./pages/tab-user/tab-user"
+        "name": "query",
+        "url": "./pages/query/query"
       },
       {
         "title": "专升本经济学刷题",

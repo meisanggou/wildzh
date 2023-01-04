@@ -1,0 +1,31 @@
+<template>
+	<view class="page">
+	 	<safe-area></safe-area>
+		<hoc-nav-bar-sgm title="搜索" />
+		<avm-zy-search id="zySearch" :value="searchValue" placeholder="请输入搜索内容" @event="zySearchEvent"></avm-zy-search>
+	</view>
+</template>
+<script>
+import '../../components/feature-component/hoc-nav-bar-sgm.stml'
+import "../../components/avm-search/avm-zy-search.stml";
+
+export default {
+	name: 'query',
+	apiready(){//like created
+
+	},
+	data() {
+		return{
+			searchValue: "",
+		}
+	},
+	methods: {
+
+	}
+}
+</script>
+<style>
+	.page {
+		height: 100%;
+	}
+</style>
