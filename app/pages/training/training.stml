@@ -23,7 +23,7 @@
 			<view class='middle'>
 				<text v-if={{questionNum>1}} onclick='before10' class='switch'>‹‹</text>
 				<picker class="switchtext" onChange="skipAction" value={{skipIndex}} range={{skipNums}}>
-					<text class=''>{{nowQuestionIndex + 1}}/{{questionNum}}</text>
+					<text class='switchtext'>{{nowQuestionIndex + 1}}/{{questionNum}}</text>
 				</picker>
 				<text v-if={{questionNum>1}} onclick='after10' class='switch'>››</text>
 			</view>
@@ -1435,6 +1435,8 @@ export default {
 		font-size: 20px;
 		text-align: center;
 		width: 33%;
+		line-height: 48px;
+		height: 48px;
 	}
 
 	.bottom {

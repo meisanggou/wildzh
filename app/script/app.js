@@ -287,14 +287,19 @@ function request2(req) {
     if ('retry' in req) {
         retry = req.retry
     }
+    if(req.data){
+        req.headers['Content-Type'] = 'application/json;charset=utf-8';
+        req.data = {'body': req.data};
+    }
     if (req.success) {
         var origin_success = req.success
         req.success = function (res) {
             if (newVersion) {
                 getOrSetCacheVersion(version);
             }
+            // 当前statusCode是没赋值的
             if (res.statusCode != 302 && res.statusCode != 401) {
-                var data = {'data': res};
+                var data = {'data': res, 'statusCode': 200};
                 origin_success(data);
             } else {
                 api.openWin({

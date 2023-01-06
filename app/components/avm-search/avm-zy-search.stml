@@ -2,13 +2,13 @@
 	<view class="avm-zy-search-search_box">
 		<view class="avm-zy-search-search_warp">
 			<view @click="leftIcon()" class="avm-zy-search-search_icon_box">
-				<image class="avm-zy-search-search_icon" src="../../image/avm-zy-icon_search.png" />
+				<image class="avm-zy-search-search_icon" src="../../images/query.png" />
 			</view>
 			<view class="avm-zy-search-search_content">
 				<input :id="id" class="avm-zy-search-search_content_input" :placeholder="placeholder || '搜索'" :value="value" confirm-type="search" onfocus={this.onfocus} oninput={this.oninput} onconfirm={this.onconfirm}/>
 			</view>
 			<view v-if="value && value.length" @click="rightIcon()" class="avm-zy-search-search_icon_box">
-				<image class="avm-zy-search-search_icon" src="../../image/avm-zy-icon_clean.png" />
+				<image class="avm-zy-search-search_icon" src="../../images/clean.png" />
 			</view>
 		</view>
 	</view>

@@ -1,31 +1,270 @@
 <template>
 	<view class="page">
 	 	<safe-area></safe-area>
-		<hoc-nav-bar-sgm title="搜索" />
-		<avm-zy-search id="zySearch" :value="searchValue" placeholder="请输入搜索内容" @event="zySearchEvent"></avm-zy-search>
+		<hoc-nav-bar-sgm title="搜索题库" />
+		<avm-zy-search id="zySearch" :value="queryStr" placeholder="请输入搜索内容" @event="search"></avm-zy-search>
+		<scroll-view>
+			<view v-for="item in items" class="list-item" onclick="selectResult" data-value={{item.value}}>
+				<text>{{item.text}}</text>
+			</view>
+		</scroll-view>
+		<view v-if="noResult && allowSearch" class="tip"><text>未搜索到</text><text class='warn'>{{ queryStr }}</text>相关内容</view>
+		<view v-for="(item,index) in betterExams" bindtap="toChangeExam" class="div tip-link" data-exam-index={{index}} v-key="exam_no">
+			<text>题库</text>
+			<text class='warn'>{{ item.exam_name }}</text>
+			<text>包含更匹配</text>
+			<text class='warn'>{{ queryStr }}</text>
+			<text>的内容</text>
+		</view>
+		<view v-if="serverMessage" class="server-message">{{ serverMessage }}</view>
 	</view>
 </template>
 <script>
+import app from '../../script/app.js'
 import '../../components/feature-component/hoc-nav-bar-sgm.stml'
 import "../../components/avm-search/avm-zy-search.stml";
 
 export default {
 	name: 'query',
 	apiready(){//like created
-
+		var options = api.pageParam;
+		this.onLoad();
 	},
 	data() {
 		return{
-			searchValue: "",
+			examNo: "",
+			allowSearch: true,
+			noResult: false,
+			queryStr: "",
+			betterExams: [],
+			serverMessage: "",
+			items: [],
 		}
 	},
 	methods: {
+		// start ---非小程序有的方法
+		setData(data) {
+			for (var key in data) {
+				this.data[key] = data[key];
+			}
+		},
+		// end --- 非小程序有的数据
+		onLoad() {
+			this.setData({
+				search: this.search.bind(this)
+			})
+		},
+		replaceImg: function (s) {
+			var ss = s.replace(/(\[\[([/\w\.]+?):([\d\.]+?):([\d\.]+?)\]\])/g, '<img>');
+			return ss;
+		},
+		search: function (detail) {
+			var value = detail.detail.value;
+			var that = this;
+			if (value.length <= 0) {
+				return new Promise((resolve, reject) => {
+					resolve([]);
+					that.setData({
+					noResult: false,
+					queryStr: "",
+					betterExams: [],
+					serverMessage: "",
+					items: items
+					})
+				})
+			}
+			var data = {
+				'query_str': value,
+				'exam_no': this.data.examNo
+			}
+			var queryStr = value;
+			return new Promise((resolve, reject) => {
+			wx.request2({
+				url: '/exam/query2',
+				method: 'POST',
+				data: data,
+				success: res => {
+					wx.hideLoading();
+					if (res.statusCode != 200) {
+						return false;
+					}
 
+					if (res.data.status == false) {
+						return;
+					}
+					var betterExams = []
+					var serverMessage = "";
+					var items = res.data.data;
+					if ('current' in res.data.data) {
+						items = res.data.data['current'];
+					}
+					if ('message' in res.data.data) {
+						serverMessage = res.data.data['message'];
+					}
+					if ('better_exams' in res.data.data) {
+						betterExams = res.data.data['better_exams'];
+					}
+					for (var i = 0; i < items.length; i++) {
+						var item = items[i];
+						item['text'] = that.replaceImg(item['question_desc']);
+						if('select_mode' in item){
+						if(item['select_mode'] < sm_len){
+							item['text'] = '【' + select_modes[item['select_mode']].name + '】' + item['text'];
+						}
+						}
+						item['value'] = item['question_no'];
+					}
+					resolve(items);
+					var noResult = false;
+					if (items.length <= 0) {
+						noResult = true;
+					}
+					if ('allow_search' in res.data.data) {
+						if (res.data.data['allow_search'] == false) {
+						noResult = false;
+						}
+					}
+					that.setData({
+						noResult: noResult,
+						queryStr: queryStr,
+						betterExams: betterExams,
+						serverMessage: serverMessage,
+						items: items
+					})
+				},
+				fail: function ({
+					errMsg
+				}) {}
+			})
+			})
+		},
+		selectResult: function (e) {
+			// var item = e.detail.item;
+			// var question_no = item['question_no'];
+			var question_no = e.dataset.value;
+			wx.navigateTo({
+				url: "../training/training?select_mode=-1&question_no=" + question_no
+			})
+		},
+		toChangeExam(e) {
+			var examIndex = e.currentTarget.dataset.examIndex;
+			if (examIndex >= this.data.betterExams.length) {
+			return false;
+			}
+			var examItem = this.data.betterExams[examIndex];
+			if (examItem.exam_role <= app.globalData.roleMap.partDesc) {
+			var msg = '您需要切换到题库【' + examItem.exam_name + '】再进行搜索，点击确定进入【我的】切换题库'
+			wx.showModal({
+				title: '需要切换题库',
+				content: msg,
+				showCancel: true,
+				success(res) {
+				wx.switchTab({
+					url: "/pages/me/me"
+				})
+				}
+			});
+			} else {
+			// 无权限
+			var msg = '您暂时无访问题库【' + examItem.exam_name + '】的权限'
+			wx.showModal({
+				title: '无权访问题库',
+				content: msg,
+				showCancel: false,
+				success(res) {}
+			});
+			}
+			console.info(examItem);
+		},
+		/**
+		 * 生命周期函数--监听页面初次渲染完成
+		 */
+		onReady: function () {
+
+		},
+
+		/**
+		 * 生命周期函数--监听页面显示
+		 */
+		onShow: function () {
+			var currentExam = app.getDefaultExam();
+			if(currentExam){
+			select_modes = currentExam.select_modes;
+			sm_len = select_modes.length;
+			}
+			var examNo = app.globalData.defaultExamNo;
+			if (examNo) {} else {
+			wx.showModal({
+				title: '未选择题库',
+				content: "未选择题库,确定进入【我的】选择题库",
+				showCancel: false,
+				success(res) {
+				wx.switchTab({
+					url: "/pages/me/me"
+				})
+				}
+			});
+			return false;
+			}
+			if (examNo != this.data.examNo) {
+			this.setData({
+				examNo: examNo
+			});
+			// let searchbarComponent = this.selectComponent('#searchbar'); // 页面获取自定义组件实例
+			// var e = {
+			// 	'detail': {
+			// 	'value': this.data.queryStr
+			// 	}
+			// }
+			// searchbarComponent.inputChange(e);
+			}
+
+		},
 	}
 }
 </script>
 <style>
-	.page {
+	/* .page {
 		height: 100%;
+	} */
+	/* pages/query/query.wxss */
+	.tip {
+		margin-top: 25px;
+		text-align: center;
+	}
+	.tip-link {
+		margin-top: 25px;
+		width: 100%;
+		justify-content: center;
+		text-align: center;
+		text-decoration: underline;
+	}
+
+	.warn {
+		color: red;
+	}
+
+	.server-message {
+		color: red;
+		width: 100%;
+		align-items: center;
+		text-align: center;
+		position: fixed;
+		bottom: 25px;
+	}
+	/* 非小程序有的 */
+	.div {
+		display: flex; 
+  		flex-direction: row;
+		flex-wrap: wrap;
+	}
+	.list-item {
+		margin-top: 10px;
+		background-color: #F5F5F5;
+		justify-content: left;
+		padding: 8px 5px;
+		/* padding-left: 5px;
+		padding-right: 5px; */
+
 	}
 </style>
