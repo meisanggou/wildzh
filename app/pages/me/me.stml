@@ -12,7 +12,6 @@
 import '../../components/feature-component/hoc-nav-bar-sgm.stml'
 import '../../components/feature-component/hoc-user-panel-sgm.stml'
 import '../templates/statis.stml'
-import '../../components/feature-component/hoc-orderbtn-group-sgm.stml'
 import '../../components/feature-component/hoc-menu-list-sgm.stml'
 import app from '../../script/app.js'
 
