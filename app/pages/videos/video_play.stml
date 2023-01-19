@@ -1,0 +1,172 @@
+<template>
+	<view class="page">
+	<safe-area></safe-area>
+	<view>
+        <video class="video" src={{videoSrc}} title={{ videoTitle }} initial-time={{ initialTime }} ontimeupdate="playTimeUpdate" ></video>
+    </view>
+    <view class="nav">
+        <text v-bind:class="navIndex == 1?'nav-item-sd':'nav-item'" data-index="1" onclick="changeNav">视频介绍</text>
+        <text v-bind:class="navIndex == 2?'nav-item-sd':'nav-item'" data-index="2" onclick="changeNav">留言</text>
+    </view>
+    <view class="content">
+        <view v-if="navIndex == 1">
+            <text class="desc">{{ videoDesc }}</text>
+        </view>
+        <view v-if="navIndex == 2">
+            <text class="desc">功能开发中</text>
+        </view>
+    </view>
+    
+    <view>
+    </view>
+	</view>
+</template>
+<script>
+import app from '../../script/app.js'
+var wx = app.wx;
+var remote_host = app.globalData.remote_host;
+var playTime = 0;
+var lastPlayTime = 0;
+var intervalReportTime = 5;
+
+export default {
+	name: 'video_play',
+	apiready(){//like created
+		var options = api.pageParam;
+		this.onLoad(options);
+	},
+	data() {
+		return{
+			videoUuid: "",
+			videoSrc: "",
+			videoTitle: "",
+			videoDesc: "",
+			initialTime: 0,
+			navIndex: 1,
+		}
+	},
+	methods: {
+		// start ---非小程序有的方法
+		setData(data) {
+			for (var key in data) {
+				this.data[key] = data[key];
+			}
+		},
+		// end --- 非小程序有的数据
+		onLoad: function (options) {
+			var video_uuid = options.video_uuid;
+			this.getVideoInfo(video_uuid);
+		},
+		onShow: function () {
+
+		},
+		getVideoInfo: function(video_uuid){
+			var that = this;
+			wx.request2({
+				url: '/video/entries/' + video_uuid,
+				success: res => {
+				
+				var resData = res.data.data;
+				var videoInfo = resData['info'];
+				var videoSrc = remote_host + videoInfo['video_location'];
+				var videoDesc = videoInfo['video_desc'];
+				var initialTime = resData['progress']['play_seconds'];
+				var videoTitle = videoInfo['video_title'];
+				that.setData({
+					videoUuid: videoInfo.video_uuid,
+					videoSrc: videoSrc,
+					videoDesc: videoDesc,
+					initialTime: initialTime,
+					videoTitle: videoTitle
+				})
+				}
+			})
+		},
+		playTimeUpdate: function(event){
+			playTime = event.detail.currentTime;
+			if(playTime > lastPlayTime + intervalReportTime){
+				lastPlayTime = playTime;
+				this.reportPlayTime(lastPlayTime);
+			}
+		},
+		reportPlayTime: function(playTime){
+			var data = {'video_uuid': this.data.videoUuid, 'play_seconds': playTime};
+			wx.request2({
+				url: '/video/progress',
+				method: 'PUT',
+				data: data,
+				success: function(res){
+				}
+			})
+		},
+		changeNav: function(event){
+			var index = parseInt(event.dataset.index);
+			this.setData({
+				'navIndex': index
+			})
+		},
+	}
+}
+</script>
+<style>
+	.page {
+		height: 100%;
+		/* background-color: brown; */
+	}
+	
+.nav {
+    position: fixed;
+    display: flex;
+	flex-direction: row;
+    top: 10px;
+    left: 0;
+    height: 50px;
+    line-height: 50px;
+    width: 100%;
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: black;
+}
+
+.nav-item-sd {
+	flex: 1;
+	text-align: center;
+	font-weight: 500;
+    font-size: 15px;
+    color: #d8264d;
+    position: relative;
+  }
+
+  .nav-item-sd::after {
+    position: absolute;
+    bottom: 0;
+    width: 40%;
+    height: 2px;
+    background: #d8264d;
+    border-radius: 1px;
+    left: 50%;
+    content: "";
+    transform: translateX(-50%);
+  }
+
+  .content {
+    position: fixed;
+    display: flex;
+    top: 282px;
+  }
+
+  .desc {
+    color: gray;
+    font-size: 14px;
+  }
+  /* 非小程序所有 */
+  .video {
+	  height: 230px;
+	  width: 100%;
+  }
+</style>

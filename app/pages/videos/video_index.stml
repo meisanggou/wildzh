@@ -1,0 +1,167 @@
+<template>
+	<view class="page">
+		<!--pages/videos/video_index.wxml-->
+	<scroll-view class="goods">
+        <view class="good-item" v-for="item in videos" v-key="id">
+            <view class="good-item-left">
+                <view class="good-item-title">
+                    <view>
+                        <text>{{ item.video_title }}</text>
+                    </view>
+                </view>
+
+                <view class="list-item-desc">
+                    <view>
+                        <text>{{ item.short_desc }}</text>
+                    </view>
+                </view>
+            </view>
+            <view class="good-item-right">
+				<view class="good-item-button bc-enable" onclick="toVideo" data-video-uuid={{item.video_uuid}}><text class="height35">观看视频</text></view>
+				<view class="good-item-lh red text-center"><text>{{ item.disable_msg}}</text></view>
+            </view>
+        </view>
+    </scroll-view>	
+	</view>
+</template>
+<script>
+import app from '../../script/app.js'
+var wx = app.wx;
+
+export default {
+	name: 'video_index',
+	apiready(){//like created
+	},
+	data() {
+		return{
+			videos: []
+		}
+	},
+	methods: {
+		// start ---非小程序有的方法
+		setData(data) {
+			for (var key in data) {
+				this.data[key] = data[key];
+			}
+		},
+		// end --- 非小程序有的数据
+		onShow: function () {
+			this.getVideos();
+		},
+		getVideos: function(){
+			app.getDefaultExam();
+			var examNo = app.globalData.defaultExamNo;
+			var that = this;
+			wx.request2({
+				url: '/video/map?exam_no=' + examNo,
+				success: res => {
+					var resData = res.data.data;
+					for(var i=0;i<resData.length;i++){
+						var desc = resData[i].video_desc;
+						if(desc.length > 30){
+							desc = desc.substr(0, 30) + ' ...';
+						}
+						resData[i].short_desc = desc;
+					}
+					that.setData({
+						videos: resData
+					})
+			}
+			})
+		},
+		toVideo: function(e){
+			var video_uuid = e.dataset['video-uuid'];
+			wx.navigateTo({
+				url: '../videos/video_play?video_uuid=' + video_uuid
+			})
+		},
+	}
+}
+</script>
+<style>
+	.page {
+		height: 100%;
+	}
+	
+
+.good-item{
+    display: flex;
+	flex-direction: row;
+    border-top:whitesmoke solid 1px;
+    background-color: white;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-left: 1.5%;
+    width: 97%;
+    height: 125px;
+    font-size: 15px;
+}
+.good-item-title {
+    display: flex;
+    height: 75px;
+    align-items: left;
+    font-size: 17px;
+}
+.good-item-lh {
+    height: 25px;
+    line-height: 25px;
+    margin: 0 auto;
+}
+.good-item-left{
+    width: 70%;
+    margin-left: 5px;
+}
+
+.red {
+    color: red;
+}
+
+.list-item-desc {
+    display: flex;
+    height: 50px;
+    align-items: center;
+    color: gray;
+}
+.good-item-attention {
+    padding-left: 7px;
+    padding-right: 7px;
+    border-radius: 2px;
+    border: red solid 0px;
+}
+
+.good-item-button{
+    margin-top: 30px;
+    height: 45px;
+    line-height: 45px;
+    padding: 5px 15px;
+    font-size: 18px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.text-center {
+    text-align: center;
+}
+.bc-enable {
+    background-color: #CE7870;
+    color: whitesmoke;
+}
+.bc-disable {
+    background-color:#999999;
+    color: white;
+}
+
+.dis-flex{
+    display: flex;
+}
+
+.margin-l20 {
+    margin-left: 10px;
+}
+
+.height35 {
+	height: 35px;
+    line-height: 35px;
+}
+
+</style>

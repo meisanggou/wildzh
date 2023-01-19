@@ -22,7 +22,7 @@
 
 			<view class='middle'>
 				<text v-if={{questionNum>1}} onclick='before10' class='switch'>‹‹</text>
-				<picker class="switchtext" onChange="skipAction" value={{skipIndex}} range={{skipNums}}>
+				<picker class="switch" onChange="skipAction" value={{skipIndex}} range={{skipNums}}>
 					<text class='switchtext'>{{nowQuestionIndex + 1}}/{{questionNum}}</text>
 				</picker>
 				<text v-if={{questionNum>1}} onclick='after10' class='switch'>››</text>
@@ -48,7 +48,7 @@
 					<view class="tag" v-for="item in tags"><text>{{item}}</text></view>
 				</view>
 				<view class='questionOption' >
-					<view id={'option_view_' + idx} class={{options[idx].class? options[idx].class:'noChose'}} onclick='choseItem' data-choseitem={{idx}} v-for="(item,idx) in options" :key="item.value" >
+					<view class={{options[idx].class? options[idx].class:'noChose'}} onclick='choseItem' data-choseitem={{idx}} v-for="(item,idx) in options" :key="item.value" >
 						<text>{{options[idx].optionChar}}、</text>
 						<view class="div" v-for="(_item, _index) in item['desc_rich']">
 							<text></text>
@@ -78,8 +78,8 @@
 		</view>
 		<view class='bottom div' v-if={{ mode == 'traning' }}>
 			<text v-if={{questionNum>1}} onclick='before1' class='switch'>‹</text>
-			<text v-show={{!(isShowAnswer && nowQuestion.canUpdate)}} class='switchtext' onclick='showAnswer'>显示答案</text>
-			<text v-show={{isShowAnswer&&nowQuestion.canUpdate}} class='switchtext' onclick='toUpdate'>修改</text>
+			<text v-show={{!(isShowAnswer && nowQuestion.canUpdate)}} class='switch' onclick='showAnswer'>显示答案</text>
+			<text v-show={{isShowAnswer&&nowQuestion.canUpdate}} class='switch' onclick='toUpdate'>修改</text>
 			<text v-if={{questionNum>1}} onclick='after1' class='switch'>›</text>
 		</view>
 		<view v-else>
@@ -1434,7 +1434,6 @@ export default {
 	.switchtext {
 		font-size: 20px;
 		text-align: center;
-		width: 33%;
 		line-height: 48px;
 		height: 48px;
 	}
@@ -1647,9 +1646,6 @@ export default {
 		margin-top: 10px;
 		/* height: 100%; */
 		/* height: 100px; */
-	}
-	.shrink0 {
-		flex-shrink: 0;
 	}
 
 	.deepskyblue {

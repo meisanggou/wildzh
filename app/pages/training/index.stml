@@ -29,7 +29,7 @@
 			</picker>
 		</view>
 		<view class='button-menu' v-if="enableVideo">
-			<text class='picker button-color6' bindtap="toVideo">视频学习</text>
+			<text class='picker button-color6' onclick="toVideo">视频学习</text>
 		</view>
 		<view class='button-menu' v-if="canUpdate">
 			<picker onchange="updateQuestionChange" class='picker' range={{select_modes}} range-key="name">

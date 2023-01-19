@@ -78,10 +78,6 @@ export default {
 	methods: {
 		// start ---非小程序有的方法
 		setData(data) {
-			// app.print(data);
-			if(data.options !== undefined){
-				this.data.options = [];
-			}
 			for (var key in data) {
 
 				this.data[key] = data[key];
