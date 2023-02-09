@@ -1,0 +1,122 @@
+<template>
+	<view class='top'>
+      <view class='topName'>
+        <text class="topTime">{{ answerTime }}</text>
+      </view>
+      <view class='topProgress'>
+        
+        <text class="topNum">{{nowQuestionIndex+1}} / {{ totalQuestionNumber }}</text>
+      </view>
+    </view>
+</template>
+<script>
+import app from '../../script/app.js'
+
+var dt = app.dt;
+// 计时相关
+var TIMER_USE = null;
+var basicSecond = 0;
+var startTime = 0;
+
+export default {
+	name: 'answer-top-process',
+	apiready(){//like created
+	},
+  installed(){
+    console.info('init time installed');
+    this.initTimePro();
+  },
+	data() {
+		return {
+            answerTime: '00:00:00',
+            nowQuestionIndex: this.props.nowQuestionIndex !== undefined ? this.props.nowQuestionIndex : '--',
+            totalQuestionNumber: this.props.totalQuestionNumber !== undefined ? this.props.totalQuestionNumber: '--',
+        };
+	},
+  computed: {
+    totalQuestionNumber: function(){
+      if(this.props.totalQuestionNumber == undefined){
+				return '--';
+			}
+      return this.props.totalQuestionNumber;
+    },
+    nowQuestionIndex: function(){
+      if(this.props.nowQuestionIndex == undefined){
+				return '--';
+			}
+      return this.props.nowQuestionIndex;
+    },
+  },
+	methods: {
+    // start ---非小程序有的方法
+		setData(data) {
+			for (var key in data) {
+				this.data[key] = data[key];
+			}
+		},
+		// end --- 非小程序有的数据
+    initTimePro() {
+        var that = this;
+        startTime = dt.get_timestamp();
+        this.runTimer();
+    },
+    runTimer: function () {
+        var that = this;
+        TIMER_USE = setInterval(function () {
+            var useTime = (dt.get_timestamp() - startTime) / 1000;
+            var s = dt.duration_str(parseInt(useTime + basicSecond));
+            that.setData({
+                answerTime: s
+            })
+            var detail = {'answerTime': s};
+            r = that.fire('reportTime', detail);
+        }, 1000);
+    },
+
+	}
+}
+</script>
+<style>
+	.page {
+		height: 100%;
+	}
+  
+  .top {
+    height: 40px;
+    width: 100%;
+    position: fixed;
+    top: 0px;
+    /* border-bottom: 1px solid #c9c9d8; */
+    display: flex;
+    flex-direction: row;
+    background-color: white;
+    z-index: 10000;
+  }
+
+  .topName {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 55%;
+    height: 100%;
+  }
+
+  .topProgress {
+    display: flex;
+    align-items: center;
+    width: 45%;
+    height: 100%;
+    font-size: 15px;
+    justify-content: center;
+  }
+
+  .topTime {
+    font-size: 15px;
+  }
+
+  .topNum {
+    font-style:italic;
+  }
+
+</style>

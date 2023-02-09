@@ -91,7 +91,6 @@ export default {
 }
 .hoc-user-panel-sgm-name-2 {
 	margin-top: 5px;
-	font-size: 12px;
 	flex-direction: row;
 	height: 35px;
 	line-height: 35px;
@@ -107,6 +106,7 @@ export default {
 .hoc-user-panel-sgm-name-2-center {
 	height: 35px;
 	line-height: 35px;
+	font-size: 12px;
 }
 
 .hoc-user-panel-sgm-name-2-text {

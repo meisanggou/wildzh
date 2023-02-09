@@ -10,7 +10,25 @@
 			</view>
 			<textarea class="fb-desc" type='text' placeholder="" bindinput="feedbackDescInput" maxlength='100' value={{feedbackDesc}}></textarea>
 		</dialog>
-		<view class='pageContent' ontouchstart="touchStart" ontouchend="touchEnd">
+		<view v-if="showSurvey">
+			<statis image4="../../images/wrong.png" titles={{titles}} value1={{rightNum}}  value2={{answerTime}} value3={{skipNum}}/>
+			<view class="center">
+				<text class="score">{{score}}/{{totalScore}}</text>
+				<text class="statis-div-desc">得分</text>
+			</view>
+			<view class="detail">
+				<text class="label-detail">查看解析</text>
+				<scroll-view class="width100p">
+				<view class='row' v-for="lineNums in  allQuestionIndexs" >
+					<view v-for="item in lineNums" onclick='showDeatil' data-index={{ item }} class={{questionItems[item].right? 'bg-right':'bg-error'}}>
+						<text class="color-white">{{ item + 1 }}</text>
+					</view>
+				</view>
+				</scroll-view>
+			</view>
+		</view>
+		<view v-else class='pageContent' ontouchstart="touchStart" ontouchend="touchEnd">
+		    
 			<view class='top'>
 				<view class="top-title">
 					<text class="">{{examName}}</text>
@@ -19,8 +37,8 @@
 				<!-- <image v-if="examNo && nowQuestion" onclick="feedbackClick" class="icon" src="../../images/feedback.png"></image>
 				 -->
 			</view>
-
-			<view class='middle'>
+			<answer-top-process v-if="mode == 'answer'" totalQuestionNumber={{questionNum}} nowQuestionIndex={{nowQuestionIndex}} onreportTime="reportTime"></answer-top-process>
+			<view v-if="mode != 'answer'" class='middle'>
 				<text v-if={{questionNum>1}} onclick='before10' class='switch'>‹‹</text>
 				<picker class="switch" onChange="skipAction" value={{skipIndex}} range={{skipNums}}>
 					<text class='switchtext'>{{nowQuestionIndex + 1}}/{{questionNum}}</text>
@@ -82,7 +100,7 @@
 			<text v-show={{isShowAnswer&&nowQuestion.canUpdate}} class='switch' onclick='toUpdate'>修改</text>
 			<text v-if={{questionNum>1}} onclick='after1' class='switch'>›</text>
 		</view>
-		<view v-else>
+		<view v-if={{ mode == 'wrong' }}>
 			<view class='bottom div' v-if={{showRemove}}>
 				<text class='bottomShow' onclick='remove'>移除该题</text>
 				<text>|</text>
@@ -92,12 +110,24 @@
 				<text class='bottomShow' onclick='showAnswer'>显示答案</text>
 			</view>
 		</view>
+		<view class='bottom div' v-if={{ mode == 'answer' }}>
+			<view class='switch' onclick='before1' ><text class="switchtext">‹</text></view>
+			<view class='switch' onclick='submit'><text class="switchtext">交卷</text></view>
+			<view class='switch' onclick='after1' ><text class="switchtext">›</text></view>
+		</view>
+		<view class='bottom div' v-if={{ mode == 'answer-show' && showSurvey == false}}>
+			<view class='switch' onclick='before1' ><text class="switchtext">‹</text></view>
+			<view class='switch' onclick='returnSurvey'><text class="switchtext">返回</text></view>
+			<view class='switch' onclick='after1' ><text class="switchtext">›</text></view>
+		</view>
 	</view>
 		
 	</safe-area>
 </template>
 <script>
 import app from '../../script/app.js'
+import '../answer/answer-top-process.stml'
+import '../templates/statis.stml'
 
 var wx = app.wx;
 var SE = app.SE;
@@ -134,7 +164,7 @@ export default {
 			optionChar: app.globalData.optionChar,
 			examNo: null,
 			examName: "",
-			mode: "traning", // 模式 traning 练习模式  wrong 错题模式
+			mode: "traning", // 模式 traning 练习模式  wrong 错题模式 answer 测试模式
 			questionNum: 0,
 			nowQuestionIndex: 0,
 			nowQuestion: null,
@@ -167,6 +197,17 @@ export default {
 			selectedOption: '', // 选择的答案
 			erroChoseCls: "errorChose",
 			tags: [], // 题目标签
+			// 测试模式使用
+			question_subject: null, // 测试模式 使用
+			score: 0,
+			totalScore: 0,
+			showSurvey: false, // 显示测试情况
+			titles: ['正确题数', '用时', '跳过题数', '题目解析'],
+			rightNum: 0,
+			answerTime: '00:00:00',
+			skipNum: 0,
+			allQuestionIndexs: [],
+			refreshTime: false,
 		}
 	},
 	methods: {
@@ -175,6 +216,15 @@ export default {
 			// app.print(data);
 			if(data.options !== undefined){
 				this.data.options = [];
+			}
+			if(data.mode !== undefined){
+				var erroChoseCls = 'errorChose';
+				if (data.mode == 'answer') {
+					data['erroChoseCls'] = 'chose';
+				}
+				else{
+					data['erroChoseCls'] = 'errorChose';
+				}
 			}
 			for (var key in data) {
 
@@ -303,6 +353,10 @@ export default {
 					}
 				} else if ('wrong_question' in options) {
 					this.enterWrongMode();
+					return true;
+				}
+				else if('answer' in options){
+					this.enterAnswerMode(options);
 					return true;
 				}
 
@@ -459,6 +513,10 @@ export default {
 			var questionLen = questionItems.length;
 			var nextIndex = nowQuestionIndex + afterNum;
 			if (nowQuestionIndex >= questionItems.length - 1) {
+				if(this.data.mode == 'answer'){
+					this.submit();
+					return
+				}
 				// 判断是否当前是否是最后一题
 				wx.showModal({
 					title: "已是最后一题",
@@ -532,8 +590,8 @@ export default {
 
 		},
 		before1: function () {
+			console.info('dddd')
 			that.before(1)
-
 		},
 
 		before10: function () {
@@ -612,10 +670,14 @@ export default {
 			}
 			
 			nowQuestion.index = index;
+			var isShowAnswer = false;
+			if(this.data.mode == 'answer-show'){
+				isShowAnswer = true;
+			}
 			this.setData({
 				nowQuestion: nowQuestion,
 				nowQuestionIndex: index,
-				isShowAnswer: false,
+				isShowAnswer: isShowAnswer,
 				showRemove: false,
 				feedbackDesc: ""
 			})
@@ -646,7 +708,10 @@ export default {
 		},
 		choseOption: function (e) {
 			var choseRight = e.detail.choseRight;
+			var selectedOpts = e.detail.selectedOpts;
+
 			var nowQuestion = that.data.nowQuestion;
+			
 			var showRemove = false;
 			if (this.data.mode == 'wrong') {
 				if (choseRight) {
@@ -660,6 +725,22 @@ export default {
 				})
 				// 显示答案
 				this.showAnswer();
+				return;
+			}
+			if(this.data.mode == 'answer'){
+				var nowQuestionIndex = this.data.nowQuestionIndex;
+				var nextQuestionNumber = nowQuestionIndex + 1;
+				questionItems[nowQuestionIndex]["right"] = choseRight;
+        		questionItems[nowQuestionIndex]["selectedOpts"] = selectedOpts;
+				if (nextQuestionNumber == questionItems.length) {
+					this.submit();
+				} else {
+					var interval = setInterval(function () {
+						clearInterval(interval)
+						that.after1();
+					}, 1000)
+
+				}
 				return;
 			}
 			if (choseRight) {
@@ -1029,14 +1110,291 @@ export default {
 
 		},
 		// 练习错题模式 结束
+		// 测试模式 开始
+		enterAnswerMode: function(options){
+			var question_subject = null;
+			if ("question_subject" in options) {
+				question_subject = options["question_subject"];
+			}
+			this.setData({
+				mode: 'answer',
+				question_subject: question_subject,
+			});
+			if ("strategy_id" in options) {
+                this.getStrategy(this.data.examNo, options["strategy_id"]);
+            } else {
+                var strategy_items = [{
+                    'num': 20,
+                    'value': -1
+                }];
+                if ("select_mode" in options) {
+                    strategy_items[0]['value'] = options["select_mode"];
+                }
+
+                this.getQuestionbyStrategy(strategy_items);
+            }
+		},
+		getStrategy(examNo, strategy_id) {
+			var that = this;
+			wx.request2({
+				url: '/exam/strategy/' + examNo,
+				method: 'GET',
+				success: res => {
+					wx.hideLoading();
+					var resData = res.data.data;
+					var strategies = resData['strategies'];
+					for (var i = 0; i < strategies.length; i++) {
+						if (strategies[i].strategy_id == strategy_id) {
+							var strategy_items = strategies[i]["strategy_items"];
+							var questionNum = 0
+							for (var j = 0; j < strategy_items.length; j++) {
+								questionNum += strategy_items[j]['num'];
+							}
+							that.setData({
+								questionNum: questionNum
+							})
+							that.getQuestionbyStrategy(strategy_items);
+							wx.showLoading({
+								title: '组卷中...',
+							})
+							return;
+						}
+					}
+					wx.showModal({
+						title: '组卷策略不存在',
+						content: "请返回重试！",
+						showCancel: false,
+						success(res) {
+							wx.navigateBack({
+								delta: 1
+							})
+						}
+					})
+					return;
+				},
+				fail: res => {
+					wx.showModal({
+						title: '访问失败',
+						content: "请稍后重试！",
+						showCancel: false,
+						success(res) {
+							wx.navigateBack({
+								delta: 1
+							})
+						}
+					})
+					return;
+				}
+			})
+		},
+		getQuestionbyStrategy(strategy_items) {
+			var that = this;
+			for (var i = 0; i < strategy_items.length; i++) {
+				var item = strategy_items[i];
+				if ('loaded' in item) {
+					continue;
+				} else {
+					var exclude_nos = "";
+					var existItems = questionItems;
+					for (var k = 0; k < existItems.length; k++) {
+						var _item = existItems[k];
+						if (_item['select_mode'] == item['value']) {
+							exclude_nos += "," + _item['question_no'];
+						}
+					}
+					var url = '/exam/questions/?fmt_version=2&exam_no=' + that.data.examNo + "&num=" + item["num"];
+					console.info(url);
+					if (exclude_nos != "") {
+						url += "&exclude_nos=" + exclude_nos;
+					}
+					url += "&select_mode=" + item["value"];
+					if (this.data.question_subject != null) {
+						url += "&question_subject=" + this.data.question_subject;
+					}
+					wx.request2({
+						url: url,
+						method: 'GET',
+						success: res => {
+							if (res.data.status == false) {
+								wx.hideLoading();
+								wx.showModal({
+									title: '无法访问题库',
+									content: "题库已删除，或无权访问。确定进入【我的】更换题库",
+									showCancel: false,
+									success(res) {
+										wx.switchTab({
+											url: "/pages/me/me"
+										})
+									}
+								})
+								return;
+							}
+							// var questionItems = res.data.data;
+							var oldItems = questionItems;
+							questionItems = oldItems.concat(res.data.data)
+							var data = {
+							};
+							if (that.data.nowQuestion == null && questionItems.length > 0) {
+								that.changeNowQuestion(0);
+								// data['nowQuestion'] = questionItems[0];
+								// data['nowQuestion']['displayed'] = true;
+								wx.hideLoading();
+							}
+							that.setData(data);
+							item['loaded'] = true;
+							that.getQuestionbyStrategy(strategy_items);
+						},
+						fail: res => {
+							setTimeout(function () {
+								that.getQuestionbyStrategy(strategy_items);
+							}, 10000);
+
+						}
+					})
+					return;
+				}
+			}
+			// var questionItems = this.data.questionItems;
+			if (questionItems.length <= 0) {
+				wx.hideLoading();
+				wx.showModal({
+					title: '无试题',
+					content: "暂无相关试题，请重新选择试题类型或者更换试题库",
+					showCancel: false,
+					success(res) {
+						wx.navigateBack({
+							delta: 1
+						})
+					}
+				})
+				return;
+			}
+			if (questionItems.length != this.data.questionNum) {
+				this.setData({
+					questionNum: questionItems.length
+				})
+			}
+		},
+		submit: function () {
+			if (this.data.mode != 'answer') {
+				wx.showToast({
+					title: '已是最后一题',
+				})
+				return false;
+			}
+			var msg = '确定要交卷吗？';
+			if (questionItems.length != this.data.questionNum) {
+				msg = '题目信息都没加载完，确定要交卷吗？';
+			}
+			wx.showModal({
+				title: '交卷',
+				content: msg,
+				success(res) {
+					if (res.confirm) {
+						var timestamp = (new Date()).valueOf()
+						var test_id = app.globalData.testIdPrefix + that.data.examNo + "_" + timestamp;
+						wx.setStorageSync(test_id, questionItems);
+						var allTestIds = wx.getStorageSync(app.globalData.allTestIdKey)
+						if (allTestIds) {
+							allTestIds = allTestIds + "," + test_id;
+						} else {
+							allTestIds = test_id;
+						}
+						wx.setStorage({
+							key: app.globalData.allTestIdKey,
+							data: allTestIds,
+						})
+						that.setResult();
+					}
+				}
+			})
+
+		},
+		setResult: function () {
+			// clearInterval(TIMER_USE);
+			// var questionItems = this.data.questionItems;
+			var questionNum = questionItems.length;
+			var score = 0;
+			var skipNum = 0;
+			var showNums = [];
+			// var wrong_question = [];
+			var questions = [];
+			for (var i = 0; i < questionNum;) {
+				var lineNums = [];
+				for (var j = 0; j < 5 && i < questionNum; i++, j++) {
+					lineNums.push(i);
+					if (!('displayed' in questionItems[i])) {
+						skipNum += 1;
+						continue;
+					}
+					if (!('right' in questionItems[i])) {
+						questions.push({
+							'no': questionItems[i].question_no,
+							'state': STATE_SKIP
+						})
+						skipNum += 1;
+						continue;
+					}
+					if (questionItems[i]["right"] == true) {
+						score = score + 1;
+						questions.push({
+							'no': questionItems[i].question_no,
+							'state': STATE_RIGHT
+						})
+					} else if (questionItems[i]["right"] == false) {
+						questions.push({
+							'no': questionItems[i].question_no,
+							'state': STATE_WRONG
+						})
+						// wrong_question.push(res.data[i]["question_no"]);
+					}
+
+				}
+				showNums.push(lineNums);
+			}
+			that.setData({
+				allQuestionIndexs: showNums,
+				score: score,
+				totalScore: questionNum,
+				mode: 'answer-show',
+				isShowAnswer: true,
+				showSurvey: true,
+				rightNum: score,
+				skipNum: skipNum,
+				refreshTime: true,
+			})
+			for(var i=0;i<questions.length;i++){
+				this.addBrushNum(questions[i].no, questions[i].state);
+			}
+			that.saveBrushNum();
+		},
+		reportTime: function(e){
+			var detail = e.detail;
+			if(this.data.mode == 'answer'){
+				this.setData(detail);
+				return true;
+			}
+			return false;
+		},
+		showDeatil: function (e) {
+			var index = e.currentTarget.dataset.index;
+			this.setData({
+				showSurvey: false
+			})
+			this.changeNowQuestion(index);
+		},
+		returnSurvey: function (e) {
+			this.setData({
+				showSurvey: true
+			})
+		},
+		// 测试模式 结束
 		onUnload: function () {
-			console.info("un load")
 			this.saveBrushNum();
 			this.saveTrainingProcess();
 		},
 		// 触摸开始事件
 		touchStart: function (e) {
-			console.info('touch start')
 			// touchStartX = e.touches[0].pageX; // 获取触摸时的原点
 			// touchStartY = e.touches[0].pageY;
 			touchStartX = e.detail.x;
@@ -1087,7 +1445,6 @@ export default {
 				return false;
 			}
 			var question = nowQuestion;
-            // console.info('-------- update nowQuestion')
             var options = question.options;
             var rightOpts = [];
             var multi = false;
@@ -1113,9 +1470,9 @@ export default {
                 for (var i = 0, l = selectedOpts.length; i < l; i++) {
                     var choseIndex = selectedOpts[i];
                     if (parseInt(options[choseIndex]["score"]) > 0) {
-                        optionItems[choseIndex]["class"] = "chose";
+                        options[choseIndex]["class"] = "chose";
                     } else {
-                        optionItems[choseIndex]["class"] = this.data.erroChoseCls;;
+                        options[choseIndex]["class"] = this.data.erroChoseCls;;
                     }
                 }
             }
@@ -1148,6 +1505,7 @@ export default {
             if(this.data.isShowAnswer){
                 this.showAnswerAction();
             }
+			question.displayed = true;
 			return true;
 		},
 		calcTags: function (item) {
@@ -1294,7 +1652,7 @@ export default {
                         choseRight = false;
                     }
                 } else if (options[i]["class"] == "chose") {
-                    // 用户选错了
+                    // 用户选错了 如果是answer模式，errorChoseCls会变成chose
                     options[i]["class"] = this.data.erroChoseCls;
                     choseRight = false;
                 }
@@ -1650,5 +2008,102 @@ export default {
 
 	.deepskyblue {
 		color: 	#00BFFF;
+	}
+	/* 测试模式下 */
+	.center {
+		display: flex;
+		flex-direction: column;
+		/* margin-left: 1%; */
+		width: 100%;
+		height: 125px;
+		/* line-height: 125px; */
+		text-align: center;
+		justify-content: center;
+		align-items: center;
+		/* margin-top: 15px;
+		margin-bottom: 15px; */
+		padding: 0;
+		background-color: white;
+	}
+
+	.score {
+		height: 75px;
+		line-height: 75px;
+		font-size: 30px;
+		color: red;
+	}
+
+	.detail{
+		display: flex;
+		flex-direction: column;
+		margin-left: 1%;
+		width: 98%;
+		padding-top: 15px;
+		padding-bottom: 25px;
+		background-color: white;
+	}
+
+	.label-detail {
+		font-size: 15px;
+		color: yellowgreen;
+		border-bottom: 0px solid #9ad4fc;
+		padding-bottom: 10px;
+		text-align: center;
+	}
+
+	.item {
+		width: 25px;
+		height: 25px;
+		color: white;
+		text-align: center;
+		border-radius: 100px;
+		background-color: mediumturquoise;
+		justify-content: center;
+		display: flex;
+		align-items: center;
+		margin-top: 15px;
+	}
+
+	.bg-right {
+		width: 25px;
+		height: 25px;
+		color: white;
+		text-align: center;
+		border-radius: 100px;
+		justify-content: center;
+		display: flex;
+		align-items: center;
+		margin-top: 15px;
+
+		background-color: #9ad4fc;
+		border: 2px #9ad4fc solid;
+	}
+
+	.bg-error {
+		width: 25px;
+		height: 25px;
+		color: white;
+		text-align: center;
+		border-radius: 100px;
+		justify-content: center;
+		display: flex;
+		align-items: center;
+		margin-top: 15px;
+
+		background-color: #fc9a9a;
+		border: 2px #fc9a9a solid;
+	}
+	.row {
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-around;
+	}
+	.color-white {
+		color: white;
+	}
+	.width100p {
+		width: 100%;
 	}
 </style>

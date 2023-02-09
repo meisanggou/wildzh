@@ -291,7 +291,7 @@ Page({
         }
         var msg = '确定要交卷吗？';
         if (this.data.questionItems.length != this.data.totalQuestionNumber) {
-            msg = '题目信息都没记载完，确定要交卷吗？';
+            msg = '题目信息都没加载完，确定要交卷吗？';
         }
         wx.showModal({
             title: '交卷',

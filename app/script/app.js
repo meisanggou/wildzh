@@ -122,9 +122,7 @@ function str_format(s, args) {
 }
 // dt 时间相关
 function get_timestamp() {
-    var timestamp = Date.parse(new Date());
-    timestamp = timestamp / 1000;
-    return timestamp;
+    return (new Date()).valueOf();
 }
 
 function get_timestamp2() {
@@ -159,8 +157,31 @@ function timestamp_2_date(ts) {
     var n_str = y + "-" + M + "-" + d;
     return n_str;
 }
+
+function duration_str(interval){
+    var hs = parseInt(interval / 3600);
+    interval = interval % 3600;
+    var ms = parseInt(interval / 60);
+    var ss = interval % 60;
+    if(hs < 10){
+        hs = '0' + hs;
+    }
+    if(hs > 99){
+        hs = 99;
+    }
+    if(ms < 10){
+        ms = '0' + ms;
+    }
+    if(ss < 10){
+        ss = '0' + ss;
+    }
+    var s = hs + ':' + ms + ':' + ss;
+    return s;
+}
 var dt = {
-    get_timestamp2: get_timestamp2
+    get_timestamp: get_timestamp,
+    get_timestamp2: get_timestamp2,
+    duration_str: duration_str,
 }
 // dt对象 时间相关结束
 // 网络请求相关
@@ -198,7 +219,7 @@ function my_auth_request(url, method, data, successFunc, failFunc) {
         return false;
     }
 
-    var auth_token = token_data['access_token'] + ':' + get_timestamp() + ':sha2:' + 'sign';
+    var auth_token = token_data['access_token'] + ':' + get_timestamp2() + ':sha2:' + 'sign';
     var req_data = null;
     if (method != 'GET' && data != null) {
         req_data = {
@@ -254,7 +275,7 @@ function _get_auth_token() {
         return '';
     }
 
-    var auth_token = token_data['access_token'] + ':' + get_timestamp() + ':sha2:' + 'sign';
+    var auth_token = token_data['access_token'] + ':' + get_timestamp2() + ':sha2:' + 'sign';
     return auth_token;
 }
 
@@ -384,6 +405,7 @@ function showModal(params){
         api.confirm(n_params, function(ret, err) {
             var index = ret.buttonIndex;
             if(index == confirmIndex && params.success){
+                ret.confirm = true;
                 params.success(ret);
             }
         });
@@ -580,6 +602,10 @@ wx = {
     showToast: showToast,
     showLoading: function () { },
     hideLoading: function () { },
+    setStorageSync: api.setStorageSync,
+    setStorage: api.setStorage,
+    getStorageSync: api.getStorageSync,
+    getStorage: api.getStorage,
 }
 
 // init
