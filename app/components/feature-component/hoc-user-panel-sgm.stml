@@ -13,7 +13,7 @@
 					</picker>
 				</view>
 			</view>
-			<image class="hoc-user-panel-sgm-gol" src="../../images/right_slip.png"></image>
+			<image class="hoc-user-panel-sgm-gol" src="../../images/right_slip.png" ></image>
 		</view>
 	</view>
 </template>
@@ -51,7 +51,7 @@ export default {
 			// var index = e.detail.value;
 			// this.data.examName = this.props.allExams[index].exam_name;
 			this.fire('selectChange', e.detail)
-		}
+		},
 	}
 }
 </script>

@@ -4,7 +4,7 @@ var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 var reqRandom = 100; // 用于某些资源防止缓存，加到请求参数中
 
-// remote_host = 'http://10.180.201.52:2400'
+remote_host = 'http://10.180.201.36:2400'
 
 var SERVER_ENDPOINT = remote_host
 var KEY_USER_TOKEN = 'user.token';
@@ -311,7 +311,12 @@ function request2(req) {
     if(req.data){
         req.headers['Content-Type'] = 'application/json;charset=utf-8';
         req.data = {'body': req.data};
+        if(req.method == 'DELETE'){
+            req.method = 'POST';
+            req.headers['X-Request-Method'] = 'DELETE';
+        }
     }
+    app.print(req.data);
     if (req.success) {
         var origin_success = req.success
         req.success = function (res) {

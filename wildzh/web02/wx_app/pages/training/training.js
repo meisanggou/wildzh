@@ -12,6 +12,7 @@ var brushDetail = new Array();
 var STATE_WRONG = 'wrong';
 var STATE_RIGHT = 'right'
 var STATE_SKIP = 'skip'
+var firstEnter = true;
 
 Page({
     data: {

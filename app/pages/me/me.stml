@@ -2,7 +2,7 @@
 	<safe-area class="hoc-mine-page-wrapper">
 		<hoc-nav-bar-sgm title="我的" />
 		<hoc-user-panel-sgm nickname={{nickName}} avatar={{userAvatar}} allExams={{allExams}} examName={{examName}} onselectChange="examChange" onhandleClick="toLogin" />
-		<statis image4="../../images/wrong.png" titles={{titles}} value1={{ranking}}  value2={{brushNum}} value3={{accuracy}}/>
+		<statis image4="../../images/wrong.png" onclickImg4="toWrongPage" titles={{titles}} value1={{ranking}}  value2={{brushNum}} value3={{accuracy}}/>
 		<hoc-menu-list-sgm menuList={{menuList1}} />
 		<hoc-menu-list-sgm menuList={{menuList2}}/>
 	</safe-area>
@@ -358,6 +358,11 @@ export default {
 					examTip: "请选择题库！"
 				})
 			}
+		},
+		toWrongPage: function(e){
+			wx.navigateTo({
+				url: "../training/training?wrong_question=true"
+			})
 		},
 	}
 }

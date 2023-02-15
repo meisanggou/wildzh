@@ -2,16 +2,15 @@
 # coding: utf-8
 
 import os
-import functools
 
 from werkzeug.exceptions import HTTPException
 
 from flask import request, g, redirect, make_response, jsonify
-from flask_login import current_user, LoginManager
+from flask_login import LoginManager
 from flask_login.utils import login_url as make_login_url
 from flask_helper import Flask2
 
-from zh_config import file_prefix_url, upload_folder, accept_agent
+from zh_config import file_prefix_url, upload_folder
 from wildzh.function.web_func import make_static_html, make_default_static_url, make_static_url
 from wildzh.function.web_func import make_static_html2
 from wildzh.utils.log import getLogger
@@ -23,9 +22,23 @@ login_manager = LoginManager()
 login_manager.session_protection = 'strong'  # TODO 原来是basic 可行吗？
 LOG = getLogger()
 
+class _Flask2(Flask2):
+
+    def request_context(self, environ):
+        method_header = 'X-Request-Method'
+        for header in environ['headers_raw']:
+            if header[0] == method_header:
+                method = header[1]
+                print(header[1])
+                if method in ['GET', 'POST', 'DELETE']:
+                    environ['REQUEST_METHOD'] = method
+                break
+        req = super().request_context(environ)
+        return req
+
 
 def create_app():
-    one_web = Flask2(__name__, log=LOG)
+    one_web = _Flask2(__name__, log=LOG)
 
     one_web.secret_key = 'a string'
     login_manager.init_app(one_web)

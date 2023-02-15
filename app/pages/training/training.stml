@@ -46,13 +46,13 @@
 				<text v-if={{questionNum>1}} onclick='after10' class='switch'>››</text>
 			</view>
 
-			<scroll-view class='content' v-if={{nowQuestion != null}} >
+			<scroll-view class='content' v-if={{nowQuestion != null}}>
 				<view id="question_desc"></view>
 				<view class="div" onclick="getQuestionTag">
 					<text v-if={{nowQuestion.index + 1}}>{{nowQuestion.index + 1}}.</text>
 					<view v-for="(item, index) in nowQuestion.question_desc_rich">
 						<image v-if={{item.url}} mode='aspectFit' style={{'height:' + item.height + 'px;width:' + item.width + 'px;'}} src={{remote_host + item.url}}></image>
-						<text v-else>{{item.value}}</text>
+						<text v-if={{!item.url}}>{{item.value}}</text>
 					</view>
 					<text v-if={{nowQuestion.question_source}}>({{nowQuestion.question_source}})</text>
 					<text v-if={{isShowSubject}}>
@@ -65,13 +65,13 @@
 				<view class="div view-tag">
 					<view class="tag" v-for="item in tags"><text>{{item}}</text></view>
 				</view>
-				<view class='questionOption' >
+				<view class='questionOption'>
 					<view class={{options[idx].class? options[idx].class:'noChose'}} onclick='choseItem' data-choseitem={{idx}} v-for="(item,idx) in options" :key="item.value" >
 						<text>{{options[idx].optionChar}}、</text>
 						<view class="div" v-for="(_item, _index) in item['desc_rich']">
 							<text></text>
 							<image v-if={{_item.url}} mode='aspectFit' style={{'height:' + _item.height + 'px;width:' + _item.width + 'px;'}} src={{remote_host + _item.url}}></image>
-							<text v-else>{{_item.value}}</text>
+							<text v-if={{!_item.url}}>{{_item.value}}</text>
 						</view>
 					</view>
 				</view>
@@ -86,7 +86,7 @@
 					<text>解析：</text>
 					<view v-for="(item, index) in nowQuestion.answer_rich">
 						<image v-if={{item.url}} mode='aspectFit' style={{'height:' + item.height + 'px;width:' + item.width + 'px;'}} src={{remote_host + item.url}}></image>
-						<text v-else>
+						<text v-if={{!item.url}}>
 							{{item.value}}
 						</text>
 					</view>
@@ -101,14 +101,10 @@
 			<text v-if={{questionNum>1}} onclick='after1' class='switch'>›</text>
 		</view>
 		<view v-if={{ mode == 'wrong' }}>
-			<view class='bottom div' v-if={{showRemove}}>
-				<text class='bottomShow' onclick='remove'>移除该题</text>
-				<text>|</text>
-				<text class='bottomShow' onclick='showAnswer'>显示答案</text>
-			</view>
-			<view class='bottom div' v-else>
-				<text class='bottomShow' onclick='showAnswer'>显示答案</text>
-			</view>
+			<view class='switch' onclick='before1' ><text class="switchtext">‹</text></view>
+			<view v-show={{showRemove}} class='switch' onclick='remove'><text class="switchtext">移除该题</text></view>
+			<view v-show={{!showRemove}} class='switch' onclick='showAnswer'><text class="switchtext">显示答案</text></view>
+			<view class='switch' onclick='after1' ><text class="switchtext">›</text></view>
 		</view>
 		<view class='bottom div' v-if={{ mode == 'answer' }}>
 			<view class='switch' onclick='before1' ><text class="switchtext">‹</text></view>
@@ -143,6 +139,7 @@ var brushDetail = new Array();
 var STATE_WRONG = 'wrong';
 var STATE_RIGHT = 'right'
 var STATE_SKIP = 'skip'
+var firstEnter = true;
 
 // 原有mp-question 定义
 var week_delta = 60 * 60 * 24 * 7;
@@ -590,7 +587,6 @@ export default {
 
 		},
 		before1: function () {
-			console.info('dddd')
 			that.before(1)
 		},
 
@@ -657,6 +653,7 @@ export default {
 		},
 		changeNowQuestion: function (index) {
 			var nowQuestion = questionItems[index];
+			
 			if ("options" in nowQuestion) {
 				//已经获取内容
 			} else {
@@ -668,7 +665,6 @@ export default {
 				that.reqQuestion(index, true);
 				return;
 			}
-			
 			nowQuestion.index = index;
 			var isShowAnswer = false;
 			if(this.data.mode == 'answer-show'){
@@ -2105,5 +2101,12 @@ export default {
 	}
 	.width100p {
 		width: 100%;
+	}
+	.bottomShow {
+		font-size: 20px;
+		text-align: center;
+		/* width: 33%; */
+		line-height: 48px;
+		height: 48px;
 	}
 </style>

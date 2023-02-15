@@ -15,7 +15,7 @@
             <text class="statis-div-desc">{{title3}}</text>
         </view>
         <text class="statis-division">|</text>
-        <view class="statis-div" bindtap="toWrongPage">
+        <view class="statis-div" onclick="clickImg4">
             <image class="statis-div-v" :src="image4" mode="aspectFit"></image>
             <text class="statis-div-desc">{{title4}}</text>
         </view>
@@ -49,7 +49,11 @@ export default {
             return this.props.value3 !== undefined ? this.props.value3 : '--'
         },
     },
-    methods: {}
+    methods: {
+        clickImg4(e){
+            this.fire('clickImg4', e.detail);
+        }
+    }
 };
 </script>
 <style>
