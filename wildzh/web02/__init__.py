@@ -29,7 +29,6 @@ class _Flask2(Flask2):
         for header in environ['headers_raw']:
             if header[0] == method_header:
                 method = header[1]
-                print(header[1])
                 if method in ['GET', 'POST', 'DELETE']:
                     environ['REQUEST_METHOD'] = method
                 break
