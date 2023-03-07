@@ -4,7 +4,7 @@ var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 var reqRandom = 100; // 用于某些资源防止缓存，加到请求参数中
 
-remote_host = 'http://10.180.201.36:2400'
+// remote_host = 'http://10.180.201.36:2400'
 
 var SERVER_ENDPOINT = remote_host
 var KEY_USER_TOKEN = 'user.token';
@@ -75,6 +75,10 @@ function getOrSetCurrentUserData(value = null) {
 function getOrSetTokenData(value = null) {
     var userInfoStorageKey = "user.token";
     return getOrSetCacheData(userInfoStorageKey, value);
+}
+
+function clearTokenData(){
+    return getOrSetTokenData("");
 }
 
 function getOrSetCacheVersion(value) {
@@ -316,14 +320,13 @@ function request2(req) {
             req.headers['X-Request-Method'] = 'DELETE';
         }
     }
-    app.print(req.data);
     if (req.success) {
         var origin_success = req.success
         req.success = function (res) {
             if (newVersion) {
                 getOrSetCacheVersion(version);
             }
-            // 当前statusCode是没赋值的
+            // 当前statusCode是没赋值的 所以不会在这触发重新登录
             if (res.statusCode != 302 && res.statusCode != 401) {
                 var data = {'data': res, 'statusCode': 200};
                 origin_success(data);
@@ -347,8 +350,12 @@ function request2(req) {
         if (ret) {
             success_func(ret);
         } else {
+            // 未登录 当前会进入这里
             print('request ' + req.url + ' fail ' + err.statusCode);
             if (err.statusCode == 401) {
+                // api.redirectTo({
+                //     url: 'widget://pages/login/login.stml',
+                // })
                 api.openWin({
                     name: '重新登录',
                     url: 'widget://pages/login/login.stml',
@@ -362,7 +369,6 @@ function request2(req) {
                 print(err)
                 return req.fail(err);
             }
-            
             api.alert({
                 msg: JSON.stringify(err)
             });
@@ -622,6 +628,7 @@ var app =  {
     getOrSetCacheData: getOrSetCacheData,
     getOrSetCurrentUserData: getOrSetCurrentUserData,
     getOrSetTokenData: getOrSetTokenData,
+    clearTokenData: clearTokenData,
     setDefaultExam: function (examItem) {
         var key = 'default.exam';
         globalData.defaultExamNo = examItem["exam_no"];

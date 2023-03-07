@@ -1,4 +1,4 @@
-<template>
+<template> <!-- login.stml 页面正在使用-->
 	<view class="page">
 		<view class="form">
 			<view class="f-input-box input-phone">
@@ -53,9 +53,7 @@ export default {
 	},
 	methods: {
 		login(){
-			console.info(this.data.userName);
 			var data = {'username': this.data.userName, 'password': this.data.password};
-			console.info(JSON.stringify(data));
 			this.fire('login', data);
 		}
 	}

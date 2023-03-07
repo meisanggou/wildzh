@@ -3,7 +3,7 @@
 		<!-- 顶部导航 -->
 		<safe-area></safe-area>
 		<view class="login">
-			<hoc-login-title-lr />
+			<hoc-login-title-lr onClickRegister="toRegister" />
 			<hoc-login-form-lr onlogin="loginAction" />
 			<!-- <hoc-login-other-lr /> -->
 		</view>
@@ -14,7 +14,6 @@ import '../../components/feature-component/hoc-login-title-lr.stml'
 import '../../components/feature-component/hoc-login-form-lr.stml'
 // import '../../components/feature-component/hoc-login-other-lr.stml'
 import app from '../../script/app.js'
-// console.info(app.getOrSetCurrentUserData())
 
 
 function login_return(ret) {
@@ -28,24 +27,41 @@ function login_return(ret) {
 		var t_data = ret.data;
 		t_data['identity'] = app.identity;
 		app.getOrSetTokenData(t_data);
-		api.openTabLayout({
-			name: 'root',
-		})
+		api.navigateBack({delta: 1});
+		// api.openTabLayout({
+		// 	name: 'root',
+		// })
 	}
 }
 export default {
 	name: "hoc-login-lr",
+	apiready() {
+		var options = api.pageParam;
+		this.onLoad(options);
+	},
 	data() {
 		return {
 
 		}
 	},
 	methods: {
+		onLoad(options){
+			if(options.logout != undefined){
+				app.clearTokenData();
+			}
+		},
 		loginAction(data) {
 			var detail = data.detail;
 			var r_data = {'user_name': detail.username, 'password': detail.password, 'identity': app.identity };
 			app.my_request('password', 'post', r_data, login_return);
 		},
+		toRegister(){
+			api.openWin({
+				name: 'register-help',
+				url: 'register-help.stml',
+				pageParam: {}
+			});
+		}
 	}
 }
 </script>

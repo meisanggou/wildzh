@@ -18,7 +18,8 @@ export default {
 	},
 	methods: {
 		back() {
-			this.fire('backClick')
+			api.navigateBack({delta: 1});
+			// this.fire('backClick')
 		}
 	}
 }

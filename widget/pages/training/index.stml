@@ -47,6 +47,7 @@ import app from '../../script/app.js'
 var wx = app.wx;
 var lastExamNo = null;
 var lastUpdateSource = 0;
+var TIMER_SHOW = null;
 
 export default {
 	name: 'training-index',
@@ -103,6 +104,13 @@ export default {
 					to: options["to"]
 				})
 			}
+			//  非小程序有的方法 加上为了登录成功后，返回能刷新页面
+			var that = this;
+			api.addEventListener({
+				name:'viewappear'
+			}, function(ret, err){
+				that.onShow();
+			});
 
 		},
 		onShow: function () {

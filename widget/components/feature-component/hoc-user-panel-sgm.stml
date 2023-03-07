@@ -1,6 +1,6 @@
 <!--我的-头部个人信息面板  使用中-->
 <template>
-	<view class="hoc-user-panel-sgm" @click="handleClick">
+	<view class="hoc-user-panel-sgm" >
 		<view class="hoc-user-panel-sgm-wrap">
 			<img class="hoc-user-panel-sgm-logo" :src="avatar" mode="aspectFill" />
 			<view class="hoc-user-panel-sgm-name">
@@ -13,7 +13,7 @@
 					</picker>
 				</view>
 			</view>
-			<image class="hoc-user-panel-sgm-gol" src="../../images/right_slip.png" ></image>
+			<image class="hoc-user-panel-sgm-gol" mode="aspectFit" src="../../images/right_slip.png" @click="handleClick"></image>
 		</view>
 	</view>
 </template>
@@ -117,8 +117,11 @@ export default {
 }
 
 .hoc-user-panel-sgm-gol {
-	width: 16px;
-	height: 16px;
+	width: 36px;
+	/* height: 16px; */
+	height: 100%;
+	padding-left: 10px;
+	padding-right: 10px;
 	margin-right: 20px;
 }
 </style>

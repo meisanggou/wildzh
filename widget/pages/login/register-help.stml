@@ -1,0 +1,55 @@
+<template>
+	<view class="page">
+		<safe-area></safe-area>
+		<hoc-nav-bar-sgm isShowBack="true" title="注册方法" />
+		<view class="title">
+			<text>当前仅允许在微信小程序注册</text>
+		</view>
+		<scroll-view class="content">
+			<text class="item">第一步：微信中搜索小程序：专升本经济学刷题，进入小程序</text>
+			<text class="item">第二步：小程序如果弹出“未选择题库，确定进入【我的】选择题库”，点击确定。如果未弹出，小程序下方点击【我】切换页面</text>
+			<text class="item">第三步：点击上方的“授权登录”，弹出授权框后，点击“允许”。如果以前授权过未显示“授权登录”，直接进入下一步。</text>
+			<image src="../../images/register/1.png"></image>
+			<text class="item">第四步：点击“昵称”右侧的箭头，进入设置账户名</text>
+			<image src="../../images/register/2.png"></image>
+			<text class="item">第五步：输入账户名和密码，确认。注意：账户名设置后不可更改！</text>
+			<image src="../../images/register/3.png"></image>
+			<text></text>
+		</scroll-view>
+	</view>
+</template>
+<script>
+import '../../components/feature-component/hoc-nav-bar-sgm.stml'
+export default {
+	name: 'register-help',
+	apiready(){//like created
+
+	},
+	data() {
+		return{
+
+		}
+	},
+	methods: {
+
+	}
+}
+</script>
+<style>
+	.page {
+		height: 100%;
+	}
+	.title {
+		align-items: center;
+		justify-content: center;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+	.content {
+		margin-left: 2%;
+		width: 96%;
+	}
+	.item {
+		margin-bottom: 10px;
+	}
+</style>

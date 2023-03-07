@@ -1,10 +1,11 @@
+<!--登录-login.stml  使用中-->
 <template>
 	<view class="hoc-login-title-lr">
 		<view class="title">
 			<text class="title-register">{ data.title }</text>
 			<view class="title-login">
 				<text class="title-other">{ data.otherText }</text>
-				<text class="title-oter-login">{ data.btnText }</text>
+				<text class="title-oter-login" onclick="toRegister">{ data.btnText }</text>
 			</view>
 		</view>
 	</view>
@@ -33,7 +34,9 @@ export default {
 		}
 	},
 	methods: {
-
+		toRegister(){
+			this.fire('ClickRegister')
+		}
 	}
 }
 </script>

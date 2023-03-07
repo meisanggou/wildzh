@@ -4,7 +4,8 @@
 			@click="itemClick(item)">
 			<text class="hoc-menu-list-item-title">{{ item.title }}</text>
 			<text v-if="item.content" class="hoc-menu-list-item-title">{{ item.content }}</text>
-			<img class="hoc-menu-list-item-gor" src="../../images/right_slip.png" />
+			<img v-if="item.href" class="hoc-menu-list-item-gor" src="../../images/right_slip.png" /> 
+			<img v-else class="hoc-menu-list-item-gor" />
 		</view>
 	</view>
 </template>
