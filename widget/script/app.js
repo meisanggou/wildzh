@@ -1,5 +1,5 @@
-var remote_host = "https://wild.gene.ac"
-var version = "7.2.3";
+var remote_host = "https://wild.gene.ac";
+var version = api.appVersion;
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 var reqRandom = 100; // 用于某些资源防止缓存，加到请求参数中
