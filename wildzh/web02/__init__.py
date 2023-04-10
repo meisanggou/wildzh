@@ -26,12 +26,18 @@ class _Flask2(Flask2):
 
     def request_context(self, environ):
         method_header = 'X-Request-Method'
-        for header in environ['headers_raw']:
-            if header[0] == method_header:
-                method = header[1]
-                if method in ['GET', 'POST', 'DELETE']:
-                    environ['REQUEST_METHOD'] = method
-                break
+        _header = 'HTTP_%s' % method_header.upper()
+        req_method = None
+        if _header in environ:
+            req_method = environ[_header]
+        elif 'headers_raw' in environ:
+            for header in environ['headers_raw']:
+                if header[0] == method_header:
+                    req_method = header[1]
+                    break
+        if req_method in ['GET', 'POST', 'DELETE']:
+            environ['REQUEST_METHOD'] = req_method
+
         req = super().request_context(environ)
         return req
 
