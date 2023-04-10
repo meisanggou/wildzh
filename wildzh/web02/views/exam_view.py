@@ -652,7 +652,7 @@ def handle_questions(q_items, no_rich=False, fmt_version=1, host=None):
                     item['answer'] = '请升级为会员！'
                 if not exam_item.can_look_answer():
                     options = item['options']
-                    item['options'] = map(lambda x: {'desc': x["desc"]}, options)
+                    item['options'] = [{'desc': x["desc"]} for x in options]
                 if not exam_item.can_look_subject():
                     item['question_desc'] = '请升级为会员！'
                     item['options'] = []

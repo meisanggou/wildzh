@@ -319,6 +319,11 @@ Page({
         var questionLen = questionItems.length;
         var nextIndex = nowQuestionIndex + afterNum;
         if (nowQuestionIndex >= questionItems.length - 1) {
+            // 判断是否仅有 1题
+            if(questionItems.length == 1){
+                this.showAnswer();
+                return;
+            }
             // 判断是否当前是否是最后一题
             wx.showModal({
                 title: "已是最后一题",
