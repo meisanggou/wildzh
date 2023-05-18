@@ -21,6 +21,20 @@ services:
     image: meisanggou/elasticsearch-ik:7.7.1
     restart: always
     volumes:
-      - /mnt/JINGD/data/es:/usr/share/elasticsearch/data
+      - $ES_DATA:/usr/share/elasticsearch/data
+  wildzh-mysql:
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    container_name: wildzh-mysql
+    environment:
+    - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+    - MYSQL_DATABASE=wild
+    image: mysql:5.7
+    ports:
+    - 3306:3306
+    restart: always
+    volumes:
+    - wildzh-mysql:/var/lib/mysql
+volumes:
+  wildzh-mysql:
+    name: wildzh-mysql
 version: '2.4'
-

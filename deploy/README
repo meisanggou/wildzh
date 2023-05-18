@@ -2,6 +2,8 @@
 set env
 export EXEC_USER_ID=
 export ZH_UPLOAD_FOLDER=
+export ES_DATA=
+export MYSQL_ROOT_PASSWORD=
 
 3、
 docker-compose up -d
