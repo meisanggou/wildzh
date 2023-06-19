@@ -7,6 +7,7 @@ from flask_helper.template import RenderTemplate
 from flask_helper.upload import support_upload2
 from flask_helper.utils import registry as f_registry
 
+from wildzh.classes.exam import Exam
 from wildzh.classes.video import Video
 from wildzh.classes.video import VideoExamMap
 from wildzh.classes.video import VideoProgress
@@ -14,6 +15,7 @@ from wildzh.utils import constants
 from wildzh.utils.log import getLogger
 from wildzh.web02.view import View2
 
+from zh_config import db_conf_path
 from zh_config import file_prefix_url
 from zh_config import upload_folder
 
@@ -45,6 +47,7 @@ rt = RenderTemplate("exam", menu_active="video",
 
 video_view = View2('video', __name__, url_prefix=url_prefix,
                    auth_required=True, menu_list=menu_list)
+exam_man = Exam(db_conf_path)
 video_man = Video()
 video_map_man = VideoExamMap()
 video_pg_man = VideoProgress()
@@ -139,6 +142,9 @@ def get_map():
     filters = {}
     # TODO 必须是管理的题库 或者 必须是自己的视频
     if 'exam_no' in data:
+        role = exam_man.get_exam_role(data['exam_no'], g.user_no)
+        if role >= 10:
+            return {'status': True, 'data': []}
         filters['exam_no'] = data['exam_no']
     if 'video_uuid' in data:
         filters['video_uuid'] = data['video_uuid']

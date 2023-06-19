@@ -394,8 +394,6 @@ if __name__ == "__main__":
     # transfer_exam(1570447137, 4295, 4357, 1575333741)
     # 会员版 to 搜题版
     # transfer_exam(1570447137, 0, 20000, 1594597891, random=True)
-    # update_xz_no_answer(exam_no, u'D:/Project/word/app/upload/英语.docx')
-    # print(all_members)
     upload_dir = r'D:\Project\word\app\upload'
     items = os.listdir(upload_dir)
     d_path = os.path.join(upload_dir, items[0])

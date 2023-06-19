@@ -16,6 +16,6 @@ GRANT ALL PRIVILEGES ON wild.* TO 'zhw'@'%';
 GRANT ALL PRIVILEGES ON wild.* TO 'zhw'@'localhost';
 
 5、
-docker exec -u root wildzh python /opt/wildzh/init_t.py
+docker exec -u root wildzh python /opt/wildzh/init_t.py $$MYSQL_ROOT_PASSWORD
 
 6、

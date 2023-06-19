@@ -174,7 +174,7 @@ class User(object):
         return l
 
     def verify_user_name_exist(self, user_name):
-        if re.search("(system|admin|123|abc|wild)", user_name, re.I):
+        if re.search("(system|admin|123|abc|wild|^\d|^\d*$)", user_name, re.I):
             return True
         if len(user_name) <= 5:
             return True

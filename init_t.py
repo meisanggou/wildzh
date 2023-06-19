@@ -20,4 +20,3 @@ if __name__ == "__main__":
         db.root_init_conf('%')
     db2 = TableDB(conf_path=db_conf_path)
     db2.create_from_dir(os.path.join(script_dir, "table"))
-
