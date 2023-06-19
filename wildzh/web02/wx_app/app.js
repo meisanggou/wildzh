@@ -60,13 +60,12 @@ function mp_login(callback) {
     try {
         const res = wx.getSystemInfoSync()
         device_data['system'] = res['system'];
-        console.log(res.model)
-        console.log(res.pixelRatio)
-        console.log(res.windowWidth)
-        console.log(res.windowHeight)
-        console.log(res.language)
-        console.log(res.version)
-        console.log(res.platform)
+        device_data['brand'] = res['brand'];
+        device_data['model'] = res['model'];
+        device_data['pixelRatio'] = res['pixelRatio'];
+        device_data['screenWidth'] = res['screenWidth'];
+        device_data['screenHeight'] = res['screenHeight'];
+        device_data['version'] = res['version'];
       } catch (e) {
         // Do something when catch error
       }

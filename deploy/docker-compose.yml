@@ -39,4 +39,5 @@ services:
 volumes:
   wildzh-mysql:
     name: wildzh-mysql
+
 version: '2.4'

@@ -132,6 +132,7 @@ def calc_timestamp(dt=None, sdt=None):
 
 @registry.has_registry_receivers
 class UserToken(object):
+    MAX_DEVICE = 1
 
     def __init__(self, db_conf_path):
         self.db = DB(conf_path=db_conf_path)
@@ -139,14 +140,64 @@ class UserToken(object):
         self.token_cols = ['user_no', 'access_token', 'identity',
                            'refresh_token', 'update_time', 'need_refresh']
 
-    def gen_token(self, user_no, identity, timeout, user_role):
+    def _gen_token_admit(self, user_no, identity):
         # TODO 限制不能无限生成
         # 获得当前活跃的终端
         ## 判定申请的终端是否是活跃的终端
         ### 如果是 允许申请
         ### 如果不是 判定当前活跃终端数是否超过限制 删除申请时间靠前的终端授权
         ### 如果是新终端 判定是否以前有过授权 判定间隔时间是否够长
+        max_device = self.MAX_DEVICE
+        admit = False
+        token_items = self.db.execute_select(
+            self.t_token, where_value={'user_no': user_no})
+        token_items.sort(key=lambda x: x['update_time'])
+        if len(token_items) >= self.MAX_DEVICE:
+            active_items = []
+            inactive_items = []
+            req_item = None
+            for item in token_items:
+                if item['identity'] == identity:
+                    req_item = item
+                if item['access_token']:
+                    active_items.append(item)
+                else:
+                    inactive_items.append(item)
+            if req_item and req_item['access_token']:
+                # 当前申请终端 是活跃终端，可以重新申请
+                admit = True
+            elif len(active_items) >= max_device:
+                # 当前申请终端不是活跃终端，且活跃终端，到达限制，不允许申请
+                admit = False
+            elif not inactive_items:
+                # 当前不是活跃终端，当前活跃终端数又没超限，又没有不活跃终端，理论上不会走到该分支
+                admit = True
+            else:
+                _t = int(time.time()) - 24 * 3600
+                # 最近不活跃的一个终端，必须超过24小时
+                if inactive_items[-1]['update_time'] < _t:
+                    admit = True
+                else:
+                    admit = False
+            for i in range(0, len(active_items) - self.MAX_DEVICE + 1):
+                # 删除申请时间靠前的终端授权
+                item = active_items[i]
+                where_value = {'user_no': user_no,
+                               'identity': item['identity']}
+                update_value = {'access_token': None,
+                                'refresh_token': None,
+                                'update_time': int(time.time())}
+                self.db.execute_update(
+                    self.t_token, where_value=where_value,
+                    update_value=update_value)
+        else:
+            # 当前所有终端数，少于限制，可以申请
+            admit = True
+        return admit
 
+    def gen_token(self, user_no, identity, timeout, user_role):
+        if not self._gen_token_admit(user_no, identity):
+            return False, "登录客户端数达到限制。请确保其他客户退出登录超过24小时后，重试！"
         r, data = generate_token(user_no, '', 'password',
                                  timeout=timeout,
                                  extra_data={'user_role': user_role})
