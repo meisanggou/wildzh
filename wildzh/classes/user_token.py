@@ -150,7 +150,8 @@ class UserToken(object):
         max_device = self.MAX_DEVICE
         admit = False
         token_items = self.db.execute_select(
-            self.t_token, where_value={'user_no': user_no})
+            self.t_token, cols=self.token_cols,
+            where_value={'user_no': user_no})
         token_items = list(token_items)
         token_items.sort(key=lambda x: x['update_time'])
         if len(token_items) >= self.MAX_DEVICE:
