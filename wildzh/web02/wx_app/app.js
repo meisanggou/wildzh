@@ -56,6 +56,21 @@ function getOrSetCacheVersion(value) {
 }
 
 function mp_login(callback) {
+    var device_data = {};
+    try {
+        const res = wx.getSystemInfoSync()
+        device_data['system'] = res['system'];
+        console.log(res.model)
+        console.log(res.pixelRatio)
+        console.log(res.windowWidth)
+        console.log(res.windowHeight)
+        console.log(res.language)
+        console.log(res.version)
+        console.log(res.platform)
+      } catch (e) {
+        // Do something when catch error
+      }
+    console.info(JSON.stringify(device_data));
     wx.login({
         success: res => {
             wx.request({

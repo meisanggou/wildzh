@@ -1,21 +1,2 @@
 <!--pages/videos/video_play.wxml-->
-<view>
-    <view>
-        <video src="{{ videoSrc }}" title="{{ videoTitle }}" initial-time="{{ initialTime }}" bindtimeupdate="playTimeUpdate" ></video>
-    </view>
-    <view class="nav">
-        <view class="nav-item {{ navIndex == 1 ? 'nav-item-sd' : '' }}" data-index="1" bindtap="changeNav">视频介绍</view>
-        <view class="nav-item {{ navIndex == 2 ? 'nav-item-sd' : '' }}" data-index="2" bindtap="changeNav">留言</view>
-    </view>
-    <view class="content">
-        <block wx:if="{{navIndex == 1}}">
-            <view class="desc">{{ videoDesc }}</view>
-        </block>
-        <block wx:if="{{navIndex == 2}}">
-            <view class="desc">功能开发中</view>
-        </block>
-    </view>
-    
-    <view>
-    </view>
-</view>
+<text>pages/videos/video_play.wxml</text>
