@@ -553,7 +553,7 @@ class Exam(ExamMember, ExamUsage):
         else:
             e_items = self.user_exams(user_no, exam_no)
             if len(e_items) <= 0:
-                exam_role = 10
+                exam_role = exist_items[0].exam_role
             else:
                 exam_role = e_items[0]['exam_role']
         return exam_role

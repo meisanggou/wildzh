@@ -520,6 +520,9 @@ def get_exam_info():
             r_item['enable_share'] = item.is_private()
         else:
             r_item['enable_share'] = False
+        if r_item['enable_video'] and r_item['exam_role'] >= 20:
+            # 半公开或者私有题库 未授权不能查看视频
+            r_item['enable_video'] = 0
         if r_item['exam_role'] <= min_role:
             r_items.append(r_item)
 

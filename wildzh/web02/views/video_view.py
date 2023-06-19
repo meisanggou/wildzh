@@ -143,7 +143,7 @@ def get_map():
     # TODO 必须是管理的题库 或者 必须是自己的视频
     if 'exam_no' in data:
         role = exam_man.get_exam_role(data['exam_no'], g.user_no)
-        if role >= 10:
+        if not g.is_admin and role >= 20:
             return {'status': True, 'data': []}
         filters['exam_no'] = data['exam_no']
     if 'video_uuid' in data:
