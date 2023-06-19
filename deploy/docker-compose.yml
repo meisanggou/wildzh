@@ -20,6 +20,7 @@ services:
     network_mode: host
     image: meisanggou/elasticsearch-ik:7.7.1
     restart: always
+    cpus: 0.8
     volumes:
       - $ES_DATA:/usr/share/elasticsearch/data
   wildzh-mysql:
