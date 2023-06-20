@@ -135,6 +135,7 @@ def password_action():
         return u"密码不正确"
     user_name = item["user_name"]
     c_user.update_password(user_name, new_password)
+    # TODO 删除所有token
     return redirect(url_prefix + "/login/")
 
 
@@ -167,6 +168,7 @@ def update_username_action():
         if v_r:
             return jsonify({"status": False, "data": '账户名已存在'})
         c_user.set_username(g.user_no, user_name, password)
+        # TODO 删除所有token
         items = c_user.verify_user_exist(g.session, user_no=g.user_no)
         if len(items) <= 0:
             return jsonify({"status": False, "data": "账户不存在"})
@@ -184,6 +186,7 @@ def update_username_action():
         if user_data['user_name'] is None:
             return jsonify({"status": False, "data": "未设置账户名，不允许设置密码"})
         c_user.update_password(user_data['user_name'], password)
+        # TODO 删除所有token
         return jsonify({"status": True, "data": user_data})
 
 

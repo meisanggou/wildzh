@@ -1,11 +1,10 @@
-var remote_host = "https://meisanggou.vicp.net"
+var remote_host = "https://wild.gene.ac"
 var version = "7.2.3";
 var session_storage_key = "wildzh_insider_session";
 var exam_storage_key = "wildzh_current_exam";
 var reqRandom = 100; // 用于某些资源防止缓存，加到请求参数中
-remote_host = "https://wild.gene.ac"
 
-// remote_host = "http://127.0.0.1:2400"
+remote_host = "http://127.0.0.1:2400"
 
 function getOrSetCacheData(key, value = null) {
     // 同步存储数据
@@ -66,17 +65,18 @@ function mp_login(callback) {
         device_data['screenWidth'] = res['screenWidth'];
         device_data['screenHeight'] = res['screenHeight'];
         device_data['version'] = res['version'];
-      } catch (e) {
+    } catch (e) {
         // Do something when catch error
-      }
-    console.info(JSON.stringify(device_data));
+    }
+
     wx.login({
         success: res => {
             wx.request({
                 url: remote_host + '/user/login/wx/',
                 method: "POST",
                 data: {
-                    "code": res.code
+                    "code": res.code,
+                    "device": device_data
                 },
                 success: res => {
                     if (res.statusCode == 200 && res.data.status == true) {
@@ -172,7 +172,7 @@ App({
         this.getDefaultExam();
         return true;
     },
-    
+
     getOrSetCacheData: getOrSetCacheData,
     getOrSetCacheData2: getOrSetCacheData2,
     getOrSetCurrentUserData: getOrSetCurrentUserData,
