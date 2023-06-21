@@ -26,8 +26,8 @@
 		</view>
 		<mp-form id="n_form" rules="{{n_rules}}" models="{{n_form_data}}">
 			<mp-cells title="更改昵称头像">
-				<mp-cell show-error prop="nick_name" title="昵称" ext-class="">
-					<input bindinput="formNickNameChange" data-field="nick_name" class="weui-input" placeholder="请输入昵称" maxlength="15" value="{{nickName}}"/>
+				<mp-cell prop="nick_name" title="昵称" ext-class="">
+					<input bindinput="formNickNameChange" data-field="nick_name" class="weui-input" placeholder="请输入昵称" maxlength="15" value="{{nickName}}" disabled="disabled"/>
 				</mp-cell>
 				<mp-cell show-error prop="avatar_url" title="头像" ext-class="">
 					<image class="avatar bottom30" mode="aspectFit" src="{{avatarUrl}}"></image>

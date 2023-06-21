@@ -5,9 +5,9 @@ var that;
 var lastUpdateUserKey = 'updateUserTime'
 
 function verify_username(rule, value, param, models) {
-    var patt = /^[\w]+$/;
+    var patt = /^[a-z]+[\w]+$/;
     if (!patt.test(value)) {
-        return '账户名仅允许由数字字母下划线组成';
+        return '账户名必须字母开头，且仅允许由数字字母下划线组成';
     }
 }
 
