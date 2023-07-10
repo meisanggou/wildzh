@@ -19,6 +19,8 @@ from mysqldb_rich.db2 import DB
 from Crypto.Cipher import AES
 from wildzh.function import generate_qr
 from wildzh.db.models.user import UserModel
+from wildzh.db.objects import base
+
 
 __author__ = 'meisa'
 
@@ -95,7 +97,12 @@ class EncryptActor(object):
             return ""
 
 
-class User(object):
+"""
+角色值 1为默认普通用户 2为内部用户
+"""
+
+
+class User(base.BaseObject):
     _salt_password = "msg_zh2018"
     model = UserModel
 
@@ -122,10 +129,8 @@ class User(object):
                 return True
         return False
 
-    def __init__(self, db_conf_path, upload_folder=None):
+    def __init__(self, upload_folder=None):
         self.encrypt = EncryptActor()
-        self.db = DB(conf_path=db_conf_path)
-        self.t = "sys_user"
         if upload_folder is not None:
             self.user_folder = os.path.join(upload_folder, "user")
             if os.path.exists(self.user_folder) is False:
@@ -142,6 +147,8 @@ class User(object):
                     role=1):
         add_time = int(time.time())
         if nick_name is not None:
+            if isinstance(nick_name, str):
+                nick_name = nick_name.encode()
             nick_name = base64.b64encode(nick_name)
         else:
             nick_name = ''
@@ -154,10 +161,11 @@ class User(object):
                 user_name, password))
         u_o.save(session)
 
-    def update_password(self, user_name, new_password):
-        en_password = generate_password_hash(self._md5_hash_password(user_name, new_password))
+    def update_password(self, session, user_name, new_password):
+        en_password = generate_password_hash(self._md5_hash_password(
+            user_name, new_password))
         update_value = {"password": en_password}
-        result = self.db.execute_update(self.t, update_value=update_value, where_value={"user_name": user_name})
+        result = self.update(session, {"user_name": user_name}, **update_value)
         return result
 
     def _update_user(self, user_no, **update_value):
@@ -170,29 +178,29 @@ class User(object):
             if isinstance(nick_name, str):
                 nick_name = nick_name.encode("utf-8")
             update_value["nick_name"] = base64.b64encode(nick_name)
-        l = self.db.execute_update(self.t, update_value=update_value, where_value=dict(user_no=user_no))
+        l = self.update(session, where_value=dict(user_no=user_no),
+                        **update_value)
         return l
 
-    def verify_user_name_exist(self, user_name):
+    def verify_user_name_exist(self, session, user_name):
         if re.search("(system|admin|123|abc|wild|^\d|^\d*$)", user_name, re.I):
             return True
         if len(user_name) <= 5:
             return True
-        items = self.verify_user_exist(user_name=user_name)
+        items = self.verify_user_exist2(session, user_name=user_name)
         if len(items) > 0:
             return True
         return False
 
-    def set_username(self, user_no, user_name, password):
+    def set_username(self, session, user_no, user_name, password):
         en_password = generate_password_hash(
             self._md5_hash_password(user_name, password))
         update_value = {"password": en_password, "user_name": user_name}
-        where_is_none = ['user_name']
-        result = self.db.execute_update(self.t, update_value=update_value,
-                                        where_value={"user_no": user_no},
-                                        where_is_none=where_is_none)
+        where_value = {'user_no': user_no, 'user_name': None}
+        result = self.update(session, where_value, **update_value)
         return result
 
+    # 验证auth是否存在 包括 account tel alias wx_id
     def verify_user_exist2(self, session, **kwargs):
         need_password = kwargs.pop('need_password', False)
         q = session.query(self.model).filter_by(**kwargs)
@@ -217,24 +225,6 @@ class User(object):
                 raise e
         return db_items
 
-    # 验证auth是否存在 包括 account tel alias wx_id
-    def verify_user_exist(self, *args, **kwargs):
-        if args:
-            return self.verify_user_exist2(args[0], **kwargs)
-        cols = ["user_no", "user_name", "tel", "email", "wx_id", "role",
-                "nick_name", "avatar_url"]
-        if kwargs.pop("need_password", None) is not None:
-            cols.append("password")
-        db_items = self.db.execute_select(self.t, where_value=kwargs, cols=cols, package=True)
-        for u_item in db_items:
-            try:
-                u_item["nick_name"] = base64.b64decode(u_item["nick_name"])
-                if isinstance(u_item['nick_name'], bytes):
-                    u_item['nick_name'] = u_item['nick_name'].decode('utf-8')
-            except Exception as e:
-                print(e)
-        return db_items
-
     def get_admin_user(self, session):
         items = self.verify_user_exist2(session)
         items = [item for item in items if item['role'] & 2 == 2]
@@ -242,9 +232,9 @@ class User(object):
 
     def new_user(self, session, user_name, password=None, nick_name=None,
                  creator=None, role=1):
-        items = self.verify_user_exist(user_name=user_name)
+        items = self.verify_user_exist2(session, user_name=user_name)
         if len(items) > 0:
-            return False, u"用户名已存在"
+            return False, "用户名已存在"
         if nick_name is None:
             nick_name = user_name
         self.insert_user(session, user_name, password, nick_name=nick_name,
@@ -256,7 +246,7 @@ class User(object):
             self.insert_user(session, wx_id=wx_id)
         except IntegrityError as ie:
             pass
-        items = self.verify_user_exist(session, wx_id=wx_id)
+        items = self.verify_user_exist2(session, wx_id=wx_id)
         if len(items) <= 0:
             return None
         return items[0]
@@ -283,7 +273,7 @@ class User(object):
         else:
             return -3, None
         where_value["need_password"] = True
-        db_items = self.verify_user_exist(session, **where_value)
+        db_items = self.verify_user_exist2(session, **where_value)
         if len(db_items) <= 0:
             return -2, None
         user_item = db_items[0]
@@ -304,9 +294,10 @@ class User(object):
         generate_qr(self.encrypt.encrypt_msg(user_no), qr_path, avatar_path)
         return True
 
-    def update_info(self, user_no, **kwargs):
+    def update_info(self, session, user_no, **kwargs):
         if "avatar_url" in kwargs:
-            if kwargs["avatar_url"].startswith("http") and self.user_folder is not None:
+            if kwargs["avatar_url"].startswith("http") and \
+                            self.user_folder is not None:
                 try:
                     resp = requests.get(kwargs["avatar_url"])
                     if resp.status_code != 200:
@@ -317,21 +308,24 @@ class User(object):
                     self.generate_user_qr(user_no)
                 except Exception as e:
                     return False
-        l = self._update_user(user_no, **kwargs)
+        l = self._update_user(session, user_no, **kwargs)
         return l
 
-    def get_multi_nick_name(self, user_list):
+    def get_multi_nick_name(self, session, user_list):
         cols = ["user_no", "nick_name", "avatar_url"]
         user_list = set(user_list)
-        items = self.db.execute_multi_select(self.t, where_value=dict(
-            user_no=user_list), cols=cols)
-        for u_item in items:
+        query = session.query(self.model).filter(
+            self.model.user_no.in_(user_list))
+        items = []
+        for u_obj in query:
+            u_item = u_obj.to_dict(cols)
             try:
                 u_item["nick_name"] = base64.b64decode(u_item["nick_name"])
                 if isinstance(u_item['nick_name'], bytes):
                     u_item['nick_name'] = u_item['nick_name'].decode('utf-8')
             except Exception as e:
                 print(e)
+            items.append(u_item)
         return items
 
     def my_qc_code(self, user_no):
@@ -368,13 +362,15 @@ if __name__ == "__main__":
     import sys
     # script_dir = os.path.abspath(os.path.dirname(__file__))
     # sys.path.append(script_dir)
-    from zh_config import db_conf_path
-    um = User(db_conf_path)
+    um = User()
     if len(sys.argv) >= 3:
         u = sys.argv[1]
         p = sys.argv[2]
     else:
         u = p = "admin"
+    from wildzh.db import session
+    with session.use_session() as s:
+        um.new_user(s, 'admin', 'admin', role=2)
     # r, item = um.new_user(u, password=p)
     # if r is False:
     #     print("update password")

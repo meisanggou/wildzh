@@ -81,7 +81,7 @@ f_registry.DATA_REGISTRY.update(constants.DR_KEY_ROUTES,
 c_exam = Exam(db_conf_path)
 EXAM_MAN = ExamInfo()
 EXAM_MF_MAN = ExamMemberFlow2()
-c_user = User(db_conf_path=db_conf_path, upload_folder=upload_folder)
+c_user = User(upload_folder=upload_folder)
 c_exam_es = ExamEs(es_conf)
 min_pro = MiniProgram(conf_path=min_program_conf, section='01')
 ASYNC_POOL = get_pool()
@@ -291,7 +291,7 @@ def parsing_token(resource, event, trigger, **kwargs):
     # TODO 判定被授权者是否已有高权限
 
     # step 实际授权 or 返回信息
-    u_items = c_user.verify_user_exist(g.session, user_no=inviter_user_no)
+    u_items = c_user.verify_user_exist2(g.session, user_no=inviter_user_no)
     if not u_items:
         r['message'] = '邀请者信息异常'
         return r

@@ -16,7 +16,7 @@ __author__ = 'meisa'
 LOG = getLogger()
 url_prefix = "/user"
 rt = RenderTemplate("user")
-c_user = User(db_conf_path=db_conf_path, upload_folder=upload_folder)
+c_user = User(upload_folder=upload_folder)
 mp = MiniProgram(conf_path=min_program_conf, section=web_pro)
 menu_list = [
     {"menu_id": "user", "index": -2, "url": "/password/", "title": u"个人中心", "icon_class": "icon-yonghuzhongxin"},
@@ -98,7 +98,7 @@ def wx_login_action():
     if exec_r is False:
         LOG.error('someone login from wx, code has error: %s', data)
         return jsonify({"status": False, "data": data})
-    items = c_user.verify_user_exist(g.session, wx_id=data["openid"])
+    items = c_user.verify_user_exist2(g.session, wx_id=data["openid"])
     if len(items) <= 0:
         LOG.info('someone login from wx, user not exist, new user %s',
                  data["openid"])
@@ -134,7 +134,7 @@ def password_action():
     if code != 0:
         return u"密码不正确"
     user_name = item["user_name"]
-    c_user.update_password(user_name, new_password)
+    c_user.update_password(g.session, user_name, new_password)
     # TODO 删除所有token
     return redirect(url_prefix + "/login/")
 
@@ -142,7 +142,7 @@ def password_action():
 @user_view.route("/info/", methods=["GET"])
 @login_required
 def user_info():
-    items = c_user.verify_user_exist(g.session, user_no=g.user_no)
+    items = c_user.verify_user_exist2(g.session, user_no=g.user_no)
     return jsonify({"status": True, "data": items})
 
 
@@ -150,8 +150,8 @@ def user_info():
 @login_required
 def update_info_action():
     data = g.request_data
-    c_user.update_info(g.user_no, **data)
-    items = c_user.verify_user_exist(g.session, user_no=g.user_no)
+    c_user.update_info(g.session, g.user_no, **data)
+    items = c_user.verify_user_exist2(g.session, user_no=g.user_no)
     if len(items) <= 0:
         return jsonify({"status": False, "data": "not exist"})
     return jsonify({"status": True, "data": items[0]})
@@ -164,12 +164,12 @@ def update_username_action():
     password = data['password']
     if 'user_name' in data:
         user_name = data['user_name']
-        v_r = c_user.verify_user_name_exist(user_name)
+        v_r = c_user.verify_user_name_exist(g.session, user_name)
         if v_r:
             return jsonify({"status": False, "data": '账户名已存在'})
-        c_user.set_username(g.user_no, user_name, password)
+        c_user.set_username(g.session, g.user_no, user_name, password)
         # TODO 删除所有token
-        items = c_user.verify_user_exist(g.session, user_no=g.user_no)
+        items = c_user.verify_user_exist2(g.session, user_no=g.user_no)
         if len(items) <= 0:
             return jsonify({"status": False, "data": "账户不存在"})
         user_data = items[0]
@@ -179,13 +179,13 @@ def update_username_action():
             return jsonify({"status": False, "data": "不允许修改账户名"})
         return jsonify({"status": True, "data": items[0]})
     else:
-        items = c_user.verify_user_exist(g.session, user_no=g.user_no)
+        items = c_user.verify_user_exist2(g.session, user_no=g.user_no)
         if len(items) <= 0:
             return jsonify({"status": False, "data": "账户不存在"})
         user_data = items[0]
         if user_data['user_name'] is None:
             return jsonify({"status": False, "data": "未设置账户名，不允许设置密码"})
-        c_user.update_password(user_data['user_name'], password)
+        c_user.update_password(g.session, user_data['user_name'], password)
         # TODO 删除所有token
         return jsonify({"status": True, "data": user_data})
 
@@ -193,7 +193,7 @@ def update_username_action():
 @user_view.route("/whoIam/", methods=["GET"])
 @login_required
 def who_i_am_action():
-    items = c_user.verify_user_exist(g.session, user_no=g.user_no)
+    items = c_user.verify_user_exist2(g.session, user_no=g.user_no)
     if len(items) != 1:
         return jsonify({"status": False, "data": "not exist"})
     en_s = c_user.who_i_am(g.user_no, 60)
@@ -209,7 +209,7 @@ def who_is_he_action():
     user_no = c_user.who_is_he(en_user)
     if user_no is None:
         return jsonify({"status": False, "data": "无效的用户信息"})
-    items = c_user.verify_user_exist(g.session, user_no=user_no)
+    items = c_user.verify_user_exist2(g.session, user_no=user_no)
     if len(items) <= 0:
         return jsonify({"status": False, "data": "用户不存在"})
     user_item = items[0]
@@ -233,7 +233,7 @@ def my_qr_code_png():
 @login_required
 def get_multi_nickname():
     data = request.json
-    items = c_user.get_multi_nick_name(user_list=data['user_list'])
+    items = c_user.get_multi_nick_name(g.session, user_list=data['user_list'])
     return jsonify({'status': True, 'data': items})
 
 

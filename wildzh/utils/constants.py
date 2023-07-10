@@ -11,7 +11,7 @@ ENCODING = 'utf-8'
 
 # exam  mode
 # G_SELECT_MODE
-G_ = []
+# 待废弃，逐步完善使用classes.objects.question_type
 G_SELECT_MODE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题", "多选题", "判断题"]
 G_MULTI_MODE = [6, ]  # 多选题型  多选题=6
 G_DEF_OPTIONS = [1, 6]  # 自定义选项  单选题=1 多选题=6

@@ -20,8 +20,9 @@ class _Base(object):
             session.add(self)
             session.flush()
 
-    def to_dict(self):
-        columns = list(dict(object_mapper(self).columns).keys())
+    def to_dict(self, cols=None):
+        if not cols:
+            columns = list(dict(object_mapper(self).columns).keys())
         return {c: getattr(self, c) for c in columns}
 
 
