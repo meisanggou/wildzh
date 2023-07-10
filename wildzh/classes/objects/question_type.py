@@ -10,7 +10,8 @@ G_CH_NUM = ['一', '二', '三', '四', '五', '六', '七', '八', '九']
 class OptionType(object):
     value = 0
     name = "无"
-    alias = []
+    alias = []  #  题型的别名
+    multi = False  # 是否是多选
     DETECTOR = None
 
     @classmethod
@@ -76,6 +77,7 @@ class MultiChoiceOptionType(OptionType):
     value = 6
     name = "多选题"
     alias = ['多选']
+    multi = True
 
 
 class JudgeOptionType(OptionType):
@@ -92,8 +94,8 @@ class WordMeaningOptionType(OptionType):
 
 # G_OPTION_TYPE = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题", "多选题", "判断题"]
 
-G_OPTION_TYPE = sorted(OptionType.__subclasses__(),
-                       key=lambda x: x.value)
+G_OPTION_TYPE = [OptionType] + sorted(OptionType.__subclasses__(),
+                                      key=lambda x: x.value)
 
 
 if __name__ == '__main__':

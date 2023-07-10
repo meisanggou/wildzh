@@ -27,6 +27,7 @@ from wildzh.classes.user import User
 from wildzh.classes.wx import MiniProgram
 from wildzh.classes.objects.exam_obj import ExamObject
 from wildzh.classes.objects.exam_obj import StrategyObject
+from wildzh.classes.objects.question_type import G_OPTION_TYPE
 from wildzh.db.session import use_session
 from wildzh.export.local_write import write_docx
 from wildzh.tools.docx.object import DocxObject
@@ -58,12 +59,13 @@ strategy_url = url_prefix + '/strategy'
 query_url = url_prefix + '/query'
 file_url = url_prefix + '/question/file'
 sync_url = url_prefix + '/es/sync'
+type_url = url_prefix + '/question/type'
 defined_routes = dict(add_url=add_url, upload_url=upload_url,
                       info_url=info_url, online_url=online_url,
                       questions_url=questions_url, page_exam=page_exam,
                       strategy_url=strategy_url, query_url=query_url,
                       page_question_url=page_question_url, file_url=file_url,
-                      sync_url=sync_url)
+                      sync_url=sync_url, type_url=type_url)
 rt = RenderTemplate("exam", menu_active="exam", defined_routes=defined_routes)
 menu_list = {"title": "试题库", "icon_class": "icon-tiku", "menu_id": "exam", "sub_menu": [
     {"title": "试题库管理", "url": url_prefix + "/"},
@@ -86,7 +88,7 @@ c_exam_es = ExamEs(es_conf)
 min_pro = MiniProgram(conf_path=min_program_conf, section='01')
 ASYNC_POOL = get_pool()
 
-G_SELECT_MODE = constants.G_SELECT_MODE
+G_SELECT_MODE = [c.name for c in G_OPTION_TYPE]
 
 
 def separate_image(text, max_width=None, host=None, new_fmt=False):
@@ -775,6 +777,13 @@ def get_exam_sources():
     items = c_exam.get_sources(g.exam_no)
     data = {'exam_no': g.exam_no, 'sources': items}
     return jsonify({"status": True, "data": data})
+
+
+@exam_view.route('/question/type', methods=['GET'])
+@login_required
+def get_question_type():
+    data = G_SELECT_MODE
+    return {'status': True, 'data': data}
 
 
 @exam_view.route("/online/", methods=["POST"])

@@ -1,6 +1,8 @@
 # !/usr/bin/env python
 # coding: utf-8
-from wildzh.utils import constants
+from wildzh.classes.objects.question_type import G_OPTION_TYPE
+
+G_SELECT_MODE = [c.name for c in G_OPTION_TYPE]
 
 
 __author__ = 'zhouhenglc'
@@ -228,23 +230,20 @@ class ExamObject(AttrEnableVideo):
             if 'enable' not in item:
                 return
             if 'name' not in item:
-                item['name'] = constants.G_SELECT_MODE[index]
+                item['name'] = G_SELECT_MODE[index]
             if 'multi' not in item:
-                if index in constants.G_MULTI_MODE:
-                    item['multi'] = True
-                else:
-                    item['multi'] = False
+                item['multi'] = G_OPTION_TYPE[index].multi
             index += 1
-        if len(values) != len(constants.G_SELECT_MODE):
+        if len(values) != len(G_SELECT_MODE):
             index = 0
             for item in values:
-                if item['name'] != constants.G_SELECT_MODE[index]:
+                if item['name'] != G_SELECT_MODE[index]:
                     # TODO write warning
                     break
                 index += 1
             else:
-                for i in range(index, len(constants.G_SELECT_MODE)):
-                    values.append({'name': constants.G_SELECT_MODE[i],
+                for i in range(index, len(G_SELECT_MODE)):
+                    values.append({'name': G_SELECT_MODE[i],
                                    'enable': False})
         self._select_modes = values
 

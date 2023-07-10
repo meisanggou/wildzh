@@ -3,13 +3,7 @@
  */
 
 $(function () {
-    var mode_names = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题", '多选题', '判断题'];
-    var select_modes = [];
     var default_subject = {'name': '', 'select_modes': [], 'chapters': [], 'enable': true, 'custom_sm': false};
-    for (var i = 0; i < mode_names.length; i++) {
-        default_subject.select_modes.push({'name': mode_names[i], 'enable': true});
-        select_modes.push({'name': mode_names[i], 'enable': true});
-    }
     var default_subject_s = JSON.stringify(default_subject);
     var vm = new Vue({
         el: "#myTabContent",
@@ -24,7 +18,7 @@ $(function () {
             allow_search: 0,
             enable_video: 0,
             search_tip: "",
-            select_modes: select_modes,
+            select_modes: [],
             subjects: [],
             new_chapter: '',
             error_tips: {"exam_name": "请输入测试名称", "exam_desc": "请输入测试介绍"}
@@ -158,5 +152,17 @@ $(function () {
             }
         })
 
+    }
+    else{
+        var type_url = $("#type_url").val();
+        my_async_request2(type_url, 'GET', null, function (data) {
+            var select_modes = [];
+            var default_subject = {'name': '', 'select_modes': [], 'chapters': [], 'enable': true, 'custom_sm': false};
+            for (var i = 0; i < data.length; i++) {
+                default_subject.select_modes.push({'name': data[i], 'enable': true});
+                select_modes.push({'name': data[i], 'enable': true});
+            }
+            vm.select_modes = select_modes;
+        });
     }
 });
