@@ -3,7 +3,7 @@
  */
 
 $(function () {
-    var default_subject = {'name': '', 'select_modes': [], 'chapters': [], 'enable': true, 'custom_sm': false};
+    var default_subject = {'name': '', 'chapters': [], 'enable': true, 'custom_sm': false};
     var default_subject_s = JSON.stringify(default_subject);
     var vm = new Vue({
         el: "#myTabContent",

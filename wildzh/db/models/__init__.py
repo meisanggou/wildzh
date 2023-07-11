@@ -23,6 +23,8 @@ class _Base(object):
     def to_dict(self, cols=None):
         if not cols:
             columns = list(dict(object_mapper(self).columns).keys())
+        else:
+            columns = cols
         return {c: getattr(self, c) for c in columns}
 
 
