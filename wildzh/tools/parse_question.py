@@ -4,10 +4,11 @@
 import collections
 import json
 import re
-
+from wildzh.classes.objects.question_type import Question
+from wildzh.classes.objects.question_type import QuestionType
 from wildzh.tools import constants
 import wildzh.tools.parse_exception as p_exc
-from wildzh.tools.parse.answer_d import Answer
+from wildzh.classes.objects.question_answer import Answer
 from wildzh.tools.parse_option import ListOption
 from wildzh.tools.parse_option import ParseOptions
 
@@ -52,13 +53,7 @@ class AnswerLocation(object):
         return self.value
 
 
-class QuestionType(object):
-    Choice = "Choice"
-    QA = "Questions and answers"
-    Judge = "Judgment"
-
-
-class Question(object):
+class Question2(object):
 
     def __init__(self, q_items=None):
         self.q_items = q_items
@@ -241,7 +236,7 @@ class Question(object):
         return json.dumps(self.to_dict())
 
 
-class ParseQuestion(object):
+class ParseQuestion2(object):
     _s_of = "".join(ParseOptions.option_prefix)
     option_compile = re.compile("^\s*\(\s*[%s]\s*\)" % _s_of, re.I)  # 匹配 (A)
     option_compile2 = re.compile("^\s*[%s]\s*" % _s_of, re.I)         # 匹配 A
@@ -510,7 +505,7 @@ class QuestionSet(object):
                     pre_q = self._s[question.select_mode][question.no - 1]
                     _temp = '%s%s' % (doubt_q.no, doubt_q.q_items[1])
                     n_items = pre_q.q_items + [_temp] + doubt_q.q_items[2:]
-                    _n_question = ParseQuestion.parse(n_items, question.select_mode)
+                    _n_question = question.parse(n_items, question.select_mode)
                     if _n_question:
                         self._add(_n_question)
                         del self._s[question.select_mode][question.no]

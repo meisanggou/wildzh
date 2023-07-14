@@ -13,7 +13,7 @@ $(function () {
             current_exam_index: 0,
             exam_no: null,
             query_str: "",
-            option_mapping: ["A", "B", "C", "D"],
+            option_mapping: ["A", "B", "C", "D", "E", "F", "G"],
             docx_file: null,
             answer_docx_file: null,
             has_answer: false,

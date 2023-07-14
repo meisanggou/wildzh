@@ -405,7 +405,7 @@ if __name__ == "__main__":
     s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
                     file_path=d_path,
                     question_subject=0, # 0-微观经济学 1-宏观经济学 2-政治经济学
-                    # answer_location=AnswerLocation.file(), #  单独的答案文件
+                    answer_location=AnswerLocation.file(), #  单独的答案文件
                     set_keys=keys)
 
     s_kwargs['set_source'] = False  # 设置题目来源 一般真题需要设置

@@ -7,10 +7,8 @@ import re
 # from win32com import client as wc
 import xml.dom.minidom as minidom
 from wildzh.tools import constants
-from wildzh.tools.parse.answer_d import Answer
 from wildzh.tools.parse.exception import QuestionTypeNotMatch
 from wildzh.tools.parse.option_type import Question
-from wildzh.tools.parse_question import ParseQuestion, QuestionType
 from wildzh.tools.parse_question import AnswerSet, AnswerLocation
 
 
@@ -168,14 +166,8 @@ def handle_docx_main_xml(docx_obj, *args, **kwargs):
     def _get_question():
         if not current_question:
             return
-        q_item = ParseQuestion.parse(current_question[1:],
-                                     select_mode=current_question[0],
+        q_item = current_question[0].parse(current_question[1:],
                                      embedded_answer=embedded_answer)
-        if current_question[0].question_type != q_item.q_type:
-                raise QuestionTypeNotMatch(
-                    current_question[1:], '题型应该是%s，实际题型是%s' % (
-                        current_question[0].question_type, q_item.q_type) )
-        q_item.select_mode = current_question[0]
         questions_set.append(q_item)
 
     for p_content in docx_obj.read_paragraphs(handle_paragraph=handle_paragraph):
@@ -237,7 +229,7 @@ def handle_answers_docx_main_xml(docx_obj, questions_set):
     for p_content in docx_obj.read_paragraphs(handle_paragraph=handle_paragraph):
         _q_type = Question.detection_type(p_content)
         if not select_mode:
-            if _q_type >= 0:
+            if _q_type:
                 # match到关键字 且字符串长度不能
                 _get_answers()
                 current_q_type = _q_type
