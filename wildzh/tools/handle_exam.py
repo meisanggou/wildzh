@@ -95,6 +95,7 @@ def post_questions(server, questions_set):
             q_item_d["question_source"] = ""
         q_item_d["question_subject"] = questions_set.question_subject  # 无
         if questions_set.dry_run:
+            print(q_item_d)
             print(json.dumps(q_item_d))
         if not questions_set.dry_run:
             resp = req.post(url, json=q_item_d)
@@ -388,11 +389,11 @@ if __name__ == "__main__":
     # exam_no = 1575333741 # 专升本经济学题库 试用版
     exam_no = 1585396371  # 本地 测试题库2
     exam_no = 1594597891  # 专升本经济学题库 搜题版
-
+    exam_no = 1689037978  # 专升本英语必备题库
     # 538 + 319
     # 会员版 to 试用版
     # transfer_exam(1570447137, 4295, 4357, 1575333741)
-    # 会员版 to 搜题版
+    # 会员版 to 搜题版专升本英语必备题库专升本英语必备题库
     # transfer_exam(1570447137, 0, 20000, 1594597891, random=True)
     upload_dir = r'D:\Project\word\app\upload'
     items = os.listdir(upload_dir)
@@ -404,10 +405,10 @@ if __name__ == "__main__":
     s_kwargs = dict(exam_no=exam_no, dry_run=True, set_mode=False,
                     file_path=d_path,
                     question_subject=0, # 0-微观经济学 1-宏观经济学 2-政治经济学
-                    answer_location=AnswerLocation.file(), #  单独的答案文件
+                    # answer_location=AnswerLocation.file(), #  单独的答案文件
                     set_keys=keys)
 
-    s_kwargs['set_source'] = True  # 设置题目来源 一般真题需要设置
+    s_kwargs['set_source'] = False  # 设置题目来源 一般真题需要设置
     s_kwargs['exam_name'] = exam_name  # 设置题目来源 一般真题需要设置
     # s_kwargs['inside_mark_prefix'] = '2008年经济学真题多选判断'
     q_set = QuestionSet(**s_kwargs)

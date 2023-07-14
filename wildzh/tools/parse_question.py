@@ -7,7 +7,7 @@ import re
 
 from wildzh.tools import constants
 import wildzh.tools.parse_exception as p_exc
-from wildzh.tools.parse.answer import Answer
+from wildzh.tools.parse.answer_d import Answer
 from wildzh.tools.parse_option import ListOption
 from wildzh.tools.parse_option import ParseOptions
 
@@ -203,7 +203,7 @@ class Question(object):
     def to_dict(self):
         real_options = self.options.to_list()
         return dict(no=self.no, desc=self.desc, options=real_options,
-                    select_mode=self.select_mode, answer=self.answer,
+                    select_mode=self.select_mode.value, answer=self.answer,
                     question_desc_url=self.desc_url)
 
     def to_exam_dict(self, func, *args, **kwargs):
@@ -213,7 +213,7 @@ class Question(object):
         _q_item = dict()
         _q_item["question_no"] = self.no
         _q_item['question_desc'] = self.desc
-        _q_item['select_mode'] = self.select_mode
+        _q_item['select_mode'] = self.select_mode.value
         _q_item['options'] = self.options.to_list()
         _q_item['inside_mark'] = self.inside_mark
         _q_item['answer'] = self.answer
@@ -355,7 +355,7 @@ class ParseQuestion(object):
         for i in range(len(question_items)):
             question_items[i] = cls.equal_replace(question_items[i])
         q_no = question_items[0]
-        if select_mode in (None, 1, 6):  # 1选择题 6 多选题
+        if select_mode.question_type == QuestionType.Choice:  # 1选择题 6 多选题
             i = cls.find_options_location(question_items[:])
             if i < 0 and select_mode in (1, 6):
                 raise p_exc.QuestionTypeNotMatch(question_items,
@@ -371,7 +371,7 @@ class ParseQuestion(object):
             options.B = u"不会"
             q.options = options
             q.q_type = QuestionType.QA
-            if embedded_answer and select_mode == 2:
+            if embedded_answer and select_mode.value == 2:
                 # 名词解释
                 n_desc, answers = cls.find_answer_by_separator(desc,
                                                                [':', u'：'])
@@ -379,7 +379,7 @@ class ParseQuestion(object):
                 if len(answers) == 0:
                     raise p_exc.AnswerNotFound(question_items)
                 q.set_answer(answers)
-            elif select_mode == 7:
+            elif select_mode.value == 7:
                 # 判断题
                 q.q_type = QuestionType.Judge
                 options.A = u"正确"
@@ -390,6 +390,12 @@ class ParseQuestion(object):
                         q.set_answer(answers[0])
                 else:
                     n_desc = desc
+            elif select_mode.value == 8:
+                # 单词释义
+                q.q_type = QuestionType.QA
+                if embedded_answer:
+                    n_desc = question_items[1]
+                    q.set_answer("\n".join(question_items[2:]))
             else:
                 n_desc, answers = cls.find_qa_answer(desc)
                 if len(answers) > 0:
@@ -441,7 +447,8 @@ class QuestionSet(object):
         self.set_source = kwargs.pop('set_source', False)
         self.set_mode = kwargs.pop('set_mode', False)
         self.real_upload = kwargs.pop('real_upload', not dry_run)
-        self.answer_location = kwargs.pop('answer_location', '')
+        self.answer_location = kwargs.pop('answer_location',
+                                          AnswerLocation.embedded())
         self.set_keys = kwargs.pop('set_keys', ['answer', 'question_desc'])
         self.exam_no = exam_no
         self.exam_name = kwargs.pop('exam_name', None)

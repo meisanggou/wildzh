@@ -2,7 +2,7 @@
  * Created by zhouhenglc on 2020/5/28.
  */
 var exam_name_mapping = {};
-var SELECT_MODES = ["无", "选择题", "名词解释", "简答题", "计算题", "论述题", "多选题", "判断题"];
+var SELECT_MODES = [];
 $(function () {
     var query_url = $("#query_url").val();
     var file_url = $("#file_url").val();
@@ -64,6 +64,12 @@ $(function () {
                     that.error_msg = data.error_msg;
                 });
             }
+        }
+    });
+    var type_url = $("#type_url").val();
+    my_async_request2(type_url, 'GET', null, function (data) {
+        for (var i = 0; i < data.length; i++) {
+            SELECT_MODES.push(data[i]);
         }
     });
     var info_url = $("#info_url").val();

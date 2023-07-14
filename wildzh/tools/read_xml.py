@@ -7,9 +7,9 @@ import re
 # from win32com import client as wc
 import xml.dom.minidom as minidom
 from wildzh.tools import constants
-from wildzh.tools.parse.answer import Answer
+from wildzh.tools.parse.answer_d import Answer
 from wildzh.tools.parse.exception import QuestionTypeNotMatch
-from wildzh.tools.parse.option_type import OptionType
+from wildzh.tools.parse.option_type import Question
 from wildzh.tools.parse_question import ParseQuestion, QuestionType
 from wildzh.tools.parse_question import AnswerSet, AnswerLocation
 
@@ -171,25 +171,19 @@ def handle_docx_main_xml(docx_obj, *args, **kwargs):
         q_item = ParseQuestion.parse(current_question[1:],
                                      select_mode=current_question[0],
                                      embedded_answer=embedded_answer)
-
-        if current_question[0] in (1, 6):
-            if q_item.q_type != QuestionType.Choice:
-                raise QuestionTypeNotMatch(current_question[1:],
-                                           '题型应该是选择题，未在题目中发现选择题')
-        elif current_question[0] in (7, ):
-            if q_item.q_type != QuestionType.Judge:
-                raise RuntimeError(u"问题类型解析错误 %s" % q_item.q_type)
-        else:
-            if q_item.q_type != QuestionType.QA:
-                raise RuntimeError(u"问题类型解析错误 %s" % q_item.q_type)
+        if current_question[0].question_type != q_item.q_type:
+                raise QuestionTypeNotMatch(
+                    current_question[1:], '题型应该是%s，实际题型是%s' % (
+                        current_question[0].question_type, q_item.q_type) )
         q_item.select_mode = current_question[0]
         questions_set.append(q_item)
 
     for p_content in docx_obj.read_paragraphs(handle_paragraph=handle_paragraph):
         # 判断是否是题目类型
         if not select_mode:
-            _q_tpe = OptionType.detection_type(p_content)
-            if _q_tpe > 0:
+            _q_tpe = Question.detection_type(p_content)
+
+            if _q_tpe:
                 current_q_type = _q_tpe
                 continue
         # 判断是否是题目
@@ -236,15 +230,12 @@ def handle_answers_docx_main_xml(docx_obj, questions_set):
     def _get_answers():
         if current_q_type is None:
             return
-        if current_q_type < 0:
-            return
-        sub_aw = Answer.get_parser(current_q_type).parse_answers(
-            current_answers_area)
+        sub_aw = current_q_type.parse_answers(current_answers_area)
         for item in sub_aw:
             answers_dict.add(item)
 
     for p_content in docx_obj.read_paragraphs(handle_paragraph=handle_paragraph):
-        _q_type = OptionType.detection_type(p_content)
+        _q_type = Question.detection_type(p_content)
         if not select_mode:
             if _q_type >= 0:
                 # match到关键字 且字符串长度不能
