@@ -3,15 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
+    <style>
+        div {
+            display: flex;
+            flex-direction: column;
+        }
+        .main {
+            width: 100%;
+            justify-items: center;
+            align-items: center;
+        }
+        .panel {
+            width: 500px;
+            justify-items: center;
+            align-items: center;
+            margin-bottom: 30px;
+            font-size: 30px;
+        }
+        .item-ymd {
+            flex-direction: row;
+        }
+    </style>
 </head>
 <body>
-<div>
-    <label>{{ data.interval.year }}年</label>
-    <label>{{ data.interval.month }}月</label>
-    <label>{{ data.interval.day }}天</label>
-</div>
-<div>
-    <label>总计：{{ data.total_days }}天</label>
+<div class="main">
+    {% for data in items %}
+    <div class="panel">
+        <div class="item-ymd">
+            <label>{{ data.interval.year }}年</label>
+            <label>{{ data.interval.month }}月</label>
+            <label>{{ data.interval.day }}天</label>
+        </div>
+        <div>
+            <label>总计：{{ data.total_days }}天</label>
+        </div>
+    </div>
+
+    {% endfor %}
 </div>
 </body>
 </html>

@@ -42,6 +42,12 @@ def report_wx_min_program_version():
 @index_view.route('/qian', methods=['GET'])
 def qian_page():
     from datetime import datetime
-    dt = datetime(2023, 3, 31, 11, 18)
-    data = datetime_helper.calc_ymd(datetime.now(), dt)
-    return rt.render('qian.html', data=data)
+    items = []
+    dt1 = datetime(1993, 8, 2)
+    dt2 = datetime(1994, 7, 31)
+    dt3 = datetime(2023, 3, 31, 11, 18)
+    for dt in (dt1, dt2, dt3):
+        data = datetime_helper.calc_ymd(datetime.now(), dt)
+        items.append(data)
+
+    return rt.render('qian.html', items=items)
